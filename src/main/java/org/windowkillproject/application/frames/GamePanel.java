@@ -9,8 +9,25 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
-    private final ArrayList<Entity> entities;
+    private ArrayList<Entity> entities;
     private Epsilon epsilon;
+
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(ArrayList<Entity> entities) {
+        this.entities = entities;
+    }
+
+    public Epsilon getEpsilon() {
+        return epsilon;
+    }
+
+    public void setEpsilon(Epsilon epsilon) {
+        this.epsilon = epsilon;
+    }
+
     public GamePanel() {
         requestFocus();
         setLayout(null);

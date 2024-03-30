@@ -1,10 +1,13 @@
 package org.windowkillproject.application;
 
 import org.windowkillproject.application.frames.GameFrame;
+import org.windowkillproject.application.frames.GamePanel;
 import org.windowkillproject.application.frames.PrimaryFrame;
+import org.windowkillproject.controller.GameController;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Application implements Runnable{
     public static PrimaryFrame primaryFrame;
@@ -20,6 +23,12 @@ public class Application implements Runnable{
     }
     public static void initGFrame(){
         gameFrame = new GameFrame();
+
+        ArrayList<GamePanel> gps = new ArrayList<>();
+        gps.add((GamePanel) gameFrame.getContentPane());
+        GameController.init(gps);
+
+        GameController.start();
     }
     public static void showSettings(){
 

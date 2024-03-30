@@ -11,7 +11,7 @@ public class Config {
 
     public static final int GAME_WIDTH = 700;
     public static final int GAME_HEIGHT = 700;
-    public static final int DELAY = 10;
+    public static final int DELAY = 20;
     public static final int BUTTON_WIDTH = 150;
     public static final int BUTTON_HEIGHT = 80;
     public static final Font BUTTON_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 28);
