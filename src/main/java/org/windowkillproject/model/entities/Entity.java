@@ -1,11 +1,13 @@
 package org.windowkillproject.model.entities;
 
+import org.windowkillproject.application.frames.GamePanel;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public abstract class Entity extends JLabel {
     protected int x, y, width, height;
+    private int hp, attackHp;
     protected double theta;
     protected BufferedImage img;
     protected ArrayList<Vertex> vertices;
@@ -18,28 +20,42 @@ public abstract class Entity extends JLabel {
         return radius;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
     public void setRadius(int radius) {
         this.radius = radius;
         setHeight(2 * getRadius());
         setWidth(2 * getRadius());
-        setxO(x + getRadius());
-        setyO(y + getRadius());
+        setXO(x + getRadius());
+        setYO(y + getRadius());
     }
 
-    public int getxO() {
-        return xO;
+    public int getAttackHp() {
+        return attackHp;
     }
 
-    public void setxO(int xO) {
-        this.xO = xO;
+    public void setAttackHp(int attackHp) {
+        this.attackHp = attackHp;
     }
 
-    public int getyO() {
-        return yO;
+    public void gotHit(Entity other, GamePanel gamePanel){
+        setHp(getHp() - other.getAttackHp());
+        if (getHp()<=0){
+            setHp(0);
+            destroy(gamePanel);
+        }
+        System.out.println(getHp());
     }
-
-    public void setyO(int yO) {
-        this.yO = yO;
+    public void destroy(GamePanel gamePanel){
+        gamePanel.getEntities().remove(this);
+        gamePanel.revalidate();
+        gamePanel.repaint();
     }
 
     public int getXO() {

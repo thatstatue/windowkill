@@ -10,8 +10,9 @@ public class Epsilon extends Entity {
 
     public Epsilon(int x, int y){
         super(x , y);
-        setRadius(12);
-
+        setRadius(14);
+        setHp(100);
+        setAttackHp(10);
         setImg(ImgData.getData().getEpsilon());
         getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
     }
@@ -24,7 +25,6 @@ public class Epsilon extends Entity {
 //        g2D.fillOval(getXO() - getRadius(), getYO() - getRadius(), getWidth(), getHeight());
 //        g2D.setColor(Color.black);
 //        g2D.fillOval(getXO() - getRadius() +2, getYO() - getRadius() +2, getWidth()-4, getHeight()-4);
-        g2D.setColor(Color.red);
         for (Vertex vertex : getVertices()){
             vertex.paint(g);
         }

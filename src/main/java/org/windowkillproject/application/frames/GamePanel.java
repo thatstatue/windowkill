@@ -49,8 +49,9 @@ public class GamePanel extends JPanel {
     }
 
     public void createEnemy(){
-        Trigorath trigorath = new Trigorath(300, 300);
+        Trigorath trigorath = new Trigorath(300, 420);
         entities.add(trigorath);
+        entities.add(new Trigorath(300, 300));
         //this.add(trigorath);
     }
 

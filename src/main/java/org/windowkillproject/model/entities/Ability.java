@@ -37,3 +37,4 @@ public abstract class Ability extends JLabel {
         this.img = img;
     }
 }
+//todo: add collectable and bullet

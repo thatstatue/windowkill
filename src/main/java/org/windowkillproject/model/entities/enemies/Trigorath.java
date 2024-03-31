@@ -11,6 +11,8 @@ public class Trigorath extends Enemy{
         super(x, y);
         setRadius(20);
         setImg(ImgData.getData().getTrigorath());
+        setHp(15);
+        setAttackHp(10);
 
         getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
         getVertices().add(new Vertex(getXO()- (int)(getRadius()*RAD3_ON_2), getYO()+ getRadius()/2, this));
