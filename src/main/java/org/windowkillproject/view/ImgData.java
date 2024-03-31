@@ -8,7 +8,7 @@ import java.io.IOException;
 public class ImgData {
     private static ImgData data;
 
-    protected BufferedImage epsilon;
+    protected BufferedImage epsilon, trigorath;
 
 
     private ImgData() {
@@ -24,6 +24,14 @@ public class ImgData {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            String pathBackground = "Trigorath.png";
+            File fileBackground = new File(pathBackground);
+            trigorath = ImageIO.read(fileBackground);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //singleton practice
@@ -32,6 +40,10 @@ public class ImgData {
             data = new ImgData();
         }
         return data;
+    }
+
+    public BufferedImage getTrigorath() {
+        return trigorath;
     }
 
     public BufferedImage getEpsilon() {

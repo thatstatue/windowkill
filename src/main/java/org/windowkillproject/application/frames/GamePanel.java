@@ -3,6 +3,7 @@ package org.windowkillproject.application.frames;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.entities.Entity;
 import org.windowkillproject.model.entities.Epsilon;
+import org.windowkillproject.model.entities.enemies.Trigorath;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,7 @@ public class GamePanel extends JPanel {
         setBackground(Color.black);
         setPreferredSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
         entities = initEntities();
+        createEnemy();
         addEntitiesToPanel();
     }
 
@@ -44,6 +46,12 @@ public class GamePanel extends JPanel {
         entities1.add(epsilon);
 
         return entities1;
+    }
+
+    public void createEnemy(){
+        Trigorath trigorath = new Trigorath(300, 300);
+        entities.add(trigorath);
+        //this.add(trigorath);
     }
 
     public void addEntitiesToPanel(){

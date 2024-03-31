@@ -27,4 +27,8 @@ public class GameController {
         );
         gameTimer.start();
     }
+
+    private void wave(){
+
+    }
 }

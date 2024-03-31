@@ -14,13 +14,16 @@ public abstract class Entity extends JLabel {
         return vertices;
     }
     private int radius;
-
     public int getRadius() {
         return radius;
     }
 
     public void setRadius(int radius) {
         this.radius = radius;
+        setHeight(2 * getRadius());
+        setWidth(2 * getRadius());
+        setxO(x + getRadius());
+        setyO(y + getRadius());
     }
 
     public int getxO() {
@@ -68,8 +71,10 @@ public abstract class Entity extends JLabel {
         this.theta = theta;
     }
     public void rotate(){
-        for (Vertex vertex : getVertices()){
-            vertex.rotate();
+        if (getVertices()!=null) {
+            for (Vertex vertex : getVertices()) {
+                vertex.rotate();
+            }
         }
     }
 
