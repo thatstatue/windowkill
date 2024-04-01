@@ -7,11 +7,15 @@ import org.windowkillproject.model.entities.enemies.Trigorath;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
     private ArrayList<Entity> entities;
     private Epsilon epsilon;
+    boolean isLeftPressed, isRightPressed, isUpPressed, isDownPressed;
+
 
     public ArrayList<Entity> getEntities() {
         return entities;
@@ -37,6 +41,51 @@ public class GamePanel extends JPanel {
         entities = initEntities();
         createEnemy();
         addEntitiesToPanel();
+        initKeyListener();
+        addKeyListener(movesKeyListener);
+        setFocusable(true);
+        requestFocusInWindow();
+    }
+
+    private KeyListener movesKeyListener;
+    private void initKeyListener(){
+        movesKeyListener = new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT -> isLeftPressed = true;
+                    case KeyEvent.VK_RIGHT-> isRightPressed = true;
+                    case KeyEvent.VK_UP -> isUpPressed = true;
+                    case KeyEvent.VK_DOWN -> isDownPressed = true;
+                    default-> System.out.print("");//todo: update
+                }
+
+                if (!((isLeftPressed&& isRightPressed) || (isDownPressed && isUpPressed))){
+                    if(isUpPressed) getEpsilon().moveY(-Config.EPSILON_SPEED);
+                    else if (isDownPressed) getEpsilon().moveY(Config.EPSILON_SPEED);
+                    if (isLeftPressed) getEpsilon().moveX(-Config.EPSILON_SPEED);
+                    else if (isRightPressed) getEpsilon().moveX(Config.EPSILON_SPEED);
+
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT -> isLeftPressed = false;
+                    case KeyEvent.VK_RIGHT-> isRightPressed = false;
+                    case KeyEvent.VK_UP -> isUpPressed = false;
+                    case KeyEvent.VK_DOWN -> isDownPressed = false;
+                    default-> System.out.print("");//todo: update
+                }
+            }
+        };
     }
 
     private ArrayList <Entity> initEntities(){
