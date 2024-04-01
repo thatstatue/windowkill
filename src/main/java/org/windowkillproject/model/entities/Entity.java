@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.frames.GamePanel;
+
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -15,7 +16,9 @@ public abstract class Entity extends JLabel {
     public ArrayList<Vertex> getVertices() {
         return vertices;
     }
+
     private int radius;
+
     public int getRadius() {
         return radius;
     }
@@ -44,15 +47,15 @@ public abstract class Entity extends JLabel {
         this.attackHp = attackHp;
     }
 
-    public void gotHit(Entity other, GamePanel gamePanel){
+    public void gotHit(Entity other, GamePanel gamePanel) {
         setHp(getHp() - other.getAttackHp());
-        if (getHp()<=0){
+        if (getHp() <= 0) {
             setHp(0);
             destroy(gamePanel);
         }
-        System.out.println(getHp());
     }
-    public void destroy(GamePanel gamePanel){
+
+    public void destroy(GamePanel gamePanel) {
         gamePanel.getEntities().remove(this);
         gamePanel.revalidate();
         gamePanel.repaint();
@@ -75,6 +78,7 @@ public abstract class Entity extends JLabel {
     }
 
     private int xO, yO;
+
     public void setVertices(ArrayList<Vertex> vertices) {
         this.vertices = vertices;
     }
@@ -86,8 +90,9 @@ public abstract class Entity extends JLabel {
     public void setTheta(double theta) {
         this.theta = theta;
     }
-    public void rotate(){
-        if (getVertices()!=null) {
+
+    public void rotate() {
+        if (getVertices() != null) {
             for (Vertex vertex : getVertices()) {
                 vertex.rotate();
             }
@@ -142,5 +147,21 @@ public abstract class Entity extends JLabel {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public void moveX(int deltaX) {
+        setX(getX() + deltaX);
+        setXO(getXO() + deltaX);
+        for (Vertex vertex : getVertices()) {
+            vertex.setX(vertex.getX() + deltaX);
+        }
+    }
+
+    public void moveY(int deltaY) {
+        setY(getY() + deltaY);
+        setYO(getYO() + deltaY);
+        for (Vertex vertex : getVertices()) {
+            vertex.setY(vertex.getY() + deltaY);
+        }
     }
 }

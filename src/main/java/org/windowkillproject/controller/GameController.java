@@ -25,6 +25,10 @@ public class GameController {
                 GamePanel gp = gamePanels.get(i);
                 for (Entity entity : gp.getEntities()) {
                     entity.rotate();
+                    if (entity instanceof Enemy){
+                        Enemy enemy = (Enemy) entity;
+                        enemy.route(gp.getEpsilon()); //for 1 panel only
+                    }
                 }
                 enemyIntersectionControl(gp);
                 gp.repaint();
@@ -43,9 +47,36 @@ public class GameController {
         }
         return enemies;
     }
+    public static double deltaAway(Entity entity, Entity other){
+        double d1 = entity.getXO() - other.getXO();
+        double d2 = entity.getYO() - other.getYO();
+        double d = Math.sqrt(d1* d1 + d2*d2);
+        int speed = (int) (Config.MAX_ENEMY_SPEED*3 - (d/6));
+//        System.out.println("this is " +speed);
+        return Math.max(0 , speed);
+    }
+    public static double vectorTheta(Entity entity, Entity other){
+        return Math.atan2(entity.getYO() - other.getYO(), entity.getXO() - other.getXO());
+    }
 
-    public static void impact(Entity entity){
 
+    public static void impact(Entity entity, GamePanel gp){
+        for (Entity other : gp.getEntities()){
+            if (!entity.equals(other) && (other instanceof Enemy)){
+                Enemy enemy = (Enemy) other;
+                double theta = vectorTheta(entity, enemy);
+                double deltaS = deltaAway(entity, enemy) * 5;
+                int yS = (int) (Math.cos(theta) * deltaS);
+                int xS = (int) (Math.cos(theta) * deltaS);
+
+                if (deltaS!=0 && entity instanceof Enemy){
+                    xS +=20;
+                    yS -= 20;
+                }//todo: fix enemies getting stuck behind each other
+                enemy.moveX(-xS);
+                enemy.moveY(-yS);
+            }
+        }
     }
     public static void enemyIntersectionControl(GamePanel gamePanel) {
         ArrayList<Enemy> enemies = getEnemies(gamePanel);
@@ -57,7 +88,7 @@ public class GameController {
                 Area a2 = new Area(p2);
                 a2.intersect(a1);
                 if (!a2.isEmpty()) {
-                    impact(enemies.get(i));
+                    impact(enemies.get(i), gamePanel);
                 }
             }
         }
@@ -74,10 +105,9 @@ public class GameController {
                 if (Math.abs(vertex.getX()- epsilon.getXO()) <= epsilon.getRadius()
                 && Math.abs(vertex.getY()- epsilon.getYO()) <= epsilon.getRadius()){
                     epsilon.gotHit(enemy, epsilonPanel);
-                    impact(epsilon);
+                    impact(epsilon, epsilonPanel);
+                    break;
                 }
-
-                break;
             }
 
             //vertex of epsilon hit enemy
@@ -85,7 +115,8 @@ public class GameController {
             for (Vertex epsilonV : epsilon.getVertices()){
                 if (enemyA.contains(epsilonV.getX(), epsilonV.getY())){
                     enemy.gotHit(epsilon, epsilonPanel);
-                    impact(epsilon);
+                    impact(epsilon, epsilonPanel);
+                    break;
                 }
             }
         }

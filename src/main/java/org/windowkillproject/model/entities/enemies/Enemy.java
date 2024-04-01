@@ -1,6 +1,9 @@
 package org.windowkillproject.model.entities.enemies;
 
+import org.windowkillproject.application.Config;
+import org.windowkillproject.controller.GameController;
 import org.windowkillproject.model.entities.Entity;
+import org.windowkillproject.model.entities.Epsilon;
 import org.windowkillproject.model.entities.Vertex;
 
 import javax.imageio.ImageIO;
@@ -12,10 +15,27 @@ import java.awt.image.BufferedImage;
 public abstract class Enemy extends Entity {
     protected Enemy(int x, int y) {
         super(x, y);
+        setySpeed(Config.MAX_ENEMY_SPEED);
+        setxSpeed(Config.MAX_ENEMY_SPEED);
     }
-    private int speed;
-    private double acceleration;
+    private int xSpeed, ySpeed;
     private Polygon polygon;
+
+    public int getxSpeed() {
+        return xSpeed;
+    }
+
+    public void setxSpeed(int xSpeed) {
+        this.xSpeed = xSpeed;
+    }
+
+    public int getySpeed() {
+        return ySpeed;
+    }
+
+    public void setySpeed(int ySpeed) {
+        this.ySpeed = ySpeed;
+    }
 
     public Polygon getPolygon() {
         return polygon;
@@ -25,8 +45,25 @@ public abstract class Enemy extends Entity {
         this.polygon = polygon;
     }
 
-    public void route(){
 
+    private double deltaSpeed(Entity entity, Entity other){
+        double d1 = entity.getXO() - other.getXO();
+        double d2 = entity.getYO() - other.getYO();
+        double d = Math.sqrt(d1* d1 + d2*d2);
+        int speed = (int) (d/25 + 0.75);
+        //System.out.println("the speed forward " + speed);
+        return Math.min(Config.MAX_ENEMY_SPEED , speed);
+    }
+
+    public void route(Epsilon epsilon){
+        //set accel
+        double theta = GameController.vectorTheta(epsilon,this);
+        double deltaS = deltaSpeed(this, epsilon);
+        int xS = (int) (Math.cos(theta) * deltaS);
+        int yS = (int) (Math.sin(theta) * deltaS);
+        //move
+        moveX(xS);
+        moveY(yS);
     }
     @Override
     public void rotate(){
