@@ -1,6 +1,7 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.frames.GameFrame;
 import org.windowkillproject.application.frames.GamePanel;
 import org.windowkillproject.model.entities.Entity;
 import org.windowkillproject.model.entities.Epsilon;
@@ -14,26 +15,26 @@ import java.util.ArrayList;
 
 
 public class GameController {
-    private static ArrayList<GamePanel> gamePanels;
+    private static GameFrame gameFrame;
     public static Timer gameTimer;
-    public static void init(ArrayList<GamePanel> gamePanels){
-        GameController.gamePanels = gamePanels;
+    public static void init(GameFrame gameFrame){
+        GameController.gameFrame = gameFrame;
     }
     public static void start(){
         gameTimer = new Timer(Config.DELAY, e -> {
-            for (int i = 0 ; i< gamePanels.size(); i++) {
-                GamePanel gp = gamePanels.get(i);
-                for (Entity entity : gp.getEntities()) {
-                    entity.rotate();
-                    if (entity instanceof Enemy){
-                        Enemy enemy = (Enemy) entity;
-                        enemy.route(gp.getEpsilon()); //for 1 panel only
-                    }
+            GamePanel gamePanel = (GamePanel) gameFrame.getContentPane();
+            for (Entity entity : gamePanel.getEntities()) {
+                entity.rotate();
+                if (entity instanceof Enemy) {
+                    Enemy enemy = (Enemy) entity;
+                    enemy.route(gamePanel.getEpsilon()); //for 1 panel only
                 }
-                enemyIntersectionControl(gp);
-                gp.repaint();
             }
+            enemyIntersectionControl(gamePanel);
+            gamePanel.repaint();
             epsilonIntersectionControl();
+            gameFrame.shrink();
+
         }
         );
         gameTimer.start();
@@ -95,17 +96,17 @@ public class GameController {
 
     }
     public static void epsilonIntersectionControl(){
-        GamePanel epsilonPanel =gamePanels.get(0);
-        Epsilon epsilon = epsilonPanel.getEpsilon();
-        ArrayList<Enemy> enemies = getEnemies(epsilonPanel);
+        GamePanel gamePanel = (GamePanel) gameFrame.getContentPane();
+        Epsilon epsilon = gamePanel.getEpsilon();
+        ArrayList<Enemy> enemies = getEnemies(gamePanel);
         for (Enemy enemy : enemies) {
 
             //vertex of enemy hit epsilon
             for (Vertex vertex: enemy.getVertices()){
                 if (Math.abs(vertex.getX()- epsilon.getXO()) <= epsilon.getRadius()
                 && Math.abs(vertex.getY()- epsilon.getYO()) <= epsilon.getRadius()){
-                    epsilon.gotHit(enemy, epsilonPanel);
-                    impact(epsilon, epsilonPanel);
+                    epsilon.gotHit(enemy, gamePanel);
+                    impact(epsilon, gamePanel);
                     break;
                 }
             }
@@ -114,8 +115,8 @@ public class GameController {
             Area enemyA = new Area(enemy.getPolygon());
             for (Vertex epsilonV : epsilon.getVertices()){
                 if (enemyA.contains(epsilonV.getX(), epsilonV.getY())){
-                    enemy.gotHit(epsilon, epsilonPanel);
-                    impact(epsilon, epsilonPanel);
+                    enemy.gotHit(epsilon, gamePanel);
+                    impact(epsilon, gamePanel);
                     break;
                 }
             }

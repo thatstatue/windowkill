@@ -14,6 +14,8 @@ public class Config {
     public static final int DELAY = 50;
     public static final int MAX_ENEMY_SPEED = 5;
     public static final int EPSILON_SPEED = 3;
+    public static final int FRAME_SHRINKAGE_SPEED = 2;
+    public static final int GAME_MIN_SIZE = 300;
 
     public static final int BUTTON_WIDTH = 150;
     public static final int BUTTON_HEIGHT = 80;

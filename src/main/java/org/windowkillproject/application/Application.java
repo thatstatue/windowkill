@@ -24,9 +24,7 @@ public class Application implements Runnable{
     public static void initGFrame(){
         gameFrame = new GameFrame();
 
-        ArrayList<GamePanel> gps = new ArrayList<>();
-        gps.add((GamePanel) gameFrame.getContentPane());
-        GameController.init(gps);
+        GameController.init(gameFrame);
 
         GameController.start();
     }
