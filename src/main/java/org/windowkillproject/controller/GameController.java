@@ -5,7 +5,7 @@ import org.windowkillproject.application.frames.GameFrame;
 import org.windowkillproject.application.frames.GamePanel;
 import org.windowkillproject.model.entities.Entity;
 import org.windowkillproject.model.entities.Epsilon;
-import org.windowkillproject.model.entities.Vertex;
+import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.model.entities.enemies.Enemy;
 
 import javax.swing.*;
@@ -31,6 +31,7 @@ public class GameController {
                 }
             }
             enemyIntersectionControl(gamePanel);
+            gamePanel.checkBounds();
             gamePanel.repaint();
             epsilonIntersectionControl();
             gameFrame.shrink();

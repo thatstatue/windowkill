@@ -1,17 +1,23 @@
-package org.windowkillproject.model.entities;
+package org.windowkillproject.model.abilities;
 
+import org.windowkillproject.model.entities.Entity;
 
 import java.awt.*;
 
 public class Vertex extends Ability {
-    private Entity parent;
+    private final Entity parent;
+
+    @Override
+    public Entity getParent() {
+        return parent;
+    }
 
     public Vertex(int x, int y, Entity parent) {
         super(x, y);
         this.parent = parent;
         //setImg(ImgData.getData().getVertex());
     }
-    void rotate(){
+    public void rotate(){
         double degree = Math.atan2( this.getY() - parent.getYO(),this.getX() -parent.getXO());
         degree += 0.084;
         setY(parent.getYO() + (int) (parent.getRadius() * Math.sin(degree)));

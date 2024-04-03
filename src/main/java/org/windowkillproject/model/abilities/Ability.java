@@ -1,4 +1,4 @@
-package org.windowkillproject.model.entities;
+package org.windowkillproject.model.abilities;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

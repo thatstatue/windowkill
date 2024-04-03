@@ -10,13 +10,12 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import static org.windowkillproject.application.Application.gameFrame;
 
 public class GamePanel extends JPanel {
     private ArrayList<Entity> entities;
     private Epsilon epsilon;
     boolean isLeftPressed, isRightPressed, isUpPressed, isDownPressed;
-
-
     public ArrayList<Entity> getEntities() {
         return entities;
     }
@@ -48,7 +47,8 @@ public class GamePanel extends JPanel {
     }
 
     private KeyListener movesKeyListener;
-    private void initKeyListener(){
+
+    private void initKeyListener() {
         movesKeyListener = new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -60,57 +60,80 @@ public class GamePanel extends JPanel {
 
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_LEFT -> isLeftPressed = true;
-                    case KeyEvent.VK_RIGHT-> isRightPressed = true;
+                    case KeyEvent.VK_RIGHT -> isRightPressed = true;
                     case KeyEvent.VK_UP -> isUpPressed = true;
                     case KeyEvent.VK_DOWN -> isDownPressed = true;
-                    default-> System.out.print("");//todo: update
+                    default -> System.out.print("");//todo: update, width height rate
                 }
-
-                if (!((isLeftPressed&& isRightPressed) || (isDownPressed && isUpPressed))){
-                    if(isUpPressed) getEpsilon().moveY(-Config.EPSILON_SPEED);
-                    else if (isDownPressed) getEpsilon().moveY(Config.EPSILON_SPEED);
-                    if (isLeftPressed) getEpsilon().moveX(-Config.EPSILON_SPEED);
-                    else if (isRightPressed) getEpsilon().moveX(Config.EPSILON_SPEED);
+                Epsilon epsilon1 = getEpsilon();
+                int endX = epsilon1.getWidth() + epsilon1.getX() + epsilon1.getRadius();
+                int endY = epsilon1.getHeight() + epsilon1.getY() + 3*epsilon1.getRadius();
+                System.out.println(endX + " " + endY);
+                System.out.println(gameFrame.getWidth() + " " + gameFrame.getHeight());
+                System.out.println();
+                if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
+                    if (isUpPressed && epsilon1.getY() - Config.EPSILON_SPEED >= 0)
+                        epsilon1.moveY(-Config.EPSILON_SPEED);
+                    else if (isDownPressed && endY + Config.EPSILON_SPEED <= gameFrame.getHeight())
+                        epsilon1.moveY(Config.EPSILON_SPEED);
+                    if (isLeftPressed && epsilon1.getX() - Config.EPSILON_SPEED >= 0)
+                        epsilon1.moveX(-Config.EPSILON_SPEED);
+                    else if (isRightPressed && endX + Config.EPSILON_SPEED <= gameFrame.getWidth())
+                        epsilon1.moveX(Config.EPSILON_SPEED);
 
                 }
             }
-
             @Override
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_LEFT -> isLeftPressed = false;
-                    case KeyEvent.VK_RIGHT-> isRightPressed = false;
+                    case KeyEvent.VK_RIGHT -> isRightPressed = false;
                     case KeyEvent.VK_UP -> isUpPressed = false;
                     case KeyEvent.VK_DOWN -> isDownPressed = false;
-                    default-> System.out.print("");//todo: update
+                    default -> System.out.print("");//todo: update
                 }
             }
         };
     }
+    public void checkBounds(){
+        Epsilon epsilon1 = getEpsilon();
+        int endX = epsilon1.getWidth() + epsilon1.getX() + epsilon1.getRadius();
+        int endY = epsilon1.getHeight() + epsilon1.getY() + 3*epsilon1.getRadius();
+        if (endY > gameFrame.getHeight()) {
+            int deltaY = gameFrame.getHeight() - endY;
+            getEpsilon().moveY(deltaY);
+        }
+        if (endX > gameFrame.getWidth()) {
+            int deltaX = gameFrame.getWidth() - endX;
+            getEpsilon().moveX(deltaX);
+        }
+    }
 
-    private ArrayList <Entity> initEntities(){
-        ArrayList <Entity> entities1 = new ArrayList<>();
 
-        epsilon = new Epsilon(Config.GAME_WIDTH / 2 , Config.GAME_HEIGHT / 2);
+    private ArrayList<Entity> initEntities() {
+        ArrayList<Entity> entities1 = new ArrayList<>();
+
+        epsilon = new Epsilon(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2);
         entities1.add(epsilon);
 
         return entities1;
     }
 
-    public void createEnemy(){
+    public void createEnemy() {
         Trigorath trigorath = new Trigorath(300, 420);
         entities.add(trigorath);
         entities.add(new Trigorath(30, 100));
         //this.add(trigorath);
     }
 
-    public void addEntitiesToPanel(){
+    public void addEntitiesToPanel() {
         for (Entity entity : entities) {
             this.add(entity);
         }
     }
+
     @Override
-    protected void paintComponent(Graphics g){
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         for (Entity entity : entities) {
             entity.paint(g);

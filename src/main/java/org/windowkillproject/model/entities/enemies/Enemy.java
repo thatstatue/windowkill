@@ -4,13 +4,8 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.controller.GameController;
 import org.windowkillproject.model.entities.Entity;
 import org.windowkillproject.model.entities.Epsilon;
-import org.windowkillproject.model.entities.Vertex;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 
 public abstract class Enemy extends Entity {
     protected Enemy(int x, int y) {

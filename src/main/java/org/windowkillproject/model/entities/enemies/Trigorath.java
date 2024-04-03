@@ -1,6 +1,6 @@
 package org.windowkillproject.model.entities.enemies;
 
-import org.windowkillproject.model.entities.Vertex;
+import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.view.ImgData;
 
 import java.awt.*;

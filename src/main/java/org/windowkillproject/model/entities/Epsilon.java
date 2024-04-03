@@ -1,11 +1,11 @@
 package org.windowkillproject.model.entities;
 
+import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.view.ImgData;
 
 import java.awt.*;
 
 public class Epsilon extends Entity {
-
 
 
     public Epsilon(int x, int y){

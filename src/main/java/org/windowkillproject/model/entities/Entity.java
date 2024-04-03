@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.frames.GamePanel;
+import org.windowkillproject.model.abilities.Vertex;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
