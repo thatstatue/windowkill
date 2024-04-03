@@ -24,8 +24,6 @@ public class Application implements Runnable{
     public static void initGFrame(){
         gameFrame = new GameFrame();
 
-        GameController.init(gameFrame);
-
         GameController.start();
     }
     public static void showSettings(){

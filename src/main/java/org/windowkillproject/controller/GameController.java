@@ -1,8 +1,8 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.frames.GameFrame;
 import org.windowkillproject.application.frames.GamePanel;
+import org.windowkillproject.model.abilities.Bullet;
 import org.windowkillproject.model.entities.Entity;
 import org.windowkillproject.model.entities.Epsilon;
 import org.windowkillproject.model.abilities.Vertex;
@@ -13,16 +13,15 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 
+import static org.windowkillproject.application.Application.gameFrame;
+
 
 public class GameController {
-    private static GameFrame gameFrame;
     public static Timer gameTimer;
-    public static void init(GameFrame gameFrame){
-        GameController.gameFrame = gameFrame;
-    }
     public static void start(){
+        GamePanel gamePanel = gameFrame.getGamePanel();
         gameTimer = new Timer(Config.DELAY, e -> {
-            GamePanel gamePanel = (GamePanel) gameFrame.getContentPane();
+            gameFrame.shrink();
             for (Entity entity : gamePanel.getEntities()) {
                 entity.rotate();
                 if (entity instanceof Enemy) {
@@ -30,14 +29,15 @@ public class GameController {
                     enemy.route(gamePanel.getEpsilon()); //for 1 panel only
                 }
             }
+            ArrayList<Bullet> bullets = gamePanel.getEpsilon().getBullets();
+            for (int i = 0 ; i < bullets.size(); i++){
+                bullets.get(i).move();
+            }
             enemyIntersectionControl(gamePanel);
             gamePanel.checkBounds();
             gamePanel.repaint();
             epsilonIntersectionControl();
-            gameFrame.shrink();
-
-        }
-        );
+        });
         gameTimer.start();
     }
     public static ArrayList<Enemy> getEnemies(GamePanel panel){
@@ -54,7 +54,6 @@ public class GameController {
         double d2 = entity.getYO() - other.getYO();
         double d = Math.sqrt(d1* d1 + d2*d2);
         int speed = (int) (Config.MAX_ENEMY_SPEED*3 - (d/6));
-//        System.out.println("this is " +speed);
         return Math.max(0 , speed);
     }
     public static double vectorTheta(Entity entity, Entity other){

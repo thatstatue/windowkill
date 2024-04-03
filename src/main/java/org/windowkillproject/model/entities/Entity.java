@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.frames.GamePanel;
+import org.windowkillproject.model.abilities.Bullet;
 import org.windowkillproject.model.abilities.Vertex;
 
 import javax.swing.*;
@@ -50,6 +51,15 @@ public abstract class Entity extends JLabel {
 
     public void gotHit(Entity other, GamePanel gamePanel) {
         setHp(getHp() - other.getAttackHp());
+        if (getHp() <= 0) {
+            setHp(0);
+            destroy(gamePanel);
+        }
+    }
+
+    public void gotShoot(Bullet bullet, GamePanel gamePanel){
+        setHp(getHp() - bullet.getAttackHp());
+        bullet.destroy(gamePanel);
         if (getHp() <= 0) {
             setHp(0);
             destroy(gamePanel);

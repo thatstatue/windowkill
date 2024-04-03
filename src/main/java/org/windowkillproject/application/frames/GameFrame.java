@@ -17,6 +17,9 @@ public class GameFrame extends JFrame {
         setContentPane(new GamePanel());
         this.setVisible(true);
     }
+    public GamePanel getGamePanel(){
+        return (GamePanel) getContentPane();
+    }
 
     public void shrink() {
 
@@ -33,5 +36,31 @@ public class GameFrame extends JFrame {
             newY = getY();
         }
         this.setBounds(newX, newY, newWidth, newHeight);
+    }
+    public void stretch(int code){
+        int newX = getX();
+        int newY = getY();
+        int newWidth = getWidth();
+        int newHeight = getHeight();
+        switch (code){
+            case Config.BULLET_HIT_DOWN -> {
+                newY += Config.FRAME_SHRINKAGE_SPEED / 2;
+                newHeight += Config.FRAME_SHRINKAGE_SPEED * 5;
+            }
+            case Config.BULLET_HIT_LEFT -> {
+                newX -= Config.FRAME_SHRINKAGE_SPEED ;
+                newWidth += Config.FRAME_SHRINKAGE_SPEED *  5;
+            }
+            case Config.BULLET_HIT_RIGHT -> {
+                newX += Config.FRAME_SHRINKAGE_SPEED / 2;
+                newWidth += Config.FRAME_SHRINKAGE_SPEED * 5;
+            }
+            case Config.BULLET_HIT_UP -> {
+                newY -= Config.FRAME_SHRINKAGE_SPEED ;
+                newHeight += Config.FRAME_SHRINKAGE_SPEED * 5;
+            }
+        }
+        this.setBounds(newX, newY, newWidth, newHeight);
+
     }
 }

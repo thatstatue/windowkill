@@ -7,7 +7,6 @@ import java.awt.*;
 public class Vertex extends Ability {
     private final Entity parent;
 
-    @Override
     public Entity getParent() {
         return parent;
     }

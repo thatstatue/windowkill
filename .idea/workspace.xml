@@ -6,16 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="4cb7147d-c2f7-4914-bd23-040476efc352" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Config.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GamePanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Ability.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Ability.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Bullet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Bullet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Shooter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Shooter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/Vertex.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/Entity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/Epsilon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/Epsilon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/Enemy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/Trigorath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/Trigorath.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +96,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java</url>
-          <line>125</line>
+          <line>124</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -106,7 +106,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java</url>
-          <line>17</line>
+          <line>18</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>

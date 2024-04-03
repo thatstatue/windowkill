@@ -24,4 +24,9 @@ public class Config {
     public static final Color BUTTON_BG_COLOR = Color.decode("#634c64");
     public static final Color GAME_BG_COLOR = Color.decode("#634c64");
     public static final Color BUTTON_FG_COLOR = Color.white;
+    public static final int BULLET_HIT_DOWN = 1;
+    public static final int BULLET_HIT_UP = 0;
+    public static final int BULLET_HIT_LEFT = 2;
+    public static final int BULLET_HIT_RIGHT = 3;
+
 }
