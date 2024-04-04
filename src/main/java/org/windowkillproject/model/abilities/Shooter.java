@@ -1,6 +1,5 @@
 package org.windowkillproject.model.abilities;
 
-import org.windowkillproject.model.entities.Entity;
 import org.windowkillproject.model.entities.Epsilon;
 
 import javax.swing.event.MouseInputAdapter;
@@ -27,13 +26,8 @@ public class Shooter extends Ability {
     private final MouseInputAdapter mouseListener = new MouseInputAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            System.out.println("im doin it");
             int x = e.getX();
             int y = e.getY();
-//        if (parent == null) {
-//            System.out.println("new kardam");
-//            parent = gameFrame.getGamePanel().getEpsilon();
-//        }
             if (getParent() == null) setParent(gameFrame.getGamePanel().getEpsilon());
             Bullet bullet = new Bullet(getParent().getXO(), getParent().getYO());
             parent.getBullets().add(bullet);
