@@ -5,7 +5,7 @@ import java.awt.*;
 public class Config {
     public static final String APP_TITLE = "Window Kill - Main Menu";
     public static final String GAME_TITLE = "Window Kill - Game";
-
+    public static final String SHOP_TITLE = "Window Kill - Shop";
     public static final int APP_WIDTH = 1000;
     public static final int APP_HEIGHT = 600;
 
@@ -16,10 +16,10 @@ public class Config {
     public static final int EPSILON_SPEED = 3;
     public static final int FRAME_SHRINKAGE_SPEED = 2;
     public static final int GAME_MIN_SIZE = 300;
-
     public static final int BUTTON_WIDTH = 150;
     public static final int BUTTON_HEIGHT = 80;
-    public static final Font BUTTON_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 28);
+    public static final int EPSILON_RADIUS = 14;
+    public static final Font BUTTON_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 25);
     public static final Font TEXT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
     public static final Color BUTTON_BG_COLOR = Color.decode("#634c64");
     public static final Color GAME_BG_COLOR = Color.decode("#634c64");

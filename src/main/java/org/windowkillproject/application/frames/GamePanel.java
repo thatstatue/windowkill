@@ -1,22 +1,19 @@
 package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.model.abilities.Shooter;
 import org.windowkillproject.model.entities.Entity;
-import org.windowkillproject.model.entities.Epsilon;
+import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.Enemy;
 import org.windowkillproject.model.entities.enemies.Trigorath;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import static org.windowkillproject.application.Application.gameFrame;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends Panel {
     private ArrayList<Entity> entities;
-    private Epsilon epsilon;
+    private EpsilonModel epsilonModel;
     boolean isLeftPressed, isRightPressed, isUpPressed, isDownPressed;
     public ArrayList<Entity> getEntities() {
         return entities;
@@ -33,43 +30,45 @@ public class GamePanel extends JPanel {
         this.entities = entities;
     }
 
-    public Epsilon getEpsilon() {
-        return epsilon;
+    public EpsilonModel getEpsilon() {
+        return epsilonModel;
     }
 
-    public void setEpsilon(Epsilon epsilon) {
-        this.epsilon = epsilon;
+    public void setEpsilon(EpsilonModel epsilonModel) {
+        this.epsilonModel = epsilonModel;
     }
 
     public GamePanel() {
-        requestFocus();
-        setLayout(null);
+        super();
         setBackground(Color.black);
         setPreferredSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
-        entities = initEntities();
-        createEnemy();
-        addEntitiesToPanel();
-        initListeners();
-        addKeyListener(movesKeyListener);
-        addMouseListener(shooter.getMouseListener());
+
         setFocusable(true);
         requestFocusInWindow();
     }
 
-    private Shooter shooter;
+    @Override
+    protected ArrayList<Component> initComponents() {
+        initListeners();
+        addKeyListener(movesKeyListener);
+        entities = initEntities();
+        return new ArrayList<>(entities);
+    }
+
     private KeyListener movesKeyListener;
 
     private void initListeners() {
-        shooter = new Shooter(0 ,0 , null);
         movesKeyListener = new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SPACE){
+//todo
+                }
 
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (shooter == null || shooter.getParent() == null) shooter = new Shooter(10, 30, getEpsilon());
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_LEFT -> isLeftPressed = true;
                     case KeyEvent.VK_RIGHT -> isRightPressed = true;
@@ -77,18 +76,18 @@ public class GamePanel extends JPanel {
                     case KeyEvent.VK_DOWN -> isDownPressed = true;
                     default -> System.out.print("");//todo: update, width height rate
                 }
-                Epsilon epsilon1 = getEpsilon();
-                int endX = epsilon1.getWidth() + epsilon1.getX() + epsilon1.getRadius();
-                int endY = epsilon1.getHeight() + epsilon1.getY() + 3*epsilon1.getRadius();
+                EpsilonModel epsilonModel1 = getEpsilon();
+                int endX = epsilonModel1.getWidth() + epsilonModel1.getX() + epsilonModel1.getRadius();
+                int endY = epsilonModel1.getHeight() + epsilonModel1.getY() + 3* epsilonModel1.getRadius();
                 if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
-                    if (isUpPressed && epsilon1.getY() - Config.EPSILON_SPEED >= 0)
-                        epsilon1.moveY(-Config.EPSILON_SPEED);
+                    if (isUpPressed && epsilonModel1.getY() - Config.EPSILON_SPEED >= 0)
+                        epsilonModel1.moveY(-Config.EPSILON_SPEED);
                     else if (isDownPressed && endY + Config.EPSILON_SPEED <= gameFrame.getHeight())
-                        epsilon1.moveY(Config.EPSILON_SPEED);
-                    if (isLeftPressed && epsilon1.getX() - Config.EPSILON_SPEED >= 0)
-                        epsilon1.moveX(-Config.EPSILON_SPEED);
+                        epsilonModel1.moveY(Config.EPSILON_SPEED);
+                    if (isLeftPressed && epsilonModel1.getX() - Config.EPSILON_SPEED >= 0)
+                        epsilonModel1.moveX(-Config.EPSILON_SPEED);
                     else if (isRightPressed && endX + Config.EPSILON_SPEED <= gameFrame.getWidth())
-                        epsilon1.moveX(Config.EPSILON_SPEED);
+                        epsilonModel1.moveX(Config.EPSILON_SPEED);
 
                 }
             }
@@ -105,9 +104,9 @@ public class GamePanel extends JPanel {
         };
     }
     public void checkBounds(){
-        Epsilon epsilon1 = getEpsilon();
-        int endX = epsilon1.getWidth() + epsilon1.getX() + 5+ epsilon1.getRadius();
-        int endY = epsilon1.getHeight() + epsilon1.getY() + 3*epsilon1.getRadius();
+        EpsilonModel epsilonModel1 = getEpsilon();
+        int endX = epsilonModel1.getWidth() + epsilonModel1.getX() + 5+ epsilonModel1.getRadius();
+        int endY = epsilonModel1.getHeight() + epsilonModel1.getY() + 3* epsilonModel1.getRadius();
         if (endY > gameFrame.getHeight()) {
             int deltaY = gameFrame.getHeight() - endY;
             getEpsilon().moveY(deltaY);
@@ -122,10 +121,9 @@ public class GamePanel extends JPanel {
     private ArrayList<Entity> initEntities() {
         ArrayList<Entity> entities1 = new ArrayList<>();
 
-        epsilon = new Epsilon(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2);
-        if(shooter == null) shooter = new Shooter(0, 0, null);
-        shooter.setParent(epsilon);
-        entities1.add(epsilon);
+        epsilonModel = EpsilonModel.getINSTANCE();
+
+        entities1.add(epsilonModel);
 
         return entities1;
     }
@@ -134,13 +132,7 @@ public class GamePanel extends JPanel {
         Trigorath trigorath = new Trigorath(300, 420);
         entities.add(trigorath);
         entities.add(new Trigorath(30, 100));
-        //this.add(trigorath);
-    }
-
-    public void addEntitiesToPanel() {
-        for (Entity entity : entities) {
-            this.add(entity);
-        }
+        //todo: fix
     }
 
     @Override

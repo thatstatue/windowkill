@@ -1,6 +1,7 @@
 package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,8 +44,8 @@ public class GameFrame extends JFrame {
     }
     public void stretch(int code){
         AtomicInteger count = new AtomicInteger();
-        Timer timer = new Timer(Config.DELAY, null);
-        timer.addActionListener(e -> {
+        Timer stretchTimer = new Timer(Config.DELAY, null);
+        stretchTimer.addActionListener(e -> {
             int newX = getX();
             int newY = getY();
             int newWidth = getWidth();
@@ -73,10 +74,41 @@ public class GameFrame extends JFrame {
                 count.getAndIncrement();
             }else {
                 isStretching = false;
-                timer.stop();
+                stretchTimer.stop();
             }
         });
-        timer.start();
+        stretchTimer.start();
     }
-
+    public void shrinkFast(){
+        Timer shrinkFastTimer = new Timer(Config.DELAY/8, null);
+        shrinkFastTimer.addActionListener(e -> {
+            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;
+            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED / 2;
+            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED;
+            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED;
+            boolean stoppedX = false, stoppedY = false;
+            if (getWidth() <= Config.GAME_MIN_SIZE) {
+                newWidth = Config.GAME_MIN_SIZE;
+                newX = getX();
+                stoppedX = true;
+            }
+            if (getHeight() <= Config.GAME_MIN_SIZE) {
+                newHeight = Config.GAME_MIN_SIZE;
+                newY = getY();
+                stoppedY = true;
+            }
+            if (!(stoppedX && stoppedY)) {
+                setBounds(newX, newY, newWidth, newHeight);
+                EpsilonModel epsilonModel =  getGamePanel().getEpsilon();
+                int deltaX = newWidth/2 - epsilonModel.getXO() - epsilonModel.getRadius();
+                int deltaY = newHeight/2 - epsilonModel.getYO() - epsilonModel.getRadius();
+                epsilonModel.moveX(deltaX);
+                epsilonModel.moveY(deltaY);
+            }else {
+                getGamePanel().createEnemy();
+                shrinkFastTimer.stop();
+            }
+        });
+        shrinkFastTimer.start();
+    }
 }

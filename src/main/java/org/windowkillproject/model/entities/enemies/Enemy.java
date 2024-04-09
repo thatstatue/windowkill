@@ -3,7 +3,7 @@ package org.windowkillproject.model.entities.enemies;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.controller.GameController;
 import org.windowkillproject.model.entities.Entity;
-import org.windowkillproject.model.entities.Epsilon;
+import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
 
@@ -50,10 +50,10 @@ public abstract class Enemy extends Entity {
         return Math.min(Config.MAX_ENEMY_SPEED , speed);
     }
 
-    public void route(Epsilon epsilon){
+    public void route(EpsilonModel epsilonModel){
         //set accel
-        double theta = GameController.vectorTheta(epsilon,this);
-        double deltaS = deltaSpeed(this, epsilon);
+        double theta = GameController.vectorTheta(epsilonModel,this);
+        double deltaS = deltaSpeed(this, epsilonModel);
         int xS = (int) (Math.cos(theta) * deltaS);
         int yS = (int) (Math.sin(theta) * deltaS);
         //move

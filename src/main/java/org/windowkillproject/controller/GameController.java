@@ -4,7 +4,7 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.application.frames.GamePanel;
 import org.windowkillproject.model.abilities.Bullet;
 import org.windowkillproject.model.entities.Entity;
-import org.windowkillproject.model.entities.Epsilon;
+import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.model.entities.enemies.Enemy;
 
@@ -20,6 +20,7 @@ public class GameController {
     public static Timer gameTimer;
     public static void start(){
         GamePanel gamePanel = gameFrame.getGamePanel();
+        gameFrame.shrinkFast();
         gameTimer = new Timer(Config.DELAY, e -> {
             gameFrame.shrink();
             for (Entity entity : gamePanel.getEntities()) {
@@ -97,26 +98,26 @@ public class GameController {
     }
     public static void epsilonIntersectionControl(){
         GamePanel gamePanel = (GamePanel) gameFrame.getContentPane();
-        Epsilon epsilon = gamePanel.getEpsilon();
+        EpsilonModel epsilonModel = gamePanel.getEpsilon();
         ArrayList<Enemy> enemies = getEnemies(gamePanel);
         for (Enemy enemy : enemies) {
 
             //vertex of enemy hit epsilon
             for (Vertex vertex: enemy.getVertices()){
-                if (Math.abs(vertex.getX()- epsilon.getXO()) <= epsilon.getRadius()
-                && Math.abs(vertex.getY()- epsilon.getYO()) <= epsilon.getRadius()){
-                    epsilon.gotHit(enemy, gamePanel);
-                    impact(epsilon, gamePanel);
+                if (Math.abs(vertex.getX()- epsilonModel.getXO()) <= epsilonModel.getRadius()
+                && Math.abs(vertex.getY()- epsilonModel.getYO()) <= epsilonModel.getRadius()){
+                    epsilonModel.gotHit(enemy, gamePanel);
+                    impact(epsilonModel, gamePanel);
                     break;
                 }
             }
 
             //vertex of epsilon hit enemy
             Area enemyA = new Area(enemy.getPolygon());
-            for (Vertex epsilonV : epsilon.getVertices()){
+            for (Vertex epsilonV : epsilonModel.getVertices()){
                 if (enemyA.contains(epsilonV.getX(), epsilonV.getY())){
-                    enemy.gotHit(epsilon, gamePanel);
-                    impact(epsilon, gamePanel);
+                    enemy.gotHit(epsilonModel, gamePanel);
+                    impact(epsilonModel, gamePanel);
                     break;
                 }
             }

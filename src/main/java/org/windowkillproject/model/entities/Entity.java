@@ -175,4 +175,5 @@ public abstract class Entity extends JLabel {
             vertex.setY(vertex.getY() + deltaY);
         }
     }
+
 }
