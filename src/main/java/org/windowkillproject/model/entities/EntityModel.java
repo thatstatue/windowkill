@@ -1,25 +1,31 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.frames.GamePanel;
-import org.windowkillproject.model.abilities.Bullet;
+import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.Vertex;
 
-import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.UUID;
 
-public abstract class Entity extends JLabel {
+import static org.windowkillproject.controller.Controller.createEntityView;
+
+public abstract class EntityModel {
     protected int x, y, width, height;
     private int hp, attackHp;
-    protected double theta;
-    protected BufferedImage img;
+
     protected ArrayList<Vertex> vertices;
+
+    public String getId() {
+        return id;
+    }
 
     public ArrayList<Vertex> getVertices() {
         return vertices;
     }
 
     private int radius;
+    public static ArrayList<EntityModel> entityModels=new ArrayList<>();
+
 
     public int getRadius() {
         return radius;
@@ -49,27 +55,25 @@ public abstract class Entity extends JLabel {
         this.attackHp = attackHp;
     }
 
-    public void gotHit(Entity other, GamePanel gamePanel) {
+    public void gotHit(EntityModel other) {
         setHp(getHp() - other.getAttackHp());
         if (getHp() <= 0) {
             setHp(0);
-            destroy(gamePanel);
+            destroy();
         }
     }
 
-    public void gotShoot(Bullet bullet, GamePanel gamePanel){
-        setHp(getHp() - bullet.getAttackHp());
-        bullet.destroy(gamePanel);
+    public void gotShoot(BulletModel bulletModel){
+        setHp(getHp() - bulletModel.getAttackHp());
+        bulletModel.explode();
         if (getHp() <= 0) {
             setHp(0);
-            destroy(gamePanel);
+            destroy();
         }
     }
 
-    public void destroy(GamePanel gamePanel) {
-        gamePanel.getEntities().remove(this);
-        gamePanel.revalidate();
-        gamePanel.repaint();
+    public void destroy() {
+        entityModels.remove(this);
     }
 
     public int getXO() {
@@ -89,18 +93,7 @@ public abstract class Entity extends JLabel {
     }
 
     private int xO, yO;
-
-    public void setVertices(ArrayList<Vertex> vertices) {
-        this.vertices = vertices;
-    }
-
-    public double getTheta() {
-        return theta;
-    }
-
-    public void setTheta(double theta) {
-        this.theta = theta;
-    }
+    private final String id;
 
     public void rotate() {
         if (getVertices() != null) {
@@ -110,13 +103,15 @@ public abstract class Entity extends JLabel {
         }
     }
 
-    protected Entity(int x, int y) {
+    protected EntityModel(int x, int y) {
         this.x = x;
         this.y = y;
         vertices = new ArrayList<>();
+        this.id= UUID.randomUUID().toString();
+        entityModels.add(this);
+        createEntityView(id);
     }
 
-    @Override
     public int getX() {
         return x;
     }
@@ -125,7 +120,6 @@ public abstract class Entity extends JLabel {
         this.x = x;
     }
 
-    @Override
     public int getY() {
         return y;
     }
@@ -134,7 +128,6 @@ public abstract class Entity extends JLabel {
         this.y = y;
     }
 
-    @Override
     public int getWidth() {
         return width;
     }
@@ -143,15 +136,6 @@ public abstract class Entity extends JLabel {
         this.width = width;
     }
 
-    public BufferedImage getImg() {
-        return img;
-    }
-
-    public void setImg(BufferedImage img) {
-        this.img = img;
-    }
-
-    @Override
     public int getHeight() {
         return height;
     }

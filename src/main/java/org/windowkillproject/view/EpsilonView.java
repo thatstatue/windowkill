@@ -1,29 +1,36 @@
 package org.windowkillproject.view;
 
+import org.windowkillproject.model.abilities.BulletModel;
+
+import java.awt.*;
 import java.awt.geom.Point2D;
 import static org.windowkillproject.application.Config.EPSILON_RADIUS;
+import static org.windowkillproject.view.BulletView.bulletViews;
 
-public class EpsilonView {
-    Point2D currentLocation=new Point2D.Double(0,0);
+public class EpsilonView extends EntityView {
+    Point2D location=new Point2D.Double(0,0);
     double radius;
     public EpsilonView(String id) {
+        super(id);
         this.radius = EPSILON_RADIUS;
-
+        setImg(ImgData.getData().getEpsilon());
     }
 
-    public Point2D getCurrentLocation() {
-        return currentLocation;
-    }
 
-    public void setCurrentLocation(Point2D currentLocation) {
-        this.currentLocation = currentLocation;
+    @Override
+    public void paint(Graphics g){
+        Graphics2D g2D = (Graphics2D) g;
+        g2D.drawImage(getImg(), getX()+2, getY()+2, getWidth(), getHeight(), null);
+        for (BulletView bulletView : bulletViews){
+            bulletView.paint(g);
+        }
     }
+}/* epsilonVertexView
 
-    public double getRadius() {
-        return radius;
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2D = (Graphics2D) g;
+        g2D.fillOval(getX(), getY(), 5,5);
     }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
-}
+ */

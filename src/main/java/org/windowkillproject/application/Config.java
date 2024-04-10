@@ -1,6 +1,7 @@
 package org.windowkillproject.application;
 
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class Config {
     public static final String APP_TITLE = "Window Kill - Main Menu";
@@ -11,7 +12,9 @@ public class Config {
 
     public static final int GAME_WIDTH = 700;
     public static final int GAME_HEIGHT = 700;
-    public static final int DELAY = 50;
+    public static final int FPS = 35;
+    public static final int UPS = 15;
+
     public static final int MAX_ENEMY_SPEED = 5;
     public static final int EPSILON_SPEED = 3;
     public static final int FRAME_SHRINKAGE_SPEED = 2;
@@ -28,5 +31,7 @@ public class Config {
     public static final int BULLET_HIT_UP = 0;
     public static final int BULLET_HIT_LEFT = 2;
     public static final int BULLET_HIT_RIGHT = 3;
+    public static final double FRAME_UPDATE_TIME=(double) TimeUnit.SECONDS.toMillis(1)/FPS;
+    public static final double MODEL_UPDATE_TIME=(double) TimeUnit.SECONDS.toMillis(1)/UPS;
 
 }

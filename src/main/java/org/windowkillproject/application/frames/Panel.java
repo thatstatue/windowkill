@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public abstract class Panel extends JPanel {
-    private final ArrayList<Component> components;
+    private ArrayList<Component> components;
     public Panel() {
         requestFocus();
         setLayout(null);
@@ -29,8 +29,10 @@ public abstract class Panel extends JPanel {
         return jButton;
     }
     protected void addComponentsToPanel(){
-        for (Component component : components) {
-            this.add(component);
+        if (components != null) {
+            for (Component component : components) {
+                this.add(component);
+            }
         }
     }
 }

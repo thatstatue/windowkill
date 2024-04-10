@@ -2,32 +2,30 @@ package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.frames.GamePanel;
-import org.windowkillproject.model.entities.enemies.Enemy;
+import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.view.EntityView;
 
 import java.awt.*;
 import java.awt.geom.Area;
+import java.util.ArrayList;
 
 import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
-public class Bullet extends Ability {
+public class BulletModel extends Ability {
     private int attackHp = 5;
     private final int delta = 10;
-    private double theta;
-
-    public double getTheta() {
-        return theta;
-    }
 
     public void setTheta(double theta) {
         this.theta = theta;
     }
 
-    public void setAttackHp(int attackHp) {
-        this.attackHp = attackHp;
-    }
-    public void destroy(GamePanel gamePanel){
-        gamePanel.getEntities().remove(this);
-    }//todo: update
+    private double theta;
+
+    public static ArrayList<BulletModel> bulletModels = new ArrayList<>();
+
     public int getAttackHp() {
         return attackHp;
     }
@@ -36,15 +34,21 @@ public class Bullet extends Ability {
         if (isShoot()) {
             setX(getX()+(int) (delta * Math.cos(theta)));
             setY(getY()+(int) (delta * Math.sin(theta)));
-            GamePanel gamePanel = gameFrame.getGamePanel();
-            for (Enemy enemy : gamePanel.getEnemies()) {
-                Area enemyA = new Area(enemy.getPolygon());
-                if (enemyA.contains(this.getX(), this.getY())) {
-                    enemy.gotShoot(this, gamePanel);
-                    explode(gamePanel);
-                    break;
+
+            //enemies getting shot
+            for (EntityModel entityModel : entityModels) {
+                if (entityModel instanceof EnemyModel) {
+                    EnemyModel enemyModel = (EnemyModel)entityModel;
+                    Area enemyA = new Area(enemyModel.getPolygon());
+                    if (enemyA.contains(this.getX(), this.getY())) {
+                        enemyModel.gotShoot(this);
+                        explode();
+                        break;
+                    }
                 }
             }
+
+            //frame getting shot
             if (getX()<0 || getX()> gameFrame.getWidth() ||
                     getY()<0 || getY() > gameFrame.getHeight()){
                 if (getX()<0){
@@ -59,29 +63,24 @@ public class Bullet extends Ability {
                 if (getY() > gameFrame.getHeight()){
                     gameFrame.stretch(Config.BULLET_HIT_DOWN);
                 }
-                explode(gamePanel);
+                explode();
             }
         }
     }
 
-    protected Bullet(int x, int y) {
+    public BulletModel(int x, int y) {
         super(x, y);
         isShoot = false;
+        bulletModels.add(this);
     }
     private boolean isShoot;
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        Graphics2D g2D = (Graphics2D) g;
-        g2D.setColor(Color.red);
-        g2D.fillOval(getX(), getY(), 5,5);
-    }
+
 
     public boolean isShoot() {
         return isShoot;
     }
-    public void explode(GamePanel gamePanel){
-          gamePanel.getEpsilon().getBullets().remove(this);
+    public void explode(){
+          bulletModels.remove(this);
     }
 
     public void setShoot(boolean shoot) {

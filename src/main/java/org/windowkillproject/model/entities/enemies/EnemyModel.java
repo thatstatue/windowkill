@@ -2,13 +2,13 @@ package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.controller.GameController;
-import org.windowkillproject.model.entities.Entity;
+import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
 
-public abstract class Enemy extends Entity {
-    protected Enemy(int x, int y) {
+public abstract class EnemyModel extends EntityModel {
+    protected EnemyModel(int x, int y) {
         super(x, y);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
@@ -41,9 +41,9 @@ public abstract class Enemy extends Entity {
     }
 
 
-    private double deltaSpeed(Entity entity, Entity other){
-        double d1 = entity.getXO() - other.getXO();
-        double d2 = entity.getYO() - other.getYO();
+    private double deltaSpeed(EntityModel entityModel, EntityModel other){
+        double d1 = entityModel.getXO() - other.getXO();
+        double d2 = entityModel.getYO() - other.getYO();
         double d = Math.sqrt(d1* d1 + d2*d2);
         int speed = (int) (d/25 + 0.75);
         //System.out.println("the speed forward " + speed);

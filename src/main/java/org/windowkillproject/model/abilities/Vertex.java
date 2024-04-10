@@ -1,32 +1,20 @@
 package org.windowkillproject.model.abilities;
 
-import org.windowkillproject.model.entities.Entity;
-
-import java.awt.*;
+import org.windowkillproject.model.entities.EntityModel;
 
 public class Vertex extends Ability {
-    private final Entity parent;
+    private final EntityModel parentEntityModel;
 
-    public Entity getParent() {
-        return parent;
-    }
-
-    public Vertex(int x, int y, Entity parent) {
+    public Vertex(int x, int y, EntityModel parentEntityModel) {
         super(x, y);
-        this.parent = parent;
+        this.parentEntityModel = parentEntityModel;
         //setImg(ImgData.getData().getVertex());
     }
     public void rotate(){
-        double degree = Math.atan2( this.getY() - parent.getYO(),this.getX() -parent.getXO());
+        double degree = Math.atan2( this.getY() - parentEntityModel.getYO(),this.getX() - parentEntityModel.getXO());
         degree += 0.084;
-        setY(parent.getYO() + (int) (parent.getRadius() * Math.sin(degree)));
-        setX(parent.getXO() + (int)(parent.getRadius() * Math.cos(degree)));
+        setY(parentEntityModel.getYO() + (int) (parentEntityModel.getRadius() * Math.sin(degree)));
+        setX(parentEntityModel.getXO() + (int)(parentEntityModel.getRadius() * Math.cos(degree)));
     }
 
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        Graphics2D g2D = (Graphics2D) g;
-        g2D.fillOval(getX(), getY(), 5,5);
-    }
 }

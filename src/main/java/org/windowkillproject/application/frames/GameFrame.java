@@ -44,7 +44,7 @@ public class GameFrame extends JFrame {
     }
     public void stretch(int code){
         AtomicInteger count = new AtomicInteger();
-        Timer stretchTimer = new Timer(Config.DELAY, null);
+        Timer stretchTimer = new Timer(Config.FPS, null);
         stretchTimer.addActionListener(e -> {
             int newX = getX();
             int newY = getY();
@@ -80,7 +80,7 @@ public class GameFrame extends JFrame {
         stretchTimer.start();
     }
     public void shrinkFast(){
-        Timer shrinkFastTimer = new Timer(Config.DELAY/8, null);
+        Timer shrinkFastTimer = new Timer(Config.FPS /8, null);
         shrinkFastTimer.addActionListener(e -> {
             int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;
             int newY = getY() + Config.FRAME_SHRINKAGE_SPEED / 2;
@@ -99,7 +99,7 @@ public class GameFrame extends JFrame {
             }
             if (!(stoppedX && stoppedY)) {
                 setBounds(newX, newY, newWidth, newHeight);
-                EpsilonModel epsilonModel =  getGamePanel().getEpsilon();
+                EpsilonModel epsilonModel =  EpsilonModel.getINSTANCE();
                 int deltaX = newWidth/2 - epsilonModel.getXO() - epsilonModel.getRadius();
                 int deltaY = newHeight/2 - epsilonModel.getYO() - epsilonModel.getRadius();
                 epsilonModel.moveX(deltaX);
