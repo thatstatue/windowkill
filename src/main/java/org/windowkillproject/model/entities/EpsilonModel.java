@@ -1,9 +1,6 @@
 package org.windowkillproject.model.entities;
 
-import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.Vertex;
-
-import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.*;
 
@@ -18,7 +15,7 @@ public class EpsilonModel extends EntityModel {
         super(x , y);
         setRadius(EPSILON_RADIUS);
         setHp(100);
-        setAttackHp(10);
-        getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
+//        setAttackHp(10);
+       // getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
     }
 }

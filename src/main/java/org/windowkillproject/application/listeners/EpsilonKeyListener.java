@@ -20,7 +20,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
             System.err.println("There was a problem registering the native hook.");
             System.err.println(ex.getMessage());
 
-            // Terminate the program with the error printed if registration failed.
+            // Terminate the program if registration failed.
             System.exit(1);
         }
 
@@ -45,13 +45,13 @@ public class EpsilonKeyListener implements NativeKeyListener {
         int endY = eM.getHeight() + eM.getY() + 3* eM.getRadius();
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed && eM.getY() - Config.EPSILON_SPEED >= 0)
-                eM.moveY(-Config.EPSILON_SPEED);
+                eM.move(0,-Config.EPSILON_SPEED);
             else if (isDownPressed && endY + Config.EPSILON_SPEED <= gameFrame.getHeight())
-                eM.moveY(Config.EPSILON_SPEED);
+                eM.move(0,Config.EPSILON_SPEED);
             if (isLeftPressed && eM.getX() - Config.EPSILON_SPEED >= 0)
-                eM.moveX(-Config.EPSILON_SPEED);
+                eM.move(-Config.EPSILON_SPEED,0);
             else if (isRightPressed && endX + Config.EPSILON_SPEED <= gameFrame.getWidth())
-                eM.moveX(Config.EPSILON_SPEED);
+                eM.move(Config.EPSILON_SPEED,0);
 
         }
     }

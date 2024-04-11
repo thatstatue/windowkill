@@ -1,46 +1,29 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.frames.GamePanel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.TrigorathModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.gameFrame;
-import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
+import static org.windowkillproject.application.Config.LOOP;
+import static org.windowkillproject.controller.Utils.impactPoint;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
 public abstract class GameController {
-    public static Timer gameTimer;
-    public static void start(){
-        GamePanel gamePanel = gameFrame.getGamePanel();
-        gameFrame.shrinkFast();
-        gameTimer = new Timer(Config.FPS, e -> {
-            gameFrame.shrink();
-            for (EntityModel entityModel : entityModels) {
-                entityModel.rotate();
-                if (entityModel instanceof EnemyModel) {
-                    EnemyModel enemyModel = (EnemyModel) entityModel;
-                    enemyModel.route(EpsilonModel.getINSTANCE()); //for 1 panel only
-                }
-            }
-            for (int i = 0; i < bulletModels.size(); i++){
-                bulletModels.get(i).move();
-            }
-            enemyIntersectionControl(gamePanel);
-            gamePanel.keepEpsilonInBounds();
-            gamePanel.repaint();
-            epsilonIntersectionControl();
-        });
-        gameTimer.start();
-    }
+    private static Random random = new Random();
+
     public static ArrayList<EnemyModel> getEnemies(){
         ArrayList<EnemyModel> enemies = new ArrayList<>();
         for (EntityModel entityModel : entityModels){
@@ -50,37 +33,17 @@ public abstract class GameController {
         }
         return enemies;
     }
-    public static double deltaAway(EntityModel entityModel, EntityModel other){
-        double d1 = entityModel.getXO() - other.getXO();
-        double d2 = entityModel.getYO() - other.getYO();
-        double d = Math.sqrt(d1* d1 + d2*d2);
-        int speed = (int) (Config.MAX_ENEMY_SPEED*3 - (d/6));
-        return Math.max(0 , speed);
-    }
-    public static double vectorTheta(EntityModel entityModel, EntityModel other){
-        return Math.atan2(entityModel.getYO() - other.getYO(), entityModel.getXO() - other.getXO());
-    }
-
 
     public static void impact(EntityModel entityModel){
         for (EntityModel other : entityModels){
             if (!entityModel.equals(other) && (other instanceof EnemyModel)){
                 EnemyModel enemyModel = (EnemyModel) other;
-                double theta = vectorTheta(entityModel, enemyModel);
-                double deltaS = deltaAway(entityModel, enemyModel) * 5;
-                int yS = (int) (Math.cos(theta) * deltaS);
-                int xS = (int) (Math.cos(theta) * deltaS);
-
-                if (deltaS!=0 && entityModel instanceof EnemyModel){
-                    xS +=20;
-                    yS -= 20;
-                }//todo: fix enemies getting stuck behind each other
-                enemyModel.moveX(-xS);
-                enemyModel.moveY(-yS);
+                Point2D deltaS = impactPoint(enemyModel.getAnchor(), entityModel.getAnchor());
+                enemyModel.move((int) deltaS.getX(), (int) deltaS.getY());
             }
         }
     }
-    public static void enemyIntersectionControl(GamePanel gamePanel) {
+    public static void enemyIntersectionControl() {
         ArrayList<EnemyModel> enemies = getEnemies();
         for (int i = 0; i < enemies.size(); i++) {
             Polygon p1 = enemies.get(i).getPolygon();
@@ -94,10 +57,32 @@ public abstract class GameController {
                 }
             }
         }
+    }
 
+    public static void createWave(int level) {
+
+        AtomicInteger count = new AtomicInteger();
+        Timer creatorTimer = new Timer((int) (LOOP * (1 - 0.2*level)), null);
+        creatorTimer.addActionListener(e -> {
+            if (count.get() < (level * (level + 5))) {
+                Direction direction = Direction.values()[random.nextInt(4)];
+                int dX = random.nextInt(Config.GAME_WIDTH);
+                int dY = random.nextInt(Config.GAME_HEIGHT);
+                switch (direction) {
+                    case TopRight -> new TrigorathModel(gameFrame.getWidth() + dX, -dY);
+                    case TopLeft -> new TrigorathModel(-dX, -dY);
+                    case ButtomLeft -> new TrigorathModel(-dX, gameFrame.getHeight() + dY);
+                    case ButtomRight -> new TrigorathModel(gameFrame.getWidth() + dX, gameFrame.getHeight() + dY);
+                }
+                count.getAndIncrement();
+            } else {
+                creatorTimer.stop();
+            }
+        });
+        creatorTimer.start();
+        //todo: add square
     }
     public static void epsilonIntersectionControl(){
-        GamePanel gamePanel = (GamePanel) gameFrame.getContentPane();
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         ArrayList<EnemyModel> enemies = getEnemies();
         for (EnemyModel enemyModel : enemies) {
@@ -122,5 +107,8 @@ public abstract class GameController {
                 }
             }
         }
+    }
+    private enum Direction{
+        TopLeft, TopRight, ButtomLeft, ButtomRight
     }
 }

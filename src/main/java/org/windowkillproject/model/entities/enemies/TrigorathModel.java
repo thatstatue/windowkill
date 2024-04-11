@@ -1,9 +1,10 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.model.abilities.Vertex;
-import org.windowkillproject.view.ImgData;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
@@ -24,6 +25,4 @@ public class TrigorathModel extends EnemyModel {
         }
         setPolygon(new Polygon(xpoints , ypoints, 3));
     }
-
-
 }

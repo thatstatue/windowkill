@@ -8,12 +8,12 @@ import static org.windowkillproject.application.Config.EPSILON_RADIUS;
 import static org.windowkillproject.view.BulletView.bulletViews;
 
 public class EpsilonView extends EntityView {
-    Point2D location=new Point2D.Double(0,0);
     double radius;
     public EpsilonView(String id) {
         super(id);
         this.radius = EPSILON_RADIUS;
         setImg(ImgData.getData().getEpsilon());
+        entityViews.add(this);
     }
 
 

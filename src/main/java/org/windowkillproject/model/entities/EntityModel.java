@@ -1,16 +1,18 @@
 package org.windowkillproject.model.entities;
 
-import org.windowkillproject.application.frames.GamePanel;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.Vertex;
+import org.windowkillproject.model.Drawable;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.windowkillproject.controller.Controller.createEntityView;
 
-public abstract class EntityModel {
+public abstract class EntityModel implements Drawable {
     protected int x, y, width, height;
+
     private int hp, attackHp;
 
     protected ArrayList<Vertex> vertices;
@@ -21,6 +23,13 @@ public abstract class EntityModel {
 
     public ArrayList<Vertex> getVertices() {
         return vertices;
+    }
+    public ArrayList<Point2D> getPointVertices() {
+        ArrayList<Point2D> v = new ArrayList<>();
+        for (Vertex vertex : vertices){
+            v.add(vertex.getAnchor());
+        }
+        return v;
     }
 
     private int radius;
@@ -43,9 +52,20 @@ public abstract class EntityModel {
         this.radius = radius;
         setHeight(2 * getRadius());
         setWidth(2 * getRadius());
-        setXO(x + getRadius());
-        setYO(y + getRadius());
+        setAnchor(x + getRadius(), y + getRadius());
     }
+
+    public Point2D getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(Point2D anchor) {
+        this.anchor = anchor;
+    }
+    public void setAnchor (double x, double y){
+        anchor.setLocation(x , y);
+    }
+
 
     public int getAttackHp() {
         return attackHp;
@@ -77,22 +97,22 @@ public abstract class EntityModel {
     }
 
     public int getXO() {
-        return xO;
+        return (int) anchor.getX();
     }
 
     public void setXO(int xO) {
-        this.xO = xO;
+        setAnchor(xO, getAnchor().getY());
     }
 
     public int getYO() {
-        return yO;
+        return (int) anchor.getY();
     }
 
     public void setYO(int yO) {
-        this.yO = yO;
+        setAnchor(getAnchor().getX(), yO);
     }
 
-    private int xO, yO;
+    private Point2D anchor = new Point2D.Double(0,0);
     private final String id;
 
     public void rotate() {
@@ -144,7 +164,12 @@ public abstract class EntityModel {
         this.height = height;
     }
 
-    public void moveX(int deltaX) {
+    public void move(int deltaX, int deltaY){
+        moveX(deltaX);
+        moveY(deltaY);
+    }
+
+    private void moveX(int deltaX) {
         setX(getX() + deltaX);
         setXO(getXO() + deltaX);
         for (Vertex vertex : getVertices()) {
@@ -152,7 +177,7 @@ public abstract class EntityModel {
         }
     }
 
-    public void moveY(int deltaY) {
+    private void moveY(int deltaY) {
         setY(getY() + deltaY);
         setYO(getYO() + deltaY);
         for (Vertex vertex : getVertices()) {

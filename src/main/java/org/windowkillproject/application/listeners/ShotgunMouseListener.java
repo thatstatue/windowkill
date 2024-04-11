@@ -14,11 +14,9 @@ public class ShotgunMouseListener extends MouseInputAdapter {
         int y1 = e.getY();
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         BulletModel bulletModel = new BulletModel(epsilonModel.getXO(), epsilonModel.getYO());
-        bulletModels.add(bulletModel);
         double theta = Math.atan2(y1 - bulletModel.getY(), x1 - bulletModel.getX());
         bulletModel.setShoot(true);
         bulletModel.setTheta(theta);
         bulletModel.move();
-
     }
 }

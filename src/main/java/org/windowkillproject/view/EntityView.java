@@ -1,15 +1,25 @@
 package org.windowkillproject.view;
 
 import javax.swing.*;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public abstract class EntityView extends JLabel {
+public abstract class EntityView extends JLabel implements Viewable {
     protected BufferedImage img;
     String id;
-    Point2D location=new Point2D.Double(0,0);
-    double radius;
+    protected int x , y, width, height;
+    private boolean enabled = true;
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public static ArrayList<EntityView> entityViews =new ArrayList<>();
     public EntityView(String id) {
         this.id = id;
@@ -20,21 +30,6 @@ public abstract class EntityView extends JLabel {
         return id;
     }
 
-    public Point2D getLoc() {
-        return location;
-    }
-
-    public void setLocation(Point2D location) {
-        this.location = location;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
 
 
     public BufferedImage getImg() {
@@ -43,5 +38,44 @@ public abstract class EntityView extends JLabel {
 
     public void setImg(BufferedImage img) {
         this.img = img;
+    }
+
+    public void set(int x, int y , int width, int height){
+        setX(x);
+        setY(y);
+        setWidth(width);
+        setHeight(height);
+
+    }
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }

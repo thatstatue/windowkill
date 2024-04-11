@@ -1,11 +1,13 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.controller.GameController;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
+
+import static org.windowkillproject.controller.Utils.*;
 
 public abstract class EnemyModel extends EntityModel {
     protected EnemyModel(int x, int y) {
@@ -13,6 +15,7 @@ public abstract class EnemyModel extends EntityModel {
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
     }
+
     private int xSpeed, ySpeed;
     private Polygon polygon;
 
@@ -41,29 +44,17 @@ public abstract class EnemyModel extends EntityModel {
     }
 
 
-    private double deltaSpeed(EntityModel entityModel, EntityModel other){
-        double d1 = entityModel.getXO() - other.getXO();
-        double d2 = entityModel.getYO() - other.getYO();
-        double d = Math.sqrt(d1* d1 + d2*d2);
-        int speed = (int) (d/25 + 0.75);
-        //System.out.println("the speed forward " + speed);
-        return Math.min(Config.MAX_ENEMY_SPEED , speed);
+    public void route() {
+        //set accel
+        Point2D deltaS = routePoint(this.getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
+        //move
+        move((int) deltaS.getX(), (int) deltaS.getY());
     }
 
-    public void route(EpsilonModel epsilonModel){
-        //set accel
-        double theta = GameController.vectorTheta(epsilonModel,this);
-        double deltaS = deltaSpeed(this, epsilonModel);
-        int xS = (int) (Math.cos(theta) * deltaS);
-        int yS = (int) (Math.sin(theta) * deltaS);
-        //move
-        moveX(xS);
-        moveY(yS);
-    }
     @Override
-    public void rotate(){
+    public void rotate() {
         super.rotate();
-        for (int i = 0 ; i < getVertices().size(); i ++){
+        for (int i = 0; i < getVertices().size(); i++) {
             polygon.xpoints[i] = getVertices().get(i).getX();
             polygon.ypoints[i] = getVertices().get(i).getY();
         }

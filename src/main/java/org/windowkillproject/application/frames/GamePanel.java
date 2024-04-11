@@ -2,8 +2,8 @@ package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import org.windowkillproject.view.EntityView;
-import org.windowkillproject.view.EpsilonView;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,8 +11,6 @@ import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.view.EntityView.entityViews;
 
 public class GamePanel extends Panel {
-
-
 
     public GamePanel() {
         super();
@@ -34,18 +32,12 @@ public class GamePanel extends Panel {
         int endY = epsilonModel.getHeight() + epsilonModel.getY() + 3* epsilonModel.getRadius();
         if (endY > gameFrame.getHeight()) {
             int deltaY = gameFrame.getHeight() - endY;
-            epsilonModel.moveY(deltaY);
+            epsilonModel.move(0, deltaY);
         }
         if (endX > gameFrame.getWidth()) {
             int deltaX = gameFrame.getWidth() - endX;
-            epsilonModel.moveX(deltaX);
+            epsilonModel.move(deltaX,0);
         }
-    }
-    public void createEnemy() {
-//        TrigorathModel trigorathModel = new TrigorathModel(300, 420);
-//        entities.add(trigorathModel);
-//        entities.add(new TrigorathModel(30, 100));
-        //todo: fix
     }
 
     @Override

@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.windowkillproject.controller.GameController.createWave;
+
 public class GameFrame extends JFrame {
     boolean isStretching = false;
     public GameFrame() {
@@ -102,10 +104,9 @@ public class GameFrame extends JFrame {
                 EpsilonModel epsilonModel =  EpsilonModel.getINSTANCE();
                 int deltaX = newWidth/2 - epsilonModel.getXO() - epsilonModel.getRadius();
                 int deltaY = newHeight/2 - epsilonModel.getYO() - epsilonModel.getRadius();
-                epsilonModel.moveX(deltaX);
-                epsilonModel.moveY(deltaY);
+                epsilonModel.move(deltaX, deltaY);
             }else {
-                getGamePanel().createEnemy();
+                createWave(1);
                 shrinkFastTimer.stop();
             }
         });
