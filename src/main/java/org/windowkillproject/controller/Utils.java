@@ -12,7 +12,7 @@ public abstract class Utils {
         double dY = point.getY() - anchor.getY();
         double dX = point.getX() - anchor.getX();
         double magnitude = Math.sqrt(dX*dX + dY*dY);
-
+        System.out.println(dX + "----" + dY);
         return new Point2D.Double(dX/magnitude,dY/magnitude );
     }
     private static double deltaSpeed(Point2D entityModel, Point2D other){
@@ -31,7 +31,7 @@ public abstract class Utils {
     public static Point2D impactPoint(Point2D entity, Point2D other){
         double speed = deltaSpeedAway(entity, other);
         Point2D vector = unitVector(entity, other);
-        return weighedVector(vector, speed*5);
+        return weighedVector(vector, speed*8);
     }
 
     private static double deltaSpeedAway(Point2D point, Point2D anchor){
@@ -41,7 +41,7 @@ public abstract class Utils {
         double speed = Config.MAX_ENEMY_SPEED*2 - (d/5);
         return Math.max(0 , speed);
     }
-    private static Point2D weighedVector(Point2D point,double scalar){
+    public static Point2D weighedVector(Point2D point, double scalar){
         return new Point2D.Double(point.getX()*scalar,point.getY()*scalar);
     }
     public static Point2D addVectors(Point2D point1,Point2D point2){

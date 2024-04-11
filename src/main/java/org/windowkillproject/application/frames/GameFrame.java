@@ -70,7 +70,7 @@ public class GameFrame extends JFrame {
                     newHeight += Config.FRAME_SHRINKAGE_SPEED * 3/2;
                 }
             }
-            if (count.get() <5) {
+            if (count.get() <7) {
                 isStretching = true;
                 setBounds(newX, newY, newWidth, newHeight);
                 count.getAndIncrement();

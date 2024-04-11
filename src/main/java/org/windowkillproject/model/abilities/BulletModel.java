@@ -2,25 +2,23 @@ package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 
 import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.controller.Controller.createBulletView;
+import static org.windowkillproject.controller.Utils.unitVector;
+import static org.windowkillproject.controller.Utils.weighedVector;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 public class BulletModel extends AbilityModel {
     private int attackHp = 5;
-    private final int delta = 10;
-
-    public void setTheta(double theta) {
-        this.theta = theta;
-    }
-
-    private double theta;
+    private final Point2D mousePoint;
 
     public static ArrayList<BulletModel> bulletModels = new ArrayList<>();
 
@@ -28,12 +26,24 @@ public class BulletModel extends AbilityModel {
         return attackHp;
     }
 
+    public Point2D getMousePoint() {
+        return mousePoint;
+    }
+
     public void move() {
 
 
         if (isShoot()) {
-            setX(getX() + (int) (delta * Math.cos(theta)));
-            setY(getY() + (int) (delta * Math.sin(theta)));
+            System.out.println(mousePoint);
+            Point2D delta = unitVector( getMousePoint(), this.getAnchor());
+            delta = weighedVector(delta, Config.EPSILON_SPEED* 2.5);
+            //System.out.println(point2D.getX());
+            /*
+            setX((int) (getX() + point2D.getX()));
+            setY((int) (getY() +point2D.getY()));
+             */
+            setX((int) (getX() + delta.getX()));
+            setY((int) (getY() + delta.getY()));
 
             //enemies getting shot
             for (EntityModel entityModel : entityModels) {
@@ -68,10 +78,11 @@ public class BulletModel extends AbilityModel {
         }
     }
 
-    public BulletModel(int x, int y) {
+    public BulletModel(int x, int y, Point2D mousePoint) {
         super(x, y);
         isShoot = false;
         bulletModels.add(this);
+        this.mousePoint = mousePoint;
         createBulletView(id, x, y);
     }
 

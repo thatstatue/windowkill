@@ -93,6 +93,8 @@ public abstract class GameController {
                 && Math.abs(vertex.getY()- epsilonModel.getYO()) <= epsilonModel.getRadius()){
                     epsilonModel.gotHit(enemyModel);
                     impact(epsilonModel);
+                    Point2D deltaS = impactPoint(epsilonModel.getAnchor(), enemyModel.getAnchor());
+                    epsilonModel.move((int) deltaS.getX(), (int) deltaS.getY());
                     break;
                 }
             }
