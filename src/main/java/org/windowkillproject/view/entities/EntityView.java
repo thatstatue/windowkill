@@ -1,4 +1,6 @@
-package org.windowkillproject.view;
+package org.windowkillproject.view.entities;
+
+import org.windowkillproject.view.Viewable;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

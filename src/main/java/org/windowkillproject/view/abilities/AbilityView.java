@@ -1,14 +1,21 @@
-package org.windowkillproject.view;
+package org.windowkillproject.view.abilities;
+
+import org.windowkillproject.view.Viewable;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public abstract class AbilityView extends JLabel implements Viewable {
     public AbilityView(String id, int x, int y) {
         this.id = id;
         this.x = x;
         this.y = y;
+        abilityViews.add(this);
+        enabled = true;
     }
+    public static ArrayList<AbilityView> abilityViews = new ArrayList<>();
+
 
     protected int x, y;
     private boolean enabled = true;

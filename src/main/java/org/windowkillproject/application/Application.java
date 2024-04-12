@@ -26,30 +26,30 @@ public class Application implements Runnable {
 
     public static void startGame() {
         primaryFrame.setVisible(false);
-        //minimize tabs
-        try {
-            Robot robot = new Robot();
-            robot.keyPress(KeyEvent.VK_WINDOWS);
-            robot.keyPress(KeyEvent.VK_D);
-            robot.keyRelease(KeyEvent.VK_D);
-            robot.keyRelease(KeyEvent.VK_WINDOWS);
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
+        //minimize tabs //todo : un-comment
+//        try {
+//            Robot robot = new Robot();
+//            robot.keyPress(KeyEvent.VK_WINDOWS);
+//            robot.keyPress(KeyEvent.VK_D);
+//            robot.keyRelease(KeyEvent.VK_D);
+//            robot.keyRelease(KeyEvent.VK_WINDOWS);
+//        } catch (AWTException e) {
+//            e.printStackTrace();
+//        }
         initGFrame();
     }
 
     public static void initGFrame() {
         gameFrame = new GameFrame();
-        gameFrame.addMouseListener(new ShotgunMouseListener()); //todo:debug
+        gameFrame.addMouseListener(new ShotgunMouseListener()); //todo: debug
         new EpsilonKeyListener().startListener();
-
+        gameFrame.shrinkFast();
         new Update();
 
     }
 
     public static void showSettings() {
-
+//todo
     }
 
 

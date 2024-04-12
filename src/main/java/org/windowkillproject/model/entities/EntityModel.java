@@ -85,7 +85,6 @@ public abstract class EntityModel implements Drawable {
 
     public void gotShoot(BulletModel bulletModel){
         setHp(getHp() - bulletModel.getAttackHp());
-        bulletModel.explode();
         if (getHp() <= 0) {
             setHp(0);
             destroy();
@@ -127,7 +126,7 @@ public abstract class EntityModel implements Drawable {
         this.x = x;
         this.y = y;
         vertices = new ArrayList<>();
-        this.id= UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         entityModels.add(this);
         createEntityView(id);
     }

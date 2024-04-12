@@ -1,7 +1,8 @@
-package org.windowkillproject.application.frames;
+package org.windowkillproject.application.panels;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.Panel;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,12 +6,6 @@ import java.awt.geom.Point2D;
 
 public class Vertex extends AbilityModel {
     private final EntityModel parentEntityModel;
-    private Point2D anchor;
-
-    public Point2D getAnchor() {
-        return anchor;
-    }
-
     public Vertex(int x, int y, EntityModel parentEntityModel) {
         super(x, y);
         anchor = new Point2D.Float(x,y);

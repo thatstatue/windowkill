@@ -1,11 +1,14 @@
-package org.windowkillproject.view;
+package org.windowkillproject.view.entities;
 
-import org.windowkillproject.model.abilities.BulletModel;
+import org.windowkillproject.view.ImgData;
+import org.windowkillproject.view.abilities.AbilityView;
+import org.windowkillproject.view.abilities.BulletView;
+import org.windowkillproject.view.entities.EntityView;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
+
 import static org.windowkillproject.application.Config.EPSILON_RADIUS;
-import static org.windowkillproject.view.BulletView.bulletViews;
+import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
 
 public class EpsilonView extends EntityView {
     double radius;
@@ -21,8 +24,8 @@ public class EpsilonView extends EntityView {
     public void paint(Graphics g){
         Graphics2D g2D = (Graphics2D) g;
         g2D.drawImage(getImg(), getX()+2, getY()+2, getWidth(), getHeight(), null);
-        for (BulletView bulletView : bulletViews){
-            bulletView.paint(g);
+        for (AbilityView abilityView : abilityViews){
+            abilityView.paint(g);
         }
     }
 }/* epsilonVertexView

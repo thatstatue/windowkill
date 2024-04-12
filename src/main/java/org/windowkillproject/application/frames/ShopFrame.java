@@ -1,6 +1,7 @@
 package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.ShopPanel;
 
 import javax.swing.*;
 import java.awt.*;

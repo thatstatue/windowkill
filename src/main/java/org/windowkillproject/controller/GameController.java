@@ -1,6 +1,7 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.Vertex;
@@ -18,11 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.application.Config.LOOP;
 import static org.windowkillproject.controller.Utils.impactPoint;
+import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
 public abstract class GameController {
-    private static Random random = new Random();
+    public static Random random = new Random();
 
     public static ArrayList<EnemyModel> getEnemies(){
         ArrayList<EnemyModel> enemies = new ArrayList<>();
@@ -82,6 +84,16 @@ public abstract class GameController {
         creatorTimer.start();
         //todo: add square
     }
+    public static void epsilonRewardControl(){
+        for (int i = 0; i< collectableModels.size(); i++){
+            CollectableModel collectableModel = collectableModels.get(i);
+            if (collectableModel.isCollectedByEpsilon()){
+                EpsilonModel.getINSTANCE().collected(collectableModel.getRewardHp());
+                collectableModels.remove(collectableModel);
+                collectableModel.destroy();
+            }
+        }
+    }
     public static void epsilonIntersectionControl(){
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         ArrayList<EnemyModel> enemies = getEnemies();
@@ -89,8 +101,7 @@ public abstract class GameController {
 
             //vertex of enemy hit epsilon
             for (Vertex vertex: enemyModel.getVertices()){
-                if (Math.abs(vertex.getX()- epsilonModel.getXO()) <= epsilonModel.getRadius()
-                && Math.abs(vertex.getY()- epsilonModel.getYO()) <= epsilonModel.getRadius()){
+                if (vertex.isCollectedByEpsilon()){
                     epsilonModel.gotHit(enemyModel);
                     impact(epsilonModel);
                     Point2D deltaS = impactPoint(epsilonModel.getAnchor(), enemyModel.getAnchor());

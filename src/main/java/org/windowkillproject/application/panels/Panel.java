@@ -1,4 +1,4 @@
-package org.windowkillproject.application.frames;
+package org.windowkillproject.application.panels;
 
 import org.windowkillproject.application.Config;
 

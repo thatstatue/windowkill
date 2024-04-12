@@ -18,4 +18,8 @@ public class EpsilonModel extends EntityModel {
 //        setAttackHp(10);
        // getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
     }
+
+    public void collected(int rewardHp){
+        setHp(getHp()+rewardHp);
+    }
 }

@@ -1,7 +1,8 @@
-package org.windowkillproject.view;
+package org.windowkillproject.view.entities;
 
 import org.windowkillproject.controller.Controller;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.view.entities.EntityView;
 
 import java.awt.*;
 import java.util.Objects;

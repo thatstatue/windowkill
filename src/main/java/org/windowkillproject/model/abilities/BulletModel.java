@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 
 import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Config.EPSILON_RADIUS;
 import static org.windowkillproject.controller.Controller.createBulletView;
 import static org.windowkillproject.controller.Utils.unitVector;
 import static org.windowkillproject.controller.Utils.weighedVector;
@@ -80,6 +81,7 @@ public class BulletModel extends AbilityModel {
 
     public BulletModel(int x, int y, Point2D mousePoint) {
         super(x, y);
+        anchor = new Point2D.Double(x+ EPSILON_RADIUS/2, y + EPSILON_RADIUS*1.5);
         isShoot = false;
         bulletModels.add(this);
         this.mousePoint = mousePoint;
@@ -93,8 +95,9 @@ public class BulletModel extends AbilityModel {
         return isShoot;
     }
 
-    public void explode() {
+    private void explode() {
         bulletModels.remove(this);
+        destroy();
     }
 
     public void setShoot(boolean shoot) {

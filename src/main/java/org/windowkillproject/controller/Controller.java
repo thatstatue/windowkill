@@ -8,7 +8,15 @@ import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import org.windowkillproject.view.*;
+import org.windowkillproject.view.abilities.BulletView;
+import org.windowkillproject.view.abilities.CollectableView;
+import org.windowkillproject.view.entities.EnemyView;
+import org.windowkillproject.view.entities.EpsilonView;
+import org.windowkillproject.view.entities.TrigorathView;
 
+import java.time.Clock;
+
+import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
@@ -43,6 +51,10 @@ public abstract class Controller {
     public static void createBulletView(String id, int x, int y) {
         new BulletView(id, x, y);
     }
+    public static void createCollectableView(String id, int x, int y) {
+        new CollectableView(id, x, y);
+    }
+
 
     public static <T extends Viewable> void setViewBounds(T view) {
         if (findModel(view.getId()) instanceof EntityModel) {
@@ -58,7 +70,7 @@ public abstract class Controller {
                     var enemyView = (EnemyView) view;
                     enemyView.setPolygon(((EnemyModel) entityModel).getPolygon());
                 }
-            }
+            }else view.setEnabled(false);
         } else if (findModel(view.getId()) instanceof AbilityModel) {
             AbilityModel abilityModel = findModel(view.getId());
             if (abilityModel != null) {
@@ -66,7 +78,7 @@ public abstract class Controller {
                         abilityModel.getX(),
                         abilityModel.getY(),
                         5, 5);
-            }
+            }else view.setEnabled(false);
         } else {
             view.setEnabled(false);
         }
@@ -76,8 +88,8 @@ public abstract class Controller {
         for (EntityModel entityModel : entityModels) {
             if (entityModel.getId().equals(id)) return (T) entityModel;
         }
-        for (BulletModel bulletModel : bulletModels) {
-            if (bulletModel.getId().equals(id)) return (T) bulletModel;
+        for (AbilityModel abilityModel : abilityModels) {
+            if (abilityModel.getId().equals(id)) return (T) abilityModel;
         }
         return null;
     }

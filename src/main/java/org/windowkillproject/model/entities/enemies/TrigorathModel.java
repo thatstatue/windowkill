@@ -13,16 +13,21 @@ public class TrigorathModel extends EnemyModel {
         setRadius(20);
         setHp(15);
         setAttackHp(10);
+        setRewardCount(2);
+        setRewardHps(5);
+        initVertices();
+        int[] xPoints = new int[3];
+        int[] yPoints = new int[3];
+        for (int i = 0 ; i < 3; i++){
+            xPoints[i] = getVertices().get(i).getX();
+            yPoints[i] = getVertices().get(i).getY();
+        }
+        setPolygon(new Polygon(xPoints , yPoints, 3));
+    }
 
+    private void initVertices(){
         getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
         getVertices().add(new Vertex(getXO()- (int)(getRadius()*RAD3_ON_2), getYO()+ getRadius()/2, this));
         getVertices().add(new Vertex(getXO()+ (int)(getRadius()*RAD3_ON_2), getYO()+ getRadius()/2, this));
-        int[] xpoints = new int[3];
-        int[] ypoints = new int[3];
-        for (int i = 0 ; i < 3; i++){
-            xpoints[i] = getVertices().get(i).getX();
-            ypoints[i] = getVertices().get(i).getY();
-        }
-        setPolygon(new Polygon(xpoints , ypoints, 3));
     }
 }

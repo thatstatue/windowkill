@@ -1,9 +1,8 @@
-package org.windowkillproject.view;
-
+package org.windowkillproject.view.entities;
 
 import java.awt.*;
 
-public class TrigorathView extends EnemyView{
+public class TrigorathView extends EnemyView {
     public TrigorathView(String id) {
         super(id);
     //    setImg(ImgData.getData().getTrigorath());

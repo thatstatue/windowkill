@@ -5,9 +5,9 @@ import org.windowkillproject.application.Config;
 import java.awt.geom.Point2D;
 
 public abstract class Utils {
-    public static double vectorTheta(Point2D point, Point2D anchor){
-        return Math.atan2(point.getY() - anchor.getY(), point.getX() - anchor.getX());
-    }
+//    public static double vectorTheta(Point2D point, Point2D anchor){
+//        return Math.atan2(point.getY() - anchor.getY(), point.getX() - anchor.getX());
+//    }
     public static Point2D unitVector(Point2D point, Point2D anchor){
         double dY = point.getY() - anchor.getY();
         double dX = point.getX() - anchor.getX();
@@ -44,8 +44,8 @@ public abstract class Utils {
     public static Point2D weighedVector(Point2D point, double scalar){
         return new Point2D.Double(point.getX()*scalar,point.getY()*scalar);
     }
-    public static Point2D addVectors(Point2D point1,Point2D point2){
-        return new Point2D.Double(point1.getX()+point2.getX(),point1.getY()+point2.getY());
-    }
+//    public static Point2D addVectors(Point2D point1,Point2D point2){
+//        return new Point2D.Double(point1.getX()+point2.getX(),point1.getY()+point2.getY());
+//    }
 
 }

@@ -1,17 +1,20 @@
 package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.model.Drawable;
+import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.UUID;
 
-import static org.windowkillproject.application.Config.EPSILON_RADIUS;
 
 public abstract class AbilityModel implements Drawable {
     protected int x, y;
-    String id;
+    protected String id;
+    public static ArrayList<AbilityModel> abilityModels = new ArrayList<>();
 
-    private Point2D anchor;
+
+    protected Point2D anchor;
 
     public Point2D getAnchor() {
         return anchor;
@@ -25,8 +28,8 @@ public abstract class AbilityModel implements Drawable {
         this.x = x;
         this.y = y;
         this.id = UUID.randomUUID().toString();
-        anchor = new Point2D.Double(x+ EPSILON_RADIUS/2, y + EPSILON_RADIUS*1.5);
-        System.out.println(anchor);
+        anchor = new Point2D.Double(x,y);
+        abilityModels.add(this);
     }
 
     public String getId() {
@@ -51,6 +54,14 @@ public abstract class AbilityModel implements Drawable {
 
     public void setY(int y) {
         this.y = y;
+    }
+    public boolean isCollectedByEpsilon() {
+        EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
+        return (Math.abs(getX() - epsilonModel.getXO()) <= epsilonModel.getRadius()
+                && Math.abs(getY() - epsilonModel.getYO()) <= epsilonModel.getRadius());
+    }
+    public void destroy() {
+        abilityModels.remove(this);
     }
 
 

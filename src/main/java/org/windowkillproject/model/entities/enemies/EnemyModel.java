@@ -1,12 +1,14 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.controller.Utils.*;
 
 public abstract class EnemyModel extends EntityModel {
@@ -14,6 +16,23 @@ public abstract class EnemyModel extends EntityModel {
         super(x, y);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
+    }
+    private int rewardCount, rewardHps;
+
+    public int getRewardCount() {
+        return rewardCount;
+    }
+
+    protected void setRewardCount(int rewardCount) {
+        this.rewardCount = rewardCount;
+    }
+
+    public int getRewardHps() {
+        return rewardHps;
+    }
+
+    public void setRewardHps(int rewardHps) {
+        this.rewardHps = rewardHps;
     }
 
     private int xSpeed, ySpeed;
@@ -50,7 +69,17 @@ public abstract class EnemyModel extends EntityModel {
         //move
         move((int) deltaS.getX(), (int) deltaS.getY());
     }
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (int i = 0 ; i < rewardCount; i++){
+            int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
+            int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();
 
+            new CollectableModel(x,y);
+        }
+
+    }
     @Override
     public void rotate() {
         super.rotate();
