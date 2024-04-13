@@ -11,6 +11,11 @@ import static org.windowkillproject.application.Application.gameFrame;
 
 public class EpsilonKeyListener implements NativeKeyListener {
     static boolean isLeftPressed, isRightPressed, isUpPressed, isDownPressed;
+    private int UP_KEY =  NativeKeyEvent.VC_UP ;
+    private int DOWN_KEY =  NativeKeyEvent.VC_DOWN ;
+    private int LEFT_KEY =  NativeKeyEvent.VC_LEFT ;
+    private int RIGHT_KEY =  NativeKeyEvent.VC_RIGHT ;
+
 
     public void startListener() {
         try {

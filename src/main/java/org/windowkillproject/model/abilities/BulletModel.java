@@ -35,7 +35,7 @@ public class BulletModel extends AbilityModel {
 
 
         if (isShoot()) {
-            System.out.println(mousePoint);
+            //System.out.println(mousePoint);
             Point2D delta = unitVector( getMousePoint(), this.getAnchor());
             delta = weighedVector(delta, Config.EPSILON_SPEED* 2.5);
             //System.out.println(point2D.getX());

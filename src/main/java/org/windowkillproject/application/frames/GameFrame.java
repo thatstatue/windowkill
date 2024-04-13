@@ -2,6 +2,7 @@ package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.GamePanel;
+import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
@@ -83,6 +84,8 @@ public class GameFrame extends JFrame {
         stretchTimer.start();
     }
     public void shrinkFast(){
+        ElapsedTime.run();
+        add(ElapsedTime.elapsedTime);
         Timer shrinkFastTimer = new Timer(Config.FPS /8, null);
         shrinkFastTimer.addActionListener(e -> {
             int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;

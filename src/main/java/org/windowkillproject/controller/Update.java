@@ -14,6 +14,7 @@ import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.application.Config.FRAME_UPDATE_TIME;
 import static org.windowkillproject.application.Config.MODEL_UPDATE_TIME;
 import static org.windowkillproject.controller.Controller.setViewBounds;
+import static org.windowkillproject.controller.ElapsedTime.elapsedTime;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
@@ -31,6 +32,7 @@ public class Update {
     }
 
     public void updateView() {
+        //System.out.println(elapsedTime);
         for (int i = 0; i < entityViews.size(); i++) {
             EntityView entityView = entityViews.get(i);
             setViewBounds(entityView);
@@ -41,13 +43,14 @@ public class Update {
             setViewBounds(abilityView);
             if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
+
         gameFrame.repaint();
     }
 
     public void updateModel() {
         Clock clock = Clock.systemDefaultZone();
         long t = clock.millis();
-        System.out.println(t);
+        //System.out.println(t);
         gameFrame.shrink();
         var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {

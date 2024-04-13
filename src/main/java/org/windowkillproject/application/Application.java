@@ -41,8 +41,10 @@ public class Application implements Runnable {
 
     public static void initGFrame() {
         gameFrame = new GameFrame();
-        gameFrame.addMouseListener(new ShotgunMouseListener()); //todo: debug
+       // gameFrame.addMouseListener(new ShotgunMouseListener()); //todo: debug
+       //
         new EpsilonKeyListener().startListener();
+        new ShotgunMouseListener().startListener();
         gameFrame.shrinkFast();
         new Update();
 

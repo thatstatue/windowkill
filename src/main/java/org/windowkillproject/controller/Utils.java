@@ -12,7 +12,6 @@ public abstract class Utils {
         double dY = point.getY() - anchor.getY();
         double dX = point.getX() - anchor.getX();
         double magnitude = Math.sqrt(dX*dX + dY*dY);
-        System.out.println(dX + "----" + dY);
         return new Point2D.Double(dX/magnitude,dY/magnitude );
     }
     private static double deltaSpeed(Point2D entityModel, Point2D other){
