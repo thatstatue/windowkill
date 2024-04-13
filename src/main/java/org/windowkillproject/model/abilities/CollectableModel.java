@@ -6,20 +6,21 @@ import static org.windowkillproject.controller.Controller.createCollectableView;
 
 public class CollectableModel extends AbilityModel{
     public static ArrayList<CollectableModel> collectableModels = new ArrayList<>();
-    public CollectableModel(int x, int y) {
+    public CollectableModel(int x, int y, int rewardXp) {
         super(x, y);
+        this.rewardXp = rewardXp;
         collectableModels.add(this);
         createCollectableView(id, x, y);
     }
-    private int rewardHp;
+    private int rewardXp;
 
 
-    public int getRewardHp() {
-        return rewardHp;
+    public int getRewardXp() {
+        return rewardXp;
     }
 
-    public void setRewardHp(int rewardHp) {
-        this.rewardHp = rewardHp;
+    public void setRewardXp(int rewardXp) {
+        this.rewardXp = rewardXp;
     }
 
 }

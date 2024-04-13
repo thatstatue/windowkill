@@ -3,8 +3,6 @@ package org.windowkillproject.model.entities.enemies;
 import org.windowkillproject.model.abilities.Vertex;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
@@ -14,7 +12,7 @@ public class TrigorathModel extends EnemyModel {
         setHp(15);
         setAttackHp(10);
         setRewardCount(2);
-        setRewardHps(5);
+        setRewardXps(5);
         initVertices();
         int[] xPoints = new int[3];
         int[] yPoints = new int[3];

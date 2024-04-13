@@ -75,8 +75,8 @@ public abstract class EntityModel implements Drawable {
         this.attackHp = attackHp;
     }
 
-    public void gotHit(EntityModel other) {
-        setHp(getHp() - other.getAttackHp());
+    public void gotHit(int attackHp) {
+        setHp(getHp() - attackHp);
         if (getHp() <= 0) {
             setHp(0);
             destroy();

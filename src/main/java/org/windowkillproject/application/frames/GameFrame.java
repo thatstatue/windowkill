@@ -9,16 +9,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.windowkillproject.controller.GameController.createWave;
 
 public class GameFrame extends JFrame {
-    boolean isStretching = false;
+    private boolean isStretching = false;
+    private final JLabel clock = new JLabel("0:00");
+    private final JLabel xp = new JLabel("✦0");
+    private final JLabel hp = new JLabel("100 ♡");
+    private final JLabel wave = new JLabel("~1");
     public GameFrame() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
         setLocationRelativeTo(null);
         setResizable(false);
         setUndecorated(false);
+        setAlwaysOnTop(true);
         setTitle(Config.GAME_TITLE);
         this.setLayout(null);
         setContentPane(new GamePanel());
@@ -83,15 +87,51 @@ public class GameFrame extends JFrame {
         });
         stretchTimer.start();
     }
+
+    public void setClockTime(String time){
+        clock.setText(time);
+    }
+    public void setWaveLevel(int level){
+        wave.setText("~"+level);
+    }
+    public void setXpAmount(int xp ){
+        this.xp.setText("✦"+xp);
+    }
+    public void setHpAmount(int xp ){
+        this.hp.setText(xp+ " ♡");
+    }
+    private void initLabels(){
+        clock.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+        clock.setForeground(Color.white);
+        clock.setBounds(3, 1, 300, 20);
+        this.add(clock);
+
+        xp.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        xp.setForeground(Color.cyan);
+        xp.setBounds(60, 1, 300, 20);
+        this.add(xp);
+
+        hp.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        hp.setForeground(Color.green);
+        hp.setBounds(160, 1, 300, 20);
+        this.add(hp);
+
+        wave.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+        wave.setForeground(Color.red);
+        wave.setBounds(110, 1, 300, 20);
+        this.add(wave);
+
+    }
     public void shrinkFast(){
         ElapsedTime.run();
-        add(ElapsedTime.elapsedTime);
-        Timer shrinkFastTimer = new Timer(Config.FPS /8, null);
+        initLabels();
+
+        Timer shrinkFastTimer = new Timer(1, null);
         shrinkFastTimer.addActionListener(e -> {
-            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;
-            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED / 2;
-            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED;
-            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED;
+            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED*3 / 2;
+            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED*3 / 2;
+            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED*3;
+            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED*3;
             boolean stoppedX = false, stoppedY = false;
             if (getWidth() <= Config.GAME_MIN_SIZE) {
                 newWidth = Config.GAME_MIN_SIZE;
@@ -110,7 +150,6 @@ public class GameFrame extends JFrame {
                 int deltaY = newHeight/2 - epsilonModel.getYO() - epsilonModel.getRadius();
                 epsilonModel.move(deltaX, deltaY);
             }else {
-                createWave(1);
                 shrinkFastTimer.stop();
             }
         });

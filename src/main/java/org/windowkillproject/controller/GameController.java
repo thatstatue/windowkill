@@ -61,34 +61,11 @@ public abstract class GameController {
         }
     }
 
-    public static void createWave(int level) {
-
-        AtomicInteger count = new AtomicInteger();
-        Timer creatorTimer = new Timer((int) (LOOP * (1 - 0.2*level)), null);
-        creatorTimer.addActionListener(e -> {
-            if (count.get() < (level * (level + 5))) {
-                Direction direction = Direction.values()[random.nextInt(4)];
-                int dX = random.nextInt(Config.GAME_WIDTH);
-                int dY = random.nextInt(Config.GAME_HEIGHT);
-                switch (direction) {
-                    case TopRight -> new TrigorathModel(gameFrame.getWidth() + dX, -dY);
-                    case TopLeft -> new TrigorathModel(-dX, -dY);
-                    case ButtomLeft -> new TrigorathModel(-dX, gameFrame.getHeight() + dY);
-                    case ButtomRight -> new TrigorathModel(gameFrame.getWidth() + dX, gameFrame.getHeight() + dY);
-                }
-                count.getAndIncrement();
-            } else {
-                creatorTimer.stop();
-            }
-        });
-        creatorTimer.start();
-        //todo: add square
-    }
     public static void epsilonRewardControl(){
         for (int i = 0; i< collectableModels.size(); i++){
             CollectableModel collectableModel = collectableModels.get(i);
             if (collectableModel.isCollectedByEpsilon()){
-                EpsilonModel.getINSTANCE().collected(collectableModel.getRewardHp());
+                EpsilonModel.getINSTANCE().collected(collectableModel.getRewardXp());
                 collectableModels.remove(collectableModel);
                 collectableModel.destroy();
             }
@@ -102,7 +79,7 @@ public abstract class GameController {
             //vertex of enemy hit epsilon
             for (Vertex vertex: enemyModel.getVertices()){
                 if (vertex.isCollectedByEpsilon()){
-                    epsilonModel.gotHit(enemyModel);
+                    epsilonModel.gotHit(enemyModel.getAttackHp());
                     impact(epsilonModel);
                     Point2D deltaS = impactPoint(epsilonModel.getAnchor(), enemyModel.getAnchor());
                     epsilonModel.move((int) deltaS.getX(), (int) deltaS.getY());
@@ -114,14 +91,11 @@ public abstract class GameController {
             Area enemyA = new Area(enemyModel.getPolygon());
             for (Vertex epsilonV : epsilonModel.getVertices()){
                 if (enemyA.contains(epsilonV.getX(), epsilonV.getY())){
-                    enemyModel.gotHit(epsilonModel);
+                    enemyModel.gotHit(epsilonModel.getAttackHp());
                     impact(epsilonModel);
                     break;
                 }
             }
         }
-    }
-    private enum Direction{
-        TopLeft, TopRight, ButtomLeft, ButtomRight
     }
 }

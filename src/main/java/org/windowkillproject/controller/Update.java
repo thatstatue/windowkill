@@ -3,6 +3,7 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
+import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.view.abilities.AbilityView;
@@ -14,8 +15,8 @@ import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.application.Config.FRAME_UPDATE_TIME;
 import static org.windowkillproject.application.Config.MODEL_UPDATE_TIME;
 import static org.windowkillproject.controller.Controller.setViewBounds;
-import static org.windowkillproject.controller.ElapsedTime.elapsedTime;
 import static org.windowkillproject.controller.GameController.*;
+import static org.windowkillproject.model.Wave.isBetweenWaves;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
@@ -23,6 +24,7 @@ import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public class Update {
     public Update() {
+        new Wave();
         new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
             setCoalesce(true);
         }}.start();
@@ -43,15 +45,11 @@ public class Update {
             setViewBounds(abilityView);
             if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
-
         gameFrame.repaint();
     }
 
     public void updateModel() {
-        Clock clock = Clock.systemDefaultZone();
-        long t = clock.millis();
-        //System.out.println(t);
-        gameFrame.shrink();
+        if (!isBetweenWaves())gameFrame.shrink();
         var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();

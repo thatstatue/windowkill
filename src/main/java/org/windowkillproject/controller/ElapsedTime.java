@@ -13,18 +13,13 @@ public abstract class ElapsedTime {
     public static void run(){
         Timer clock = new Timer(1000, e -> {
             pass();
-            setElapsedTime();
+            gameFrame.setClockTime(timeSetter());
         });
         clock.start();
     }
-    public static JLabel elapsedTime = new JLabel();
-    private static void setElapsedTime(){
-        String time = minutes + ":" +
+    private static String timeSetter(){
+        return minutes + ":" +
                 (seconds >= 10 ? String.valueOf(seconds) : "0" + seconds);
-        elapsedTime = new JLabel(time);
-        elapsedTime.setFont(new Font(Font.DIALOG, Font.BOLD, 25));
-        elapsedTime.setForeground(Color.white);
-        elapsedTime.setBounds(200, 150, 300, 300);
     }
 
     public static int secondsPassed(int minutes, int seconds){
