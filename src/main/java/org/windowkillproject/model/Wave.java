@@ -17,10 +17,14 @@ import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemies
 public class Wave {
     private static int level;
 
-    private static boolean betweenWaves = false;
+    private static boolean betweenWaves = true;
 
     public static boolean isBetweenWaves() {
         return betweenWaves;
+    }
+
+    public static void setBetweenWaves(boolean betweenWaves) {
+        Wave.betweenWaves = betweenWaves;
     }
 
     public Wave() {
@@ -51,7 +55,7 @@ public class Wave {
                     count.getAndIncrement();
                 }
             }else {
-                if (count.get()< bound+3){
+                if (count.get()< bound+2){
                     count.getAndIncrement();
                 }else {
                     betweenWaves = false;

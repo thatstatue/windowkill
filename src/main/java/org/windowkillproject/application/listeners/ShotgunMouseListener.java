@@ -7,13 +7,10 @@ import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
-import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
 import static org.windowkillproject.application.Application.gameFrame;
-import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 
 public class ShotgunMouseListener implements NativeMouseListener {
     public void nativeMouseClicked(NativeMouseEvent e) {

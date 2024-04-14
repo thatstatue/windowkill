@@ -3,6 +3,7 @@ package org.windowkillproject.model.abilities;
 import java.util.ArrayList;
 
 import static org.windowkillproject.controller.Controller.createCollectableView;
+import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 
 public class CollectableModel extends AbilityModel{
     public static ArrayList<CollectableModel> collectableModels = new ArrayList<>();
@@ -11,9 +12,14 @@ public class CollectableModel extends AbilityModel{
         this.rewardXp = rewardXp;
         collectableModels.add(this);
         createCollectableView(id, x, y);
+        initSeconds = getTotalSeconds();
     }
     private int rewardXp;
+    private final long initSeconds;
 
+    public long getInitSeconds() {
+        return initSeconds;
+    }
 
     public int getRewardXp() {
         return rewardXp;

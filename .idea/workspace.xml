@@ -5,17 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cb7147d-c2f7-4914-bd23-040476efc352" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/listeners/ShotgunMouseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/listeners/ShotgunMouseListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/ElapsedTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/ElapsedTime.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Update.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Update.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/CollectableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/CollectableModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EntityModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EntityModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EpsilonModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EpsilonModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/EnemyModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/EnemyModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/TrigorathModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/TrigorathModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

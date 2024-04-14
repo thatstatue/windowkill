@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.application.Config.LOOP;
+import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.impactPoint;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
@@ -50,6 +51,8 @@ public abstract class GameController {
         for (int i = 0; i < enemies.size(); i++) {
             Polygon p1 = enemies.get(i).getPolygon();
             Area a1 = new Area(p1);
+
+
             for (int j = i + 1; j < enemies.size(); j++) {
                 Polygon p2 = enemies.get(j).getPolygon();
                 Area a2 = new Area(p2);
@@ -63,9 +66,13 @@ public abstract class GameController {
 
     public static void epsilonRewardControl(){
         for (int i = 0; i< collectableModels.size(); i++){
-            CollectableModel collectableModel = collectableModels.get(i);
+            var collectableModel = collectableModels.get(i);
             if (collectableModel.isCollectedByEpsilon()){
                 EpsilonModel.getINSTANCE().collected(collectableModel.getRewardXp());
+                collectableModels.remove(collectableModel);
+                collectableModel.destroy();
+            }
+            if (secondsPassed(collectableModel.getInitSeconds()) >= 10){
                 collectableModels.remove(collectableModel);
                 collectableModel.destroy();
             }
