@@ -2,22 +2,20 @@ package org.windowkillproject.controller;
 
 import org.windowkillproject.model.Drawable;
 import org.windowkillproject.model.abilities.AbilityModel;
-import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.BulletView;
 import org.windowkillproject.view.abilities.CollectableView;
-import org.windowkillproject.view.entities.EnemyView;
+import org.windowkillproject.view.entities.enemies.EnemyView;
 import org.windowkillproject.view.entities.EpsilonView;
-import org.windowkillproject.view.entities.TrigorathView;
-
-import java.time.Clock;
+import org.windowkillproject.view.entities.enemies.SquarantineView;
+import org.windowkillproject.view.entities.enemies.TrigorathView;
 
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
-import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
@@ -34,7 +32,16 @@ public abstract class Controller {
                         trigorathModel.getWidth(),
                         trigorathModel.getHeight()
                 );
-            }//todo add square
+            }else if (entityModel instanceof SquarantineModel){
+                var squarantineModel = (SquarantineModel) entityModel;
+                var squarantineView = new SquarantineView(id);
+                squarantineView.set(
+                        squarantineModel.getX(),
+                        squarantineModel.getY(),
+                        squarantineModel.getWidth(),
+                        squarantineModel.getHeight()
+                );
+            }
         } else {
             var epsilonModel = (EpsilonModel) entityModel;
             var epsilonView = new EpsilonView(id);

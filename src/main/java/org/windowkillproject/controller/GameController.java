@@ -6,6 +6,7 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 
 import javax.swing.*;
@@ -42,24 +43,42 @@ public abstract class GameController {
             if (!entityModel.equals(other) && (other instanceof EnemyModel)){
                 EnemyModel enemyModel = (EnemyModel) other;
                 Point2D deltaS = impactPoint(enemyModel.getAnchor(), entityModel.getAnchor());
-                enemyModel.move((int) deltaS.getX(), (int) deltaS.getY());
+                AtomicInteger count = new AtomicInteger();
+                Timer impactTimer = new Timer(Config.FPS/2, null);
+                impactTimer.addActionListener(e -> {
+                    if (count.get() <7) {
+                        enemyModel.move((int) deltaS.getX(), (int) deltaS.getY());
+
+                        count.getAndIncrement();
+                    }else {
+                        impactTimer.stop();
+                    }
+                });
+                impactTimer.start();
             }
         }
     }
     public static void enemyIntersectionControl() {
         ArrayList<EnemyModel> enemies = getEnemies();
         for (int i = 0; i < enemies.size(); i++) {
-            Polygon p1 = enemies.get(i).getPolygon();
+            var enemyModel = enemies.get(i);
+            Polygon p1 = enemyModel.getPolygon();
             Area a1 = new Area(p1);
-
-
+            boolean tempCollision = false;
+            //impact controller
             for (int j = i + 1; j < enemies.size(); j++) {
                 Polygon p2 = enemies.get(j).getPolygon();
                 Area a2 = new Area(p2);
                 a2.intersect(a1);
                 if (!a2.isEmpty()) {
-                    impact(enemies.get(i));
+                    impact(enemyModel);
+                    tempCollision = true;
                 }
+            }
+            //dash controller
+            if (enemyModel instanceof SquarantineModel){
+                var squarantine = (SquarantineModel) enemyModel;
+                squarantine.setCollision(tempCollision);
             }
         }
     }

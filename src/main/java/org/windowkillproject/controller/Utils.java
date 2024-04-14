@@ -4,6 +4,8 @@ import org.windowkillproject.application.Config;
 
 import java.awt.geom.Point2D;
 
+import static org.windowkillproject.application.Config.MIN_ENEMY_SPEED;
+
 public abstract class Utils {
 //    public static double vectorTheta(Point2D point, Point2D anchor){
 //        return Math.atan2(point.getY() - anchor.getY(), point.getX() - anchor.getX());
@@ -14,15 +16,16 @@ public abstract class Utils {
         double magnitude = Math.sqrt(dX*dX + dY*dY);
         return new Point2D.Double(dX/magnitude,dY/magnitude );
     }
-    private static double deltaSpeed(Point2D entityModel, Point2D other){
+    private static double accelSpeed(Point2D entityModel, Point2D other){
         double d1 = entityModel.getX() - other.getX();
         double d2 = entityModel.getY() - other.getY();
         double d = Math.sqrt(d1* d1 + d2*d2);
         int speed = (int) (d/25 + 0.75);
         return Math.min(Config.MAX_ENEMY_SPEED , speed);
     }
-    public static Point2D routePoint(Point2D entity, Point2D other){
-        double speed = deltaSpeed(entity, other);
+    public static Point2D routePoint(Point2D entity, Point2D other, boolean hasAccel){
+        double speed = MIN_ENEMY_SPEED;
+        if (hasAccel) speed = accelSpeed(entity, other);
         Point2D vector = unitVector(other, entity);
         return weighedVector(vector, speed);
 
@@ -30,7 +33,7 @@ public abstract class Utils {
     public static Point2D impactPoint(Point2D entity, Point2D other){
         double speed = deltaSpeedAway(entity, other);
         Point2D vector = unitVector(entity, other);
-        return weighedVector(vector, speed*8);
+        return weighedVector(vector, speed*2);
     }
 
     private static double deltaSpeedAway(Point2D point, Point2D anchor){

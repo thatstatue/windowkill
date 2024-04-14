@@ -8,12 +8,14 @@ import org.windowkillproject.model.entities.EpsilonModel;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+import static org.windowkillproject.application.Config.ENEMY_RADIUS;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.controller.Utils.*;
 
 public abstract class EnemyModel extends EntityModel {
     protected EnemyModel(int x, int y) {
         super(x, y);
+        setRadius(ENEMY_RADIUS);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
     }
@@ -72,12 +74,7 @@ public abstract class EnemyModel extends EntityModel {
     }
 
 
-    public void route() {
-        //set accel
-        Point2D deltaS = routePoint(this.getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
-        //move
-        move((int) deltaS.getX(), (int) deltaS.getY());
-    }
+    public abstract void route();
     @Override
     public void destroy() {
         super.destroy();
@@ -90,6 +87,7 @@ public abstract class EnemyModel extends EntityModel {
         }
 
     }
+    abstract void initVertices();
     @Override
     public void rotate() {
         super.rotate();

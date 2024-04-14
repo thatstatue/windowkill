@@ -3,7 +3,9 @@ package org.windowkillproject.model;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.controller.GameController;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
+import org.windowkillproject.view.entities.enemies.SquarantineView;
 
 import javax.swing.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,7 +44,7 @@ public class Wave {
                     int dY = random.nextInt(Config.GAME_HEIGHT);
                     switch (direction) {
                         case TopRight -> new TrigorathModel(gameFrame.getWidth() + dX, -dY);
-                        case TopLeft -> new TrigorathModel(-dX, -dY);
+                        case TopLeft -> new SquarantineModel(-dX, -dY);
                         case BottomLeft -> new TrigorathModel(-dX, gameFrame.getHeight() + dY);
                         case BottomRight -> new TrigorathModel(gameFrame.getWidth() + dX, gameFrame.getHeight() + dY);
                     }

@@ -1,4 +1,4 @@
-package org.windowkillproject.view.entities;
+package org.windowkillproject.view.entities.enemies;
 
 import org.windowkillproject.controller.Controller;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
