@@ -1,10 +1,14 @@
 package org.windowkillproject.model.entities;
 
+import org.windowkillproject.application.Config;
 import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.abilities.Vertex;
 
+import java.awt.geom.Point2D;
+
 import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
 
 public class EpsilonModel extends EntityModel {
     private static EpsilonModel INSTANCE;
@@ -25,10 +29,27 @@ public class EpsilonModel extends EntityModel {
     private EpsilonModel(int x, int y){
         super(x , y);
         setRadius(EPSILON_RADIUS);
-        setHp(100);
+        setHp(1000);
 //        setAttackHp(10);
        // getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
     }
+
+    @Override
+    public Point2D getRoutePoint() {
+        Point2D point2D = new Point2D.Double(0,0);
+        if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
+            if (isUpPressed)
+                point2D.setLocation(point2D.getX(), -EPSILON_SPEED);
+            else if (isDownPressed)
+                point2D.setLocation(point2D.getX(), EPSILON_SPEED);
+            if (isLeftPressed)
+                point2D.setLocation(-EPSILON_SPEED, point2D.getY());
+            else if (isRightPressed)
+                point2D.setLocation(-EPSILON_SPEED, point2D.getY());
+        }
+        return point2D;
+    }
+
     @Override
     public void gotHit(int attackHp){
         super.gotHit(attackHp);

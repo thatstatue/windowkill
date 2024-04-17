@@ -51,12 +51,13 @@ public class SquarantineModel extends EnemyModel {
 
     @Override
     public void route() {
-        //set accel
-        Point2D deltaS = routePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor(), false);
-        //move
-        move((int) deltaS.getX(), (int) deltaS.getY());
+
+        move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         if(random.nextInt(7)==3) dash();
+    }
+    public Point2D getRoutePoint(){
+        return routePoint(this.getAnchor(),
+                EpsilonModel.getINSTANCE().getAnchor(), false);
     }
     private void dash(){
         AtomicInteger count = new AtomicInteger();

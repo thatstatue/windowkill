@@ -27,7 +27,7 @@ public abstract class EntityModel implements Drawable {
     public ArrayList<Point2D> getPointVertices() {
         ArrayList<Point2D> v = new ArrayList<>();
         for (Vertex vertex : vertices){
-            v.add(vertex.getAnchor());
+            v.add(new Point2D.Double(vertex.getX(), vertex.getY()));
         }
         return v;
     }
@@ -54,6 +54,7 @@ public abstract class EntityModel implements Drawable {
         setWidth(2 * getRadius());
         setAnchor(x + getRadius(), y + getRadius());
     }
+    public abstract Point2D getRoutePoint();
 
     public Point2D getAnchor() {
         return anchor;

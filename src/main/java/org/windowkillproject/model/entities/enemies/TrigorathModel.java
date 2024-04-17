@@ -15,6 +15,7 @@ public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
     public TrigorathModel(int x, int y) {
         super(x, y);
+        setRadius(ENEMY_RADIUS);
         setHp(15);
         setAttackHp(10);
         setRewardCount(2);
@@ -31,11 +32,11 @@ public class TrigorathModel extends EnemyModel {
 
     @Override
     public void route() {
-        //set accel
-        Point2D deltaS = routePoint(this.getAnchor(),
+        move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
+    }
+    public Point2D getRoutePoint(){
+        return routePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), true);
-        //move
-        move((int) deltaS.getX(), (int) deltaS.getY());
     }
 
     @Override

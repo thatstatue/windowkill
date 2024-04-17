@@ -27,15 +27,15 @@ public class Application implements Runnable {
     public static void startGame() {
         primaryFrame.setVisible(false);
         //minimize tabs //todo : un-comment
-//        try {
-//            Robot robot = new Robot();
-//            robot.keyPress(KeyEvent.VK_WINDOWS);
-//            robot.keyPress(KeyEvent.VK_D);
-//            robot.keyRelease(KeyEvent.VK_D);
-//            robot.keyRelease(KeyEvent.VK_WINDOWS);
-//        } catch (AWTException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Robot robot = new Robot();
+            robot.keyPress(KeyEvent.VK_WINDOWS);
+            robot.keyPress(KeyEvent.VK_D);
+            robot.keyRelease(KeyEvent.VK_D);
+            robot.keyRelease(KeyEvent.VK_WINDOWS);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
         initGFrame();
     }
 
