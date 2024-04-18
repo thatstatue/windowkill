@@ -53,7 +53,7 @@ public class Update {
         var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();
-            if (entityModel instanceof EnemyModel) {
+            if (!entityModel.isImpact() && entityModel instanceof EnemyModel) {
                 EnemyModel enemyModel = (EnemyModel) entityModel;
                 enemyModel.route();
             }

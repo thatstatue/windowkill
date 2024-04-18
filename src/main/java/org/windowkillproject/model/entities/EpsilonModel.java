@@ -39,13 +39,13 @@ public class EpsilonModel extends EntityModel {
         Point2D point2D = new Point2D.Double(0,0);
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed)
-                point2D.setLocation(point2D.getX(), -EPSILON_SPEED);
+                point2D.setLocation(point2D.getX(), -2*EPSILON_SPEED);
             else if (isDownPressed)
-                point2D.setLocation(point2D.getX(), EPSILON_SPEED);
+                point2D.setLocation(point2D.getX(), 2*EPSILON_SPEED);
             if (isLeftPressed)
-                point2D.setLocation(-EPSILON_SPEED, point2D.getY());
+                point2D.setLocation(-2*EPSILON_SPEED, point2D.getY());
             else if (isRightPressed)
-                point2D.setLocation(-EPSILON_SPEED, point2D.getY());
+                point2D.setLocation(2*EPSILON_SPEED, point2D.getY());
         }
         return point2D;
     }

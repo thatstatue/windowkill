@@ -55,37 +55,47 @@ public abstract class GameController {
         }else{
             p1 = smallerP;
         }
-        Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, 2));
-        Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, 2));
+        //todo: epsilon in bounds
+        double s1 = 1, s2=1;
+        if (magnitude(p1)<5) s1 = 2.5;
+        if (magnitude(p2)<5) s2 = 2.5;
+
+        Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, s1));
+        Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2));
         impactTimer1.start();
         impactTimer2.start();
         //wave of collision
         Point2D collisionPoint = Utils.closestPointOnPolygon(
                 entityModel.getAnchor(), enemyModel.getPointVertices());
-//
-//        for (EntityModel entity : entityModels) {
-//            if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
-//                Point2D deltaS = impactPoint(entity.getAnchor(), collisionPoint);
-//                Timer impactTimer = getImpactTimer(entity, deltaS);
-//                impactTimer.start();
-//            }
-//        }
-        AtomicInteger count = new AtomicInteger();
-        Timer impactTimer = new Timer(Config.FPS/5, null);
-        impactTimer.addActionListener(e -> {
-            if (count.get() < 7) {
-                for (EntityModel entity : entityModels) {
-                    if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
-                        Point2D deltaS = impactPoint(entity.getAnchor(), collisionPoint);
-                        entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
-                        count.getAndIncrement();
-                    } else {
-                        impactTimer.stop();
-                    }
+
+        for (EntityModel entity : entityModels) {
+            if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
+                Point2D deltaS = impactPoint(entity.getAnchor(), collisionPoint);
+                if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
+                    Timer impactTimer = getImpactTimer(entity, deltaS);
+                    impactTimer.start();
                 }
             }
-        } );
-        impactTimer.start();
+        }
+//        AtomicInteger count = new AtomicInteger();
+//        Timer impactTimer = new Timer(Config.FPS/5, null);
+//        impactTimer.addActionListener(e -> {
+//            if (count.get() < 7) {
+//                for (EntityModel entity : entityModels) {
+//                    if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
+//                        Point2D deltaS = impactPoint(entity.getAnchor(), collisionPoint);
+//                        entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
+//                        isImpact = true;
+//                    }
+//                }
+//                count.getAndIncrement();
+//            } else {
+//                isImpact = false;
+//                impactTimer.stop();
+//            }
+//
+//        } );
+//        impactTimer.start();
     }
 
     private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS) {
@@ -93,9 +103,14 @@ public abstract class GameController {
         Timer impactTimer = new Timer(Config.FPS/5, null);
         impactTimer.addActionListener(e -> {
             if (count.get() <7) {
+                entityModel.setImpact(true);
                 entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
+                if (entityModel instanceof EpsilonModel){
+                    gameFrame.getGamePanel().keepEpsilonInBounds();
+                }
                 count.getAndIncrement();
             }else {
+                entityModel.setImpact(false);
                 impactTimer.stop();
             }
         });

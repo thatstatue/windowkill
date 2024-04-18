@@ -47,7 +47,7 @@ public abstract class Utils {
         double d1 = point.getX() - anchor.getX();
         double d2 = point.getY() - anchor.getY();
         double d = Math.sqrt(d1* d1 + d2*d2);
-        double speed = Config.MAX_ENEMY_SPEED/*1.2 - d/50*/;
+        double speed = Config.MAX_ENEMY_SPEED - d/50;
         return Math.max(0 , speed);
     }
     public static Point2D weighedVector(Point2D point, double scalar){

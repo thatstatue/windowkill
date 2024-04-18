@@ -12,6 +12,15 @@ import static org.windowkillproject.controller.Controller.createEntityView;
 
 public abstract class EntityModel implements Drawable {
     protected int x, y, width, height;
+    private boolean isImpact = false;
+
+    public boolean isImpact() {
+        return isImpact;
+    }
+
+    public void setImpact(boolean impact) {
+        isImpact = impact;
+    }
 
     private int hp, attackHp;
 
