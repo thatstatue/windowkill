@@ -6,14 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4cb7147d-c2f7-4914-bd23-040476efc352" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/frames/GameFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/listeners/EpsilonKeyListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/listeners/EpsilonKeyListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Update.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Update.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/BulletModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/BulletModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EpsilonModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EpsilonModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,19 +21,6 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <favorite-branches>
-      <branch-storage>
-        <map>
-          <entry type="REMOTE">
-            <value>
-              <list>
-                <branch-info repo="$PROJECT_DIR$" source="origin/PHASE_1" />
-              </list>
-            </value>
-          </entry>
-        </map>
-      </branch-storage>
-    </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="master" />
