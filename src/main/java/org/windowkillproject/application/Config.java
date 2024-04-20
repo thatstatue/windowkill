@@ -13,15 +13,18 @@ public class Config {
     public static final int GAME_WIDTH = 700;
     public static final int GAME_HEIGHT = 700;
     public static final int FPS = 35;
-    public static final int UPS = 50;
-    public static final int LOOP = 5 * 1000;
+    public static final int UPS = 60;
+    public static final int WAVE_LOOP = 5 * 1000;
     public static int ENEMY_RADIUS = 20;
 
-    public static final int MAX_ENEMY_SPEED = 5;
+    public static final int MAX_ENEMY_SPEED = 4;
+    public static final int MAX_ENEMIES = 4;
     public static final int MIN_ENEMY_SPEED = 2;
 
     public static final int EPSILON_SPEED = 3;
     public static final int FRAME_SHRINKAGE_SPEED = 2;
+
+    public static final int FRAME_STRETCH_SPEED = 3;
     public static final int GAME_MIN_SIZE = 300;
     public static final int BUTTON_WIDTH = 150;
     public static final int BUTTON_HEIGHT = 80;

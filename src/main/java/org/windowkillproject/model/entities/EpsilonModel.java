@@ -30,8 +30,8 @@ public class EpsilonModel extends EntityModel {
         super(x , y);
         setRadius(EPSILON_RADIUS);
         setHp(1000);
-//        setAttackHp(10);
-       // getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
+        setAttackHp(10);
+        getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
     }
 
     @Override
@@ -40,11 +40,11 @@ public class EpsilonModel extends EntityModel {
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed)
                 point2D.setLocation(point2D.getX(), -2*EPSILON_SPEED);
-            else if (isDownPressed)
+            if (isDownPressed)
                 point2D.setLocation(point2D.getX(), 2*EPSILON_SPEED);
             if (isLeftPressed)
                 point2D.setLocation(-2*EPSILON_SPEED, point2D.getY());
-            else if (isRightPressed)
+            if (isRightPressed)
                 point2D.setLocation(2*EPSILON_SPEED, point2D.getY());
         }
         return point2D;

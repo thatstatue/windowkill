@@ -1,13 +1,12 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.model.abilities.CollectableModel;
+import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.Vertex;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.SquarantineModel;
-import org.windowkillproject.model.entities.enemies.TrigorathModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +17,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.gameFrame;
-import static org.windowkillproject.application.Config.LOOP;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
@@ -37,65 +35,77 @@ public abstract class GameController {
         }
         return enemies;
     }
+    public static void impact(BulletModel bulletModel) {
+        for (EntityModel entity : entityModels) {
+            Point2D bulletPoint = new Point2D.Double( bulletModel.getX(), bulletModel.getY());
+                Point2D deltaS = impactPoint(entity.getAnchor(),bulletPoint);
+                if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
+                    Timer impactTimer = getImpactTimer(entity, deltaS);
+                    impactTimer.start();
+                }
+        }
+    }
 
     public static void impact(EntityModel entityModel, EnemyModel enemyModel) {
+        //control overlapping
+        Point2D closestPointOfEnemy = closestPointOnPolygon(entityModel.getAnchor() , enemyModel.getPointVertices());
+        Point2D delta;
+//        if (entityModel instanceof EnemyModel){
+//            EnemyModel entity = (EnemyModel) entityModel;
+//            Point2D closestPointOfEntity = closestPointOnPolygon(enemyModel.getAnchor() , entity.getPointVertices());
+//            delta =  weighedVector(unitVector(closestPointOfEntity, closestPointOfEnemy),
+//                    closestPointOfEnemy.distance(closestPointOfEntity)/2.0);
+//            if (magnitude(delta)<5) delta = weighedVector(delta, enemyModel.getRadius()*1.2);
+//        }else{
+            delta = weighedVector(unitVector(entityModel.getAnchor(), closestPointOfEnemy),
+                    entityModel.getRadius()-closestPointOfEnemy.distance(entityModel.getAnchor())/2.0);
+
+//        }
+        entityModel.move((int) delta.getX(), (int) delta.getY());
+        enemyModel.move((int) -delta.getX(), (int) -delta.getY());
+
         // rEaLiStiC impact on the colliding entities
         Point2D p1 = enemyModel.getRoutePoint();
         Point2D p2 = entityModel.getRoutePoint();
-        Point2D smallerP = p1;
-        if (magnitude(p1)>magnitude(p2)) {
-            smallerP = p2;
-        }
+
         if ((p1.getX()*p2.getX() >0)|| (p1.getY()*p2.getY() >0)){
 
-            smallerP = inverse(smallerP);
+            if (magnitude(p1)>magnitude(p2)) {
+                Point2D smallerP = inverse(p2);
+                p2 = p1;
+                p1 = smallerP;
+            }else {
+                Point2D smallerP = inverse(p1);
+                p1 = p2;
+                p2 = smallerP;
+            }
         }
-        if (magnitude(p1)>magnitude(p2)) {
-            p2 = smallerP;
-        }else{
-            p1 = smallerP;
-        }
+//        if (magnitude(p1)>magnitude(p2)) {
+//            p2 = smallerP;
+//        }else{
+//            p1 = smallerP;
+//        }
         //todo: epsilon in bounds
         double s1 = 1, s2=1;
         if (magnitude(p1)<5) s1 = 2.5;
         if (magnitude(p2)<5) s2 = 2.5;
+        if (entityModel instanceof EpsilonModel) s2 = 3;
 
         Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, s1));
         Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2));
         impactTimer1.start();
         impactTimer2.start();
         //wave of collision
-        Point2D collisionPoint = Utils.closestPointOnPolygon(
-                entityModel.getAnchor(), enemyModel.getPointVertices());
 
         for (EntityModel entity : entityModels) {
             if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
-                Point2D deltaS = impactPoint(entity.getAnchor(), collisionPoint);
+                Point2D deltaS = impactPoint(entity.getAnchor(), closestPointOfEnemy);
                 if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
                     Timer impactTimer = getImpactTimer(entity, deltaS);
                     impactTimer.start();
                 }
             }
         }
-//        AtomicInteger count = new AtomicInteger();
-//        Timer impactTimer = new Timer(Config.FPS/5, null);
-//        impactTimer.addActionListener(e -> {
-//            if (count.get() < 7) {
-//                for (EntityModel entity : entityModels) {
-//                    if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
-//                        Point2D deltaS = impactPoint(entity.getAnchor(), collisionPoint);
-//                        entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
-//                        isImpact = true;
-//                    }
-//                }
-//                count.getAndIncrement();
-//            } else {
-//                isImpact = false;
-//                impactTimer.stop();
-//            }
-//
-//        } );
-//        impactTimer.start();
     }
 
     private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS) {
@@ -163,17 +173,18 @@ public abstract class GameController {
         for (EnemyModel enemyModel : enemies) {
 
             //vertex of enemy hit epsilon
-//            Point2D d = Utils.closestPointOnPolygon(
-//                    epsilonModel.getAnchor(), enemyModel.getPointVertices());
-//            if(Math.abs(d.distance(epsilonModel.getAnchor())) <= epsilonModel.getRadius()){
-            for (Vertex vertex: enemyModel.getVertices()){
-                if (vertex.isCollectedByEpsilon()) {
-                    epsilonModel.gotHit(enemyModel.getAttackHp());
-                    impact(epsilonModel, enemyModel);
-//                    Point2D deltaS = impactPoint(epsilonModel.getAnchor(), enemyModel.getAnchor());
-//                    epsilonModel.move((int) deltaS.getX(), (int) deltaS.getY());
-                    break;
+            Point2D d = Utils.closestPointOnPolygon(
+                    epsilonModel.getAnchor(), enemyModel.getPointVertices());
+            if(Math.abs(d.distance(epsilonModel.getAnchor())) <= epsilonModel.getRadius()) {
+                for (Vertex vertex : enemyModel.getVertices()) {
+                    if (vertex.isCollectedByEpsilon()) {
+                        epsilonModel.gotHit(enemyModel.getAttackHp());
+                        break;
+                    }
                 }
+                impact(epsilonModel, enemyModel);
+                break;
+                //  }
             }
 
             //vertex of epsilon hit enemy

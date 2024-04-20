@@ -9,8 +9,6 @@ import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
-import java.time.Clock;
-
 import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.application.Config.FRAME_UPDATE_TIME;
 import static org.windowkillproject.application.Config.MODEL_UPDATE_TIME;
@@ -25,16 +23,15 @@ import static org.windowkillproject.view.entities.EntityView.entityViews;
 public class Update {
     public Update() {
         new Wave();
-        new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
+        new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
         }}.start();
-        new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
+        new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
             setCoalesce(true);
         }}.start();
     }
 
     public void updateView() {
-        //System.out.println(elapsedTime);
         for (int i = 0; i < entityViews.size(); i++) {
             EntityView entityView = entityViews.get(i);
             setViewBounds(entityView);
@@ -49,7 +46,7 @@ public class Update {
     }
 
     public void updateModel() {
-        if (!isBetweenWaves())gameFrame.shrink();
+        if (!isBetweenWaves()) gameFrame.shrink();
         var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();
@@ -66,9 +63,5 @@ public class Update {
         enemyIntersectionControl();
         epsilonIntersectionControl();
 
-
-//        for (EntityModel entityModel : entityModels) {
-//            //  entityModel.setLocation(calculateViewLocation(gameFrame.getGamePanel(), entityView.getId()));
-//        }
     }
 }

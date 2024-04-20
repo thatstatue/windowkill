@@ -3,11 +3,15 @@ package org.windowkillproject.application.frames;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
+import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
 public class GameFrame extends JFrame {
@@ -59,25 +63,36 @@ public class GameFrame extends JFrame {
             int newWidth = getWidth();
             int newHeight = getHeight();
             switch (code){
-                case Config.BULLET_HIT_DOWN -> {
-                    newY += Config.FRAME_SHRINKAGE_SPEED / 2;
-                    newHeight += Config.FRAME_SHRINKAGE_SPEED * 3/2;
+                case BULLET_HIT_DOWN -> {
+                    newY += FRAME_STRETCH_SPEED / 2;
+                    newHeight += FRAME_STRETCH_SPEED;
                 }
-                case Config.BULLET_HIT_LEFT -> {
-                    newX -= Config.FRAME_SHRINKAGE_SPEED *3/2 ;
-                    newWidth += Config.FRAME_SHRINKAGE_SPEED *  3/2;
+                case BULLET_HIT_LEFT -> {
+                    newX -= FRAME_STRETCH_SPEED ;
+                    newWidth += FRAME_STRETCH_SPEED;
                 }
-                case Config.BULLET_HIT_RIGHT -> {
-                    newX += Config.FRAME_SHRINKAGE_SPEED / 2;
-                    newWidth += Config.FRAME_SHRINKAGE_SPEED * 3/2;
+                case BULLET_HIT_RIGHT -> {
+                    newX += FRAME_STRETCH_SPEED / 2;
+                    newWidth += FRAME_STRETCH_SPEED;
                 }
-                case Config.BULLET_HIT_UP -> {
-                    newY -= Config.FRAME_SHRINKAGE_SPEED *3/2;
-                    newHeight += Config.FRAME_SHRINKAGE_SPEED * 3/2;
+                case BULLET_HIT_UP -> {
+                    newY -= FRAME_STRETCH_SPEED;
+                    newHeight += FRAME_STRETCH_SPEED;
                 }
+                default -> throw new IllegalStateException("Unexpected value: " + code);
             }
             if (count.get() <7) {
                 isStretching = true;
+                if (code == BULLET_HIT_LEFT || code == BULLET_HIT_UP){
+                    for (EntityModel entityModel : entityModels){
+                        if (code == BULLET_HIT_LEFT) {
+                            entityModel.move(FRAME_STRETCH_SPEED,0);
+                        }
+                        if (code == BULLET_HIT_UP) {
+                            entityModel.move(0, FRAME_STRETCH_SPEED);
+                        }
+                    }
+                }
                 setBounds(newX, newY, newWidth, newHeight);
                 count.getAndIncrement();
             }else {
