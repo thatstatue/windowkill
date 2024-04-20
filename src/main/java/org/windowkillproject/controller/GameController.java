@@ -1,121 +1,198 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.frames.GamePanel;
-import org.windowkillproject.model.entities.Entity;
-import org.windowkillproject.model.entities.Epsilon;
-import org.windowkillproject.model.entities.Vertex;
-import org.windowkillproject.model.entities.enemies.Enemy;
+import org.windowkillproject.model.abilities.BulletModel;
+import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.abilities.Vertex;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.SquarantineModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
+import static org.windowkillproject.controller.Utils.*;
+import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
+import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
-public class GameController {
-    private static ArrayList<GamePanel> gamePanels;
-    public static Timer gameTimer;
-    public static void init(ArrayList<GamePanel> gamePanels){
-        GameController.gamePanels = gamePanels;
-    }
-    public static void start(){
-        gameTimer = new Timer(Config.DELAY, e -> {
-            for (int i = 0 ; i< gamePanels.size(); i++) {
-                GamePanel gp = gamePanels.get(i);
-                for (Entity entity : gp.getEntities()) {
-                    entity.rotate();
-                    if (entity instanceof Enemy){
-                        Enemy enemy = (Enemy) entity;
-                        enemy.route(gp.getEpsilon()); //for 1 panel only
-                    }
-                }
-                enemyIntersectionControl(gp);
-                gp.repaint();
-            }
-            epsilonIntersectionControl();
-        }
-        );
-        gameTimer.start();
-    }
-    public static ArrayList<Enemy> getEnemies(GamePanel panel){
-        ArrayList<Enemy> enemies = new ArrayList<>();
-        for (Entity entity : panel.getEntities()){
-            if (entity instanceof Enemy){
-                enemies.add((Enemy) entity);
+public abstract class GameController {
+    public static Random random = new Random();
+
+    public static ArrayList<EnemyModel> getEnemies(){
+        ArrayList<EnemyModel> enemies = new ArrayList<>();
+        for (EntityModel entityModel : entityModels){
+            if (entityModel instanceof EnemyModel){
+                enemies.add((EnemyModel) entityModel);
             }
         }
         return enemies;
     }
-    public static double deltaAway(Entity entity, Entity other){
-        double d1 = entity.getXO() - other.getXO();
-        double d2 = entity.getYO() - other.getYO();
-        double d = Math.sqrt(d1* d1 + d2*d2);
-        int speed = (int) (Config.MAX_ENEMY_SPEED*3 - (d/6));
-//        System.out.println("this is " +speed);
-        return Math.max(0 , speed);
+    public static void impact(BulletModel bulletModel) {
+        for (EntityModel entity : entityModels) {
+            Point2D bulletPoint = new Point2D.Double( bulletModel.getX(), bulletModel.getY());
+                Point2D deltaS = impactPoint(entity.getAnchor(),bulletPoint);
+                if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
+                    Timer impactTimer = getImpactTimer(entity, deltaS);
+                    impactTimer.start();
+                }
+        }
     }
-    public static double vectorTheta(Entity entity, Entity other){
-        return Math.atan2(entity.getYO() - other.getYO(), entity.getXO() - other.getXO());
-    }
 
+    public static void impact(EntityModel entityModel, EnemyModel enemyModel) {
+        //control overlapping
+        Point2D closestPointOfEnemy = closestPointOnPolygon(entityModel.getAnchor() , enemyModel.getPointVertices());
+        Point2D delta;
+//        if (entityModel instanceof EnemyModel){
+//            EnemyModel entity = (EnemyModel) entityModel;
+//            Point2D closestPointOfEntity = closestPointOnPolygon(enemyModel.getAnchor() , entity.getPointVertices());
+//            delta =  weighedVector(unitVector(closestPointOfEntity, closestPointOfEnemy),
+//                    closestPointOfEnemy.distance(closestPointOfEntity)/2.0);
+//            if (magnitude(delta)<5) delta = weighedVector(delta, enemyModel.getRadius()*1.2);
+//        }else{
+            delta = weighedVector(unitVector(entityModel.getAnchor(), closestPointOfEnemy),
+                    entityModel.getRadius()-closestPointOfEnemy.distance(entityModel.getAnchor())/2.0);
 
-    public static void impact(Entity entity, GamePanel gp){
-        for (Entity other : gp.getEntities()){
-            if (!entity.equals(other) && (other instanceof Enemy)){
-                Enemy enemy = (Enemy) other;
-                double theta = vectorTheta(entity, enemy);
-                double deltaS = deltaAway(entity, enemy) * 5;
-                int yS = (int) (Math.cos(theta) * deltaS);
-                int xS = (int) (Math.cos(theta) * deltaS);
+//        }
+        entityModel.move((int) delta.getX(), (int) delta.getY());
+        enemyModel.move((int) -delta.getX(), (int) -delta.getY());
 
-                if (deltaS!=0 && entity instanceof Enemy){
-                    xS +=20;
-                    yS -= 20;
-                }//todo: fix enemies getting stuck behind each other
-                enemy.moveX(-xS);
-                enemy.moveY(-yS);
+        // rEaLiStiC impact on the colliding entities
+        Point2D p1 = enemyModel.getRoutePoint();
+        Point2D p2 = entityModel.getRoutePoint();
+
+        if ((p1.getX()*p2.getX() >0)|| (p1.getY()*p2.getY() >0)){
+
+            if (magnitude(p1)>magnitude(p2)) {
+                Point2D smallerP = inverse(p2);
+                p2 = p1;
+                p1 = smallerP;
+            }else {
+                Point2D smallerP = inverse(p1);
+                p1 = p2;
+                p2 = smallerP;
+            }
+        }
+//        if (magnitude(p1)>magnitude(p2)) {
+//            p2 = smallerP;
+//        }else{
+//            p1 = smallerP;
+//        }
+        //todo: epsilon in bounds
+        double s1 = 1, s2=1;
+        if (magnitude(p1)<5) s1 = 2.5;
+        if (magnitude(p2)<5) s2 = 2.5;
+        if (entityModel instanceof EpsilonModel) s2 = 3;
+
+        Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, s1));
+        Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2));
+        impactTimer1.start();
+        impactTimer2.start();
+        //wave of collision
+
+        for (EntityModel entity : entityModels) {
+            if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
+                Point2D deltaS = impactPoint(entity.getAnchor(), closestPointOfEnemy);
+                if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
+                    Timer impactTimer = getImpactTimer(entity, deltaS);
+                    impactTimer.start();
+                }
             }
         }
     }
-    public static void enemyIntersectionControl(GamePanel gamePanel) {
-        ArrayList<Enemy> enemies = getEnemies(gamePanel);
+
+    private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS) {
+        AtomicInteger count = new AtomicInteger();
+        Timer impactTimer = new Timer(Config.FPS/5, null);
+        impactTimer.addActionListener(e -> {
+            if (count.get() <7) {
+                entityModel.setImpact(true);
+                entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
+                if (entityModel instanceof EpsilonModel){
+                    gameFrame.getGamePanel().keepEpsilonInBounds();
+                }
+                count.getAndIncrement();
+            }else {
+                entityModel.setImpact(false);
+                impactTimer.stop();
+            }
+        });
+        return impactTimer;
+    }
+
+    public static void enemyIntersectionControl() {
+        ArrayList<EnemyModel> enemies = getEnemies();
         for (int i = 0; i < enemies.size(); i++) {
-            Polygon p1 = enemies.get(i).getPolygon();
+            var enemyModel = enemies.get(i);
+            Polygon p1 = enemyModel.getPolygon();
             Area a1 = new Area(p1);
+            boolean tempCollision = false;
+            //impact controller
             for (int j = i + 1; j < enemies.size(); j++) {
-                Polygon p2 = enemies.get(j).getPolygon();
+                var collidedEnemy = enemies.get(j);
+                Polygon p2 = collidedEnemy.getPolygon();
                 Area a2 = new Area(p2);
                 a2.intersect(a1);
                 if (!a2.isEmpty()) {
-                    impact(enemies.get(i), gamePanel);
+                    impact(enemyModel, collidedEnemy);
+                    tempCollision = true;
                 }
             }
+            //dash controller
+            if (enemyModel instanceof SquarantineModel){
+                var squarantine = (SquarantineModel) enemyModel;
+                squarantine.setCollision(tempCollision);
+            }
         }
+    }
 
+    public static void epsilonRewardControl(){
+        for (int i = 0; i< collectableModels.size(); i++){
+            var collectableModel = collectableModels.get(i);
+            if (collectableModel.isCollectedByEpsilon()){
+                EpsilonModel.getINSTANCE().collected(collectableModel.getRewardXp());
+                collectableModels.remove(collectableModel);
+                collectableModel.destroy();
+            }
+            if (secondsPassed(collectableModel.getInitSeconds()) >= 10){
+                collectableModels.remove(collectableModel);
+                collectableModel.destroy();
+            }
+        }
     }
     public static void epsilonIntersectionControl(){
-        GamePanel epsilonPanel =gamePanels.get(0);
-        Epsilon epsilon = epsilonPanel.getEpsilon();
-        ArrayList<Enemy> enemies = getEnemies(epsilonPanel);
-        for (Enemy enemy : enemies) {
+        EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
+        ArrayList<EnemyModel> enemies = getEnemies();
+        for (EnemyModel enemyModel : enemies) {
 
             //vertex of enemy hit epsilon
-            for (Vertex vertex: enemy.getVertices()){
-                if (Math.abs(vertex.getX()- epsilon.getXO()) <= epsilon.getRadius()
-                && Math.abs(vertex.getY()- epsilon.getYO()) <= epsilon.getRadius()){
-                    epsilon.gotHit(enemy, epsilonPanel);
-                    impact(epsilon, epsilonPanel);
-                    break;
+            Point2D d = Utils.closestPointOnPolygon(
+                    epsilonModel.getAnchor(), enemyModel.getPointVertices());
+            if(Math.abs(d.distance(epsilonModel.getAnchor())) <= epsilonModel.getRadius()) {
+                for (Vertex vertex : enemyModel.getVertices()) {
+                    if (vertex.isCollectedByEpsilon()) {
+                        epsilonModel.gotHit(enemyModel.getAttackHp());
+                        break;
+                    }
                 }
+                impact(epsilonModel, enemyModel);
+                break;
+                //  }
             }
 
             //vertex of epsilon hit enemy
-            Area enemyA = new Area(enemy.getPolygon());
-            for (Vertex epsilonV : epsilon.getVertices()){
+            Area enemyA = new Area(enemyModel.getPolygon());
+            for (Vertex epsilonV : epsilonModel.getVertices()){
                 if (enemyA.contains(epsilonV.getX(), epsilonV.getY())){
-                    enemy.gotHit(epsilon, epsilonPanel);
-                    impact(epsilon, epsilonPanel);
+                    enemyModel.gotHit(epsilonModel.getAttackHp());
+                    impact(epsilonModel, enemyModel);
                     break;
                 }
             }
