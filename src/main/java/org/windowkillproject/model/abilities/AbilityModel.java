@@ -66,4 +66,3 @@ public abstract class AbilityModel implements Drawable {
 
 
 }
-//todo: add collectable

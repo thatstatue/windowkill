@@ -10,7 +10,10 @@ import org.windowkillproject.model.entities.EpsilonModel;
 import static org.windowkillproject.application.Application.gameFrame;
 
 public class EpsilonKeyListener implements NativeKeyListener {
-    static boolean isLeftPressed, isRightPressed, isUpPressed, isDownPressed;
+    public static boolean isLeftPressed;
+    public static boolean isRightPressed;
+    public static boolean isUpPressed;
+    public static boolean isDownPressed;
     private int UP_KEY =  NativeKeyEvent.VC_UP ;
     private int DOWN_KEY =  NativeKeyEvent.VC_DOWN ;
     private int LEFT_KEY =  NativeKeyEvent.VC_LEFT ;
@@ -37,12 +40,15 @@ public class EpsilonKeyListener implements NativeKeyListener {
     }
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        switch (e.getKeyCode()) {
-            case NativeKeyEvent.VC_LEFT -> isLeftPressed = true;
-            case NativeKeyEvent.VC_RIGHT -> isRightPressed = true;
-            case NativeKeyEvent.VC_UP -> isUpPressed = true;
-            case NativeKeyEvent.VC_DOWN -> isDownPressed = true;
-            default -> System.out.print("");//todo: update, width height rate
+        int keyCode = e.getKeyCode();
+        if (keyCode == NativeKeyEvent.VC_LEFT) {
+            isLeftPressed = true;
+        } else if (keyCode == NativeKeyEvent.VC_RIGHT) {
+            isRightPressed = true;
+        } else if (keyCode == NativeKeyEvent.VC_UP) {
+            isUpPressed = true;
+        } else if (keyCode == NativeKeyEvent.VC_DOWN) {
+            isDownPressed = true;
         }
         EpsilonModel eM = EpsilonModel.getINSTANCE();
 
@@ -63,12 +69,15 @@ public class EpsilonKeyListener implements NativeKeyListener {
 
     @Override
      public void nativeKeyReleased(NativeKeyEvent e) {
-        switch (e.getKeyCode()) {
-            case NativeKeyEvent.VC_LEFT -> isLeftPressed = false;
-            case NativeKeyEvent.VC_RIGHT -> isRightPressed = false;
-            case NativeKeyEvent.VC_UP -> isUpPressed = false;
-            case NativeKeyEvent.VC_DOWN -> isDownPressed = false;
-            default -> System.out.print("");//todo: update
+        int keyCode = e.getKeyCode();
+        if (keyCode == NativeKeyEvent.VC_LEFT) {
+            isLeftPressed = false;
+        } else if (keyCode == NativeKeyEvent.VC_RIGHT) {
+            isRightPressed = false;
+        } else if (keyCode == NativeKeyEvent.VC_UP) {
+            isUpPressed = false;
+        } else if (keyCode == NativeKeyEvent.VC_DOWN) {
+            isDownPressed = false;
         }
     }
 

@@ -15,7 +15,6 @@ import static org.windowkillproject.controller.Utils.*;
 public abstract class EnemyModel extends EntityModel {
     protected EnemyModel(int x, int y) {
         super(x, y);
-        setRadius(ENEMY_RADIUS);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
     }
@@ -75,7 +74,8 @@ public abstract class EnemyModel extends EntityModel {
 
 
     public abstract void route();
-    @Override
+
+        @Override
     public void destroy() {
         super.destroy();
         enemiesKilled++;

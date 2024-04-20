@@ -12,6 +12,15 @@ import static org.windowkillproject.controller.Controller.createEntityView;
 
 public abstract class EntityModel implements Drawable {
     protected int x, y, width, height;
+    private boolean isImpact = false;
+
+    public boolean isImpact() {
+        return isImpact;
+    }
+
+    public void setImpact(boolean impact) {
+        isImpact = impact;
+    }
 
     private int hp, attackHp;
 
@@ -27,7 +36,7 @@ public abstract class EntityModel implements Drawable {
     public ArrayList<Point2D> getPointVertices() {
         ArrayList<Point2D> v = new ArrayList<>();
         for (Vertex vertex : vertices){
-            v.add(vertex.getAnchor());
+            v.add(new Point2D.Double(vertex.getX(), vertex.getY()));
         }
         return v;
     }
@@ -54,6 +63,7 @@ public abstract class EntityModel implements Drawable {
         setWidth(2 * getRadius());
         setAnchor(x + getRadius(), y + getRadius());
     }
+    public abstract Point2D getRoutePoint();
 
     public Point2D getAnchor() {
         return anchor;
