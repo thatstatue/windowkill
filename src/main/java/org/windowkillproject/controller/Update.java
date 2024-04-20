@@ -21,14 +21,18 @@ import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public class Update {
+    public static Timer modelUpdateTimer;
+    public static Timer frameUpdateTimer;
     public Update() {
         new Wave();
-        new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
+        modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
-        }}.start();
-        new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
+        }};
+        modelUpdateTimer.start();
+        frameUpdateTimer = new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
             setCoalesce(true);
-        }}.start();
+        }};
+        frameUpdateTimer.start();
     }
 
     public void updateView() {

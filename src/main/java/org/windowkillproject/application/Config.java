@@ -12,6 +12,8 @@ public class Config {
 
     public static final int GAME_WIDTH = 700;
     public static final int GAME_HEIGHT = 700;
+    public static final int OPTION_WIDTH = 300;
+    public static final int OPTION_HEIGHT = 700;
     public static final int FPS = 35;
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;

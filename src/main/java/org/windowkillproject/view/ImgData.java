@@ -8,7 +8,7 @@ import java.io.IOException;
 public class ImgData {
     private static ImgData data;
 
-    protected BufferedImage epsilon, trigorath;
+    protected BufferedImage epsilon, trigorath, banish;
 
 
     private ImgData() {
@@ -32,6 +32,15 @@ public class ImgData {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            String pathBackground = "Banish.png";
+            File fileBackground = new File(pathBackground);
+            banish = ImageIO.read(fileBackground);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //todo add bullet
     }
 
     //singleton practice
@@ -49,5 +58,9 @@ public class ImgData {
     public BufferedImage getEpsilon() {
         return epsilon;
     }
+    public BufferedImage getBanish() {
+        return banish;
+    }
+
 
 }

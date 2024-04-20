@@ -5,9 +5,13 @@ import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.frames.ShopFrame;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.initShFrame;
+import static org.windowkillproject.controller.Update.frameUpdateTimer;
+import static org.windowkillproject.controller.Update.modelUpdateTimer;
 
 public class EpsilonKeyListener implements NativeKeyListener {
     public static boolean isLeftPressed;
@@ -79,12 +83,14 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } else if (keyCode == NativeKeyEvent.VC_DOWN) {
             isDownPressed = false;
         }
+        else if (e.getKeyCode() == NativeKeyEvent.VC_SPACE){
+            initShFrame();
+//todo
+        }
     }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
-        if (nativeEvent.getKeyCode() == NativeKeyEvent.VC_SPACE){
-//todo
-        }
+
     }
 }

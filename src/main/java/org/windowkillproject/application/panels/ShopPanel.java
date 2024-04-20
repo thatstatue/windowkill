@@ -2,6 +2,7 @@ package org.windowkillproject.application.panels;
 
 
 import org.windowkillproject.application.panels.Panel;
+import org.windowkillproject.view.ImgData;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,6 +19,11 @@ public class ShopPanel extends Panel {
 
     @Override
     protected ArrayList<Component> initComponents() {
-        return null;
+        ArrayList<Component> components = new ArrayList<>();
+        OptionPanel banish = new OptionPanel("O' Hephaestus، Banish", 100, ImgData.getData().getBanish());
+        banish.setBounds(100, 100, 300, 400);
+        components.add(banish);
+        System.out.println("banish added");
+        return components;
     }
 }

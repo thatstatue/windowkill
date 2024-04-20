@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public abstract class EntityView extends JLabel implements Viewable {
+public abstract class EntityView extends JLabel implements Viewable{
     protected BufferedImage img;
     String id;
     protected int x , y, width, height;
