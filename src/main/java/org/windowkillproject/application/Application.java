@@ -61,6 +61,15 @@ public class Application implements Runnable {
         ElapsedTime.pause();
         if (gameFrame != null) gameFrame.setVisible(false);
         if (shopFrame == null) shopFrame = new ShopFrame();
+        else shopFrame.setVisible(true);
+
+    }
+    public static void hideShFrame(){
+        if (shopFrame != null) shopFrame.setVisible(false);
+        if (gameFrame != null) gameFrame.setVisible(true);
+        ElapsedTime.resume();
+        modelUpdateTimer.start();
+        frameUpdateTimer.start();
 
     }
 
