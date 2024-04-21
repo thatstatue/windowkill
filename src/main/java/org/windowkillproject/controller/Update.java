@@ -15,6 +15,7 @@ import static org.windowkillproject.application.Config.MODEL_UPDATE_TIME;
 import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
+import static org.windowkillproject.model.Wave.spawnWave;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
@@ -24,7 +25,7 @@ public class Update {
     public static Timer modelUpdateTimer;
     public static Timer frameUpdateTimer;
     public Update() {
-        new Wave();
+        spawnWave();
         modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
         }};

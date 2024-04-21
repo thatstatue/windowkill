@@ -7,6 +7,7 @@ import org.windowkillproject.model.abilities.Vertex;
 import java.awt.geom.Point2D;
 
 import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.initScoreFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
 
@@ -46,7 +47,7 @@ public class EpsilonModel extends EntityModel {
     private EpsilonModel(int x, int y){
         super(x , y);
         setRadius(EPSILON_RADIUS);
-        setHp(1000);
+        setHp(100);
         setAttackHp(10);
         getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
     }
@@ -71,6 +72,12 @@ public class EpsilonModel extends EntityModel {
     public void gotHit(int attackHp){
         super.gotHit(attackHp);
         gameFrame.setHpAmount(getHp());
+
+    }
+    @Override
+    public void destroy(){
+        super.destroy();
+        initScoreFrame();
     }
 
     public void collected(int rewardXp){

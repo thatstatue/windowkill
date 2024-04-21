@@ -22,7 +22,8 @@ public class EpsilonKeyListener implements NativeKeyListener {
     private int LEFT_KEY =  NativeKeyEvent.VC_LEFT ;
     private int RIGHT_KEY =  NativeKeyEvent.VC_RIGHT ;
 
-
+//todo listeners object
+    //todo restart has bugs
     public void startListener() {
         try {
             GlobalScreen.registerNativeHook();

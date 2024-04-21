@@ -18,8 +18,4 @@ public class PrimaryFrame extends JFrame {
         setContentPane(new PrimaryPanel());
         this.setVisible(true);
     }
-    private void update() {
-        this.revalidate();
-        this.repaint();
-    }
 }

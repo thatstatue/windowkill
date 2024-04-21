@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 public class Config {
     public static final String APP_TITLE = "Window Kill - Main Menu";
     public static final String GAME_TITLE = "Window Kill - Game";
+    public static final String SCORE_TITLE = "Window Kill - Score";
+
     public static final String SHOP_TITLE = "Window Kill - Shop";
     public static final int APP_WIDTH = 1000;
     public static final int APP_HEIGHT = 600;
@@ -32,7 +34,7 @@ public class Config {
     public static final int BUTTON_HEIGHT = 80;
     public static final int EPSILON_RADIUS = 14;
     public static final Font BUTTON_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 25);
-    public static final Font TEXT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
+    public static final Font TEXT_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 20);
     public static final Color BUTTON_BG_COLOR = Color.decode("#634c64");
     public static final Color GAME_BG_COLOR = Color.decode("#634c64");
     public static final Color BUTTON_FG_COLOR = Color.white;
