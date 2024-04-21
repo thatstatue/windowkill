@@ -73,7 +73,6 @@ public abstract class EnemyModel extends EntityModel {
     }
 
 
-    public abstract void route();
 
         @Override
     public void destroy() {

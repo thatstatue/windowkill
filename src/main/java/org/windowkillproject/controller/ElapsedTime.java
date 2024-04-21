@@ -10,20 +10,27 @@ import static org.windowkillproject.model.Wave.setBetweenWaves;
 
 public abstract class ElapsedTime {
     private static int seconds, minutes;
-
+    private static Timer clock;
     public static int getTotalSeconds() {
         return seconds + minutes*60;
     }
 
 
     public static void run(){
-        Timer clock = new Timer(1000, e -> {
+        clock = new Timer(1000, e -> {
             pass();
             if (minutes == 0 && seconds == 10) setBetweenWaves(false);
             gameFrame.setClockTime(timeSetter());
         });
         clock.start();
     }
+    public static void pause(){
+        if (clock!= null) clock.stop();
+    }
+    public static void resume(){
+        if (clock!= null) clock.start();
+    }
+
     private static String timeSetter(){
         return minutes + ":" +
                 (seconds >= 10 ? String.valueOf(seconds) : "0" + seconds);

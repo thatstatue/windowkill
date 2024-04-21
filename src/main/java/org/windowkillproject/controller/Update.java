@@ -15,20 +15,25 @@ import static org.windowkillproject.application.Config.MODEL_UPDATE_TIME;
 import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
+import static org.windowkillproject.model.Wave.spawnWave;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public class Update {
+    public static Timer modelUpdateTimer;
+    public static Timer frameUpdateTimer;
     public Update() {
-        new Wave();
-        new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
+        spawnWave();
+        modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
-        }}.start();
-        new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
+        }};
+        modelUpdateTimer.start();
+        frameUpdateTimer = new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
             setCoalesce(true);
-        }}.start();
+        }};
+        frameUpdateTimer.start();
     }
 
     public void updateView() {
@@ -50,10 +55,8 @@ public class Update {
         var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();
-            if (!entityModel.isImpact() && entityModel instanceof EnemyModel) {
-                EnemyModel enemyModel = (EnemyModel) entityModel;
-                enemyModel.route();
-            }
+            if (!entityModel.isImpact()) entityModel.route();
+
         }
         for (int i = 0; i < bulletModels.size(); i++) {
             bulletModels.get(i).move();

@@ -16,6 +16,10 @@ import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemies
 
 public class Wave {
     private static int level;
+    public static void spawnWave(){
+        level = 0;
+        new Wave();
+    }
 
     private static boolean betweenWaves = true;
 
@@ -27,7 +31,7 @@ public class Wave {
         Wave.betweenWaves = betweenWaves;
     }
 
-    public Wave() {
+    private Wave() {
         level++;
         gameFrame.setWaveLevel(level);
         AtomicInteger count = new AtomicInteger();
@@ -66,7 +70,6 @@ public class Wave {
             }
         });
         creatorTimer.start();
-        //todo: add square
     }
     private enum Direction{
         TopLeft, TopRight, BottomLeft, BottomRight

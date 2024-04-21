@@ -18,6 +18,10 @@ public abstract class Panel extends JPanel {
 
     protected abstract ArrayList <Component> initComponents();
 
+    public void setComponents(ArrayList<Component> components) {
+        this.components = components;
+    }
+
     protected final JButton buttonMaker(String name, int x, int y, ActionListener actionListener){
         JButton jButton = new JButton(name);
         jButton.setBounds(x , y, Config.BUTTON_WIDTH, Config.BUTTON_HEIGHT);

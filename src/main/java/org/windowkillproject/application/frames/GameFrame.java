@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
 
 
 public class GameFrame extends JFrame {
@@ -34,6 +35,10 @@ public class GameFrame extends JFrame {
     }
     public GamePanel getGamePanel(){
         return (GamePanel) getContentPane();
+    }
+    public JLabel[] getLabels(){
+        return new JLabel[]{new JLabel(""),clock,xp
+                ,new JLabel(String.valueOf(getEnemiesKilled())),wave};
     }
 
     public void shrink() {
@@ -83,16 +88,7 @@ public class GameFrame extends JFrame {
             }
             if (count.get() <7) {
                 isStretching = true;
-                if (code == BULLET_HIT_LEFT || code == BULLET_HIT_UP){
-                    for (EntityModel entityModel : entityModels){
-                        if (code == BULLET_HIT_LEFT) {
-                            entityModel.move(FRAME_STRETCH_SPEED,0);
-                        }
-                        if (code == BULLET_HIT_UP) {
-                            entityModel.move(0, FRAME_STRETCH_SPEED);
-                        }
-                    }
-                }
+                fixEntityPositionsInFrame(code);
                 setBounds(newX, newY, newWidth, newHeight);
                 count.getAndIncrement();
             }else {
@@ -101,6 +97,19 @@ public class GameFrame extends JFrame {
             }
         });
         stretchTimer.start();
+    }
+
+    private static void fixEntityPositionsInFrame(int code) {
+        if (code == BULLET_HIT_LEFT || code == BULLET_HIT_UP){
+            for (EntityModel entityModel : entityModels){
+                if (code == BULLET_HIT_LEFT) {
+                    entityModel.move(FRAME_STRETCH_SPEED,0);
+                }
+                if (code == BULLET_HIT_UP) {
+                    entityModel.move(0, FRAME_STRETCH_SPEED);
+                }
+            }
+        }
     }
 
     public void setClockTime(String time){

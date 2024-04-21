@@ -5,9 +5,12 @@ import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.frames.ShopFrame;
 import org.windowkillproject.model.entities.EpsilonModel;
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.*;
+import static org.windowkillproject.controller.Update.frameUpdateTimer;
+import static org.windowkillproject.controller.Update.modelUpdateTimer;
 
 public class EpsilonKeyListener implements NativeKeyListener {
     public static boolean isLeftPressed;
@@ -19,7 +22,8 @@ public class EpsilonKeyListener implements NativeKeyListener {
     private int LEFT_KEY =  NativeKeyEvent.VC_LEFT ;
     private int RIGHT_KEY =  NativeKeyEvent.VC_RIGHT ;
 
-
+//todo listeners object
+    //todo restart has bugs
     public void startListener() {
         try {
             GlobalScreen.registerNativeHook();
@@ -50,21 +54,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } else if (keyCode == NativeKeyEvent.VC_DOWN) {
             isDownPressed = true;
         }
-        EpsilonModel eM = EpsilonModel.getINSTANCE();
 
-        int endX = eM.getWidth() + eM.getX() + eM.getRadius();
-        int endY = eM.getHeight() + eM.getY() + 3* eM.getRadius();
-        if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
-            if (isUpPressed && eM.getY() - Config.EPSILON_SPEED >= 0)
-                eM.move(0,-Config.EPSILON_SPEED);
-            else if (isDownPressed && endY + Config.EPSILON_SPEED <= gameFrame.getHeight())
-                eM.move(0,Config.EPSILON_SPEED);
-            if (isLeftPressed && eM.getX() - Config.EPSILON_SPEED >= 0)
-                eM.move(-Config.EPSILON_SPEED,0);
-            else if (isRightPressed && endX + Config.EPSILON_SPEED <= gameFrame.getWidth())
-                eM.move(Config.EPSILON_SPEED,0);
-
-        }
     }
 
     @Override
@@ -79,12 +69,16 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } else if (keyCode == NativeKeyEvent.VC_DOWN) {
             isDownPressed = false;
         }
+        else if (e.getKeyCode() == NativeKeyEvent.VC_SPACE){
+            initShFrame();
+//todo
+        }else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE){
+            hideShFrame();
+        }
     }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
-        if (nativeEvent.getKeyCode() == NativeKeyEvent.VC_SPACE){
-//todo
-        }
+
     }
 }
