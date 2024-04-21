@@ -54,10 +54,8 @@ public class Update {
         var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();
-            if (!entityModel.isImpact() && entityModel instanceof EnemyModel) {
-                EnemyModel enemyModel = (EnemyModel) entityModel;
-                enemyModel.route();
-            }
+            if (!entityModel.isImpact()) entityModel.route();
+
         }
         for (int i = 0; i < bulletModels.size(); i++) {
             bulletModels.get(i).move();

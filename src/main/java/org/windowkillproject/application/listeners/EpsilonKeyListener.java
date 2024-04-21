@@ -54,21 +54,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } else if (keyCode == NativeKeyEvent.VC_DOWN) {
             isDownPressed = true;
         }
-        EpsilonModel eM = EpsilonModel.getINSTANCE();
 
-        int endX = eM.getWidth() + eM.getX() + eM.getRadius();
-        int endY = eM.getHeight() + eM.getY() + 3* eM.getRadius();
-        if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
-            if (isUpPressed && eM.getY() - Config.EPSILON_SPEED >= 0)
-                eM.move(0,-Config.EPSILON_SPEED);
-            else if (isDownPressed && endY + Config.EPSILON_SPEED <= gameFrame.getHeight())
-                eM.move(0,Config.EPSILON_SPEED);
-            if (isLeftPressed && eM.getX() - Config.EPSILON_SPEED >= 0)
-                eM.move(-Config.EPSILON_SPEED,0);
-            else if (isRightPressed && endX + Config.EPSILON_SPEED <= gameFrame.getWidth())
-                eM.move(Config.EPSILON_SPEED,0);
-
-        }
     }
 
     @Override

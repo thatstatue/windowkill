@@ -44,6 +44,7 @@ public abstract class EntityModel implements Drawable {
     private int radius;
     public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
+    public abstract void route();
 
     public int getRadius() {
         return radius;
