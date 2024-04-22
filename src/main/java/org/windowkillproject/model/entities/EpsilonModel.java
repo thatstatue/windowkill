@@ -83,6 +83,5 @@ public class EpsilonModel extends EntityModel {
     public void collected(int rewardXp){
         setXp(getXp()+rewardXp);
         gameFrame.setXpAmount(getXp());
-        System.out.println();
     }
 }

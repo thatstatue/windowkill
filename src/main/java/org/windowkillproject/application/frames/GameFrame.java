@@ -137,12 +137,12 @@ public class GameFrame extends JFrame {
 
         hp.setFont(new Font(Font.SERIF, Font.BOLD, 20));
         hp.setForeground(Color.green);
-        hp.setBounds(160, 1, 300, 20);
+        hp.setBounds(180, 1, 300, 20);
         this.add(hp);
 
         wave.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         wave.setForeground(Color.red);
-        wave.setBounds(110, 1, 300, 20);
+        wave.setBounds(140, 1, 300, 20);
         this.add(wave);
 
     }

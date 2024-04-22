@@ -26,19 +26,6 @@ public class GamePanel extends Panel {
         return null;//todo: add elapsed time etc
     }
 
-    public void keepEpsilonInBounds(){
-        var epsilonModel = EpsilonModel.getINSTANCE();
-        int endX = epsilonModel.getWidth() + epsilonModel.getX() + 5+ epsilonModel.getRadius();
-        int endY = epsilonModel.getHeight() + epsilonModel.getY() + 3* epsilonModel.getRadius();
-        if (endY > gameFrame.getHeight()) {
-            int deltaY = gameFrame.getHeight() - endY;
-            epsilonModel.move(0, deltaY);
-        }
-        if (endX > gameFrame.getWidth()) {
-            int deltaX = gameFrame.getWidth() - endX;
-            epsilonModel.move(deltaX,0);
-        }
-    }
 
     @Override
     protected void paintComponent(Graphics g) {

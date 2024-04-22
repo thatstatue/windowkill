@@ -1,6 +1,7 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.listeners.ShotgunMouseListener;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -17,6 +18,10 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Config.BANISH_DURATION;
+import static org.windowkillproject.application.Config.IMPACT_DURATION;
+import static org.windowkillproject.application.panels.ShopPanel.*;
+import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
@@ -40,7 +45,7 @@ public abstract class GameController {
             Point2D bulletPoint = new Point2D.Double( bulletModel.getX(), bulletModel.getY());
                 Point2D deltaS = impactPoint(entity.getAnchor(),bulletPoint);
                 if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
-                    Timer impactTimer = getImpactTimer(entity, deltaS);
+                    Timer impactTimer = getImpactTimer(entity, deltaS,IMPACT_DURATION);
                     impactTimer.start();
                 }
         }
@@ -91,8 +96,8 @@ public abstract class GameController {
         if (magnitude(p2)<5) s2 = 2.5;
         if (entityModel instanceof EpsilonModel) s2 = 3;
 
-        Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, s1));
-        Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2));
+        Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, s1),IMPACT_DURATION);
+        Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2),IMPACT_DURATION);
         impactTimer1.start();
         impactTimer2.start();
         //wave of collision
@@ -101,22 +106,22 @@ public abstract class GameController {
             if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
                 Point2D deltaS = impactPoint(entity.getAnchor(), closestPointOfEnemy);
                 if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
-                    Timer impactTimer = getImpactTimer(entity, deltaS);
+                    Timer impactTimer = getImpactTimer(entity, deltaS,IMPACT_DURATION);
                     impactTimer.start();
                 }
             }
         }
     }
 
-    private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS) {
+    private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS, int t) {
         AtomicInteger count = new AtomicInteger();
         Timer impactTimer = new Timer(Config.FPS/5, null);
         impactTimer.addActionListener(e -> {
-            if (count.get() <7) {
+            if (count.get() <t) {
                 entityModel.setImpact(true);
                 entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
                 if (entityModel instanceof EpsilonModel){
-                    gameFrame.getGamePanel().keepEpsilonInBounds();
+                    keepEpsilonInBounds();
                 }
                 count.getAndIncrement();
             }else {
@@ -167,6 +172,19 @@ public abstract class GameController {
             }
         }
     }
+    public static void keepEpsilonInBounds(){
+        var epsilonModel = EpsilonModel.getINSTANCE();
+        int endX = epsilonModel.getWidth() + epsilonModel.getX() + 5+ epsilonModel.getRadius();
+        int endY = epsilonModel.getHeight() + epsilonModel.getY() + 3* epsilonModel.getRadius();
+        if (endY > gameFrame.getHeight()) {
+            int deltaY = gameFrame.getHeight() - endY;
+            epsilonModel.move(0, deltaY);
+        }
+        if (endX > gameFrame.getWidth()) {
+            int deltaX = gameFrame.getWidth() - endX;
+            epsilonModel.move(deltaX,0);
+        }
+    }
     public static void epsilonIntersectionControl(){
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         ArrayList<EnemyModel> enemies = getEnemies();
@@ -196,6 +214,30 @@ public abstract class GameController {
                     break;
                 }
             }
+        }
+    }
+    public static void specialtiesControl(){
+        if (banish.isOn()){
+            for (EntityModel entity : entityModels) {
+                    Point2D deltaS = impactPoint(entity.getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
+                    deltaS = weighedVector(deltaS, 4);
+                    if(!(deltaS.getY()<1 && deltaS.getX()<1)) {
+                        Timer impactTimer = getImpactTimer(entity, deltaS, BANISH_DURATION);
+                        impactTimer.start();
+                    }
+            }
+            banish.setOn(false);
+
+        }
+        if (empower.isOn()){
+            ShotgunMouseListener.empowerInitSeconds = getTotalSeconds();
+            empower.setOn(false);
+        }
+        if (heal.isOn()){
+            var epsilon = EpsilonModel.getINSTANCE();
+            epsilon.setHp(epsilon.getHp()+10);
+            heal.setOn(false);
+            heal.setPurchased(false);
         }
     }
 }

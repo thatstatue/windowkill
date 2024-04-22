@@ -49,6 +49,8 @@ public class Application implements Runnable {
 
     public static void startGame() {
         primaryFrame.setVisible(false);
+        shopFrame = new ShopFrame();
+        shopFrame.setVisible(false);
         //minimize tabs //todo : un-comment
         try {
             Robot robot = new Robot();
