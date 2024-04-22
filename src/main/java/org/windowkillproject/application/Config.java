@@ -18,6 +18,9 @@ public class Config {
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;
     public static int ENEMY_RADIUS = 20;
+    public static final int IMPACT_DURATION=7;
+    public static final int BANISH_DURATION=13;
+
 
     public static final int MAX_ENEMY_SPEED = 4;
     public static final int MAX_ENEMIES = 4;

@@ -50,6 +50,7 @@ public abstract class Utils {
         double speed = Config.MAX_ENEMY_SPEED - d/50;
         return Math.max(0 , speed);
     }
+
     public static Point2D weighedVector(Point2D point, double scalar){
         return new Point2D.Double(point.getX()*scalar,point.getY()*scalar);
     }

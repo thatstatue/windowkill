@@ -31,6 +31,12 @@ public class BulletModel extends AbilityModel {
     public Point2D getMousePoint() {
         return mousePoint;
     }
+    public void shot(){
+        setShoot(true);
+        move();
+        move();
+        move();
+    }
 
     public void move() {
 

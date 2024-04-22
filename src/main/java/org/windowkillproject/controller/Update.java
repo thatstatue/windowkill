@@ -51,7 +51,6 @@ public class Update {
 
     public void updateModel() {
         if (!isBetweenWaves()) gameFrame.shrink();
-        var gamePanel = gameFrame.getGamePanel();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();
             if (!entityModel.isImpact()) entityModel.route();
@@ -60,7 +59,8 @@ public class Update {
         for (int i = 0; i < bulletModels.size(); i++) {
             bulletModels.get(i).move();
         }
-        gamePanel.keepEpsilonInBounds();
+        keepEpsilonInBounds();
+        specialtiesControl();
         epsilonRewardControl();
         enemyIntersectionControl();
         epsilonIntersectionControl();

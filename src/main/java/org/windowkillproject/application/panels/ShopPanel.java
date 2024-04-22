@@ -18,22 +18,21 @@ public class ShopPanel extends Panel {
         setBackground(Color.decode("#3B2635"));
         setPreferredSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     }
-
+    public static OptionPanel banish;
+    public static OptionPanel empower;
+    public static OptionPanel heal;
     @Override
     protected ArrayList<Component> initComponents() {
         ArrayList<Component> components = new ArrayList<>();
-        OptionPanel banish = new OptionPanel(Banish, 100, ImgData.getData().getBanish());
-        banish.setSelectButtonListener();
+        banish = new OptionPanel(Banish, 100, ImgData.getData().getBanish());
         banish.setBounds(60, 100, 270, 400);
         components.add(banish);
 
-        OptionPanel empower = new OptionPanel(Empower, 75, ImgData.getData().getEmpower());
-        empower.setSelectButtonListener();
+        empower = new OptionPanel(Empower, 75, ImgData.getData().getEmpower());
         empower.setBounds(360, 100, 270, 400);
         components.add(empower);
 
-        OptionPanel heal = new OptionPanel(Heal, 50, ImgData.getData().getHeal());
-        heal.setSelectButtonListener();
+        heal = new OptionPanel(Heal, 50, ImgData.getData().getHeal());
         heal.setBounds(660, 100, 270, 400);
         components.add(heal);
 
