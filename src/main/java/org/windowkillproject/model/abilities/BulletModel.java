@@ -4,27 +4,33 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.view.abilities.BulletView;
 
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
 import static org.windowkillproject.application.Config.EPSILON_RADIUS;
-import static org.windowkillproject.controller.Controller.createBulletView;
+import static org.windowkillproject.controller.Controller.createAbilityView;
 import static org.windowkillproject.controller.GameController.impact;
 import static org.windowkillproject.controller.Utils.unitVector;
 import static org.windowkillproject.controller.Utils.weighedVector;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 public class BulletModel extends AbilityModel {
-    private int attackHp = 5;
+    private static int attackHp = BULLET_ATTACK_HP;
     private final Point2D mousePoint;
+
+    public static void setAttackHp(int attackHp) {
+        BulletModel.attackHp = attackHp;
+    }
 
     public static ArrayList<BulletModel> bulletModels = new ArrayList<>();
 
-    public int getAttackHp() {
+    public static int getAttackHp() {
         return attackHp;
     }
 
@@ -66,19 +72,19 @@ public class BulletModel extends AbilityModel {
             }
 
             //frame getting shot
-            if (getX() < 0 || getX() > gameFrame.getWidth() ||
-                    getY() < 0 || getY() > gameFrame.getHeight()) {
+            if (getX() < 0 || getX() > getGameFrame().getWidth() ||
+                    getY() < 0 || getY() > getGameFrame().getHeight()) {
                 if (getX() < 0) {
-                    gameFrame.stretch(Config.BULLET_HIT_LEFT);
+                    getGameFrame().stretch(Config.BULLET_HIT_LEFT);
                 }
-                if (getX() > gameFrame.getWidth()) {
-                    gameFrame.stretch(Config.BULLET_HIT_RIGHT);
+                if (getX() > getGameFrame().getWidth()) {
+                    getGameFrame().stretch(Config.BULLET_HIT_RIGHT);
                 }
                 if (getY() < 0) {
-                    gameFrame.stretch(Config.BULLET_HIT_UP);
+                    getGameFrame().stretch(Config.BULLET_HIT_UP);
                 }
-                if (getY() > gameFrame.getHeight()) {
-                    gameFrame.stretch(Config.BULLET_HIT_DOWN);
+                if (getY() > getGameFrame().getHeight()) {
+                    getGameFrame().stretch(Config.BULLET_HIT_DOWN);
                 }
                 explode();
             }
@@ -91,7 +97,7 @@ public class BulletModel extends AbilityModel {
         isShoot = false;
         bulletModels.add(this);
         this.mousePoint = mousePoint;
-        createBulletView(id, x, y);
+        createAbilityView(BulletView.class, id, x, y);
     }
 
     private boolean isShoot;

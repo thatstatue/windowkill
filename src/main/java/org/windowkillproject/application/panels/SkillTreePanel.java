@@ -1,0 +1,43 @@
+package org.windowkillproject.application.panels;
+
+import org.windowkillproject.view.ImgData;
+
+
+import java.awt.*;
+import java.util.ArrayList;
+
+import static org.windowkillproject.application.Application.initPFrame;
+import static org.windowkillproject.application.Config.APP_HEIGHT;
+import static org.windowkillproject.application.Config.APP_WIDTH;
+import static org.windowkillproject.application.panels.OptionPanel.SpecialtyName.*;
+
+public class SkillTreePanel extends Panel{
+    public SkillTreePanel(){
+        super();
+        setBackground(Color.decode("#3B2635"));
+        setPreferredSize(new Dimension(APP_WIDTH, APP_HEIGHT));
+    }
+    public static OptionPanel ares;
+    public static OptionPanel aceso;
+    public static OptionPanel proteus;
+    @Override
+    protected ArrayList<Component> initComponents() {
+        ArrayList<Component> components = new ArrayList<>();
+        ares = new OptionPanel(Ares, 750, ImgData.getData().getBanish());
+        ares.setBounds(60, 100, 270, 400);
+        components.add(ares);
+
+        aceso = new OptionPanel(Aceso, 500, ImgData.getData().getEmpower());
+        aceso.setBounds(360, 100, 270, 400);
+        components.add(aceso);
+
+        proteus = new OptionPanel(Proteus, 1000, ImgData.getData().getHeal());
+
+        proteus.setBounds(660, 100, 270, 400);
+        components.add(proteus);
+        components.add(jLabelMaker("SKILL TREE", 50, 20, 200, 50));
+        components.add(buttonMaker("Menu", 790, 20, e -> initPFrame()));
+
+        return components;
+    }
+}

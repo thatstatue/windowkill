@@ -7,8 +7,10 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import static org.windowkillproject.application.Config.TEXT_FONT;
+
 public abstract class Panel extends JPanel {
-    private ArrayList<Component> components;
+    protected ArrayList<Component> components;
     public Panel() {
         requestFocus();
         setLayout(null);
@@ -31,6 +33,13 @@ public abstract class Panel extends JPanel {
         jButton.setForeground(Config.BUTTON_FG_COLOR);
         jButton.addActionListener(actionListener);
         return jButton;
+    }
+    protected final JLabel jLabelMaker(String name, int x, int y, int width, int height){
+        JLabel jLabel = new JLabel(name);
+        jLabel.setBounds(x , y, width, height);
+        jLabel.setFont(TEXT_FONT);
+        jLabel.setForeground(Config.BUTTON_FG_COLOR);
+        return jLabel;
     }
     protected void addComponentsToPanel(){
         if (components != null) {

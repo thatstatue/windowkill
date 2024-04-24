@@ -10,12 +10,13 @@ import static org.windowkillproject.application.Config.OPTION_WIDTH;
 
 public class OptionPanel extends Panel {
 
-    private JLabel specialtyName;
+    private JLabel specialty;
     private JLabel xpAmount;
     private JLabel imgDisplay;
 
 
     private Button selectButton;
+    private SpecialtyName specialtyName = SpecialtyName.Heal;
     public boolean isOn(){
         return selectButton.isOn();
     }
@@ -37,7 +38,8 @@ public class OptionPanel extends Panel {
         setBackground(Color.decode("#d3ab97"));
         setPreferredSize(new Dimension(OPTION_WIDTH, OPTION_HEIGHT));
         setFocusable(true);
-        this.specialtyName.setText(specialtyName.getDisplayName());
+        this.specialtyName = specialtyName;
+        this.specialty.setText(specialtyName.getDisplayName());
         this.xpAmount.setText("xp : " + xpAmount);
         selectButton.setXpAmount(xpAmount);
         this.imgDisplay.setIcon(new ImageIcon(img));
@@ -48,11 +50,11 @@ public class OptionPanel extends Panel {
     @Override
     protected ArrayList<Component> initComponents() {
         ArrayList<Component> components = new ArrayList<>();
-        specialtyName = new JLabel();
-        specialtyName.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
-        specialtyName.setForeground(Color.white);
-        specialtyName.setBounds(30, 30, OPTION_WIDTH, 20);
-        components.add(specialtyName);
+        specialty = new JLabel();
+        specialty.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+        specialty.setForeground(Color.white);
+        specialty.setBounds(30, 30, OPTION_WIDTH, 20);
+        components.add(specialty);
 
         xpAmount = new JLabel();
         xpAmount.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
@@ -64,7 +66,7 @@ public class OptionPanel extends Panel {
         imgDisplay.setBounds(40, 80, OPTION_WIDTH, 250);
         components.add(imgDisplay);
 
-        selectButton = new Button("PURCHASE");
+        selectButton = new Button("PURCHASE",specialtyName);
         selectButton.setBounds(70, 330, 150, 50);
 
         components.add(selectButton);
@@ -74,7 +76,10 @@ public class OptionPanel extends Panel {
     public enum SpecialtyName {
         Banish("O' Hephaestus، Banish"),
         Empower("O’ Athena، Empower"),
-        Heal("O' Apollo، Heal");
+        Heal("O' Apollo، Heal"),
+        Ares("Writ of Ares"),
+        Aceso("Writ of Aceso"),
+        Proteus("Writ of Proteus");
         private final String displayName;
 
         SpecialtyName(String displayName) {

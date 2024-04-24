@@ -31,7 +31,7 @@ public class GameFrame extends JFrame {
         setTitle(Config.GAME_TITLE);
         this.setLayout(null);
         setContentPane(new GamePanel());
-        this.setVisible(true);
+
     }
     public GamePanel getGamePanel(){
         return (GamePanel) getContentPane();

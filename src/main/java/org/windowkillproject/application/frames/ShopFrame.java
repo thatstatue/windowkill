@@ -17,7 +17,6 @@ public class ShopFrame extends JFrame{
         setTitle(Config.SHOP_TITLE);
         this.setLayout(null);
         setContentPane(new ShopPanel());
-        this.setVisible(true);
     }
 
 }

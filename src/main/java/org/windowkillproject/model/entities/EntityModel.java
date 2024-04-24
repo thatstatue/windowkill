@@ -1,7 +1,7 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.model.abilities.BulletModel;
-import org.windowkillproject.model.abilities.Vertex;
+import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.Drawable;
 
 import java.awt.geom.Point2D;
@@ -24,19 +24,19 @@ public abstract class EntityModel implements Drawable {
 
     private int hp, attackHp;
 
-    protected ArrayList<Vertex> vertices;
+    protected ArrayList<VertexModel> vertices;
 
     public String getId() {
         return id;
     }
 
-    public ArrayList<Vertex> getVertices() {
+    public ArrayList<VertexModel> getVertices() {
         return vertices;
     }
     public ArrayList<Point2D> getPointVertices() {
         ArrayList<Point2D> v = new ArrayList<>();
-        for (Vertex vertex : vertices){
-            v.add(new Point2D.Double(vertex.getX(), vertex.getY()));
+        for (VertexModel vertexModel : vertices){
+            v.add(new Point2D.Double(vertexModel.getX(), vertexModel.getY()));
         }
         return v;
     }
@@ -127,8 +127,8 @@ public abstract class EntityModel implements Drawable {
 
     public void rotate() {
         if (getVertices() != null) {
-            for (Vertex vertex : getVertices()) {
-                vertex.rotate();
+            for (VertexModel vertexModel : getVertices()) {
+                vertexModel.rotate();
             }
         }
     }
@@ -182,16 +182,16 @@ public abstract class EntityModel implements Drawable {
     private void moveX(int deltaX) {
         setX(getX() + deltaX);
         setXO(getXO() + deltaX);
-        for (Vertex vertex : getVertices()) {
-            vertex.setX(vertex.getX() + deltaX);
+        for (VertexModel vertexModel : getVertices()) {
+            vertexModel.setX(vertexModel.getX() + deltaX);
         }
     }
 
     private void moveY(int deltaY) {
         setY(getY() + deltaY);
         setYO(getYO() + deltaY);
-        for (Vertex vertex : getVertices()) {
-            vertex.setY(vertex.getY() + deltaY);
+        for (VertexModel vertexModel : getVertices()) {
+            vertexModel.setY(vertexModel.getY() + deltaY);
         }
     }
 

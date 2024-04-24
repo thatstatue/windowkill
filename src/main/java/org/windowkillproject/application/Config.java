@@ -34,13 +34,16 @@ public class Config {
     public static final int FRAME_STRETCH_SPEED = 3;
     public static final int GAME_MIN_SIZE = 300;
     public static final int BUTTON_WIDTH = 150;
-    public static final int BUTTON_HEIGHT = 80;
+    public static final int BUTTON_HEIGHT = 60;
     public static final int EPSILON_RADIUS = 14;
     public static final Font BUTTON_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 25);
     public static final Font TEXT_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 20);
     public static final Color BUTTON_BG_COLOR = Color.decode("#634c64");
     public static final Color GAME_BG_COLOR = Color.decode("#634c64");
     public static final Color BUTTON_FG_COLOR = Color.white;
+    public static final int WRIT_DURATION = 15;
+
+    public static final int BULLET_ATTACK_HP = 5;
     public static final int BULLET_HIT_DOWN = 1;
     public static final int BULLET_HIT_UP = 0;
     public static final int BULLET_HIT_LEFT = 2;

@@ -10,7 +10,7 @@ import org.windowkillproject.model.entities.EpsilonModel;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.Utils.unitVector;
 import static org.windowkillproject.controller.Utils.weighedVector;
@@ -20,7 +20,7 @@ public class ShotgunMouseListener implements NativeMouseListener {
     public void nativeMouseClicked(NativeMouseEvent e) {
 
         Point2D mouseLoc = MouseInfo.getPointerInfo().getLocation();
-        Point2D relativePoint = new Point2D.Double(mouseLoc.getX()-gameFrame.getX(), mouseLoc.getY()-gameFrame.getY());
+        Point2D relativePoint = new Point2D.Double(mouseLoc.getX()-getGameFrame().getX(), mouseLoc.getY()-getGameFrame().getY());
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
 
         BulletModel bulletModel = new BulletModel(

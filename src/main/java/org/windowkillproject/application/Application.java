@@ -1,9 +1,6 @@
 package org.windowkillproject.application;
 
-import org.windowkillproject.application.frames.GameFrame;
-import org.windowkillproject.application.frames.PrimaryFrame;
-import org.windowkillproject.application.frames.ScoreFrame;
-import org.windowkillproject.application.frames.ShopFrame;
+import org.windowkillproject.application.frames.*;
 import org.windowkillproject.application.listeners.EpsilonKeyListener;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 
@@ -17,11 +14,28 @@ import static org.windowkillproject.controller.Update.frameUpdateTimer;
 import static org.windowkillproject.controller.Update.modelUpdateTimer;
 
 public class Application implements Runnable {
-    public static PrimaryFrame primaryFrame;
-    public static GameFrame gameFrame;
-    public static ShopFrame shopFrame;
+    private static PrimaryFrame primaryFrame;
+    private static GameFrame gameFrame;
+    private static ShopFrame shopFrame;
     public static ScoreFrame scoreFrame;
+    private static SkillTreeFrame skillTreeFrame;
 
+    public static PrimaryFrame getPrimaryFrame(){
+        if (primaryFrame == null) primaryFrame = new PrimaryFrame();
+        return primaryFrame;
+    }
+    public static GameFrame getGameFrame(){
+        if (gameFrame == null) gameFrame = new GameFrame();
+        return gameFrame;
+    }
+    public static ShopFrame getShopFrame(){
+        if (shopFrame == null) shopFrame = new ShopFrame();
+        return shopFrame;
+    }
+    public static SkillTreeFrame getSkillTreeFrame(){
+        if (skillTreeFrame == null) skillTreeFrame = new SkillTreeFrame();
+        return skillTreeFrame;
+    }
 
 
 
@@ -32,26 +46,25 @@ public class Application implements Runnable {
 
     public static void initPFrame() {
         if (scoreFrame!=null) scoreFrame.dispose();
-        if (gameFrame!=null) gameFrame.dispose();
-        if (shopFrame!=null) shopFrame.dispose();
+        gameFrame = new GameFrame();
+        shopFrame = new ShopFrame();
+        getSkillTreeFrame().setVisible(false);
+        getPrimaryFrame().setVisible(true);
 
-        primaryFrame = new PrimaryFrame();
+
     }
     public static void initScoreFrame(){
-        if (gameFrame!=null) {
-            gameFrame.setVisible(false);
-            scoreFrame= new ScoreFrame(gameFrame.getLabels());
-            pauseUpdate();
-            gameFrame.dispose();
-        }
+        getGameFrame().setVisible(false);
+        scoreFrame= new ScoreFrame(gameFrame.getLabels());
+        pauseUpdate();
+        gameFrame = new GameFrame();
     }
 
 
     public static void startGame() {
-        primaryFrame.setVisible(false);
-        shopFrame = new ShopFrame();
-        shopFrame.setVisible(false);
-        //minimize tabs //todo : un-comment
+        getPrimaryFrame().setVisible(false);
+        getShopFrame().setVisible(false);
+        //minimize tabs
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_WINDOWS);
@@ -65,18 +78,22 @@ public class Application implements Runnable {
     }
 
     private static void initGFrame() {
-        gameFrame = new GameFrame();
+        getGameFrame().setVisible(true);
         new EpsilonKeyListener().startListener();
         new ShotgunMouseListener().startListener();
-        gameFrame.shrinkFast();
+        getGameFrame().shrinkFast();
         new Update();
 
     }
     public static void initShFrame() {
         pauseUpdate();
-        if (gameFrame != null) gameFrame.setVisible(false);
-        if (shopFrame == null) shopFrame = new ShopFrame();
-        else shopFrame.setVisible(true);
+        getGameFrame().setVisible(false);
+        getShopFrame().setVisible(true);
+
+    }
+    public static void initSTFrame() {
+        getPrimaryFrame().setVisible(false);
+        getSkillTreeFrame().setVisible(true);
 
     }
     public static void pauseUpdate(){
@@ -85,8 +102,8 @@ public class Application implements Runnable {
         ElapsedTime.pause();
     }
     public static void hideShFrame(){
-        if (shopFrame != null) shopFrame.setVisible(false);
-        if (gameFrame != null) gameFrame.setVisible(true);
+        getShopFrame().setVisible(false);
+        getGameFrame().setVisible(true);
         ElapsedTime.resume();
         modelUpdateTimer.start();
         frameUpdateTimer.start();

@@ -1,8 +1,6 @@
 package org.windowkillproject.model.entities.enemies;
 
-import org.windowkillproject.application.Config;
-import org.windowkillproject.model.abilities.CollectableModel;
-import org.windowkillproject.model.abilities.Vertex;
+import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
@@ -41,8 +39,8 @@ public class TrigorathModel extends EnemyModel {
 
     @Override
     void initVertices() {
-        getVertices().add(new Vertex(getXO(), getYO() - getRadius(), this));
-        getVertices().add(new Vertex(getXO() - (int) (getRadius() * RAD3_ON_2), getYO() + getRadius() / 2, this));
-        getVertices().add(new Vertex(getXO() + (int) (getRadius() * RAD3_ON_2), getYO() + getRadius() / 2, this));
+        getVertices().add(new VertexModel(getXO(), getYO() - getRadius(), this));
+        getVertices().add(new VertexModel(getXO() - (int) (getRadius() * RAD3_ON_2), getYO() + getRadius() / 2, this));
+        getVertices().add(new VertexModel(getXO() + (int) (getRadius() * RAD3_ON_2), getYO() + getRadius() / 2, this));
     }
 }

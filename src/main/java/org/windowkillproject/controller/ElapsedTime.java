@@ -1,11 +1,8 @@
 package org.windowkillproject.controller;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.model.Wave.setBetweenWaves;
 
 public abstract class ElapsedTime {
@@ -20,7 +17,7 @@ public abstract class ElapsedTime {
         clock = new Timer(1000, e -> {
             pass();
             if (minutes == 0 && seconds == 10) setBetweenWaves(false);
-            gameFrame.setClockTime(timeSetter());
+            getGameFrame().setClockTime(timeSetter());
         });
         clock.start();
     }

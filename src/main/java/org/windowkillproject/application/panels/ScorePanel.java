@@ -31,12 +31,7 @@ public class ScorePanel extends Panel {
         setLabels(jLabels);
         labels = new JLabel[]{score,clock,xp,enemy,wave};
         ArrayList<Component> components =new ArrayList<>(List.of(labels));
-        components.add(buttonMaker("Menu", 150, 320, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                initPFrame();
-            }
-        }));
+        components.add(buttonMaker("Menu", 150, 320, e -> initPFrame()));
         setComponents(components);
         addComponentsToPanel();
 

@@ -1,7 +1,7 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.model.abilities.Vertex;
+import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
@@ -43,10 +43,10 @@ public class SquarantineModel extends EnemyModel {
 
     @Override
     void initVertices() {
-        getVertices().add(new Vertex(getXO(), getYO() - getRadius(), this));
-        getVertices().add(new Vertex(getXO() - getRadius(), getYO(), this));
-        getVertices().add(new Vertex(getXO(), getYO() + getRadius(), this));
-        getVertices().add(new Vertex(getXO() + getRadius(), getYO(), this));
+        getVertices().add(new VertexModel(getXO(), getYO() - getRadius(), this));
+        getVertices().add(new VertexModel(getXO() - getRadius(), getYO(), this));
+        getVertices().add(new VertexModel(getXO(), getYO() + getRadius(), this));
+        getVertices().add(new VertexModel(getXO() + getRadius(), getYO(), this));
     }
 
     @Override

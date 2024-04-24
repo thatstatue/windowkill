@@ -6,9 +6,11 @@ import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.frames.ShopFrame;
+import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import static org.windowkillproject.application.Application.*;
+import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.Update.frameUpdateTimer;
 import static org.windowkillproject.controller.Update.modelUpdateTimer;
 
@@ -17,6 +19,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
     public static boolean isRightPressed;
     public static boolean isUpPressed;
     public static boolean isDownPressed;
+
     private int UP_KEY =  NativeKeyEvent.VC_UP ;
     private int DOWN_KEY =  NativeKeyEvent.VC_DOWN ;
     private int LEFT_KEY =  NativeKeyEvent.VC_LEFT ;
@@ -60,21 +63,26 @@ public class EpsilonKeyListener implements NativeKeyListener {
     @Override
      public void nativeKeyReleased(NativeKeyEvent e) {
         int keyCode = e.getKeyCode();
-        if (keyCode == NativeKeyEvent.VC_LEFT) {
-            isLeftPressed = false;
-        } else if (keyCode == NativeKeyEvent.VC_RIGHT) {
-            isRightPressed = false;
-        } else if (keyCode == NativeKeyEvent.VC_UP) {
-            isUpPressed = false;
-        } else if (keyCode == NativeKeyEvent.VC_DOWN) {
-            isDownPressed = false;
+        switch (keyCode){
+            case NativeKeyEvent.VC_LEFT -> isLeftPressed = false;
+            case NativeKeyEvent.VC_RIGHT -> isRightPressed = false;
+            case NativeKeyEvent.VC_UP ->  isUpPressed = false;
+            case NativeKeyEvent.VC_DOWN -> isDownPressed = false;
+            case NativeKeyEvent.VC_SPACE -> initShFrame();
+            case NativeKeyEvent.VC_ESCAPE -> hideShFrame();
+            case NativeKeyEvent.VC_ALT -> {
+                System.out.println("clicked");
+                if (EpsilonModel.getINSTANCE().getXp()>= 100){
+                    if (Writ.getChosenSkill()!=null){
+                        if ( getTotalSeconds() - Writ.getInitSeconds() >= 5*60 )
+                            Writ.setInitSeconds();
+                        else System.out.println("time prob");
+                    }
+                    else System.out.println("writ null");
+                }else System.out.println("low xp");
+            }
         }
-        else if (e.getKeyCode() == NativeKeyEvent.VC_SPACE){
-            initShFrame();
-//todo
-        }else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE){
-            hideShFrame();
-        }
+
     }
 
     @Override

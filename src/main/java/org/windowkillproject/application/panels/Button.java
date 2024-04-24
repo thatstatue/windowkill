@@ -1,11 +1,13 @@
 package org.windowkillproject.application.panels;
 
+import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.panels.OptionPanel.SpecialtyName.*;
 
 public class Button extends JButton {
     private final Color color =Color.decode("#7C4F63");
@@ -21,12 +23,14 @@ public class Button extends JButton {
     }
     private boolean purchased, on;
     private int xpAmount;
+    private OptionPanel.SpecialtyName specialtyName = Heal;
 
-    public Button (String name){
+    public Button (String name, OptionPanel.SpecialtyName specialtyName){
         setText(name);
         setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         setBackground(color);
         setForeground(Color.white);
+        this.specialtyName = specialtyName;
         setSelectButtonListener();
     }
     public void setXpAmount(int xpAmount){
@@ -41,6 +45,7 @@ public class Button extends JButton {
         this.on = on;
         setText("SELECT");
         setBackground(color);
+        setWrit(on);
         if (on) {
             setText("SELECTED");
             setBackground(Color.green);
@@ -57,10 +62,11 @@ public class Button extends JButton {
                     if (xpAmount <= epsilonXP) {
                         setPurchased(true);
                         on = true;
-                        setText("SELECTED");
-                        setBackground(Color.green);
+                        setOn(true);
                         EpsilonModel.getINSTANCE().setXp(epsilonXP - xpAmount);
-                        gameFrame.setXpAmount(EpsilonModel.getINSTANCE().getXp());
+                        getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp());
+
+                        setWrit(true);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "you don't have enough xp");
@@ -68,17 +74,19 @@ public class Button extends JButton {
                 }
                 JOptionPane.getRootFrame().dispose();
             } else {
-                if (on) {
-                    setText("SElECT");
-                    setBackground(color);
-                } else {
-                    setText("SELECTED");
-                    setBackground(Color.green);
-                }
-                on = !on;
+               setOn(!on);
             }
             setEnabled(true);
         });
+    }
+
+    private void setWrit(boolean set) {
+        if (specialtyName != null &&(specialtyName.equals(Ares) || specialtyName.equals(Aceso)
+        || specialtyName.equals(Proteus))){
+            if (set) Writ.setChosenSkill(specialtyName);
+            else Writ.setChosenSkill(null);
+        }
+        if (specialtyName == null) System.out.println("خاکبرسر");
     }
 
 

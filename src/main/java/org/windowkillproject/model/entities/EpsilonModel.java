@@ -1,12 +1,11 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.model.abilities.CollectableModel;
-import org.windowkillproject.model.abilities.Vertex;
+import org.windowkillproject.model.abilities.VertexModel;
 
 import java.awt.geom.Point2D;
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Application.initScoreFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
@@ -34,11 +33,11 @@ public class EpsilonModel extends EntityModel {
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed && eM.getY() - Config.EPSILON_SPEED >= 0)
                 eM.move(0,-Config.EPSILON_SPEED);
-            else if (isDownPressed && endY + Config.EPSILON_SPEED <= gameFrame.getHeight())
+            else if (isDownPressed && endY + Config.EPSILON_SPEED <= getGameFrame().getHeight())
                 eM.move(0,Config.EPSILON_SPEED);
             if (isLeftPressed && eM.getX() - Config.EPSILON_SPEED >= 0)
                 eM.move(-Config.EPSILON_SPEED,0);
-            else if (isRightPressed && endX + Config.EPSILON_SPEED <= gameFrame.getWidth())
+            else if (isRightPressed && endX + Config.EPSILON_SPEED <= getGameFrame().getWidth())
                 eM.move(Config.EPSILON_SPEED,0);
 
         }
@@ -49,7 +48,16 @@ public class EpsilonModel extends EntityModel {
         setRadius(EPSILON_RADIUS);
         setHp(100);
         setAttackHp(10);
-        getVertices().add(new Vertex(getXO(), getYO()- getRadius(), this));
+        setXp(2000);
+    }
+
+    public void spawnVertex(){
+        vertices.add(new VertexModel(getXO(), getYO()- getRadius(), this));
+        double theta = Math.PI*2/(vertices.size()*1D);
+        for (int i = 0; i< vertices.size(); i++){
+            vertices.get(i).setAnchor(new Point2D.Double(getXO(), getYO()- getRadius()));
+            vertices.get(i).rotate(i*theta);
+        }
     }
 
     @Override
@@ -71,7 +79,7 @@ public class EpsilonModel extends EntityModel {
     @Override
     public void gotHit(int attackHp){
         super.gotHit(attackHp);
-        gameFrame.setHpAmount(getHp());
+        getGameFrame().setHpAmount(getHp());
 
     }
     @Override
@@ -82,6 +90,6 @@ public class EpsilonModel extends EntityModel {
 
     public void collected(int rewardXp){
         setXp(getXp()+rewardXp);
-        gameFrame.setXpAmount(getXp());
+        getGameFrame().setXpAmount(getXp());
     }
 }

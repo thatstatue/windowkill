@@ -30,7 +30,7 @@ public class PrimaryPanel extends Panel {
             componentArrayList.add(button);
         }
         {
-            ActionListener actionListener = e -> Application.startGame();
+            ActionListener actionListener = e -> Application.initSTFrame();
             JButton button = buttonMaker("Skill Tree", 180, 300, actionListener);
             componentArrayList.add(button);
         }

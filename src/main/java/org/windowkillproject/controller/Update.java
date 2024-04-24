@@ -3,16 +3,19 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
+import org.windowkillproject.application.Config;
 import org.windowkillproject.model.Wave;
+import org.windowkillproject.model.Writ;
+import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EntityModel;
-import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
-import static org.windowkillproject.application.Application.gameFrame;
-import static org.windowkillproject.application.Config.FRAME_UPDATE_TIME;
-import static org.windowkillproject.application.Config.MODEL_UPDATE_TIME;
+import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.controller.Controller.setViewBounds;
+import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
 import static org.windowkillproject.model.Wave.spawnWave;
@@ -47,15 +50,14 @@ public class Update {
             setViewBounds(abilityView);
             if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
-        gameFrame.repaint();
+        getGameFrame().repaint();
     }
 
     public void updateModel() {
-        if (!isBetweenWaves()) gameFrame.shrink();
+        if (!isBetweenWaves()) getGameFrame().shrink();
         for (EntityModel entityModel : entityModels) {
             entityModel.rotate();
             if (!entityModel.isImpact()) entityModel.route();
-
         }
         for (int i = 0; i < bulletModels.size(); i++) {
             bulletModels.get(i).move();
@@ -65,6 +67,26 @@ public class Update {
         epsilonRewardControl();
         enemyIntersectionControl();
         epsilonIntersectionControl();
+        keepEpsilonInBounds();
+        long now = getTotalSeconds();
+        if (Writ.getInitSeconds()>0 && now - Writ.getInitSeconds() <= WRIT_DURATION ) {
+            switch (Writ.getChosenSkill()){
+                case Ares ->{
+                    BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
+                }
+                case Aceso -> {
+                    if (now -  Writ.getInitSeconds()>=Writ.getTimes() && Writ.getTimes()<10){
+                        EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp()+1);
+                        Writ.timesAddIncrement();
+                    }
+                }
+                case Proteus -> {
+                    EpsilonModel.getINSTANCE().spawnVertex();
+                }
+            }
+        }else{
+            BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
+        }
 
     }
 }

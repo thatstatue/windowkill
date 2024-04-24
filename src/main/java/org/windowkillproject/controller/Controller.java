@@ -8,12 +8,16 @@ import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import org.windowkillproject.view.*;
+import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.abilities.BulletView;
 import org.windowkillproject.view.abilities.CollectableView;
 import org.windowkillproject.view.entities.enemies.EnemyView;
 import org.windowkillproject.view.entities.EpsilonView;
 import org.windowkillproject.view.entities.enemies.SquarantineView;
 import org.windowkillproject.view.entities.enemies.TrigorathView;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
@@ -55,13 +59,16 @@ public abstract class Controller {
         }
     }
 
-    public static void createBulletView(String id, int x, int y) {
-        new BulletView(id, x, y);
-    }
-    public static void createCollectableView(String id, int x, int y) {
-        new CollectableView(id, x, y);
-    }
+    public static <T extends AbilityView> void createAbilityView(Class<T> tClass, String id, int x, int y) {
 
+        try {
+            Constructor<T> constructor = tClass.getConstructor(String.class, int.class, int.class);
+            constructor.newInstance(id, x, y);
+        } catch (NoSuchMethodException | InstantiationException |
+                 InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static <T extends Viewable> void setViewBounds(T view) {
         if (findModel(view.getId()) instanceof EntityModel) {

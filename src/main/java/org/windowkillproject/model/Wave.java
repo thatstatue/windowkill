@@ -7,7 +7,7 @@ import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import javax.swing.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.windowkillproject.application.Application.gameFrame;
+import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.MAX_ENEMIES;
 import static org.windowkillproject.application.Config.WAVE_LOOP;
 import static org.windowkillproject.controller.GameController.random;
@@ -33,7 +33,7 @@ public class Wave {
 
     private Wave() {
         level++;
-        gameFrame.setWaveLevel(level);
+        getGameFrame().setWaveLevel(level);
         AtomicInteger count = new AtomicInteger();
         Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.2*level)), null);
         creatorTimer.addActionListener(e -> {
@@ -45,10 +45,10 @@ public class Wave {
                     int dX = random.nextInt(Config.GAME_WIDTH);
                     int dY = random.nextInt(Config.GAME_HEIGHT);
                     switch (direction) {
-                        case TopRight -> new TrigorathModel(gameFrame.getWidth() + dX, -dY);
+                        case TopRight -> new TrigorathModel(getGameFrame().getWidth() + dX, -dY);
                         case TopLeft -> new SquarantineModel(-dX, -dY);
-                        case BottomLeft -> new TrigorathModel(-dX, gameFrame.getHeight() + dY);
-                        case BottomRight -> new TrigorathModel(gameFrame.getWidth() + dX, gameFrame.getHeight() + dY);
+                        case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getHeight() + dY);
+                        case BottomRight -> new TrigorathModel(getGameFrame().getWidth() + dX, getGameFrame().getHeight() + dY);
                     }
                     count.getAndIncrement();
                 }

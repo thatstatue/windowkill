@@ -1,13 +1,10 @@
 package org.windowkillproject.application.panels;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.panels.Panel;
-import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.view.entities.EntityView;
 
 import java.awt.*;
 import java.util.ArrayList;
-import static org.windowkillproject.application.Application.gameFrame;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public class GamePanel extends Panel {
