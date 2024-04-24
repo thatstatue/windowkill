@@ -5,8 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static org.windowkillproject.application.Config.OPTION_HEIGHT;
-import static org.windowkillproject.application.Config.OPTION_WIDTH;
+import static org.windowkillproject.application.Config.*;
 
 public class OptionPanel extends Panel {
 
@@ -16,7 +15,6 @@ public class OptionPanel extends Panel {
 
 
     private Button selectButton;
-    private SpecialtyName specialtyName = SpecialtyName.Heal;
     public boolean isOn(){
         return selectButton.isOn();
     }
@@ -38,12 +36,15 @@ public class OptionPanel extends Panel {
         setBackground(Color.decode("#d3ab97"));
         setPreferredSize(new Dimension(OPTION_WIDTH, OPTION_HEIGHT));
         setFocusable(true);
-        this.specialtyName = specialtyName;
         this.specialty.setText(specialtyName.getDisplayName());
         this.xpAmount.setText("xp : " + xpAmount);
         selectButton.setXpAmount(xpAmount);
+        selectButton.setSpecialtyName(specialtyName);
         this.imgDisplay.setIcon(new ImageIcon(img));
 
+    }
+    public SpecialtyName getSpecialtyName(){
+        return selectButton.getSpecialtyName();
     }
 
 
@@ -63,10 +64,10 @@ public class OptionPanel extends Panel {
         components.add(xpAmount);
 
         imgDisplay = new JLabel();
-        imgDisplay.setBounds(40, 80, OPTION_WIDTH, 250);
+        imgDisplay.setBounds(40, 80, OPTION_WIDTH, OPTION_IMG_HEIGHT);
         components.add(imgDisplay);
 
-        selectButton = new Button("PURCHASE",specialtyName);
+        selectButton = new Button("PURCHASE");
         selectButton.setBounds(70, 330, 150, 50);
 
         components.add(selectButton);

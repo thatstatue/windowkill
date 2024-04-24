@@ -11,5 +11,6 @@ public class VertexView extends AbilityView{
         super.paint(g);
         Graphics2D g2D = (Graphics2D) g;
         g2D.setColor(Color.orange);
+        g2D.fillOval(getX()-2, getY()-2, 5, 5);
     }
 }

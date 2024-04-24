@@ -53,10 +53,13 @@ public class EpsilonModel extends EntityModel {
 
     public void spawnVertex(){
         vertices.add(new VertexModel(getXO(), getYO()- getRadius(), this));
+        System.out.println(vertices.size());
         double theta = Math.PI*2/(vertices.size()*1D);
         for (int i = 0; i< vertices.size(); i++){
-            vertices.get(i).setAnchor(new Point2D.Double(getXO(), getYO()- getRadius()));
-            vertices.get(i).rotate(i*theta);
+            VertexModel vertexModel = vertices.get(i);
+            vertexModel.setX(getXO());
+            vertexModel.setY( getYO()- getRadius());
+            vertexModel.rotate(i*theta);
         }
     }
 
@@ -79,8 +82,6 @@ public class EpsilonModel extends EntityModel {
     @Override
     public void gotHit(int attackHp){
         super.gotHit(attackHp);
-        getGameFrame().setHpAmount(getHp());
-
     }
     @Override
     public void destroy(){

@@ -64,29 +64,13 @@ public class Update {
         }
         keepEpsilonInBounds();
         specialtiesControl();
+        writControl();
         epsilonRewardControl();
         enemyIntersectionControl();
         epsilonIntersectionControl();
         keepEpsilonInBounds();
-        long now = getTotalSeconds();
-        if (Writ.getInitSeconds()>0 && now - Writ.getInitSeconds() <= WRIT_DURATION ) {
-            switch (Writ.getChosenSkill()){
-                case Ares ->{
-                    BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
-                }
-                case Aceso -> {
-                    if (now -  Writ.getInitSeconds()>=Writ.getTimes() && Writ.getTimes()<10){
-                        EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp()+1);
-                        Writ.timesAddIncrement();
-                    }
-                }
-                case Proteus -> {
-                    EpsilonModel.getINSTANCE().spawnVertex();
-                }
-            }
-        }else{
-            BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
-        }
+
 
     }
+
 }

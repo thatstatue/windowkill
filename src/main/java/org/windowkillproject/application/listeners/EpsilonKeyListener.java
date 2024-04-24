@@ -10,6 +10,7 @@ import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import static org.windowkillproject.application.Application.*;
+import static org.windowkillproject.application.Config.WRIT_COOL_DOWN;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.Update.frameUpdateTimer;
 import static org.windowkillproject.controller.Update.modelUpdateTimer;
@@ -74,8 +75,11 @@ public class EpsilonKeyListener implements NativeKeyListener {
                 System.out.println("clicked");
                 if (EpsilonModel.getINSTANCE().getXp()>= 100){
                     if (Writ.getChosenSkill()!=null){
-                        if ( getTotalSeconds() - Writ.getInitSeconds() >= 5*60 )
+                        long deltaT =getTotalSeconds() - Writ.getInitSeconds();
+                        if (deltaT <=0 || deltaT >= WRIT_COOL_DOWN ) {
                             Writ.setInitSeconds();
+                            Writ.acceptedClicksAddIncrement();
+                        }
                         else System.out.println("time prob");
                     }
                     else System.out.println("writ null");

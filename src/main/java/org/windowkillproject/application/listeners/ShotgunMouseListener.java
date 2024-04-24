@@ -17,6 +17,7 @@ import static org.windowkillproject.controller.Utils.weighedVector;
 
 public class ShotgunMouseListener implements NativeMouseListener {
     public static long empowerInitSeconds = Long.MAX_VALUE;
+    private int times;
     public void nativeMouseClicked(NativeMouseEvent e) {
 
         Point2D mouseLoc = MouseInfo.getPointerInfo().getLocation();
@@ -26,7 +27,9 @@ public class ShotgunMouseListener implements NativeMouseListener {
         BulletModel bulletModel = new BulletModel(
                 epsilonModel.getXO(), epsilonModel.getYO(), relativePoint);
         long deltaT =getTotalSeconds() - empowerInitSeconds ;
-        if ( deltaT>0 && deltaT<= 10){
+        if ( deltaT>0 && deltaT<= 10 && deltaT>times/2){
+            times++;
+
             Point2D point = weighedVector(unitVector(epsilonModel.getAnchor(),relativePoint),10);
             var extraBullet1 = new BulletModel(
                     (int) (epsilonModel.getXO()+point.getX()),
@@ -37,6 +40,7 @@ public class ShotgunMouseListener implements NativeMouseListener {
                     (int) (epsilonModel.getYO()+point.getY()), relativePoint);
             extraBullet1.shot();
             extraBullet2.shot();
+            if (times >=20) times = 0;
         }
         bulletModel.shot();
     }

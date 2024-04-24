@@ -60,7 +60,6 @@ public abstract class Controller {
     }
 
     public static <T extends AbilityView> void createAbilityView(Class<T> tClass, String id, int x, int y) {
-
         try {
             Constructor<T> constructor = tClass.getConstructor(String.class, int.class, int.class);
             constructor.newInstance(id, x, y);

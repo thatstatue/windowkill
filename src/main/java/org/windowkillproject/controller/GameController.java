@@ -2,6 +2,7 @@ package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
+import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -18,8 +19,8 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.application.Config.BANISH_DURATION;
-import static org.windowkillproject.application.Config.IMPACT_DURATION;
+import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
 import static org.windowkillproject.application.panels.ShopPanel.*;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
@@ -192,6 +193,8 @@ public abstract class GameController {
             int deltaX = - epsilonModel.getX();
             epsilonModel.move(deltaX ,0);
         }
+        getGameFrame().setHpAmount(epsilonModel.getHp());
+
     }
 
     public static void epsilonIntersectionControl() {
@@ -223,6 +226,31 @@ public abstract class GameController {
                     break;
                 }
             }
+        }
+    }
+
+    public static void writControl() {
+        long now = getTotalSeconds();
+        if (Writ.getInitSeconds()>0 && now - Writ.getInitSeconds() <= WRIT_DURATION ) {
+            switch (Writ.getChosenSkill()){
+                case Ares ->{
+                    BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
+                }
+                case Aceso -> {
+                    if (now -  Writ.getInitSeconds()>=Writ.getTimes() && Writ.getTimes()<10){
+                        EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp()+1);
+                        Writ.timesAddIncrement();
+                    }
+                }
+                case Proteus -> {
+                    if (Writ.getTimes()< Writ.getAcceptedClicks()){
+                        EpsilonModel.getINSTANCE().spawnVertex();
+                        Writ.timesAddIncrement();
+                    }
+                }
+            }
+        }else{
+            BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
         }
     }
 

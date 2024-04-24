@@ -3,6 +3,7 @@ package org.windowkillproject.application.frames;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
+import org.windowkillproject.model.abilities.AbilityModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
 
@@ -32,9 +34,6 @@ public class GameFrame extends JFrame {
         this.setLayout(null);
         setContentPane(new GamePanel());
 
-    }
-    public GamePanel getGamePanel(){
-        return (GamePanel) getContentPane();
     }
     public JLabel[] getLabels(){
         return new JLabel[]{new JLabel(""),clock,xp
@@ -100,10 +99,10 @@ public class GameFrame extends JFrame {
     }
 
     private static void fixEntityPositionsInFrame(int code) {
-        if (code == BULLET_HIT_LEFT || code == BULLET_HIT_UP){
-            for (EntityModel entityModel : entityModels){
+        if (code == BULLET_HIT_LEFT || code == BULLET_HIT_UP) {
+            for (EntityModel entityModel : entityModels) {
                 if (code == BULLET_HIT_LEFT) {
-                    entityModel.move(FRAME_STRETCH_SPEED,0);
+                    entityModel.move(FRAME_STRETCH_SPEED, 0);
                 }
                 if (code == BULLET_HIT_UP) {
                     entityModel.move(0, FRAME_STRETCH_SPEED);
@@ -121,8 +120,8 @@ public class GameFrame extends JFrame {
     public void setXpAmount(int xp ){
         this.xp.setText("✦"+xp);
     }
-    public void setHpAmount(int xp ){
-        this.hp.setText(xp+ " ♡");
+    public void setHpAmount(int hp ){
+        this.hp.setText(hp+ " ♡");
     }
     private void initLabels(){
         clock.setFont(new Font(Font.DIALOG, Font.BOLD, 20));

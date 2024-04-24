@@ -23,15 +23,15 @@ public class SkillTreePanel extends Panel{
     @Override
     protected ArrayList<Component> initComponents() {
         ArrayList<Component> components = new ArrayList<>();
-        ares = new OptionPanel(Ares, 750, ImgData.getData().getBanish());
+        ares = new OptionPanel(Ares, 750, ImgData.getData().getAres());
         ares.setBounds(60, 100, 270, 400);
         components.add(ares);
 
-        aceso = new OptionPanel(Aceso, 500, ImgData.getData().getEmpower());
+        aceso = new OptionPanel(Aceso, 500, ImgData.getData().getAceso());
         aceso.setBounds(360, 100, 270, 400);
         components.add(aceso);
 
-        proteus = new OptionPanel(Proteus, 1000, ImgData.getData().getHeal());
+        proteus = new OptionPanel(Proteus, 1000, ImgData.getData().getProteus());
 
         proteus.setBounds(660, 100, 270, 400);
         components.add(proteus);

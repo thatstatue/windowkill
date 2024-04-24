@@ -15,6 +15,7 @@ public class Config {
     public static final int GAME_WIDTH = 700;
     public static final int GAME_HEIGHT = 700;
     public static final int OPTION_WIDTH = 300;
+    public static final int OPTION_IMG_HEIGHT = 250;
     public static final int OPTION_HEIGHT = 700;
     public static final int FPS = 35;
     public static final int UPS = 60;
@@ -42,6 +43,8 @@ public class Config {
     public static final Color GAME_BG_COLOR = Color.decode("#634c64");
     public static final Color BUTTON_FG_COLOR = Color.white;
     public static final int WRIT_DURATION = 15;
+    public static final int WRIT_COOL_DOWN = 20;
+
 
     public static final int BULLET_ATTACK_HP = 5;
     public static final int BULLET_HIT_DOWN = 1;

@@ -25,12 +25,19 @@ public class Button extends JButton {
     private int xpAmount;
     private OptionPanel.SpecialtyName specialtyName = Heal;
 
-    public Button (String name, OptionPanel.SpecialtyName specialtyName){
+    public OptionPanel.SpecialtyName getSpecialtyName() {
+        return specialtyName;
+    }
+
+    public void setSpecialtyName(OptionPanel.SpecialtyName specialtyName) {
+        this.specialtyName = specialtyName;
+    }
+
+    public Button (String name){
         setText(name);
         setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         setBackground(color);
         setForeground(Color.white);
-        this.specialtyName = specialtyName;
         setSelectButtonListener();
     }
     public void setXpAmount(int xpAmount){
