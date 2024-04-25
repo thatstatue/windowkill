@@ -20,6 +20,11 @@ public class EpsilonKeyListener implements NativeKeyListener {
     public static boolean isRightPressed;
     public static boolean isUpPressed;
     public static boolean isDownPressed;
+    private static boolean started;
+
+    public static boolean isStarted() {
+        return started;
+    }
 
     private int UP_KEY =  NativeKeyEvent.VC_UP ;
     private int DOWN_KEY =  NativeKeyEvent.VC_DOWN ;
@@ -41,10 +46,11 @@ public class EpsilonKeyListener implements NativeKeyListener {
         }
 
         GlobalScreen.addNativeKeyListener(this);
+        started = true;
     }
 
     public void stopListener() throws NativeHookException {
-        GlobalScreen.unregisterNativeHook();
+        GlobalScreen.removeNativeKeyListener(this);
     }
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {

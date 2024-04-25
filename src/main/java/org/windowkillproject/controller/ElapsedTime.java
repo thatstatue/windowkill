@@ -7,17 +7,28 @@ import static org.windowkillproject.model.Wave.setBetweenWaves;
 
 public abstract class ElapsedTime {
     private static int seconds, minutes;
+    private static boolean running;
     private static Timer clock;
+
+    public static void setRunning(boolean running) {
+        ElapsedTime.running = running;
+    }
+
+    public static boolean isRunning() {
+        return running;
+    }
+
     public static int getTotalSeconds() {
         return seconds + minutes*60;
     }
 
 
-    public static void run(){
+    public static void run() {
         clock = new Timer(1000, e -> {
             pass();
             if (minutes == 0 && seconds == 10) setBetweenWaves(false);
             getGameFrame().setClockTime(timeSetter());
+            System.out.println(seconds);
         });
         clock.start();
     }
@@ -25,7 +36,18 @@ public abstract class ElapsedTime {
         if (clock!= null) clock.stop();
     }
     public static void resume(){
-        if (clock!= null) clock.start();
+        if (clock!= null) {
+            clock.start();
+            System.out.println("Heuuuuuu");
+        }
+        else {
+            System.out.println("lkskdmjfolsedk");
+            run();
+        }
+    }
+    public static void reset(){
+        seconds = 0;
+        minutes = 0;
     }
 
     private static String timeSetter(){

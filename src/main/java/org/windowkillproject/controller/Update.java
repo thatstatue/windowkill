@@ -28,7 +28,6 @@ public class Update {
     public static Timer modelUpdateTimer;
     public static Timer frameUpdateTimer;
     public Update() {
-        spawnWave();
         modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
         }};
@@ -37,6 +36,7 @@ public class Update {
             setCoalesce(true);
         }};
         frameUpdateTimer.start();
+        spawnWave();
     }
 
     public void updateView() {

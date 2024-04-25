@@ -44,12 +44,17 @@ public class ShotgunMouseListener implements NativeMouseListener {
         }
         bulletModel.shot();
     }
+    private static boolean started;
 
+    public static boolean isStarted() {
+        return started;
+    }
     public void startListener() {
         GlobalScreen.addNativeMouseListener(this);
+        started = true;
     }
 
     public void stopListener() throws NativeHookException {
-        GlobalScreen.unregisterNativeHook();
+//        GlobalScreen.removeNativeMouseListener(this);
     }
 }

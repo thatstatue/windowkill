@@ -23,6 +23,7 @@ public class GameFrame extends JFrame {
     private final JLabel xp = new JLabel("✦0");
     private final JLabel hp = new JLabel("100 ♡");
     private final JLabel wave = new JLabel("~1");
+
     public GameFrame() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
@@ -35,9 +36,10 @@ public class GameFrame extends JFrame {
         setContentPane(new GamePanel());
 
     }
-    public JLabel[] getLabels(){
-        return new JLabel[]{new JLabel(""),clock,xp
-                ,new JLabel(String.valueOf(getEnemiesKilled())),wave};
+
+    public JLabel[] getLabels() {
+        return new JLabel[]{new JLabel(""), clock, xp
+                , new JLabel(String.valueOf(getEnemiesKilled())), wave};
     }
 
     public void shrink() {
@@ -58,7 +60,8 @@ public class GameFrame extends JFrame {
             this.setBounds(newX, newY, newWidth, newHeight);
         }
     }
-    public void stretch(int code){
+
+    public void stretch(int code) {
         AtomicInteger count = new AtomicInteger();
         Timer stretchTimer = new Timer(Config.FPS, null);
         stretchTimer.addActionListener(e -> {
@@ -66,13 +69,13 @@ public class GameFrame extends JFrame {
             int newY = getY();
             int newWidth = getWidth();
             int newHeight = getHeight();
-            switch (code){
+            switch (code) {
                 case BULLET_HIT_DOWN -> {
                     newY += FRAME_STRETCH_SPEED / 2;
                     newHeight += FRAME_STRETCH_SPEED;
                 }
                 case BULLET_HIT_LEFT -> {
-                    newX -= FRAME_STRETCH_SPEED ;
+                    newX -= FRAME_STRETCH_SPEED;
                     newWidth += FRAME_STRETCH_SPEED;
                 }
                 case BULLET_HIT_RIGHT -> {
@@ -85,12 +88,12 @@ public class GameFrame extends JFrame {
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + code);
             }
-            if (count.get() <7) {
+            if (count.get() < 7) {
                 isStretching = true;
                 fixEntityPositionsInFrame(code);
                 setBounds(newX, newY, newWidth, newHeight);
                 count.getAndIncrement();
-            }else {
+            } else {
                 isStretching = false;
                 stretchTimer.stop();
             }
@@ -111,19 +114,23 @@ public class GameFrame extends JFrame {
         }
     }
 
-    public void setClockTime(String time){
+    public void setClockTime(String time) {
         clock.setText(time);
     }
-    public void setWaveLevel(int level){
-        wave.setText("~"+level);
+
+    public void setWaveLevel(int level) {
+        wave.setText("~" + level);
     }
-    public void setXpAmount(int xp ){
-        this.xp.setText("✦"+xp);
+
+    public void setXpAmount(int xp) {
+        this.xp.setText("✦" + xp);
     }
-    public void setHpAmount(int hp ){
-        this.hp.setText(hp+ " ♡");
+
+    public void setHpAmount(int hp) {
+        this.hp.setText(hp + " ♡");
     }
-    private void initLabels(){
+
+    private void initLabels() {
         clock.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         clock.setForeground(Color.white);
         clock.setBounds(3, 1, 300, 20);
@@ -145,16 +152,21 @@ public class GameFrame extends JFrame {
         this.add(wave);
 
     }
-    public void shrinkFast(){
-        ElapsedTime.run();
-        initLabels();
 
+    public void shrinkFast() {
+        ElapsedTime.reset();
+        if (!ElapsedTime.isRunning()) {
+            ElapsedTime.setRunning(true);
+            ElapsedTime.run();
+        }
+        else ElapsedTime.resume();
+        initLabels();
         Timer shrinkFastTimer = new Timer(1, null);
         shrinkFastTimer.addActionListener(e -> {
-            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED*3 / 2;
-            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED*3 / 2;
-            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED*3;
-            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED*3;
+            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED * 3 / 2;
+            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED * 3 / 2;
+            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED * 3;
+            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED * 3;
             boolean stoppedX = false, stoppedY = false;
             if (getWidth() <= Config.GAME_MIN_SIZE) {
                 newWidth = Config.GAME_MIN_SIZE;
@@ -166,13 +178,14 @@ public class GameFrame extends JFrame {
                 newY = getY();
                 stoppedY = true;
             }
+            //keep epsilon in the middle
             if (!(stoppedX && stoppedY)) {
                 setBounds(newX, newY, newWidth, newHeight);
-                EpsilonModel epsilonModel =  EpsilonModel.getINSTANCE();
-                int deltaX = newWidth/2 - epsilonModel.getXO() - epsilonModel.getRadius();
-                int deltaY = newHeight/2 - epsilonModel.getYO() - epsilonModel.getRadius();
+                EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
+                int deltaX = newWidth / 2 - epsilonModel.getXO() - epsilonModel.getRadius();
+                int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();
                 epsilonModel.move(deltaX, deltaY);
-            }else {
+            } else {
                 shrinkFastTimer.stop();
             }
         });

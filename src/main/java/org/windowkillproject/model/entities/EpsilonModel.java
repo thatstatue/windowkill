@@ -13,8 +13,13 @@ import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
 public class EpsilonModel extends EntityModel {
     private static EpsilonModel INSTANCE;
     public static EpsilonModel getINSTANCE(){
-        if (INSTANCE == null) INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        if (INSTANCE == null) INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, 0);
         return INSTANCE;
+    }
+    public static void newINSTANCE(){
+        int xp = 0;
+        if (INSTANCE != null) xp = INSTANCE.getXp();
+        INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, xp);
     }
     private int xp;
 
@@ -43,12 +48,12 @@ public class EpsilonModel extends EntityModel {
         }
     }
 
-    private EpsilonModel(int x, int y){
+    private EpsilonModel(int x, int y, int xp){
         super(x , y);
         setRadius(EPSILON_RADIUS);
         setHp(100);
         setAttackHp(10);
-        setXp(2000);
+        setXp(xp);
     }
 
     public void spawnVertex(){

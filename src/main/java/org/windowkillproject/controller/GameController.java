@@ -102,16 +102,8 @@ public abstract class GameController {
         impactTimer1.start();
         impactTimer2.start();
         //wave of collision
-
-        for (EntityModel entity : entityModels) {
-            if (!(entity.equals(entityModel) || entity.equals(enemyModel))) {
-                Point2D deltaS = impactPoint(entity.getAnchor(), closestPointOfEnemy);
-                if (!(deltaS.getY() < 1 && deltaS.getX() < 1)) {
-                    Timer impactTimer = getImpactTimer(entity, deltaS, IMPACT_DURATION);
-                    impactTimer.start();
-                }
-            }
-        }
+        Timer impactsTimer = getImpactsTimer(entityModels,entityModel,enemyModel, closestPointOfEnemy, IMPACT_DURATION);
+        impactsTimer.start();
     }
 
     private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS, int t) {
@@ -126,6 +118,32 @@ public abstract class GameController {
             } else {
                 keepEpsilonInBounds();
                 entityModel.setImpact(false);
+                impactTimer.stop();
+            }
+        });
+        return impactTimer;
+    }
+    private static Timer getImpactsTimer(ArrayList<EntityModel> entityModels, EntityModel not1, EntityModel not2,Point2D closestPointOfEnemy, int t){
+        AtomicInteger count = new AtomicInteger();
+        Timer impactTimer = new Timer(Config.FPS / 5, null);
+        impactTimer.addActionListener(e -> {
+            if (count.get() < t) {
+                for (EntityModel entityModel : entityModels){
+                    if (!(entityModel.equals(not1)|| entityModel.equals(not2))) {
+                        entityModel.setImpact(true);
+                        Point2D deltaS = impactPoint(entityModel.getAnchor(), closestPointOfEnemy);
+                        entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
+                    }
+                }
+                keepEpsilonInBounds();
+                count.getAndIncrement();
+            } else {
+                for (EntityModel entityModel : entityModels){
+                    if (!(entityModel.equals(not1)|| entityModel.equals(not2))) {
+                        entityModel.setImpact(false);
+                    }
+                }
+                keepEpsilonInBounds();
                 impactTimer.stop();
             }
         });
@@ -201,7 +219,6 @@ public abstract class GameController {
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         ArrayList<EnemyModel> enemies = getEnemies();
         for (EnemyModel enemyModel : enemies) {
-
             //vertex of enemy hit epsilon
             Point2D d = Utils.closestPointOnPolygon(
                     epsilonModel.getAnchor(), enemyModel.getPointVertices());
@@ -214,7 +231,6 @@ public abstract class GameController {
                 }
                 impact(epsilonModel, enemyModel);
                 break;
-                //  }
             }
 
             //vertex of epsilon hit enemy
