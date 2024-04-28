@@ -37,7 +37,7 @@ public class Wave {
         AtomicInteger count = new AtomicInteger();
         Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.2*level)), null);
         creatorTimer.addActionListener(e -> {
-            int bound = level * (level + 5); //todo unhard
+            int bound = level * (level + Config.BOUND); //todo still allows too many enemies after one game
             if (count.get() < bound) {
                 //doesn't allow too many enemies
                 if (count.get() - getEnemiesKilled() <= MAX_ENEMIES) {

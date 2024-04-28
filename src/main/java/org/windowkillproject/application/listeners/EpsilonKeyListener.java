@@ -5,15 +5,12 @@ import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.frames.ShopFrame;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import static org.windowkillproject.application.Application.*;
 import static org.windowkillproject.application.Config.WRIT_COOL_DOWN;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
-import static org.windowkillproject.controller.Update.frameUpdateTimer;
-import static org.windowkillproject.controller.Update.modelUpdateTimer;
 
 public class EpsilonKeyListener implements NativeKeyListener {
     public static boolean isLeftPressed;
@@ -70,6 +67,11 @@ public class EpsilonKeyListener implements NativeKeyListener {
     @Override
      public void nativeKeyReleased(NativeKeyEvent e) {
         int keyCode = e.getKeyCode();
+        try {
+            Thread.sleep(Config.SENSITIVITY_RATE);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
         switch (keyCode){
             case NativeKeyEvent.VC_LEFT -> isLeftPressed = false;
             case NativeKeyEvent.VC_RIGHT -> isRightPressed = false;

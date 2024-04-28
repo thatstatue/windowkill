@@ -4,6 +4,9 @@ import org.windowkillproject.application.frames.*;
 import org.windowkillproject.application.listeners.EpsilonKeyListener;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 
+import org.windowkillproject.application.panels.SettingsPanel;
+import org.windowkillproject.application.panels.ShopPanel;
+import org.windowkillproject.application.panels.SkillTreePanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Update;
 import org.windowkillproject.model.abilities.BulletModel;
@@ -26,9 +29,15 @@ public class Application implements Runnable {
     private static final ShotgunMouseListener shotgunMouseListener = new ShotgunMouseListener();
     private static final EpsilonKeyListener epsilonKeyListener = new EpsilonKeyListener();
     private static GameFrame gameFrame;
-    private static ShopFrame shopFrame;
+    private static SideFrame shopFrame;
     public static ScoreFrame scoreFrame;
-    private static SkillTreeFrame skillTreeFrame;
+    private static SideFrame skillTreeFrame;
+    private static SideFrame settingsFrame;
+
+    public static SideFrame getSettingsFrame() {
+        if (settingsFrame == null) settingsFrame = new SideFrame(SettingsPanel.class);
+        return settingsFrame;
+    }
 
     public static PrimaryFrame getPrimaryFrame(){
         if (primaryFrame == null) primaryFrame = new PrimaryFrame();
@@ -38,12 +47,12 @@ public class Application implements Runnable {
         if (gameFrame == null) gameFrame = new GameFrame();
         return gameFrame;
     }
-    public static ShopFrame getShopFrame(){
-        if (shopFrame == null) shopFrame = new ShopFrame();
+    public static SideFrame getShopFrame(){
+        if (shopFrame == null) shopFrame = new SideFrame(ShopPanel.class);
         return shopFrame;
     }
-    public static SkillTreeFrame getSkillTreeFrame(){
-        if (skillTreeFrame == null) skillTreeFrame = new SkillTreeFrame();
+    public static SideFrame getSkillTreeFrame(){
+        if (skillTreeFrame == null) skillTreeFrame = new SideFrame(SkillTreePanel.class);
         return skillTreeFrame;
     }
 
@@ -55,11 +64,13 @@ public class Application implements Runnable {
     }
 
     public static void initPFrame() {
+        getSettingsFrame().setVisible(false);
         if (scoreFrame!=null) scoreFrame.dispose();
         gameFrame = new GameFrame();
-        shopFrame = new ShopFrame();
+        shopFrame = new SideFrame(ShopPanel.class);
         getSkillTreeFrame().setVisible(false);
         getPrimaryFrame().setVisible(true);
+        SoundPlayer.getSoundPlayer();
 
 
     }
@@ -131,7 +142,8 @@ public class Application implements Runnable {
     }
 
     public static void showSettings() {
-//todo
+        getPrimaryFrame().setVisible(false);
+        getSettingsFrame().setVisible(true);
     }
     public static void resetGame(){
         collectableModels = new ArrayList<>();

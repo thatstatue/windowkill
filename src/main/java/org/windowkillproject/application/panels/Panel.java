@@ -3,9 +3,11 @@ package org.windowkillproject.application.panels;
 import org.windowkillproject.application.Config;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import static org.windowkillproject.application.Config.TEXT_FONT;
 
@@ -40,6 +42,21 @@ public abstract class Panel extends JPanel {
         jLabel.setFont(TEXT_FONT);
         jLabel.setForeground(Config.BUTTON_FG_COLOR);
         return jLabel;
+    }
+    protected final JSlider sliderMaker(ChangeListener changeListener, int x, int y){
+        JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 2, 2);
+        slider.setMajorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setOpaque(false);
+        slider.setPaintLabels(true);
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+        labelTable.put(0, new JLabel("LOW"));
+        labelTable.put(1, new JLabel("NORMAL"));
+        labelTable.put(2, new JLabel("HIGH"));
+        slider.setLabelTable(labelTable);
+        slider.addChangeListener(changeListener);
+        slider.setBounds(x, y, 300, 50);
+        return slider;
     }
     protected void addComponentsToPanel(){
         if (components != null) {
