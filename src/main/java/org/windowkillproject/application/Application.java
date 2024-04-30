@@ -9,8 +9,10 @@ import org.windowkillproject.application.panels.ShopPanel;
 import org.windowkillproject.application.panels.SkillTreePanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Update;
+import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
@@ -23,6 +25,7 @@ import static org.windowkillproject.controller.Update.modelUpdateTimer;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemiesKilled;
 
 public class Application implements Runnable {
     private static PrimaryFrame primaryFrame;
@@ -64,22 +67,25 @@ public class Application implements Runnable {
     }
 
     public static void initPFrame() {
-        getSettingsFrame().setVisible(false);
-        if (scoreFrame!=null) scoreFrame.dispose();
+
+        if (gameFrame != null) gameFrame= null;
+        if (scoreFrame != null) scoreFrame.dispose();
+        scoreFrame = null;
+
         gameFrame = new GameFrame();
         shopFrame = new SideFrame(ShopPanel.class);
+
         getSkillTreeFrame().setVisible(false);
+        getSettingsFrame().setVisible(false);
         getPrimaryFrame().setVisible(true);
-        SoundPlayer.getSoundPlayer();
-
-
+      //  SoundPlayer.getSoundPlayer(); todo
     }
     public static void initScoreFrame(){
         getGameFrame().setVisible(false);
         scoreFrame= new ScoreFrame(gameFrame.getLabels());
         pauseUpdate();
 
-        gameFrame = new GameFrame();
+       // gameFrame = new GameFrame(); todo
     }
 
 
@@ -105,6 +111,7 @@ public class Application implements Runnable {
         gameFrame.setVisible(true);
         if (!EpsilonKeyListener.isStarted()) epsilonKeyListener.startListener();
         if (!ShotgunMouseListener.isStarted()) shotgunMouseListener.startListener();
+        getGameFrame().setUpGame();
         getGameFrame().shrinkFast();
         new Update();
 
@@ -134,7 +141,7 @@ public class Application implements Runnable {
     public static void hideShFrame(){
         getShopFrame().setVisible(false);
         getGameFrame().setVisible(true);
-        System.out.println("what the");
+
         ElapsedTime.resume();
         modelUpdateTimer.start();
         frameUpdateTimer.start();
@@ -146,6 +153,7 @@ public class Application implements Runnable {
         getSettingsFrame().setVisible(true);
     }
     public static void resetGame(){
+        setEnemiesKilled(0);
         collectableModels = new ArrayList<>();
         BulletModel.bulletModels = new ArrayList<>();
         abilityModels = new ArrayList<>();
@@ -153,6 +161,10 @@ public class Application implements Runnable {
         AbilityView.abilityViews = new ArrayList<>();
         EntityView.entityViews = new ArrayList<>();
         EpsilonModel.newINSTANCE();
+        //GAME_MIN_SIZE=300;
+        Wave.waves.clear();
+        Wave.setLevel(0);
+        Wave.setStartNewWave(false);
     }
 
 

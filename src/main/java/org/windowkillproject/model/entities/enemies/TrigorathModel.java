@@ -17,7 +17,7 @@ public class TrigorathModel extends EnemyModel {
         setHp(15);
         setAttackHp(10);
         setRewardCount(2);
-        setRewardXps(50);
+        setRewardXps(500);
         initVertices();
         int[] xPoints = new int[3];
         int[] yPoints = new int[3];

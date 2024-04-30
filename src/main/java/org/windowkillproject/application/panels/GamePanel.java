@@ -13,7 +13,6 @@ public class GamePanel extends Panel {
         super();
         setBackground(Color.black);
         setPreferredSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
-
         setFocusable(true);
         requestFocusInWindow();
     }

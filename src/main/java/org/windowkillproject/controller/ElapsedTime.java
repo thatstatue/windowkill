@@ -38,10 +38,8 @@ public abstract class ElapsedTime {
     public static void resume(){
         if (clock!= null) {
             clock.start();
-            System.out.println("Heuuuuuu");
         }
         else {
-            System.out.println("lkskdmjfolsedk");
             run();
         }
     }

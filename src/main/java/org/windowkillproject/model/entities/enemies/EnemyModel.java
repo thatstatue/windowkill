@@ -23,6 +23,7 @@ public abstract class EnemyModel extends EntityModel {
 
     public static void setEnemiesKilled(int enemiesKilled) {
         EnemyModel.enemiesKilled = enemiesKilled;
+        System.out.println("enemies set to" + enemiesKilled);
     }
 
     public int getRewardCount() {
@@ -78,6 +79,7 @@ public abstract class EnemyModel extends EntityModel {
     public void destroy() {
         super.destroy();
         enemiesKilled++;
+            System.out.println("destroyed " + this.getId()+ " ; killed enemies are now " + enemiesKilled);
         for (int i = 0 ; i < rewardCount; i++){
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();

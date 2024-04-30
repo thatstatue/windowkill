@@ -20,19 +20,21 @@ public class Config {
     public static final int FPS = 35;
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;
-    public static int ENEMY_RADIUS = 20;
+    public static final int ENEMY_RADIUS = 20;
     public static final int IMPACT_DURATION=7;
     public static final int BANISH_DURATION=13;
 
 
-    public static int MAX_ENEMY_SPEED = 4;
-    public static int MAX_ENEMIES = 4;
+    public static final int MAX_ENEMY_SPEED = 5;
+    public static final int MAX_ENEMIES = 4;
     public static final int MIN_ENEMY_SPEED = 2;
-    public static int SENSITIVITY_RATE = 5;
+    public static final int SENSITIVITY_RATE = 5;
 
-    public static int EPSILON_SPEED = 3;
+    public static final int EPSILON_SPEED = 4;
+    public static final int BULLET_SPEED = 7;
+
     public static final int FRAME_SHRINKAGE_SPEED = 2;
-    public static int BOUND = 5;
+    public static final int BOUND = 5;
 
     public static final int FRAME_STRETCH_SPEED = 3;
     public static final int GAME_MIN_SIZE = 300;

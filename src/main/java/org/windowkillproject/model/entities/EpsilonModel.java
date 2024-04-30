@@ -20,6 +20,7 @@ public class EpsilonModel extends EntityModel {
         int xp = 0;
         if (INSTANCE != null) xp = INSTANCE.getXp();
         INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, xp);
+        INSTANCE.setRadius(EPSILON_RADIUS);
     }
     private int xp;
 
@@ -33,8 +34,8 @@ public class EpsilonModel extends EntityModel {
     public void route(){
         EpsilonModel eM = getINSTANCE();
 
-        int endX = eM.getWidth() + eM.getX() + eM.getRadius();
-        int endY = eM.getHeight() + eM.getY() + 3* eM.getRadius();
+        int endX = eM.getWidth() + eM.getX();
+        int endY = eM.getHeight() + eM.getY();
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed && eM.getY() - Config.EPSILON_SPEED >= 0)
                 eM.move(0,-Config.EPSILON_SPEED);

@@ -45,11 +45,9 @@ public class BulletModel extends AbilityModel {
     }
 
     public void move() {
-
-
         if (isShoot()) {
             Point2D delta = unitVector( getMousePoint(), this.getAnchor());
-            delta = weighedVector(delta, Config.EPSILON_SPEED* 2.5);
+            delta = weighedVector(delta, Config.BULLET_SPEED);
             //System.out.println(point2D.getX());
             /*
             setX((int) (getX() + point2D.getX()));
@@ -59,34 +57,42 @@ public class BulletModel extends AbilityModel {
             setY((int) (getY() + delta.getY()));
 
             //enemies getting shot
-            for (EntityModel entityModel : entityModels) {
-                if (entityModel instanceof EnemyModel) {
-                    EnemyModel enemyModel = (EnemyModel) entityModel;
-                    Area enemyA = new Area(enemyModel.getPolygon());
-                    if (enemyA.contains(this.getX(), this.getY())) {
-                        enemyModel.gotShoot(this);
-                        explode();
-                        break;
-                    }
-                }
-            }
+            isEnemyShot();
 
             //frame getting shot
-            if (getX() < 0 || getX() > getGameFrame().getWidth() ||
-                    getY() < 0 || getY() > getGameFrame().getHeight()) {
-                if (getX() < 0) {
-                    getGameFrame().stretch(Config.BULLET_HIT_LEFT);
+            isFrameShot();
+        }
+    }
+
+    private void isFrameShot() {
+        if (getX() < 0 || getX() > getGameFrame().getWidth() ||
+                getY() < 0 || getY() > getGameFrame().getHeight()) {
+            if (getX() < 0) {
+                getGameFrame().stretch(Config.BULLET_HIT_LEFT);
+            }
+            if (getX() > getGameFrame().getWidth()) {
+                getGameFrame().stretch(Config.BULLET_HIT_RIGHT);
+            }
+            if (getY() < 0) {
+                getGameFrame().stretch(Config.BULLET_HIT_UP);
+            }
+            if (getY() > getGameFrame().getHeight()) {
+                getGameFrame().stretch(Config.BULLET_HIT_DOWN);
+            }
+            explode();
+        }
+    }
+
+    private void isEnemyShot() {
+        for (EntityModel entityModel : entityModels) {
+            if (entityModel instanceof EnemyModel) {
+                EnemyModel enemyModel = (EnemyModel) entityModel;
+                Area enemyA = new Area(enemyModel.getPolygon());
+                if (enemyA.contains(this.getX(), this.getY())) {
+                    enemyModel.gotShoot(this);
+                    explode();
+                    break;
                 }
-                if (getX() > getGameFrame().getWidth()) {
-                    getGameFrame().stretch(Config.BULLET_HIT_RIGHT);
-                }
-                if (getY() < 0) {
-                    getGameFrame().stretch(Config.BULLET_HIT_UP);
-                }
-                if (getY() > getGameFrame().getHeight()) {
-                    getGameFrame().stretch(Config.BULLET_HIT_DOWN);
-                }
-                explode();
             }
         }
     }

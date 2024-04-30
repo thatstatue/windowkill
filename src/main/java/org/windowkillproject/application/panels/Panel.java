@@ -44,7 +44,7 @@ public abstract class Panel extends JPanel {
         return jLabel;
     }
     protected final JSlider sliderMaker(ChangeListener changeListener, int x, int y){
-        JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 2, 2);
+        JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 2, 1);
         slider.setMajorTickSpacing(1);
         slider.setPaintTicks(true);
         slider.setOpaque(false);

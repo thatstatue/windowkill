@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import static org.windowkillproject.application.Config.MIN_ENEMY_SPEED;
 
 public abstract class Utils {
-//    public static double vectorTheta(Point2D point, Point2D anchor){
-//        return Math.atan2(point.getY() - anchor.getY(), point.getX() - anchor.getX());
-//    }
     public static Point2D unitVector(Point2D point, Point2D anchor){
         double dY = point.getY() - anchor.getY();
         double dX = point.getX() - anchor.getX();
@@ -77,8 +74,5 @@ public abstract class Utils {
         else if (u <= 0.0) return (Point2D) head1.clone();
         else return new Point2D.Double(head2.getX()* u + head1.getX() * (1.0 - u) + 0.5,head2.getY() * u + head1.getY() * (1.0 - u) + 0.5);
     }
-//    public static Point2D addVectors(Point2D point1,Point2D point2){
-//        return new Point2D.Double(point1.getX()+point2.getX(),point1.getY()+point2.getY());
-//    }
 
 }

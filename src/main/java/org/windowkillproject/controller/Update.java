@@ -15,10 +15,8 @@ import org.windowkillproject.view.entities.EntityView;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.controller.Controller.setViewBounds;
-import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
-import static org.windowkillproject.model.Wave.spawnWave;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
@@ -36,7 +34,7 @@ public class Update {
             setCoalesce(true);
         }};
         frameUpdateTimer.start();
-        spawnWave();
+        new Wave();
     }
 
     public void updateView() {
@@ -69,6 +67,7 @@ public class Update {
         enemyIntersectionControl();
         epsilonIntersectionControl();
         keepEpsilonInBounds();
+        if (Wave.isStartNewWave()) new Wave();
 
 
     }

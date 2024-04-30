@@ -101,7 +101,8 @@ public abstract class Controller {
         for (EntityModel entityModel : entityModels) {
             if (entityModel.getId().equals(id)) return (T) entityModel;
         }
-        for (AbilityModel abilityModel : abilityModels) {
+        for (int i = 0 ; i< abilityModels.size();i++) {
+            AbilityModel abilityModel = abilityModels.get(i);
             if (abilityModel.getId().equals(id)) return (T) abilityModel;
         }
         return null;

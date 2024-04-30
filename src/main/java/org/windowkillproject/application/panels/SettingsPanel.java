@@ -23,12 +23,12 @@ public class SettingsPanel extends Panel {
         {
             ChangeListener changeListener = e -> {
                 JSlider source = (JSlider) e.getSource();
-                switch (source.getValue()){
-                    case 0 -> Config.SENSITIVITY_RATE = 10;
-                    case 1 -> Config.SENSITIVITY_RATE = 5;
-                    case 2 -> Config.SENSITIVITY_RATE = 0;
-
-                }
+//                switch (source.getValue()){
+//                    case 0 -> Config.SENSITIVITY_RATE = 10;
+//                    case 1 -> Config.SENSITIVITY_RATE = 5;
+//                    case 2 -> Config.SENSITIVITY_RATE = 0;
+//
+//                }
             };
             JSlider slider = sliderMaker(changeListener, 200, 250);
             JLabel label = jLabelMaker("Sensitivity", 50, 240, 100, 50);

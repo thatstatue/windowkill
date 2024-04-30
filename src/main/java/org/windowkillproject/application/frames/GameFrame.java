@@ -9,8 +9,10 @@ import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.windowkillproject.application.Application.*;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
@@ -18,18 +20,27 @@ import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemies
 
 
 public class GameFrame extends JFrame {
+    public void setExploding(boolean exploding) {
+        this.exploding = exploding;
+    }
+
     private boolean isStretching = false;
     private final JLabel clock = new JLabel("0:00");
     private final JLabel xp = new JLabel("✦0");
     private final JLabel hp = new JLabel("100 ♡");
     private final JLabel wave = new JLabel("~1");
+    private boolean exploding = false;
+
+    public boolean isExploding() {
+        return exploding;
+    }
 
     public GameFrame() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
         setLocationRelativeTo(null);
         setResizable(false);
-        setUndecorated(false);
+        setUndecorated(true);
         setAlwaysOnTop(true);
         setTitle(Config.GAME_TITLE);
         this.setLayout(null);
@@ -152,8 +163,7 @@ public class GameFrame extends JFrame {
         this.add(wave);
 
     }
-
-    public void shrinkFast() {
+    public void setUpGame(){
         ElapsedTime.reset();
         if (!ElapsedTime.isRunning()) {
             ElapsedTime.setRunning(true);
@@ -161,6 +171,9 @@ public class GameFrame extends JFrame {
         }
         else ElapsedTime.resume();
         initLabels();
+    }
+    public void shrinkFast() {
+        if (exploding) EpsilonModel.getINSTANCE().setRadius(0);
         Timer shrinkFastTimer = new Timer(1, null);
         shrinkFastTimer.addActionListener(e -> {
             int newX = getX() + Config.FRAME_SHRINKAGE_SPEED * 3 / 2;
@@ -186,9 +199,33 @@ public class GameFrame extends JFrame {
                 int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();
                 epsilonModel.move(deltaX, deltaY);
             } else {
+                if (exploding){
+                    dispose();
+                    initScoreFrame();
+                }
                 shrinkFastTimer.stop();
             }
         });
         shrinkFastTimer.start();
+
+    }
+    public void endingScene(){
+        Timer endingTimer = new Timer(10, null);
+
+        ActionListener actionListener = e -> {
+            EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
+            if (epsilonModel.getRadius()<getGameFrame().getWidth()/2 ||
+                    epsilonModel.getRadius()<getGameFrame().getHeight()/2){
+                epsilonModel.setRadius(epsilonModel.getRadius()+6);
+            }else{
+                //Config.GAME_MIN_SIZE = 10;
+                setExploding(true);
+                shrinkFast();
+                endingTimer.stop();
+            }
+        };
+        endingTimer.addActionListener(actionListener);
+        endingTimer.start();
+
     }
 }

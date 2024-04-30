@@ -192,26 +192,28 @@ public abstract class GameController {
     }
 
     public static void keepEpsilonInBounds() {
-        var epsilonModel = EpsilonModel.getINSTANCE();
-        int endX =  epsilonModel.getXO() +2*epsilonModel.getRadius();
-        int endY = epsilonModel.getHeight() + epsilonModel.getYO() + 2*epsilonModel.getRadius();
-        if (endY > getGameFrame().getHeight()) {
-            int deltaY = getGameFrame().getHeight() - endY;
-            epsilonModel.move(0, deltaY);
+        if (!getGameFrame().isExploding()) {
+            var epsilonModel = EpsilonModel.getINSTANCE();
+            int endX = epsilonModel.getXO() + epsilonModel.getRadius();
+            int endY = epsilonModel.getYO() + epsilonModel.getRadius();
+            if (endY > getGameFrame().getHeight()) {
+                int deltaY = getGameFrame().getHeight() - endY;
+                epsilonModel.move(0, deltaY);
+            }
+            if (endX > getGameFrame().getWidth()) {
+                int deltaX = getGameFrame().getWidth() - endX;
+                epsilonModel.move(deltaX, 0);
+            }
+            if (epsilonModel.getY() < 0) {
+                int deltaY = -epsilonModel.getY();
+                epsilonModel.move(0, deltaY);
+            }
+            if (epsilonModel.getX() < 0) {
+                int deltaX = -epsilonModel.getX();
+                epsilonModel.move(deltaX, 0);
+            }
+            getGameFrame().setHpAmount(epsilonModel.getHp());
         }
-        if (endX > getGameFrame().getWidth()) {
-            int deltaX = getGameFrame().getWidth() - endX;
-            epsilonModel.move(deltaX, 0);
-        }
-        if (epsilonModel.getY() < 0) {
-            int deltaY = - epsilonModel.getY();
-            epsilonModel.move(0, deltaY);
-        }
-        if (epsilonModel.getX() < 0) {
-            int deltaX = - epsilonModel.getX();
-            epsilonModel.move(deltaX ,0);
-        }
-        getGameFrame().setHpAmount(epsilonModel.getHp());
 
     }
 
