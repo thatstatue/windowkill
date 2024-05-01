@@ -14,6 +14,7 @@ public abstract class AbilityView extends JLabel implements Viewable {
         abilityViews.add(this);
         enabled = true;
     }
+
     public static ArrayList<AbilityView> abilityViews = new ArrayList<>();
 
 

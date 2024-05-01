@@ -11,6 +11,7 @@ import static org.windowkillproject.controller.Utils.routePoint;
 
 public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
+
     public TrigorathModel(int x, int y) {
         super(x, y);
         setRadius(ENEMY_RADIUS);
@@ -21,18 +22,19 @@ public class TrigorathModel extends EnemyModel {
         initVertices();
         int[] xPoints = new int[3];
         int[] yPoints = new int[3];
-        for (int i = 0 ; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             xPoints[i] = getVertices().get(i).getX();
             yPoints[i] = getVertices().get(i).getY();
         }
-        setPolygon(new Polygon(xPoints , yPoints, 3));
+        setPolygon(new Polygon(xPoints, yPoints, 3));
     }
 
     @Override
     public void route() {
         move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
     }
-    public Point2D getRoutePoint(){
+
+    public Point2D getRoutePoint() {
         return routePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), true);
     }
@@ -40,7 +42,7 @@ public class TrigorathModel extends EnemyModel {
     @Override
     void initVertices() {
         getVertices().add(new VertexModel(getXO(), getYO() - getRadius(), this));
-        getVertices().add(new VertexModel(getXO() - (int) (getRadius() * RAD3_ON_2), getYO() + getRadius() / 2, this));
-        getVertices().add(new VertexModel(getXO() + (int) (getRadius() * RAD3_ON_2), getYO() + getRadius() / 2, this));
+        getVertices().add(new VertexModel((int) (getXO() - (getRadius() * RAD3_ON_2)), getYO() + getRadius() / 2, this));
+        getVertices().add(new VertexModel((int) (getXO() + (getRadius() * RAD3_ON_2)), getYO() + getRadius() / 2, this));
     }
 }

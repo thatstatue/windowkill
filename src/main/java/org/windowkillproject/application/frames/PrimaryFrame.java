@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PrimaryFrame extends JFrame {
-    public PrimaryFrame(){
+    public PrimaryFrame() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(new Dimension(Config.APP_WIDTH, Config.APP_HEIGHT));
         setLocationRelativeTo(null);

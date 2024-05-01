@@ -48,7 +48,7 @@ public class ImgData {
         try {
             String pathBackground = "Empower.png";
             File fileBackground = new File(pathBackground);
-            empower= ImageIO.read(fileBackground);
+            empower = ImageIO.read(fileBackground);
             empower.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
 
@@ -58,7 +58,7 @@ public class ImgData {
         try {
             String pathBackground = "Heal.png";
             File fileBackground = new File(pathBackground);
-            heal= ImageIO.read(fileBackground);
+            heal = ImageIO.read(fileBackground);
             heal.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
@@ -76,7 +76,7 @@ public class ImgData {
         try {
             String pathBackground = "Aceso.png";
             File fileBackground = new File(pathBackground);
-            aceso= ImageIO.read(fileBackground);
+            aceso = ImageIO.read(fileBackground);
             aceso.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
@@ -85,16 +85,15 @@ public class ImgData {
         try {
             String pathBackground = "Proteus.png";
             File fileBackground = new File(pathBackground);
-            proteus= ImageIO.read(fileBackground);
+            proteus = ImageIO.read(fileBackground);
             proteus.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //todo add bullet
     }
 
-    //singleton practice
+    //singleton
     public static ImgData getData() {
         if (data == null) {
             data = new ImgData();
@@ -109,9 +108,11 @@ public class ImgData {
     public BufferedImage getEpsilon() {
         return epsilon;
     }
+
     public BufferedImage getBanish() {
         return banish;
     }
+
     public BufferedImage getHeal() {
         return heal;
     }
@@ -119,9 +120,11 @@ public class ImgData {
     public BufferedImage getAres() {
         return ares;
     }
+
     public BufferedImage getAceso() {
         return aceso;
     }
+
     public BufferedImage getProteus() {
         return proteus;
     }
@@ -129,7 +132,6 @@ public class ImgData {
     public BufferedImage getEmpower() {
         return empower;
     }
-
 
 
 }

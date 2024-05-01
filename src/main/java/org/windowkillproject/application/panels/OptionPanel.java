@@ -15,19 +15,17 @@ public class OptionPanel extends Panel {
 
 
     private Button selectButton;
-    public boolean isOn(){
+
+    public boolean isOn() {
         return selectButton.isOn();
     }
-    public void setOn(boolean selected){
+
+    public void setOn(boolean selected) {
         selectButton.setOn(selected);
     }
 
-    public boolean isPurchased() {
-        return selectButton.isPurchased();
-    }
-
     public void setPurchased(boolean purchased) {
-        selectButton.setPurchased(false);
+        selectButton.setPurchased(purchased);
     }
 
 
@@ -43,10 +41,6 @@ public class OptionPanel extends Panel {
         this.imgDisplay.setIcon(new ImageIcon(img));
 
     }
-    public SpecialtyName getSpecialtyName(){
-        return selectButton.getSpecialtyName();
-    }
-
 
     @Override
     protected ArrayList<Component> initComponents() {

@@ -27,8 +27,4 @@ public class CollectableModel extends AbilityModel{
         return rewardXp;
     }
 
-    public void setRewardXp(int rewardXp) {
-        this.rewardXp = rewardXp;
-    }
-
 }

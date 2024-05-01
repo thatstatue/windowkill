@@ -24,9 +24,5 @@ public abstract class EnemyView extends EntityView {
         return polygon;
     }
 
-    public void set(int x, int y, int width, int height, Polygon polygon) {
-        super.set(x, y, width, height);
-        setPolygon(polygon);
-    }
 
 }

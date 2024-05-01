@@ -1,5 +1,6 @@
 package org.windowkillproject.model.entities;
 
+import org.windowkillproject.application.SoundPlayer;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.Drawable;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.windowkillproject.controller.Controller.createEntityView;
+import static org.windowkillproject.model.abilities.VertexModel.UNIT_DEGREE;
 
 public abstract class EntityModel implements Drawable {
     protected int x, y, width, height;
@@ -23,6 +25,7 @@ public abstract class EntityModel implements Drawable {
     }
 
     private int hp, attackHp;
+    private double theta;
 
     protected ArrayList<VertexModel> vertices;
 
@@ -41,7 +44,7 @@ public abstract class EntityModel implements Drawable {
         return v;
     }
 
-    private int radius;
+    private int radius, reduceCount;
     public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
     public abstract void route();
@@ -92,10 +95,11 @@ public abstract class EntityModel implements Drawable {
             setHp(0);
             destroy();
         }
+        SoundPlayer.playHit();
     }
 
-    public void gotShoot(BulletModel bulletModel){
-        setHp(getHp() - bulletModel.getAttackHp());
+    public void gotShoot(){
+        setHp(getHp() - BulletModel.getAttackHp());
         if (getHp() <= 0) {
             setHp(0);
             destroy();
@@ -128,7 +132,7 @@ public abstract class EntityModel implements Drawable {
     public void rotate() {
         if (getVertices() != null) {
             for (VertexModel vertexModel : getVertices()) {
-                vertexModel.rotate();
+                vertexModel.rotate(theta);
             }
         }
     }
@@ -177,6 +181,24 @@ public abstract class EntityModel implements Drawable {
     public void move(int deltaX, int deltaY){
         moveX(deltaX);
         moveY(deltaY);
+        reduceTheta();
+    }
+    public void reduceTheta(){
+        reduceCount++;
+        if (reduceCount%5==0) {
+            int i = 1;
+            if (theta > 0) i = -1;
+            if (theta != 0) theta += i * UNIT_DEGREE;
+            if (theta * i > 0) theta = 0;
+        }
+    }
+
+    public double getTheta() {
+        return theta;
+    }
+
+    public void setTheta(double theta){
+        this.theta = theta;
     }
 
     private void moveX(int deltaX) {

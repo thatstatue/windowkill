@@ -13,6 +13,7 @@ import static org.windowkillproject.application.Config.TEXT_FONT;
 
 public abstract class Panel extends JPanel {
     protected ArrayList<Component> components;
+
     public Panel() {
         requestFocus();
         setLayout(null);
@@ -20,15 +21,15 @@ public abstract class Panel extends JPanel {
         addComponentsToPanel();
     }
 
-    protected abstract ArrayList <Component> initComponents();
+    protected abstract ArrayList<Component> initComponents();
 
     public void setComponents(ArrayList<Component> components) {
         this.components = components;
     }
 
-    protected final JButton buttonMaker(String name, int x, int y, ActionListener actionListener){
+    protected final JButton buttonMaker(String name, int x, int y, ActionListener actionListener) {
         JButton jButton = new JButton(name);
-        jButton.setBounds(x , y, Config.BUTTON_WIDTH, Config.BUTTON_HEIGHT);
+        jButton.setBounds(x, y, Config.BUTTON_WIDTH, Config.BUTTON_HEIGHT);
         jButton.setFont(Config.BUTTON_FONT);
         jButton.setFocusPainted(false);
         jButton.setBackground(Config.BUTTON_BG_COLOR);
@@ -36,14 +37,16 @@ public abstract class Panel extends JPanel {
         jButton.addActionListener(actionListener);
         return jButton;
     }
-    protected final JLabel jLabelMaker(String name, int x, int y, int width, int height){
+
+    protected final JLabel jLabelMaker(String name, int x, int y, int width, int height) {
         JLabel jLabel = new JLabel(name);
-        jLabel.setBounds(x , y, width, height);
+        jLabel.setBounds(x, y, width, height);
         jLabel.setFont(TEXT_FONT);
         jLabel.setForeground(Config.BUTTON_FG_COLOR);
         return jLabel;
     }
-    protected final JSlider sliderMaker(ChangeListener changeListener, int x, int y){
+
+    protected final JSlider sliderMaker(ChangeListener changeListener, int x, int y) {
         JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 2, 1);
         slider.setMajorTickSpacing(1);
         slider.setPaintTicks(true);
@@ -58,7 +61,8 @@ public abstract class Panel extends JPanel {
         slider.setBounds(x, y, 300, 50);
         return slider;
     }
-    protected void addComponentsToPanel(){
+
+    protected void addComponentsToPanel() {
         if (components != null) {
             for (Component component : components) {
                 this.add(component);

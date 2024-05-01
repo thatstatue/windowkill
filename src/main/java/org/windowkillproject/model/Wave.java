@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Application.initPFrame;
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.SoundPlayer.playCreate;
+import static org.windowkillproject.application.SoundPlayer.playEndWave;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemiesKilled;
@@ -21,18 +23,14 @@ public class Wave {
     public static ArrayList<Wave> waves = new ArrayList<>();
     private static int level;
     private void spawnWave(){
-
-        System.out.println(level + " now");
         getGameFrame().setWaveLevel(level);
         AtomicInteger count = new AtomicInteger();
         Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05*level)), null);
         creatorTimer.addActionListener(e -> {
-            int bound = level *2 + Config.BOUND; //todo still allows too many enemies after one game
+            int bound = level *2 + Config.BOUND;
             if (count.get() < bound) {
                 //doesn't allow too many enemies
                 if (count.get() - getEnemiesKilled() < MAX_ENEMIES) {
-                    System.out.println("count is" + (count.get()) + " killed " + getEnemiesKilled());
-                    System.out.println();
                     Direction direction = Direction.values()[random.nextInt(4)];
                     int dX = random.nextInt(Config.GAME_WIDTH);
                     int dY = random.nextInt(Config.GAME_HEIGHT);
@@ -42,11 +40,12 @@ public class Wave {
                         case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getHeight() + dY);
                         case BottomRight -> new TrigorathModel(getGameFrame().getWidth() + dX, getGameFrame().getHeight() + dY);
                     }
+                    playCreate();
                     count.getAndIncrement();
                 }
             } else if (count.get()==bound) {
                 if (getEnemiesKilled() == bound){
-                    //todo play sound
+                    playEndWave();
                     betweenWaves = true;
                     count.getAndIncrement();
                 }

@@ -26,6 +26,7 @@ import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
+import static org.windowkillproject.model.abilities.VertexModel.UNIT_DEGREE;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
@@ -57,17 +58,8 @@ public abstract class GameController {
         //control overlapping
         Point2D closestPointOfEnemy = closestPointOnPolygon(entityModel.getAnchor(), enemyModel.getPointVertices());
         Point2D delta;
-//        if (entityModel instanceof EnemyModel){
-//            EnemyModel entity = (EnemyModel) entityModel;
-//            Point2D closestPointOfEntity = closestPointOnPolygon(enemyModel.getAnchor() , entity.getPointVertices());
-//            delta =  weighedVector(unitVector(closestPointOfEntity, closestPointOfEnemy),
-//                    closestPointOfEnemy.distance(closestPointOfEntity)/2.0);
-//            if (magnitude(delta)<5) delta = weighedVector(delta, enemyModel.getRadius()*1.2);
-//        }else{
         delta = weighedVector(unitVector(entityModel.getAnchor(), closestPointOfEnemy),
                 entityModel.getRadius() - closestPointOfEnemy.distance(entityModel.getAnchor()) / 2.0);
-
-//        }
         entityModel.move((int) delta.getX(), (int) delta.getY());
         enemyModel.move((int) -delta.getX(), (int) -delta.getY());
 
@@ -87,22 +79,28 @@ public abstract class GameController {
                 p2 = smallerP;
             }
         }
-//        if (magnitude(p1)>magnitude(p2)) {
-//            p2 = smallerP;
-//        }else{
-//            p1 = smallerP;
-//        }
         double s1 = 1, s2 = 1;
         if (magnitude(p1) < 5) s1 = 2.5;
         if (magnitude(p2) < 5) s2 = 2.5;
-        if (entityModel instanceof EpsilonModel) s2 = 3;
+
+        //torque
+        Point2D forceOfEntity = calculateForce(
+                unitVector(closestPointOfEnemy, entityModel.getAnchor()),
+                rotateI(closestPointOfEnemy, entityModel.getRoutePoint()));
+        Point2D forceOfEnemy = calculateForce(
+                unitVector(closestPointOfEnemy, enemyModel.getAnchor()),
+                rotateI(closestPointOfEnemy, enemyModel.getRoutePoint()));
+        entityModel.setTheta(rotateI(entityModel.getAnchor(), forceOfEnemy) * 6 * UNIT_DEGREE);
+        enemyModel.setTheta(rotateI(enemyModel.getAnchor(), forceOfEntity) * 6 * UNIT_DEGREE);
+
 
         Timer impactTimer1 = getImpactTimer(entityModel, weighedVector(p1, s1), IMPACT_DURATION);
         Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2), IMPACT_DURATION);
         impactTimer1.start();
         impactTimer2.start();
+
         //wave of collision
-        Timer impactsTimer = getImpactsTimer(entityModels,entityModel,enemyModel, closestPointOfEnemy, IMPACT_DURATION);
+        Timer impactsTimer = getImpactsTimer(entityModels, entityModel, enemyModel, closestPointOfEnemy, IMPACT_DURATION);
         impactsTimer.start();
     }
 
@@ -123,13 +121,14 @@ public abstract class GameController {
         });
         return impactTimer;
     }
-    private static Timer getImpactsTimer(ArrayList<EntityModel> entityModels, EntityModel not1, EntityModel not2,Point2D closestPointOfEnemy, int t){
+
+    private static Timer getImpactsTimer(ArrayList<EntityModel> entityModels, EntityModel not1, EntityModel not2, Point2D closestPointOfEnemy, int t) {
         AtomicInteger count = new AtomicInteger();
         Timer impactTimer = new Timer(Config.FPS / 5, null);
         impactTimer.addActionListener(e -> {
             if (count.get() < t) {
-                for (EntityModel entityModel : entityModels){
-                    if (!(entityModel.equals(not1)|| entityModel.equals(not2))) {
+                for (EntityModel entityModel : entityModels) {
+                    if (!(entityModel.equals(not1) || entityModel.equals(not2))) {
                         entityModel.setImpact(true);
                         Point2D deltaS = impactPoint(entityModel.getAnchor(), closestPointOfEnemy);
                         entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
@@ -138,8 +137,8 @@ public abstract class GameController {
                 keepEpsilonInBounds();
                 count.getAndIncrement();
             } else {
-                for (EntityModel entityModel : entityModels){
-                    if (!(entityModel.equals(not1)|| entityModel.equals(not2))) {
+                for (EntityModel entityModel : entityModels) {
+                    if (!(entityModel.equals(not1) || entityModel.equals(not2))) {
                         entityModel.setImpact(false);
                     }
                 }
@@ -221,6 +220,17 @@ public abstract class GameController {
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         ArrayList<EnemyModel> enemies = getEnemies();
         for (EnemyModel enemyModel : enemies) {
+
+            //vertex of epsilon hit enemy
+            Area enemyA = new Area(enemyModel.getPolygon());
+            for (VertexModel epsilonV : epsilonModel.getVertices()) {
+                if (enemyA.contains(epsilonV.getX(), epsilonV.getY())) {
+                    enemyModel.gotHit(epsilonModel.getAttackHp());
+                    impact(epsilonModel, enemyModel);
+                    break;
+                }
+            }
+
             //vertex of enemy hit epsilon
             Point2D d = Utils.closestPointOnPolygon(
                     epsilonModel.getAnchor(), enemyModel.getPointVertices());
@@ -235,40 +245,31 @@ public abstract class GameController {
                 break;
             }
 
-            //vertex of epsilon hit enemy
-            Area enemyA = new Area(enemyModel.getPolygon());
-            for (VertexModel epsilonV : epsilonModel.getVertices()) {
-                if (enemyA.contains(epsilonV.getX(), epsilonV.getY())) {
-                    enemyModel.gotHit(epsilonModel.getAttackHp());
-                    impact(epsilonModel, enemyModel);
-                    break;
-                }
-            }
         }
     }
 
     public static void writControl() {
         long now = getTotalSeconds();
-        if (Writ.getInitSeconds()>0 && now - Writ.getInitSeconds() <= WRIT_DURATION ) {
-            switch (Writ.getChosenSkill()){
-                case Ares ->{
-                    BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
+        if (Writ.getInitSeconds() > 0 && now - Writ.getInitSeconds() <= WRIT_DURATION) {
+            switch (Writ.getChosenSkill()) {
+                case Ares -> {
+                    BulletModel.setAttackHp(BULLET_ATTACK_HP + 2);
                 }
                 case Aceso -> {
-                    if (now -  Writ.getInitSeconds()>=Writ.getTimes() && Writ.getTimes()<10){
-                        EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp()+1);
+                    if (now - Writ.getInitSeconds() >= Writ.getTimes() && Writ.getTimes() < 10) {
+                        EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp() + 1);
                         Writ.timesAddIncrement();
                     }
                 }
                 case Proteus -> {
-                    if (Writ.getTimes()< Writ.getAcceptedClicks()){
+                    if (Writ.getTimes() < Writ.getAcceptedClicks()) {
                         EpsilonModel.getINSTANCE().spawnVertex();
                         Writ.timesAddIncrement();
                     }
                 }
             }
-        }else{
-            BulletModel.setAttackHp(BULLET_ATTACK_HP +2);
+        } else {
+            BulletModel.setAttackHp(BULLET_ATTACK_HP + 2);
         }
     }
 

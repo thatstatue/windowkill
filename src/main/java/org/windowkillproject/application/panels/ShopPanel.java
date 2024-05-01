@@ -1,7 +1,6 @@
 package org.windowkillproject.application.panels;
 
 
-import org.windowkillproject.application.panels.Panel;
 import org.windowkillproject.view.ImgData;
 
 import java.awt.*;
@@ -13,14 +12,16 @@ import static org.windowkillproject.application.panels.OptionPanel.SpecialtyName
 
 public class ShopPanel extends Panel {
 
-    public ShopPanel(){
+    public ShopPanel() {
         super();
         setBackground(Color.decode("#3B2635"));
         setPreferredSize(new Dimension(APP_WIDTH, APP_HEIGHT));
     }
+
     public static OptionPanel banish;
     public static OptionPanel empower;
     public static OptionPanel heal;
+
     @Override
     protected ArrayList<Component> initComponents() {
         ArrayList<Component> components = new ArrayList<>();

@@ -9,8 +9,6 @@ import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.AbilityView;
-import org.windowkillproject.view.abilities.BulletView;
-import org.windowkillproject.view.abilities.CollectableView;
 import org.windowkillproject.view.entities.enemies.EnemyView;
 import org.windowkillproject.view.entities.EpsilonView;
 import org.windowkillproject.view.entities.enemies.SquarantineView;
@@ -36,7 +34,7 @@ public abstract class Controller {
                         trigorathModel.getWidth(),
                         trigorathModel.getHeight()
                 );
-            }else if (entityModel instanceof SquarantineModel){
+            } else if (entityModel instanceof SquarantineModel) {
                 var squarantineModel = (SquarantineModel) entityModel;
                 var squarantineView = new SquarantineView(id);
                 squarantineView.set(
@@ -83,7 +81,7 @@ public abstract class Controller {
                     var enemyView = (EnemyView) view;
                     enemyView.setPolygon(((EnemyModel) entityModel).getPolygon());
                 }
-            }else view.setEnabled(false);
+            } else view.setEnabled(false);
         } else if (findModel(view.getId()) instanceof AbilityModel) {
             AbilityModel abilityModel = findModel(view.getId());
             if (abilityModel != null) {
@@ -91,7 +89,7 @@ public abstract class Controller {
                         abilityModel.getX(),
                         abilityModel.getY(),
                         5, 5);
-            }else view.setEnabled(false);
+            } else view.setEnabled(false);
         } else {
             view.setEnabled(false);
         }
@@ -101,7 +99,7 @@ public abstract class Controller {
         for (EntityModel entityModel : entityModels) {
             if (entityModel.getId().equals(id)) return (T) entityModel;
         }
-        for (int i = 0 ; i< abilityModels.size();i++) {
+        for (int i = 0; i < abilityModels.size(); i++) {
             AbilityModel abilityModel = abilityModels.get(i);
             if (abilityModel.getId().equals(id)) return (T) abilityModel;
         }

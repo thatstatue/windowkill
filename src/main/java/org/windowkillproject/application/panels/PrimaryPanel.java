@@ -2,7 +2,6 @@ package org.windowkillproject.application.panels;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.panels.Panel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +10,13 @@ import java.util.ArrayList;
 
 
 public class PrimaryPanel extends Panel {
-    public PrimaryPanel(){
+    public PrimaryPanel() {
         super();
         setBackground(Color.decode("#3B2635"));
         setPreferredSize(new Dimension(Config.APP_WIDTH, Config.APP_HEIGHT));
     }
-    protected ArrayList <Component> initComponents() {
+
+    protected ArrayList<Component> initComponents() {
         ArrayList<Component> componentArrayList = new ArrayList<>();
 
         {

@@ -12,16 +12,19 @@ import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
 
 public class EpsilonModel extends EntityModel {
     private static EpsilonModel INSTANCE;
-    public static EpsilonModel getINSTANCE(){
+
+    public static EpsilonModel getINSTANCE() {
         if (INSTANCE == null) INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, 0);
         return INSTANCE;
     }
-    public static void newINSTANCE(){
+
+    public static void newINSTANCE() {
         int xp = 0;
         if (INSTANCE != null) xp = INSTANCE.getXp();
         INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, xp);
         INSTANCE.setRadius(EPSILON_RADIUS);
     }
+
     private int xp;
 
     public int getXp() {
@@ -31,72 +34,74 @@ public class EpsilonModel extends EntityModel {
     public void setXp(int xp) {
         this.xp = xp;
     }
-    public void route(){
+
+    public void route() {
         EpsilonModel eM = getINSTANCE();
 
         int endX = eM.getWidth() + eM.getX();
         int endY = eM.getHeight() + eM.getY();
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed && eM.getY() - Config.EPSILON_SPEED >= 0)
-                eM.move(0,-Config.EPSILON_SPEED);
+                eM.move(0, -Config.EPSILON_SPEED);
             else if (isDownPressed && endY + Config.EPSILON_SPEED <= getGameFrame().getHeight())
-                eM.move(0,Config.EPSILON_SPEED);
+                eM.move(0, Config.EPSILON_SPEED);
             if (isLeftPressed && eM.getX() - Config.EPSILON_SPEED >= 0)
-                eM.move(-Config.EPSILON_SPEED,0);
+                eM.move(-Config.EPSILON_SPEED, 0);
             else if (isRightPressed && endX + Config.EPSILON_SPEED <= getGameFrame().getWidth())
-                eM.move(Config.EPSILON_SPEED,0);
+                eM.move(Config.EPSILON_SPEED, 0);
 
         }
     }
 
-    private EpsilonModel(int x, int y, int xp){
-        super(x , y);
+    private EpsilonModel(int x, int y, int xp) {
+        super(x, y);
         setRadius(EPSILON_RADIUS);
         setHp(100);
         setAttackHp(10);
         setXp(xp);
     }
 
-    public void spawnVertex(){
-        vertices.add(new VertexModel(getXO(), getYO()- getRadius(), this));
+    public void spawnVertex() {
+        vertices.add(new VertexModel(getXO(), getYO() - getRadius(), this));
         System.out.println(vertices.size());
-        double theta = Math.PI*2/(vertices.size()*1D);
-        for (int i = 0; i< vertices.size(); i++){
+        double theta = Math.PI * 2 / (vertices.size() * 1D);
+        for (int i = 0; i < vertices.size(); i++) {
             VertexModel vertexModel = vertices.get(i);
             vertexModel.setX(getXO());
-            vertexModel.setY( getYO()- getRadius());
-            vertexModel.rotate(i*theta);
+            vertexModel.setY(getYO() - getRadius());
+            vertexModel.rotate(i * theta);
         }
     }
 
     @Override
     public Point2D getRoutePoint() {
-        Point2D point2D = new Point2D.Double(0,0);
+        Point2D point2D = new Point2D.Double(0, 0);
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
             if (isUpPressed)
-                point2D.setLocation(point2D.getX(), -2*EPSILON_SPEED);
+                point2D.setLocation(point2D.getX(), -2 * EPSILON_SPEED);
             if (isDownPressed)
-                point2D.setLocation(point2D.getX(), 2*EPSILON_SPEED);
+                point2D.setLocation(point2D.getX(), 2 * EPSILON_SPEED);
             if (isLeftPressed)
-                point2D.setLocation(-2*EPSILON_SPEED, point2D.getY());
+                point2D.setLocation(-2 * EPSILON_SPEED, point2D.getY());
             if (isRightPressed)
-                point2D.setLocation(2*EPSILON_SPEED, point2D.getY());
+                point2D.setLocation(2 * EPSILON_SPEED, point2D.getY());
         }
         return point2D;
     }
 
     @Override
-    public void gotHit(int attackHp){
+    public void gotHit(int attackHp) {
         super.gotHit(attackHp);
     }
+
     @Override
-    public void destroy(){
+    public void destroy() {
         super.destroy();
         initScoreFrame();
     }
 
-    public void collected(int rewardXp){
-        setXp(getXp()+rewardXp);
+    public void collected(int rewardXp) {
+        setXp(getXp() + rewardXp);
         getGameFrame().setXpAmount(getXp());
     }
 }

@@ -8,9 +8,10 @@ import java.awt.*;
 
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.panels.OptionPanel.SpecialtyName.*;
+import static org.windowkillproject.application.panels.SkillTreePanel.*;
 
 public class Button extends JButton {
-    private final Color color =Color.decode("#7C4F63");
+    private final Color color = Color.decode("#7C4F63");
 
     public boolean isPurchased() {
         return purchased;
@@ -21,6 +22,7 @@ public class Button extends JButton {
         if (!purchased) setText("PURCHASE");
 
     }
+
     private boolean purchased, on;
     private int xpAmount;
     private OptionPanel.SpecialtyName specialtyName = Heal;
@@ -33,15 +35,16 @@ public class Button extends JButton {
         this.specialtyName = specialtyName;
     }
 
-    public Button (String name){
+    public Button(String name) {
         setText(name);
         setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         setBackground(color);
         setForeground(Color.white);
         setSelectButtonListener();
     }
-    public void setXpAmount(int xpAmount){
-        this.xpAmount= xpAmount;
+
+    public void setXpAmount(int xpAmount) {
+        this.xpAmount = xpAmount;
     }
 
     public boolean isOn() {
@@ -52,7 +55,6 @@ public class Button extends JButton {
         this.on = on;
         setText("SELECT");
         setBackground(color);
-        setWrit(on);
         if (on) {
             setText("SELECTED");
             setBackground(Color.green);
@@ -68,12 +70,10 @@ public class Button extends JButton {
                     int epsilonXP = EpsilonModel.getINSTANCE().getXp();
                     if (xpAmount <= epsilonXP) {
                         setPurchased(true);
-                        on = true;
                         setOn(true);
+                        setWrit();
                         EpsilonModel.getINSTANCE().setXp(epsilonXP - xpAmount);
                         getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp());
-
-                        setWrit(true);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "you don't have enough xp");
@@ -81,19 +81,25 @@ public class Button extends JButton {
                 }
                 JOptionPane.getRootFrame().dispose();
             } else {
-               setOn(!on);
+                setOn(!on);
+                setWrit();
             }
             setEnabled(true);
         });
     }
 
-    private void setWrit(boolean set) {
-        if (specialtyName != null &&(specialtyName.equals(Ares) || specialtyName.equals(Aceso)
-        || specialtyName.equals(Proteus))){
-            if (set) Writ.setChosenSkill(specialtyName);
-            else Writ.setChosenSkill(null);
+    private void setWrit() {
+        if (specialtyName != null && (specialtyName.equals(Ares) || specialtyName.equals(Aceso)
+                || specialtyName.equals(Proteus))) {
+            if (on) {
+                if (Writ.getChosenSkill() != null) {
+                    ares.setOn(false);
+                    aceso.setOn(false);
+                    proteus.setOn(false);
+                }
+                Writ.setChosenSkill(specialtyName);
+            } else Writ.setChosenSkill(null);
         }
-        if (specialtyName == null) System.out.println("خاکبرسر");
     }
 
 

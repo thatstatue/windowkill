@@ -14,11 +14,8 @@ public class VertexModel extends AbilityModel {
         super(x, y);
         this.parentEntityModel = parentEntityModel;
         if (parentEntityModel instanceof EpsilonModel) createAbilityView(VertexView.class, id, x, y);
-        //setImg(ImgData.getData().getVertex());
     }
-    public void rotate(){
-        this.rotate(0/*.084*/);
-    }
+    public static final double UNIT_DEGREE =0.084;
     public void rotate(double theta){
         double degree = Math.atan2( this.getY() - parentEntityModel.getYO(),this.getX() - parentEntityModel.getXO());
         degree += theta;

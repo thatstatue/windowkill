@@ -28,7 +28,7 @@ public abstract class AbilityModel implements Drawable {
         this.x = x;
         this.y = y;
         this.id = UUID.randomUUID().toString();
-        anchor = new Point2D.Double(x,y);
+        anchor = new Point2D.Double(x, y);
         abilityModels.add(this);
     }
 
@@ -55,11 +55,13 @@ public abstract class AbilityModel implements Drawable {
     public void setY(int y) {
         this.y = y;
     }
+
     public boolean isCollectedByEpsilon() {
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         return (Math.abs(getX() - epsilonModel.getXO()) <= epsilonModel.getRadius()
                 && Math.abs(getY() - epsilonModel.getYO()) <= epsilonModel.getRadius());
     }
+
     public void destroy() {
         abilityModels.remove(this);
     }

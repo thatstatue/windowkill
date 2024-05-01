@@ -3,12 +3,8 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
-import org.windowkillproject.application.Config;
 import org.windowkillproject.model.Wave;
-import org.windowkillproject.model.Writ;
-import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EntityModel;
-import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
@@ -25,6 +21,7 @@ import static org.windowkillproject.view.entities.EntityView.entityViews;
 public class Update {
     public static Timer modelUpdateTimer;
     public static Timer frameUpdateTimer;
+
     public Update() {
         modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
@@ -64,8 +61,8 @@ public class Update {
         specialtiesControl();
         writControl();
         epsilonRewardControl();
-        enemyIntersectionControl();
         epsilonIntersectionControl();
+        enemyIntersectionControl();
         keepEpsilonInBounds();
         if (Wave.isStartNewWave()) new Wave();
 

@@ -3,14 +3,11 @@ package org.windowkillproject.model.entities.enemies;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.entities.EntityModel;
-import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 
-import static org.windowkillproject.application.Config.ENEMY_RADIUS;
+import static org.windowkillproject.application.SoundPlayer.playDestroy;
 import static org.windowkillproject.controller.GameController.random;
-import static org.windowkillproject.controller.Utils.*;
 
 public abstract class EnemyModel extends EntityModel {
     protected EnemyModel(int x, int y) {
@@ -18,16 +15,12 @@ public abstract class EnemyModel extends EntityModel {
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
     }
+
     private int rewardCount, rewardXps;
     private static int enemiesKilled;
 
     public static void setEnemiesKilled(int enemiesKilled) {
         EnemyModel.enemiesKilled = enemiesKilled;
-        System.out.println("enemies set to" + enemiesKilled);
-    }
-
-    public int getRewardCount() {
-        return rewardCount;
     }
 
     public static int getEnemiesKilled() {
@@ -38,10 +31,6 @@ public abstract class EnemyModel extends EntityModel {
         this.rewardCount = rewardCount;
     }
 
-    public int getRewardXps() {
-        return rewardXps;
-    }
-
     public void setRewardXps(int rewardXps) {
         this.rewardXps = rewardXps;
     }
@@ -49,16 +38,8 @@ public abstract class EnemyModel extends EntityModel {
     private int xSpeed, ySpeed;
     private Polygon polygon;
 
-    public int getxSpeed() {
-        return xSpeed;
-    }
-
     public void setxSpeed(int xSpeed) {
         this.xSpeed = xSpeed;
-    }
-
-    public int getySpeed() {
-        return ySpeed;
     }
 
     public void setySpeed(int ySpeed) {
@@ -74,21 +55,21 @@ public abstract class EnemyModel extends EntityModel {
     }
 
 
-
-        @Override
+    @Override
     public void destroy() {
         super.destroy();
+        playDestroy();
         enemiesKilled++;
-            System.out.println("destroyed " + this.getId()+ " ; killed enemies are now " + enemiesKilled);
-        for (int i = 0 ; i < rewardCount; i++){
+        for (int i = 0; i < rewardCount; i++) {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();
 
-            new CollectableModel(x,y, rewardXps);
+            new CollectableModel(x, y, rewardXps);
         }
-
     }
+
     abstract void initVertices();
+
     @Override
     public void rotate() {
         super.rotate();

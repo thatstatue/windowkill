@@ -6,10 +6,10 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public abstract class EntityView extends JLabel implements Viewable{
+public abstract class EntityView extends JLabel implements Viewable {
     protected BufferedImage img;
     String id;
-    protected int x , y, width, height;
+    protected int x, y, width, height;
     private boolean enabled = true;
 
     @Override
@@ -22,7 +22,8 @@ public abstract class EntityView extends JLabel implements Viewable{
         this.enabled = enabled;
     }
 
-    public static ArrayList<EntityView> entityViews =new ArrayList<>();
+    public static ArrayList<EntityView> entityViews = new ArrayList<>();
+
     public EntityView(String id) {
         this.id = id;
         entityViews.add(this);
@@ -33,7 +34,6 @@ public abstract class EntityView extends JLabel implements Viewable{
     }
 
 
-
     public BufferedImage getImg() {
         return img;
     }
@@ -42,13 +42,14 @@ public abstract class EntityView extends JLabel implements Viewable{
         this.img = img;
     }
 
-    public void set(int x, int y , int width, int height){
+    public void set(int x, int y, int width, int height) {
         setX(x);
         setY(y);
         setWidth(width);
         setHeight(height);
 
     }
+
     public int getX() {
         return x;
     }

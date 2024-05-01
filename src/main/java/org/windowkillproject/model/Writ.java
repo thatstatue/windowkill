@@ -31,7 +31,9 @@ public abstract class Writ {
     public static void setInitSeconds() {
         Writ.initSeconds = getTotalSeconds();
     }
-
+    public static void resetInitSeconds() {
+        Writ.initSeconds = Long.MIN_VALUE;
+    }
     public static OptionPanel.SpecialtyName getChosenSkill() {
         return chosenSkill;
     }

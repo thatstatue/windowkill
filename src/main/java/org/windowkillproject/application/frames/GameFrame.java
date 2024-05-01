@@ -3,7 +3,6 @@ package org.windowkillproject.application.frames;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
-import org.windowkillproject.model.abilities.AbilityModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
@@ -14,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.*;
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
 
@@ -81,19 +79,19 @@ public class GameFrame extends JFrame {
             int newWidth = getWidth();
             int newHeight = getHeight();
             switch (code) {
-                case BULLET_HIT_DOWN -> {
+                case DOWN_CODE -> {
                     newY += FRAME_STRETCH_SPEED / 2;
                     newHeight += FRAME_STRETCH_SPEED;
                 }
-                case BULLET_HIT_LEFT -> {
+                case LEFT_CODE -> {
                     newX -= FRAME_STRETCH_SPEED;
                     newWidth += FRAME_STRETCH_SPEED;
                 }
-                case BULLET_HIT_RIGHT -> {
+                case RIGHT_CODE -> {
                     newX += FRAME_STRETCH_SPEED / 2;
                     newWidth += FRAME_STRETCH_SPEED;
                 }
-                case BULLET_HIT_UP -> {
+                case UP_CODE -> {
                     newY -= FRAME_STRETCH_SPEED;
                     newHeight += FRAME_STRETCH_SPEED;
                 }
@@ -113,12 +111,12 @@ public class GameFrame extends JFrame {
     }
 
     private static void fixEntityPositionsInFrame(int code) {
-        if (code == BULLET_HIT_LEFT || code == BULLET_HIT_UP) {
+        if (code == LEFT_CODE || code == UP_CODE) {
             for (EntityModel entityModel : entityModels) {
-                if (code == BULLET_HIT_LEFT) {
+                if (code == LEFT_CODE) {
                     entityModel.move(FRAME_STRETCH_SPEED, 0);
                 }
-                if (code == BULLET_HIT_UP) {
+                if (code == UP_CODE) {
                     entityModel.move(0, FRAME_STRETCH_SPEED);
                 }
             }
@@ -163,15 +161,16 @@ public class GameFrame extends JFrame {
         this.add(wave);
 
     }
-    public void setUpGame(){
+
+    public void setUpGame() {
         ElapsedTime.reset();
         if (!ElapsedTime.isRunning()) {
             ElapsedTime.setRunning(true);
             ElapsedTime.run();
-        }
-        else ElapsedTime.resume();
+        } else ElapsedTime.resume();
         initLabels();
     }
+
     public void shrinkFast() {
         if (exploding) EpsilonModel.getINSTANCE().setRadius(0);
         Timer shrinkFastTimer = new Timer(1, null);
@@ -199,7 +198,7 @@ public class GameFrame extends JFrame {
                 int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();
                 epsilonModel.move(deltaX, deltaY);
             } else {
-                if (exploding){
+                if (exploding) {
                     dispose();
                     initScoreFrame();
                 }
@@ -209,16 +208,17 @@ public class GameFrame extends JFrame {
         shrinkFastTimer.start();
 
     }
-    public void endingScene(){
+
+    public void endingScene() {
         Timer endingTimer = new Timer(10, null);
 
         ActionListener actionListener = e -> {
             EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
-            if (epsilonModel.getRadius()<getGameFrame().getWidth()/2 ||
-                    epsilonModel.getRadius()<getGameFrame().getHeight()/2){
-                epsilonModel.setRadius(epsilonModel.getRadius()+6);
-            }else{
-                //Config.GAME_MIN_SIZE = 10;
+            if (epsilonModel.getRadius() < getGameFrame().getWidth() / 2 ||
+                    epsilonModel.getRadius() < getGameFrame().getHeight() / 2) {
+                epsilonModel.setRadius(epsilonModel.getRadius() + 6);
+            } else {
+                Config.GAME_MIN_SIZE = 10;
                 setExploding(true);
                 shrinkFast();
                 endingTimer.stop();

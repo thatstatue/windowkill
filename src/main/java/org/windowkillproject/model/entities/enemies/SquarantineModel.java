@@ -16,10 +16,6 @@ import static org.windowkillproject.controller.Utils.routePoint;
 public class SquarantineModel extends EnemyModel {
     private boolean collision;
 
-    public boolean isCollision() {
-        return collision;
-    }
-
     public void setCollision(boolean collision) {
         this.collision = collision;
     }
@@ -53,24 +49,26 @@ public class SquarantineModel extends EnemyModel {
     public void route() {
 
         move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
-        if(random.nextInt(7)==3) dash();
+        if (random.nextInt(7) == 3) dash();
     }
-    public Point2D getRoutePoint(){
+
+    public Point2D getRoutePoint() {
         return routePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
     }
-    private void dash(){
+
+    private void dash() {
         AtomicInteger count = new AtomicInteger();
-        Timer dashTimer = new Timer(Config.FPS/2, null);
+        Timer dashTimer = new Timer(Config.FPS / 2, null);
         Point2D deltaS = routePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
 
         dashTimer.addActionListener(e -> {
-            if (count.get() >=10 || collision ) {
+            if (count.get() >= 10 || collision) {
                 collision = false;
                 dashTimer.stop();
-            }else {
-                move((int) deltaS.getX(), (int) deltaS.getY()*2);
+            } else {
+                move((int) deltaS.getX(), (int) deltaS.getY() * 2);
                 count.getAndIncrement();
             }
         });

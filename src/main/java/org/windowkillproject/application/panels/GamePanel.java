@@ -5,6 +5,7 @@ import org.windowkillproject.view.entities.EntityView;
 
 import java.awt.*;
 import java.util.ArrayList;
+
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public class GamePanel extends Panel {
@@ -19,7 +20,7 @@ public class GamePanel extends Panel {
 
     @Override
     protected ArrayList<Component> initComponents() {
-        return null;//todo: add elapsed time etc
+        return null;
     }
 
 

@@ -9,10 +9,12 @@ import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import static org.windowkillproject.application.Application.*;
-import static org.windowkillproject.application.Config.WRIT_COOL_DOWN;
+import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.Setter.setButton;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 
 public class EpsilonKeyListener implements NativeKeyListener {
+    public static boolean changingButtons;
     public static boolean isLeftPressed;
     public static boolean isRightPressed;
     public static boolean isUpPressed;
@@ -23,18 +25,19 @@ public class EpsilonKeyListener implements NativeKeyListener {
         return started;
     }
 
-    private int UP_KEY =  NativeKeyEvent.VC_UP ;
-    private int DOWN_KEY =  NativeKeyEvent.VC_DOWN ;
-    private int LEFT_KEY =  NativeKeyEvent.VC_LEFT ;
-    private int RIGHT_KEY =  NativeKeyEvent.VC_RIGHT ;
+    public static int UP_KEY = NativeKeyEvent.VC_UP;
+    public static String UP_KEY_NAME = "UP";
+    public static String DOWN_KEY_NAME = "DOWN";
+    public static String LEFT_KEY_NAME = "LEFT";
+    public static String RIGHT_KEY_NAME = "RIGHT";
+    public static int DOWN_KEY = NativeKeyEvent.VC_DOWN;
+    public static int LEFT_KEY = NativeKeyEvent.VC_LEFT;
+    public static int RIGHT_KEY = NativeKeyEvent.VC_RIGHT;
 
-//todo listeners object
-    //todo restart has bugs
     public void startListener() {
         try {
             GlobalScreen.registerNativeHook();
-        }
-        catch (NativeHookException ex) {
+        } catch (NativeHookException ex) {
             System.err.println("There was a problem registering the native hook.");
             System.err.println(ex.getMessage());
 
@@ -49,56 +52,66 @@ public class EpsilonKeyListener implements NativeKeyListener {
     public void stopListener() throws NativeHookException {
         GlobalScreen.removeNativeKeyListener(this);
     }
+
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if (keyCode == NativeKeyEvent.VC_LEFT) {
-            isLeftPressed = true;
-        } else if (keyCode == NativeKeyEvent.VC_RIGHT) {
-            isRightPressed = true;
-        } else if (keyCode == NativeKeyEvent.VC_UP) {
-            isUpPressed = true;
-        } else if (keyCode == NativeKeyEvent.VC_DOWN) {
-            isDownPressed = true;
-        }
-
-    }
-
-    @Override
-     public void nativeKeyReleased(NativeKeyEvent e) {
-        int keyCode = e.getKeyCode();
-        try {
-            Thread.sleep(Config.SENSITIVITY_RATE);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
-        switch (keyCode){
-            case NativeKeyEvent.VC_LEFT -> isLeftPressed = false;
-            case NativeKeyEvent.VC_RIGHT -> isRightPressed = false;
-            case NativeKeyEvent.VC_UP ->  isUpPressed = false;
-            case NativeKeyEvent.VC_DOWN -> isDownPressed = false;
-            case NativeKeyEvent.VC_SPACE -> initShFrame();
-            case NativeKeyEvent.VC_ESCAPE -> hideShFrame();
-            case NativeKeyEvent.VC_ALT -> {
-                System.out.println("clicked");
-                if (EpsilonModel.getINSTANCE().getXp()>= 100){
-                    if (Writ.getChosenSkill()!=null){
-                        long deltaT =getTotalSeconds() - Writ.getInitSeconds();
-                        if (deltaT <=0 || deltaT >= WRIT_COOL_DOWN ) {
-                            Writ.setInitSeconds();
-                            Writ.acceptedClicksAddIncrement();
-                        }
-                        else System.out.println("time prob");
-                    }
-                    else System.out.println("writ null");
-                }else System.out.println("low xp");
+        if (getGameFrame().isVisible()) {
+            int keyCode = e.getKeyCode();
+            if (keyCode == LEFT_KEY) {
+                isLeftPressed = true;
+            } else if (keyCode == RIGHT_KEY) {
+                isRightPressed = true;
+            } else if (keyCode == UP_KEY) {
+                isUpPressed = true;
+            } else if (keyCode == DOWN_KEY) {
+                isDownPressed = true;
             }
         }
 
     }
 
     @Override
-    public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
+    public void nativeKeyReleased(NativeKeyEvent e) {
+        int keyCode = e.getKeyCode();
+        try {
+            Thread.sleep(Config.SENSITIVITY_RATE);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
+        switch (keyCode) {
+            case NativeKeyEvent.VC_SPACE -> initShFrame();
+            case NativeKeyEvent.VC_ESCAPE -> hideShFrame();
+            case NativeKeyEvent.VC_SLASH -> {
+                if (EpsilonModel.getINSTANCE().getXp() >= 100) {
+                    if (Writ.getChosenSkill() != null) {
+                        long deltaT = getTotalSeconds() - Writ.getInitSeconds();
+                        if (deltaT <= 0 || deltaT >= WRIT_COOL_DOWN_SECONDS) {
+                            Writ.setInitSeconds();
+                            Writ.acceptedClicksAddIncrement();
+                        }
+                    }
+                }
+            }
+            default -> {
+                if (keyCode == LEFT_KEY) isLeftPressed = false;
+                if (keyCode == RIGHT_KEY) isRightPressed = false;
+                if (keyCode == UP_KEY) isUpPressed = false;
+                if (keyCode == DOWN_KEY) isDownPressed = false;
+            }
+        }
+    }
 
+    @Override
+    public void nativeKeyTyped(NativeKeyEvent e) {
+        if (changingButtons) {
+            if (setButton(e.getKeyCode())) {
+//                switch (key) {
+//                    case UP_CODE -> UP_KEY_NAME = String.valueOf(e.getKeyChar());
+//                    case DOWN_CODE -> DOWN_KEY_NAME = String.valueOf(e.getKeyChar());
+//                    case LEFT_CODE -> LEFT_KEY_NAME = String.valueOf(e.getKeyChar());
+//                    case RIGHT_CODE -> RIGHT_KEY_NAME = String.valueOf(e.getKeyChar());
+//                }
+            }
+        }
     }
 }

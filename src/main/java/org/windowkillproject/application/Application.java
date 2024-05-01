@@ -10,9 +10,9 @@ import org.windowkillproject.application.panels.SkillTreePanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Update;
 import org.windowkillproject.model.Wave;
+import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
@@ -42,23 +42,25 @@ public class Application implements Runnable {
         return settingsFrame;
     }
 
-    public static PrimaryFrame getPrimaryFrame(){
+    public static PrimaryFrame getPrimaryFrame() {
         if (primaryFrame == null) primaryFrame = new PrimaryFrame();
         return primaryFrame;
     }
-    public static GameFrame getGameFrame(){
+
+    public static GameFrame getGameFrame() {
         if (gameFrame == null) gameFrame = new GameFrame();
         return gameFrame;
     }
-    public static SideFrame getShopFrame(){
+
+    public static SideFrame getShopFrame() {
         if (shopFrame == null) shopFrame = new SideFrame(ShopPanel.class);
         return shopFrame;
     }
-    public static SideFrame getSkillTreeFrame(){
+
+    public static SideFrame getSkillTreeFrame() {
         if (skillTreeFrame == null) skillTreeFrame = new SideFrame(SkillTreePanel.class);
         return skillTreeFrame;
     }
-
 
 
     @Override
@@ -68,8 +70,10 @@ public class Application implements Runnable {
 
     public static void initPFrame() {
 
-        if (gameFrame != null) gameFrame= null;
+        if (gameFrame != null) gameFrame = null;
         if (scoreFrame != null) scoreFrame.dispose();
+        if (!EpsilonKeyListener.isStarted()) epsilonKeyListener.startListener();
+        if (!ShotgunMouseListener.isStarted()) shotgunMouseListener.startListener();
         scoreFrame = null;
 
         gameFrame = new GameFrame();
@@ -78,14 +82,14 @@ public class Application implements Runnable {
         getSkillTreeFrame().setVisible(false);
         getSettingsFrame().setVisible(false);
         getPrimaryFrame().setVisible(true);
-      //  SoundPlayer.getSoundPlayer(); todo
+        SoundPlayer.getSoundPlayer();
     }
-    public static void initScoreFrame(){
-        getGameFrame().setVisible(false);
-        scoreFrame= new ScoreFrame(gameFrame.getLabels());
-        pauseUpdate();
 
-       // gameFrame = new GameFrame(); todo
+    public static void initScoreFrame() {
+
+        getGameFrame().setVisible(false);
+        scoreFrame = new ScoreFrame(gameFrame.getLabels());
+        pauseUpdate();
     }
 
 
@@ -109,36 +113,34 @@ public class Application implements Runnable {
         resetGame();
         gameFrame = new GameFrame();
         gameFrame.setVisible(true);
-        if (!EpsilonKeyListener.isStarted()) epsilonKeyListener.startListener();
-        if (!ShotgunMouseListener.isStarted()) shotgunMouseListener.startListener();
+
         getGameFrame().setUpGame();
         getGameFrame().shrinkFast();
         new Update();
 
     }
+
     public static void initShFrame() {
         pauseUpdate();
         getGameFrame().setVisible(false);
         getShopFrame().setVisible(true);
 
     }
+
     public static void initSTFrame() {
         getPrimaryFrame().setVisible(false);
         getSkillTreeFrame().setVisible(true);
 
     }
+
     public static void pauseUpdate() {
         modelUpdateTimer.stop();
         frameUpdateTimer.stop();
         ElapsedTime.pause();
-//        try {
-//            shotgunMouseListener.stopListener();
-//        } catch (NativeHookException e) {
-//            throw new RuntimeException(e);
-//        }
 
     }
-    public static void hideShFrame(){
+
+    public static void hideShFrame() {
         getShopFrame().setVisible(false);
         getGameFrame().setVisible(true);
 
@@ -152,7 +154,8 @@ public class Application implements Runnable {
         getPrimaryFrame().setVisible(false);
         getSettingsFrame().setVisible(true);
     }
-    public static void resetGame(){
+
+    public static void resetGame() {
         setEnemiesKilled(0);
         collectableModels = new ArrayList<>();
         BulletModel.bulletModels = new ArrayList<>();
@@ -161,10 +164,13 @@ public class Application implements Runnable {
         AbilityView.abilityViews = new ArrayList<>();
         EntityView.entityViews = new ArrayList<>();
         EpsilonModel.newINSTANCE();
-        //GAME_MIN_SIZE=300;
+        Writ.resetInitSeconds();
+        Config.GAME_MIN_SIZE = 300;
         Wave.waves.clear();
         Wave.setLevel(0);
         Wave.setStartNewWave(false);
+        Wave.setBetweenWaves(true);
+        getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp());
     }
 
 

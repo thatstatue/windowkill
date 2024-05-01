@@ -19,7 +19,7 @@ public abstract class ElapsedTime {
     }
 
     public static int getTotalSeconds() {
-        return seconds + minutes*60;
+        return seconds + minutes * 60;
     }
 
 
@@ -28,34 +28,36 @@ public abstract class ElapsedTime {
             pass();
             if (minutes == 0 && seconds == 10) setBetweenWaves(false);
             getGameFrame().setClockTime(timeSetter());
-            System.out.println(seconds);
         });
         clock.start();
     }
-    public static void pause(){
-        if (clock!= null) clock.stop();
+
+    public static void pause() {
+        if (clock != null) clock.stop();
     }
-    public static void resume(){
-        if (clock!= null) {
+
+    public static void resume() {
+        if (clock != null) {
             clock.start();
-        }
-        else {
+        } else {
             run();
         }
     }
-    public static void reset(){
+
+    public static void reset() {
         seconds = 0;
         minutes = 0;
     }
 
-    private static String timeSetter(){
+    private static String timeSetter() {
         return minutes + ":" +
                 (seconds >= 10 ? String.valueOf(seconds) : "0" + seconds);
     }
 
-    public static long secondsPassed( long time){
-        return minutes* 60L +seconds - time;
+    public static long secondsPassed(long time) {
+        return minutes * 60L + seconds - time;
     }
+
     private static void pass() {
         if (seconds == 59) {
             minutes++;
@@ -64,7 +66,6 @@ public abstract class ElapsedTime {
             seconds++;
         }
     }
-
 
 
 }
