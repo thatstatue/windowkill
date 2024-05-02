@@ -46,7 +46,7 @@ public class Config {
     public static final Color GAME_BG_COLOR = Color.decode("#634c64");
     public static final Color BUTTON_FG_COLOR = Color.white;
     public static final int WRIT_DURATION = 15;
-    public static final int WRIT_COOL_DOWN_SECONDS = 5;
+    public static final int WRIT_COOL_DOWN_SECONDS = 5*60;
 
 
     public static final int BULLET_ATTACK_HP = 5;

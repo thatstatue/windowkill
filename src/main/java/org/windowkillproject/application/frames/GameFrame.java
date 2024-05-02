@@ -148,6 +148,7 @@ public class GameFrame extends JFrame {
         xp.setFont(new Font(Font.SERIF, Font.BOLD, 20));
         xp.setForeground(Color.cyan);
         xp.setBounds(60, 1, 300, 20);
+        xp.setText(""+EpsilonModel.getINSTANCE().getXp());
         this.add(xp);
 
         hp.setFont(new Font(Font.SERIF, Font.BOLD, 20));

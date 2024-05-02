@@ -11,7 +11,7 @@ import java.io.IOException;
 public class ImgData {
     private static ImgData data;
 
-    protected BufferedImage epsilon, trigorath, banish, empower, heal, ares, aceso, proteus;
+    protected BufferedImage epsilon, trigorath, banish, empower, heal, ares, aceso, proteus, bg;
 
 
     private ImgData() {
@@ -19,6 +19,14 @@ public class ImgData {
     }
 
     private void addImages() {
+        try {
+            String pathBackground = "BG.png";
+            File fileBackground = new File(pathBackground);
+            bg = ImageIO.read(fileBackground);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try {
             String pathBackground = "Epsilon.png";
             File fileBackground = new File(pathBackground);
@@ -124,6 +132,10 @@ public class ImgData {
     public BufferedImage getAceso() {
         return aceso;
     }
+    public BufferedImage getBg() {
+        return bg;
+    }
+
 
     public BufferedImage getProteus() {
         return proteus;

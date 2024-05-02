@@ -7,6 +7,7 @@ import org.windowkillproject.application.listeners.ShotgunMouseListener;
 import org.windowkillproject.application.panels.SettingsPanel;
 import org.windowkillproject.application.panels.ShopPanel;
 import org.windowkillproject.application.panels.SkillTreePanel;
+import org.windowkillproject.application.panels.TutorialPanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Update;
 import org.windowkillproject.model.Wave;
@@ -36,11 +37,18 @@ public class Application implements Runnable {
     public static ScoreFrame scoreFrame;
     private static SideFrame skillTreeFrame;
     private static SideFrame settingsFrame;
+    private static SideFrame tutorialFrame;
+
 
     public static SideFrame getSettingsFrame() {
         if (settingsFrame == null) settingsFrame = new SideFrame(SettingsPanel.class);
         return settingsFrame;
     }
+    public static SideFrame getTutFrame() {
+        if (tutorialFrame == null) tutorialFrame = new SideFrame(TutorialPanel.class);
+        return tutorialFrame;
+    }
+
 
     public static PrimaryFrame getPrimaryFrame() {
         if (primaryFrame == null) primaryFrame = new PrimaryFrame();
@@ -90,6 +98,10 @@ public class Application implements Runnable {
         getGameFrame().setVisible(false);
         scoreFrame = new ScoreFrame(gameFrame.getLabels());
         pauseUpdate();
+    }
+    public static void showTut(){
+        getPrimaryFrame().setVisible(false);
+        getTutFrame().setVisible(true);
     }
 
 

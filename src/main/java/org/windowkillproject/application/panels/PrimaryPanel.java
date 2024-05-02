@@ -2,6 +2,7 @@ package org.windowkillproject.application.panels;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.view.ImgData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,7 @@ public class PrimaryPanel extends Panel {
     protected ArrayList<Component> initComponents() {
         ArrayList<Component> componentArrayList = new ArrayList<>();
 
+
         {
             ActionListener actionListener = e -> Application.startGame();
             JButton button = buttonMaker("Start", 330, 100, actionListener);
@@ -35,10 +37,14 @@ public class PrimaryPanel extends Panel {
             componentArrayList.add(button);
         }
         {
-            ActionListener actionListener = e -> Application.startGame();
+            ActionListener actionListener = e -> Application.showTut();
             JButton button = buttonMaker("Tutorial", 630, 200, actionListener);
             componentArrayList.add(button);
         }
+
+        JLabel imgDisplay = new JLabel(new ImageIcon(ImgData.getData().getBg()));
+        imgDisplay.setBounds(-20,-200, 1000, 1000);
+        componentArrayList.add(imgDisplay);
 
         return componentArrayList;
     }

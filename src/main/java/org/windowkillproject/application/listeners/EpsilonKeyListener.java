@@ -8,9 +8,14 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+
 import static org.windowkillproject.application.Application.*;
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.Setter.key;
 import static org.windowkillproject.application.Setter.setButton;
+import static org.windowkillproject.application.panels.SettingsPanel.monoDialog;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 
 public class EpsilonKeyListener implements NativeKeyListener {
@@ -78,40 +83,47 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
-        switch (keyCode) {
-            case NativeKeyEvent.VC_SPACE -> initShFrame();
-            case NativeKeyEvent.VC_ESCAPE -> hideShFrame();
-            case NativeKeyEvent.VC_SLASH -> {
-                if (EpsilonModel.getINSTANCE().getXp() >= 100) {
-                    if (Writ.getChosenSkill() != null) {
-                        long deltaT = getTotalSeconds() - Writ.getInitSeconds();
-                        if (deltaT <= 0 || deltaT >= WRIT_COOL_DOWN_SECONDS) {
-                            Writ.setInitSeconds();
-                            Writ.acceptedClicksAddIncrement();
+        if(getGameFrame().isVisible()) {
+            switch (keyCode) {
+                case NativeKeyEvent.VC_SPACE -> initShFrame();
+                case NativeKeyEvent.VC_ESCAPE -> hideShFrame();
+                case NativeKeyEvent.VC_SLASH -> {
+                    if (EpsilonModel.getINSTANCE().getXp() >= 100) {
+                        if (Writ.getChosenSkill() != null) {
+                            long deltaT = getTotalSeconds() - Writ.getInitSeconds();
+                            if (deltaT <= 0 || deltaT >= WRIT_COOL_DOWN_SECONDS) {
+                                Writ.setInitSeconds();
+                                Writ.acceptedClicksAddIncrement();
+                            }
                         }
                     }
                 }
+                default -> {
+                    if (keyCode == LEFT_KEY) isLeftPressed = false;
+                    if (keyCode == RIGHT_KEY) isRightPressed = false;
+                    if (keyCode == UP_KEY) isUpPressed = false;
+                    if (keyCode == DOWN_KEY) isDownPressed = false;
+                }
             }
-            default -> {
-                if (keyCode == LEFT_KEY) isLeftPressed = false;
-                if (keyCode == RIGHT_KEY) isRightPressed = false;
-                if (keyCode == UP_KEY) isUpPressed = false;
-                if (keyCode == DOWN_KEY) isDownPressed = false;
+        }else {
+            if( keyCode == NativeKeyEvent.VC_ESCAPE) monoDialog.dispose();
+            else if (changingButtons) {
+                if (setButton(e.getRawCode(), e.getKeyCode())) {
+                    switch (key) {
+                        case UP_CODE -> UP_KEY_NAME = KeyEvent.getKeyText(e.getRawCode());
+                        case DOWN_CODE -> DOWN_KEY_NAME = KeyEvent.getKeyText(e.getRawCode());
+                        case LEFT_CODE -> LEFT_KEY_NAME = KeyEvent.getKeyText(e.getRawCode());
+                        case RIGHT_CODE -> RIGHT_KEY_NAME = KeyEvent.getKeyText(e.getRawCode());
+                    }
+                    changingButtons = false;
+                }
             }
         }
     }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent e) {
-        if (changingButtons) {
-            if (setButton(e.getKeyCode())) {
-//                switch (key) {
-//                    case UP_CODE -> UP_KEY_NAME = String.valueOf(e.getKeyChar());
-//                    case DOWN_CODE -> DOWN_KEY_NAME = String.valueOf(e.getKeyChar());
-//                    case LEFT_CODE -> LEFT_KEY_NAME = String.valueOf(e.getKeyChar());
-//                    case RIGHT_CODE -> RIGHT_KEY_NAME = String.valueOf(e.getKeyChar());
-//                }
-            }
-        }
+
+
     }
 }

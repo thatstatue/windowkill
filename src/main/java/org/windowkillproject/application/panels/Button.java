@@ -27,10 +27,6 @@ public class Button extends JButton {
     private int xpAmount;
     private OptionPanel.SpecialtyName specialtyName = Heal;
 
-    public OptionPanel.SpecialtyName getSpecialtyName() {
-        return specialtyName;
-    }
-
     public void setSpecialtyName(OptionPanel.SpecialtyName specialtyName) {
         this.specialtyName = specialtyName;
     }
@@ -53,7 +49,8 @@ public class Button extends JButton {
 
     public void setOn(boolean on) {
         this.on = on;
-        setText("SELECT");
+        setText("PURCHASE");
+        if (purchased) setText("SELECT");
         setBackground(color);
         if (on) {
             setText("SELECTED");
@@ -96,6 +93,9 @@ public class Button extends JButton {
                     ares.setOn(false);
                     aceso.setOn(false);
                     proteus.setOn(false);
+                    if (specialtyName.equals(Ares)) ares.setOn(true);
+                    if (specialtyName.equals(Aceso)) aceso.setOn(true);
+                    if (specialtyName.equals(Proteus)) proteus.setOn(true);
                 }
                 Writ.setChosenSkill(specialtyName);
             } else Writ.setChosenSkill(null);

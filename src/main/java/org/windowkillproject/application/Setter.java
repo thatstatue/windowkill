@@ -1,6 +1,8 @@
 package org.windowkillproject.application;
 
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+
 import javax.swing.*;
 
 import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
@@ -27,24 +29,24 @@ public class Setter {
 
     public static int key;
 
-    public static boolean setButton(int pressedKey) {
-        if (buttonIsUsed(pressedKey)) {
+    public static boolean setButton(int pressedKey, int code) {
+        if (buttonIsUsed(code)) {
             JOptionPane.showMessageDialog(null,
                     "this key is already used");
             return false;
         } else {
             switch (key) {
                 case Config.UP_CODE -> {
-                    UP_KEY = pressedKey;
+                    UP_KEY = code;
                 }
                 case Config.DOWN_CODE -> {
-                    DOWN_KEY = pressedKey;
+                    DOWN_KEY = code;
                 }
                 case Config.LEFT_CODE -> {
-                    LEFT_KEY = pressedKey;
+                    LEFT_KEY = code;
                 }
                 case Config.RIGHT_CODE -> {
-                    RIGHT_KEY = pressedKey;
+                    RIGHT_KEY = code;
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + key);
             }
@@ -56,23 +58,12 @@ public class Setter {
     }
 
     private static boolean buttonIsUsed(int pressedKey) {
-//        if ( UP_KEY == pressedKey){
-//            System.out.println("uppp");
-//        }
-//        if( DOWN_KEY == pressedKey){
-//            System.out.println("doown");
-//        }
-//        if (LEFT_KEY == pressedKey){
-//            System.out.println("leeft");
-//        }
-//        if (RIGHT_KEY == pressedKey)
-//            System.out.println("righht");
-//        if (NativeKeyEvent.VC_ESCAPE == pressedKey)
-//            System.out.println("esc");
-//        if(NativeKeyEvent.VC_SPACE == pressedKey)
-//            System.out.println("spc");
-//        if (NativeKeyEvent.VC_SHIFT == pressedKey)
-//            System.out.println("shft");
+        if ( UP_KEY == pressedKey || DOWN_KEY == pressedKey
+        || LEFT_KEY == pressedKey || RIGHT_KEY == pressedKey) return true;
+        System.out.println();
+        if (NativeKeyEvent.VC_SPACE == pressedKey || NativeKeyEvent.VC_SHIFT == pressedKey
+        || NativeKeyEvent.VC_ESCAPE == pressedKey || NativeKeyEvent.VC_SLASH==pressedKey) return true;
+
         return false;
     }
 
