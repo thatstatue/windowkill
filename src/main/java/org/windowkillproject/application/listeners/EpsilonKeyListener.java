@@ -106,7 +106,10 @@ public class EpsilonKeyListener implements NativeKeyListener {
                 }
             }
         }else {
-            if( keyCode == NativeKeyEvent.VC_ESCAPE) monoDialog.dispose();
+            if( keyCode == NativeKeyEvent.VC_ESCAPE) {
+                changingButtons = false;
+                monoDialog.dispose();
+            }
             else if (changingButtons) {
                 if (setButton(e.getRawCode(), e.getKeyCode())) {
                     switch (key) {
