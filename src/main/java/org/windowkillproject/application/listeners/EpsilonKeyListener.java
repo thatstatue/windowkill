@@ -8,7 +8,6 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import static org.windowkillproject.application.Application.*;
@@ -83,7 +82,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
-        if(getGameFrame().isVisible()) {
+        if(getGameFrame().isVisible() || getShopFrame().isVisible()) {
             switch (keyCode) {
                 case NativeKeyEvent.VC_SPACE -> initShFrame();
                 case NativeKeyEvent.VC_ESCAPE -> hideShFrame();
@@ -105,7 +104,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
                     if (keyCode == DOWN_KEY) isDownPressed = false;
                 }
             }
-        }else {
+        }else{
             if( keyCode == NativeKeyEvent.VC_ESCAPE) {
                 changingButtons = false;
                 monoDialog.dispose();
