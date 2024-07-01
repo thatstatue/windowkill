@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.SoundPlayer;
+import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.Drawable;
@@ -26,6 +27,15 @@ public abstract class EntityModel implements Drawable {
 
     private int hp, attackHp;
     private double theta;
+    private GamePanel localPanel;
+
+    public GamePanel getLocalPanel() {
+        return localPanel;
+    }
+
+    public void setLocalPanel(GamePanel localPanel) {
+        this.localPanel = localPanel;
+    }
 
     protected ArrayList<VertexModel> vertices;
 
@@ -95,7 +105,7 @@ public abstract class EntityModel implements Drawable {
             setHp(0);
             destroy();
         }
-        SoundPlayer.playHit();
+        SoundPlayer.playHitSound();
     }
 
     public void gotShoot(){

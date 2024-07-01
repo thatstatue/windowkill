@@ -1,7 +1,10 @@
 package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.frames.GameFrame;
+import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.view.abilities.BulletView;
 
@@ -14,7 +17,7 @@ import java.util.Objects;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
 import static org.windowkillproject.application.Config.EPSILON_RADIUS;
-import static org.windowkillproject.application.SoundPlayer.playBullet;
+import static org.windowkillproject.application.SoundPlayer.playBulletSound;
 import static org.windowkillproject.controller.Controller.createAbilityView;
 import static org.windowkillproject.controller.GameController.impact;
 import static org.windowkillproject.controller.Utils.unitVector;
@@ -24,6 +27,7 @@ import static org.windowkillproject.model.entities.EntityModel.entityModels;
 public class BulletModel extends AbilityModel {
     private static int attackHp = BULLET_ATTACK_HP;
     private final Point2D mousePoint;
+    private GamePanel localPanel;
 
     public static void setAttackHp(int attackHp) {
         BulletModel.attackHp = attackHp;
@@ -62,20 +66,16 @@ public class BulletModel extends AbilityModel {
     }
 
     private void isFrameShot() {
-        if (getX() < 0 || getX() > getGameFrame().getWidth() ||
-                getY() < 0 || getY() > getGameFrame().getHeight()) {
-            if (getX() < 0) {
-                getGameFrame().stretch(Config.LEFT_CODE);
-            }
-            if (getX() > getGameFrame().getWidth()) {
-                getGameFrame().stretch(Config.RIGHT_CODE);
-            }
-            if (getY() < 0) {
-                getGameFrame().stretch(Config.UP_CODE);
-            }
-            if (getY() > getGameFrame().getHeight()) {
-                getGameFrame().stretch(Config.DOWN_CODE);
-            }
+        boolean shotRight = getX() > getGameFrame().getMainPanelWidth();
+        boolean shotLeft = getX() < 0;
+        boolean shotUp = getY() < 0 ;
+        boolean shotDown = getY() > getGameFrame().getMainPanelHeight();
+
+        if ( shotLeft|| shotRight ||shotUp || shotDown) {
+            if (shotLeft) getGameFrame().stretch(Config.LEFT_CODE);
+            if (shotRight) getGameFrame().stretch(Config.RIGHT_CODE);
+            if (shotUp) getGameFrame().stretch(Config.UP_CODE);
+            if (shotDown) getGameFrame().stretch(Config.DOWN_CODE);
             explode();
         }
     }
@@ -112,6 +112,7 @@ public class BulletModel extends AbilityModel {
         isShoot = false;
         bulletModels.add(this);
         this.mousePoint = mousePoint;
+//        localPanel = EpsilonModel.getINSTANCE().getLocalPanel();
         createAbilityView(BulletView.class, id, x, y);
     }
 
@@ -125,7 +126,7 @@ public class BulletModel extends AbilityModel {
     private void explode() {
         impact(this);
         bulletModels.remove(this);
-        playBullet();
+        playBulletSound();
         destroy();
     }
 

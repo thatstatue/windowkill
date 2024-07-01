@@ -195,12 +195,12 @@ public abstract class GameController {
             var epsilonModel = EpsilonModel.getINSTANCE();
             int endX = epsilonModel.getXO() + epsilonModel.getRadius();
             int endY = epsilonModel.getYO() + epsilonModel.getRadius();
-            if (endY > getGameFrame().getHeight()) {
-                int deltaY = getGameFrame().getHeight() - endY;
+            if (endY > getGameFrame().getMainPanelHeight()) {
+                int deltaY = getGameFrame().getMainPanelHeight() - endY;
                 epsilonModel.move(0, deltaY);
             }
-            if (endX > getGameFrame().getWidth()) {
-                int deltaX = getGameFrame().getWidth() - endX;
+            if (endX > getGameFrame().getMainPanelWidth()) {
+                int deltaX = getGameFrame().getMainPanelWidth() - endX;
                 epsilonModel.move(deltaX, 0);
             }
             if (epsilonModel.getY() < 0) {

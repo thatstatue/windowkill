@@ -1,8 +1,11 @@
 package org.windowkillproject.view.entities;
 
+import org.windowkillproject.application.Application;
+import org.windowkillproject.application.frames.GameFrame;
 import org.windowkillproject.view.Viewable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -11,6 +14,15 @@ public abstract class EntityView extends JLabel implements Viewable {
     String id;
     protected int x, y, width, height;
     private boolean enabled = true;
+    private GameFrame localFrame;
+
+    public GameFrame getLocalFrame() {
+        return localFrame;
+    }
+
+    public void setLocalFrame(GameFrame localFrame) {
+        this.localFrame = localFrame;
+    }
 
     @Override
     public boolean isEnabled() {
@@ -24,10 +36,16 @@ public abstract class EntityView extends JLabel implements Viewable {
 
     public static ArrayList<EntityView> entityViews = new ArrayList<>();
 
-    public EntityView(String id) {
+    public EntityView(String id, GameFrame localFrame) {
         this.id = id;
         entityViews.add(this);
+        this.localFrame = localFrame;
     }
+
+    public EntityView(String id) {
+        this(id, Application.getGameFrame());
+    }
+
 
     public String getId() {
         return id;

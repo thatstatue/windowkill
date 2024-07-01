@@ -1,6 +1,8 @@
 package org.windowkillproject.model.entities;
 
+import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 
 import java.awt.geom.Point2D;
@@ -26,6 +28,7 @@ public class EpsilonModel extends EntityModel {
     }
 
     private int xp;
+
 
     public int getXp() {
         return xp;
@@ -59,6 +62,7 @@ public class EpsilonModel extends EntityModel {
         setHp(100);
         setAttackHp(10);
         setXp(xp);
+        setLocalPanel(Application.getGameFrame().getMainGamePanel());
     }
 
     public void spawnVertex() {

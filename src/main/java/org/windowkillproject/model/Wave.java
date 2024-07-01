@@ -1,20 +1,17 @@
 package org.windowkillproject.model;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.application.Application.initPFrame;
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.application.SoundPlayer.playCreate;
-import static org.windowkillproject.application.SoundPlayer.playEndWave;
+import static org.windowkillproject.application.SoundPlayer.playCreateSound;
+import static org.windowkillproject.application.SoundPlayer.playEndWaveSound;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemiesKilled;
@@ -40,12 +37,12 @@ public class Wave {
                         case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getHeight() + dY);
                         case BottomRight -> new TrigorathModel(getGameFrame().getWidth() + dX, getGameFrame().getHeight() + dY);
                     }
-                    playCreate();
+                    playCreateSound();
                     count.getAndIncrement();
                 }
             } else if (count.get()==bound) {
                 if (getEnemiesKilled() == bound){
-                    playEndWave();
+                    playEndWaveSound();
                     betweenWaves = true;
                     count.getAndIncrement();
                 }

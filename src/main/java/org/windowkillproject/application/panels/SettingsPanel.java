@@ -59,9 +59,9 @@ public class SettingsPanel extends Panel {
             ChangeListener changeListener = e -> {
                 JSlider source = (JSlider) e.getSource();
                 switch (source.getValue()) {
-                    case 0 -> SoundPlayer.setSound("LOW");
-                    case 1 -> SoundPlayer.setSound("MEDIUM");
-                    case 2 -> SoundPlayer.setSound("HIGH");
+                    case 0 -> SoundPlayer.setSoundVolume("LOW");
+                    case 1 -> SoundPlayer.setSoundVolume("MEDIUM");
+                    case 2 -> SoundPlayer.setSoundVolume("HIGH");
                 }
             };
             JSlider slider = sliderMaker(changeListener, 200, 450);

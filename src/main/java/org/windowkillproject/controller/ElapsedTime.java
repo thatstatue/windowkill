@@ -44,9 +44,16 @@ public abstract class ElapsedTime {
         }
     }
 
-    public static void reset() {
+    private static void reset() {
         seconds = 0;
         minutes = 0;
+    }
+    public static void resetTime() {
+        ElapsedTime.reset();
+        if (!ElapsedTime.isRunning()) {
+            ElapsedTime.setRunning(true);
+            ElapsedTime.run();
+        } else ElapsedTime.resume();
     }
 
     private static String timeSetter() {

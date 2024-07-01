@@ -25,9 +25,8 @@ public class SoundPlayer {
         }
     }
 
-    public static SoundPlayer getSoundPlayer() {
+    public static void getSoundPlayer() {
         if (soundPlayer == null) soundPlayer = new SoundPlayer();
-        return soundPlayer;
     }
 
     private SoundPlayer() {
@@ -54,40 +53,40 @@ public class SoundPlayer {
             throw new RuntimeException(e);
         }
         SoundPlayer.bgThemeControl = (FloatControl) bgTheme.getControl(FloatControl.Type.MASTER_GAIN);
-        playTheme();
+        playThemeSong();
     }
 
 
-    private static void playTheme() {
+    private static void playThemeSong() {
         bgTheme.start();
         bgTheme.loop(500);
     }
 
-    public static void playHit() {
+    public static void playHitSound() {
         hit.stop();
         hit.setMicrosecondPosition(0);
         hit.start();
     }
 
-    public static void playCreate() {
+    public static void playCreateSound() {
         create.stop();
         create.setMicrosecondPosition(0);
         create.start();
     }
 
-    public static void playEndWave() {
+    public static void playEndWaveSound() {
         wave.stop();
         wave.setMicrosecondPosition(0);
         wave.start();
     }
 
-    public static void playDestroy() {
+    public static void playDestroySound() {
         destroy.stop();
         destroy.setMicrosecondPosition(0);
         destroy.start();
     }
 
-    public static void playBullet() {
+    public static void playBulletSound() {
         bullet.stop();
         bullet.setMicrosecondPosition(0);
         bullet.start();
@@ -95,7 +94,7 @@ public class SoundPlayer {
 
     private static FloatControl bgThemeControl;
 
-    public static void setSound(String rate) {
+    public static void setSoundVolume(String rate) {
         bgThemeControl.setValue(-25.0f);
         if (rate.equals("LOW")) {
             bgThemeControl.setValue(-40.0f);

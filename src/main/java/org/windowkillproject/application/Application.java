@@ -44,6 +44,7 @@ public class Application implements Runnable {
         if (settingsFrame == null) settingsFrame = new SideFrame(SettingsPanel.class);
         return settingsFrame;
     }
+
     public static SideFrame getTutFrame() {
         if (tutorialFrame == null) tutorialFrame = new SideFrame(TutorialPanel.class);
         return tutorialFrame;
@@ -99,7 +100,8 @@ public class Application implements Runnable {
         scoreFrame = new ScoreFrame(gameFrame.getLabels());
         pauseUpdate();
     }
-    public static void showTut(){
+
+    public static void showTut() {
         getPrimaryFrame().setVisible(false);
         getTutFrame().setVisible(true);
     }
@@ -118,17 +120,31 @@ public class Application implements Runnable {
         } catch (AWTException e) {
             e.printStackTrace();
         }
+        resetGame();
         initGFrame();
+        new Update();
+    }
+
+    public static void startGame(int t) {//doesn't reset time
+        nextLevel();
+        initGFrame();
+        for (int i = 0; i < t; i++) {
+            initIGFrame();
+        }
+
+    }
+
+    private static void initIGFrame() {
+
     }
 
     private static void initGFrame() {
-        resetGame();
+
         gameFrame = new GameFrame();
         gameFrame.setVisible(true);
-
-        getGameFrame().setUpGame();
+        getGameFrame().initLabels();
         getGameFrame().shrinkFast();
-        new Update();
+//        new InternalGameFrame(new Rectangle(100,100,300,300), PanelStatus.isometric);
 
     }
 
@@ -169,20 +185,27 @@ public class Application implements Runnable {
 
     public static void resetGame() {
         setEnemiesKilled(0);
-        collectableModels = new ArrayList<>();
-        BulletModel.bulletModels = new ArrayList<>();
-        abilityModels = new ArrayList<>();
-        entityModels = new ArrayList<>();
-        AbilityView.abilityViews = new ArrayList<>();
-        EntityView.entityViews = new ArrayList<>();
-        EpsilonModel.newINSTANCE();
+        nextLevel();
         Writ.resetInitSeconds();
         Config.GAME_MIN_SIZE = 300;
         Wave.waves.clear();
         Wave.setLevel(0);
         Wave.setStartNewWave(false);
         Wave.setBetweenWaves(true);
+        ElapsedTime.resetTime();
+
+    }
+
+    private static void nextLevel() {
+        collectableModels = new ArrayList<>();
+        abilityModels = new ArrayList<>();
+        BulletModel.bulletModels = new ArrayList<>();
+        entityModels = new ArrayList<>();
+        AbilityView.abilityViews = new ArrayList<>();
+        EntityView.entityViews = new ArrayList<>();
+        EpsilonModel.newINSTANCE();
         getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp());
+
     }
 
 

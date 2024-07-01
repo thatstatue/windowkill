@@ -6,7 +6,7 @@ import org.windowkillproject.model.entities.EntityModel;
 
 import java.awt.*;
 
-import static org.windowkillproject.application.SoundPlayer.playDestroy;
+import static org.windowkillproject.application.SoundPlayer.playDestroySound;
 import static org.windowkillproject.controller.GameController.random;
 
 public abstract class EnemyModel extends EntityModel {
@@ -58,7 +58,7 @@ public abstract class EnemyModel extends EntityModel {
     @Override
     public void destroy() {
         super.destroy();
-        playDestroy();
+        playDestroySound();
         enemiesKilled++;
         for (int i = 0; i < rewardCount; i++) {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
