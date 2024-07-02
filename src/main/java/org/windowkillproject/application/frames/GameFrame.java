@@ -1,13 +1,14 @@
 package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.panels.GamePanel;
-import org.windowkillproject.application.panels.MainGamePanel;
+import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.application.panels.game.PanelStatus;
+import org.windowkillproject.application.panels.game.MainGamePanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static org.windowkillproject.application.panels.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 
 public class GameFrame extends JFrame {
 

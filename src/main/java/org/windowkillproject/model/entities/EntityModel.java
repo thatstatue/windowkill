@@ -1,7 +1,7 @@
 package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.SoundPlayer;
-import org.windowkillproject.application.panels.GamePanel;
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.Drawable;
@@ -25,7 +25,7 @@ public abstract class EntityModel implements Drawable {
         isImpact = impact;
     }
 
-    private int hp, attackHp;
+    private int hp, meleeAttackHp;
     private double theta;
     private GamePanel localPanel;
 
@@ -43,6 +43,10 @@ public abstract class EntityModel implements Drawable {
         return id;
     }
 
+    public void setVertices(ArrayList<VertexModel> vertices) {
+        this.vertices = vertices;
+    }
+
     public ArrayList<VertexModel> getVertices() {
         return vertices;
     }
@@ -57,7 +61,7 @@ public abstract class EntityModel implements Drawable {
     private int radius, reduceCount;
     public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
-    public abstract void route();
+    public abstract void route(); //if entity is local, implement is also local
 
     public int getRadius() {
         return radius;
@@ -91,12 +95,12 @@ public abstract class EntityModel implements Drawable {
     }
 
 
-    public int getAttackHp() {
-        return attackHp;
+    public int getMeleeAttackHp() {
+        return meleeAttackHp;
     }
 
-    public void setAttackHp(int attackHp) {
-        this.attackHp = attackHp;
+    public void setMeleeAttackHp(int meleeAttackHp) {
+        this.meleeAttackHp = meleeAttackHp;
     }
 
     public void gotHit(int attackHp) {
@@ -140,6 +144,10 @@ public abstract class EntityModel implements Drawable {
     private final String id;
 
     public void rotate() {
+        rotate(theta);
+    }
+
+    public void rotate(double theta){
         if (getVertices() != null) {
             for (VertexModel vertexModel : getVertices()) {
                 vertexModel.rotate(theta);

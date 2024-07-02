@@ -27,22 +27,26 @@ public class ShotgunMouseListener implements NativeMouseListener {
 
             BulletModel bulletModel = new BulletModel(
                     epsilonModel.getXO(), epsilonModel.getYO(), relativePoint);
-            bulletModel.shot();
+            bulletModel.shoot();
             long deltaT = getTotalSeconds() - empowerInitSeconds;
-            if (deltaT > 0 && deltaT <= 10) {
-                Point2D point = weighedVector(unitVector(epsilonModel.getAnchor(), relativePoint), 10);
-                var extraBullet1 = new BulletModel(
-                        (int) (epsilonModel.getXO() + point.getX()),
-                        (int) (epsilonModel.getYO() + point.getY()), relativePoint);
-                point = weighedVector(point, 2);
-                var extraBullet2 = new BulletModel(
-                        (int) (epsilonModel.getXO() + point.getX()),
-                        (int) (epsilonModel.getYO() + point.getY()), relativePoint);
-                extraBullet1.shot();
-                extraBullet2.shot();
+            if (deltaT > 0 && deltaT <= 10) { //doesn't allow too many bullets
+                empowerBullets(epsilonModel, relativePoint);
             }
 
         }
+    }
+
+    private static void empowerBullets(EpsilonModel epsilonModel, Point2D relativePoint) {
+        Point2D point = weighedVector(unitVector(epsilonModel.getAnchor(), relativePoint), 10);
+        var extraBullet1 = new BulletModel(
+                (int) (epsilonModel.getXO() + point.getX()),
+                (int) (epsilonModel.getYO() + point.getY()), relativePoint);
+        point = weighedVector(point, 2);
+        var extraBullet2 = new BulletModel(
+                (int) (epsilonModel.getXO() + point.getX()),
+                (int) (epsilonModel.getYO() + point.getY()), relativePoint);
+        extraBullet1.shoot();
+        extraBullet2.shoot();
     }
 
     private static boolean started;

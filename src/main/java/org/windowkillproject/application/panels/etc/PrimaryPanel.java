@@ -1,7 +1,8 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.etc;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.Panel;
 import org.windowkillproject.view.ImgData;
 
 import javax.swing.*;

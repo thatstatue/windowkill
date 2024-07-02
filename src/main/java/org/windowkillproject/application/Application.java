@@ -4,10 +4,10 @@ import org.windowkillproject.application.frames.*;
 import org.windowkillproject.application.listeners.EpsilonKeyListener;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 
-import org.windowkillproject.application.panels.SettingsPanel;
-import org.windowkillproject.application.panels.ShopPanel;
-import org.windowkillproject.application.panels.SkillTreePanel;
-import org.windowkillproject.application.panels.TutorialPanel;
+import org.windowkillproject.application.panels.etc.SettingsPanel;
+import org.windowkillproject.application.panels.shop.ShopPanel;
+import org.windowkillproject.application.panels.shop.SkillTreePanel;
+import org.windowkillproject.application.panels.etc.TutorialPanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Update;
 import org.windowkillproject.model.Wave;
@@ -26,7 +26,7 @@ import static org.windowkillproject.controller.Update.modelUpdateTimer;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemiesKilled;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
 
 public class Application implements Runnable {
     private static PrimaryFrame primaryFrame;
@@ -184,7 +184,7 @@ public class Application implements Runnable {
     }
 
     public static void resetGame() {
-        setEnemiesKilled(0);
+        setKilledEnemiesInWave(0);
         nextLevel();
         Writ.resetInitSeconds();
         Config.GAME_MIN_SIZE = 300;

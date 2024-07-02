@@ -26,6 +26,7 @@ public class Config {
 
     public static int MAX_ENEMY_SPEED = 5;
     public static final int MAX_ENEMIES = 4;
+    public static final int PROJECTILE_TIMEOUT = 1;
     public static final int MIN_ENEMY_SPEED = 2;
     public static int SENSITIVITY_RATE = 0;
 

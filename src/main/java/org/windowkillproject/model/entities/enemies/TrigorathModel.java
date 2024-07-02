@@ -16,18 +16,12 @@ public class TrigorathModel extends EnemyModel {
         super(x, y);
         setRadius(ENEMY_RADIUS);
         setHp(15);
-        setAttackHp(10);
-        setRewardCount(2);
-        setRewardXps(5);
+        setMeleeAttackHp(10);
+        setReward(2, 5);
         initVertices();
-        int[] xPoints = new int[3];
-        int[] yPoints = new int[3];
-        for (int i = 0; i < 3; i++) {
-            xPoints[i] = getVertices().get(i).getX();
-            yPoints[i] = getVertices().get(i).getY();
-        }
-        setPolygon(new Polygon(xPoints, yPoints, 3));
+        initPolygon(3);
     }
+
 
     @Override
     public void route() {

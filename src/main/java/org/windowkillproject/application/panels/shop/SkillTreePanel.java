@@ -1,5 +1,7 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.shop;
 
+import org.windowkillproject.application.panels.Panel;
+import org.windowkillproject.application.panels.shop.OptionPanel;
 import org.windowkillproject.view.ImgData;
 
 import java.awt.*;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 import static org.windowkillproject.application.Application.initPFrame;
 import static org.windowkillproject.application.Config.APP_HEIGHT;
 import static org.windowkillproject.application.Config.APP_WIDTH;
-import static org.windowkillproject.application.panels.OptionPanel.SpecialtyName.*;
+import static org.windowkillproject.application.panels.shop.OptionPanel.SpecialtyName.*;
 
 public class SkillTreePanel extends Panel {
     public SkillTreePanel() {

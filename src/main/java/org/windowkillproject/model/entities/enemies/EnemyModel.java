@@ -15,25 +15,32 @@ public abstract class EnemyModel extends EntityModel {
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
     }
+    protected void initPolygon(int vertices) {
+        int[] xPoints = new int[vertices];
+        int[] yPoints = new int[vertices];
+        for (int i = 0; i < vertices; i++) {
+            xPoints[i] = getVertices().get(i).getX();
+            yPoints[i] = getVertices().get(i).getY();
+        }
+        setPolygon(new Polygon(xPoints, yPoints, vertices));
+    }
 
     private int rewardCount, rewardXps;
-    private static int enemiesKilled;
+    private static int killedEnemiesInWave;
 
-    public static void setEnemiesKilled(int enemiesKilled) {
-        EnemyModel.enemiesKilled = enemiesKilled;
+    public static void setKilledEnemiesInWave(int killedEnemiesInWave) {
+        EnemyModel.killedEnemiesInWave = killedEnemiesInWave;
     }
 
-    public static int getEnemiesKilled() {
-        return enemiesKilled;
+    public static int getKilledEnemiesInWave() {
+        return killedEnemiesInWave;
     }
 
-    protected void setRewardCount(int rewardCount) {
+    protected void setReward(int rewardCount, int rewardXps) {
         this.rewardCount = rewardCount;
-    }
-
-    public void setRewardXps(int rewardXps) {
         this.rewardXps = rewardXps;
     }
+
 
     private int xSpeed, ySpeed;
     private Polygon polygon;
@@ -59,7 +66,7 @@ public abstract class EnemyModel extends EntityModel {
     public void destroy() {
         super.destroy();
         playDestroySound();
-        enemiesKilled++;
+        killedEnemiesInWave++;
         for (int i = 0; i < rewardCount; i++) {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();

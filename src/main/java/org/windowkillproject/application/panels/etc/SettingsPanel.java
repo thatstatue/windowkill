@@ -1,10 +1,11 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.etc;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.Setter;
 import org.windowkillproject.application.SoundPlayer;
 import org.windowkillproject.application.listeners.EpsilonKeyListener;
+import org.windowkillproject.application.panels.Panel;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;

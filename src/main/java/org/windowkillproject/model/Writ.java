@@ -1,6 +1,6 @@
 package org.windowkillproject.model;
 
-import org.windowkillproject.application.panels.OptionPanel;
+import org.windowkillproject.application.panels.shop.OptionPanel;
 
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 

@@ -1,16 +1,13 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.game;
 
-import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.frames.PanelStatus;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static java.awt.Toolkit.getDefaultToolkit;
-import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 
 public class MainGamePanel extends GamePanel {
     private final JLabel clock = new JLabel("0:00");
@@ -29,7 +26,7 @@ public class MainGamePanel extends GamePanel {
 
     public JLabel[] getLabels() {
         return new JLabel[]{new JLabel(""), clock, xp
-                , new JLabel(String.valueOf(getEnemiesKilled())), wave};
+                , new JLabel(String.valueOf(getKilledEnemiesInWave())), wave};
     }
 
 

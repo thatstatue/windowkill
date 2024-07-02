@@ -14,6 +14,7 @@ import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
+import static org.windowkillproject.model.abilities.ProjectileModel.projectileModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
@@ -50,12 +51,16 @@ public class Update {
 
     public void updateModel() {
         if (!isBetweenWaves()) getGameFrame().shrink();
-        for (EntityModel entityModel : entityModels) {
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
             entityModel.rotate();
             if (!entityModel.isImpact()) entityModel.route();
         }
         for (int i = 0; i < bulletModels.size(); i++) {
             bulletModels.get(i).move();
+        }
+        for (int i = 0; i < projectileModels.size(); i++) {
+            projectileModels.get(i).move();
         }
         keepEpsilonInBounds();
         specialtiesControl();

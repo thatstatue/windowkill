@@ -1,4 +1,7 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.shop;
+
+import org.windowkillproject.application.panels.Panel;
+import org.windowkillproject.application.panels.shop.SelectButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +17,7 @@ public class OptionPanel extends Panel {
     private JLabel imgDisplay;
 
 
-    private Button selectButton;
+    private SelectButton selectButton;
 
     public boolean isOn() {
         return selectButton.isOn();
@@ -61,7 +64,7 @@ public class OptionPanel extends Panel {
         imgDisplay.setBounds(40, 80, OPTION_WIDTH, OPTION_IMG_HEIGHT);
         components.add(imgDisplay);
 
-        selectButton = new Button("PURCHASE");
+        selectButton = new SelectButton("PURCHASE");
         selectButton.setBounds(70, 330, 150, 50);
 
         components.add(selectButton);

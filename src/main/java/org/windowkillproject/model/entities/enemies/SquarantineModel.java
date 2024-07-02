@@ -24,18 +24,13 @@ public class SquarantineModel extends EnemyModel {
         super(x, y);
         setRadius((int) (ENEMY_RADIUS * 0.8));
         setHp(10);
-        setAttackHp(6);
-        setRewardCount(1);
-        setRewardXps(5);
+        setMeleeAttackHp(6);
+        setReward(1,5);
         initVertices();
-        int[] xPoints = new int[4];
-        int[] yPoints = new int[4];
-        for (int i = 0; i < 4; i++) {
-            xPoints[i] = getVertices().get(i).getX();
-            yPoints[i] = getVertices().get(i).getY();
-        }
-        setPolygon(new Polygon(xPoints, yPoints, 4));
+        initPolygon(4);
     }
+
+
 
     @Override
     void initVertices() {

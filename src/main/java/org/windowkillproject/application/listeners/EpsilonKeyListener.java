@@ -14,7 +14,7 @@ import static org.windowkillproject.application.Application.*;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Setter.key;
 import static org.windowkillproject.application.Setter.setButton;
-import static org.windowkillproject.application.panels.SettingsPanel.monoDialog;
+import static org.windowkillproject.application.panels.etc.SettingsPanel.monoDialog;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 
 public class EpsilonKeyListener implements NativeKeyListener {

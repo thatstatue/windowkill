@@ -1,4 +1,6 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.etc;
+
+import org.windowkillproject.application.panels.Panel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import static org.windowkillproject.application.Application.initPFrame;
 import static org.windowkillproject.application.Config.APP_HEIGHT;
 import static org.windowkillproject.application.Config.APP_WIDTH;
 
-public class TutorialPanel extends Panel{
+public class TutorialPanel extends Panel {
     public TutorialPanel(){
         super();
         setBackground(Color.decode("#3B2635"));

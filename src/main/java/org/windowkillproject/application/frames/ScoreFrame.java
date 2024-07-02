@@ -1,7 +1,7 @@
 package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.panels.ScorePanel;
+import org.windowkillproject.application.panels.etc.ScorePanel;
 
 import javax.swing.*;
 import java.awt.*;

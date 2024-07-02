@@ -1,10 +1,11 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.game;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.frames.PanelStatus;
+import org.windowkillproject.application.panels.Panel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.OmenoctModel;
 import org.windowkillproject.view.entities.EntityView;
 
 import javax.swing.*;
@@ -16,9 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.FRAME_STRETCH_SPEED;
-import static org.windowkillproject.application.frames.PanelStatus.shrinkable;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public abstract class GamePanel extends Panel {
@@ -118,11 +117,13 @@ public abstract class GamePanel extends Panel {
     private static void fixEntityPositionsInFrame(int code) {
         if (code == LEFT_CODE || code == UP_CODE) {
             for (EntityModel entityModel : entityModels) {
-                if (code == LEFT_CODE) {
-                    entityModel.move(FRAME_STRETCH_SPEED, 0);
-                }
-                if (code == UP_CODE) {
-                    entityModel.move(0, FRAME_STRETCH_SPEED);
+                if (!(entityModel instanceof OmenoctModel)) {
+                    if (code == LEFT_CODE) {
+                        entityModel.move(FRAME_STRETCH_SPEED, 0);
+                    }
+                    if (code == UP_CODE) {
+                        entityModel.move(0, FRAME_STRETCH_SPEED);
+                    }
                 }
             }
         }

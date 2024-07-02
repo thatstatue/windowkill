@@ -6,7 +6,7 @@ import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import javax.swing.*;
 
 import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
-import static org.windowkillproject.application.panels.SettingsPanel.monoDialog;
+import static org.windowkillproject.application.panels.etc.SettingsPanel.monoDialog;
 
 public class Setter {
     public static void setDifficulty(String rate) {

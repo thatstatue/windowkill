@@ -1,6 +1,8 @@
 package org.windowkillproject.model;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.OmenoctModel;
 import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 
@@ -13,57 +15,108 @@ import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.SoundPlayer.playCreateSound;
 import static org.windowkillproject.application.SoundPlayer.playEndWaveSound;
 import static org.windowkillproject.controller.GameController.random;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.getEnemiesKilled;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.setEnemiesKilled;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
 
 public class Wave {
     public static ArrayList<Wave> waves = new ArrayList<>();
     private static int level;
-    private void spawnWave(){
+
+    private void spawnWave() {
         getGameFrame().setWaveLevel(level);
         AtomicInteger count = new AtomicInteger();
-        Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05*level)), null);
+        Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * level)), null);
         creatorTimer.addActionListener(e -> {
-            int bound = level *2 + Config.BOUND;
+            int bound = level * 2 + Config.BOUND;
             if (count.get() < bound) {
                 //doesn't allow too many enemies
-                if (count.get() - getEnemiesKilled() < MAX_ENEMIES) {
-                    Direction direction = Direction.values()[random.nextInt(4)];
-                    int dX = random.nextInt(Config.GAME_WIDTH);
-                    int dY = random.nextInt(Config.GAME_HEIGHT);
-                    switch (direction) {
-                        case TopRight -> new TrigorathModel(getGameFrame().getWidth() + dX, -dY);
-                        case TopLeft -> new SquarantineModel(-dX, -dY);
-                        case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getHeight() + dY);
-                        case BottomRight -> new TrigorathModel(getGameFrame().getWidth() + dX, getGameFrame().getHeight() + dY);
-                    }
-                    playCreateSound();
+                if (count.get() - getKilledEnemiesInWave() < MAX_ENEMIES) {
+                    createRandomEnemy();/*todo Local*/
                     count.getAndIncrement();
                 }
-            } else if (count.get()==bound) {
-                if (getEnemiesKilled() == bound){
+            } else if (count.get() == bound) {
+                //waits until u kill the remaining enemies
+                if (getKilledEnemiesInWave() == bound) {
                     playEndWaveSound();
                     betweenWaves = true;
                     count.getAndIncrement();
                 }
-            }else {
-                if (count.get()< bound+2){
+            } else {
+                //10 secs between waves
+                if (count.get() < bound + 2) {
                     count.getAndIncrement();
-                }else {
+                } else {
+                    //time to go to the next level !
                     if (level < 3) {
                         startNewWave = true;
                         betweenWaves = false;
-                        setEnemiesKilled(0);
+                        setKilledEnemiesInWave(0);
                         creatorTimer.stop();
                     } else {
                         getGameFrame().endingScene();
-                        waves.remove(this);
+                        //waves.remove(this); //todo why?
                         creatorTimer.stop();
                     }
                 }
             }
         });
         creatorTimer.start();
+
+    }
+
+    private void createRandomLocalEnemy() {
+        Direction direction = Direction.values()[random.nextInt(4)];
+        int dX = random.nextInt(Config.GAME_WIDTH);
+        int dY = random.nextInt(Config.GAME_HEIGHT);
+        switch (direction) {
+            case TopRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX, -dY);
+            case TopLeft -> new SquarantineModel(-dX, -dY);
+            case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getMainPanelHeight() + dY);
+            case BottomRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX,
+                    getGameFrame().getMainPanelHeight() + dY);
+        }
+        playCreateSound();
+    }
+
+    private void spawnMiniBossWave() {
+        getGameFrame().setWaveLevel(level);
+        AtomicInteger count = new AtomicInteger();
+        Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * level)), null);
+        creatorTimer.addActionListener(e -> {
+            int boundKill = level * 2 + Config.BOUND;
+            if (getKilledEnemiesInWave() < boundKill) {
+                createRandomEnemy();
+                count.getAndIncrement();
+            }
+            //waits until u kill the remaining enemies
+            else if (count.get() == getKilledEnemiesInWave()) {
+                playEndWaveSound();
+                betweenWaves = true;
+                count.getAndIncrement();
+            } else {
+                //10 secs between waves
+                if (count.get() < getKilledEnemiesInWave() + 2) {
+                    count.getAndIncrement();
+                } else {
+                    //time to go to the next level !
+                    if (level < 10) {
+                        startNewWave = true;
+                        betweenWaves = false;
+                        setKilledEnemiesInWave(0);
+                        creatorTimer.stop();
+                    } else {
+                        getGameFrame().endingScene();
+                        //waves.remove(this); //todo final ending scene to be implemented
+                        creatorTimer.stop();
+                    }
+                }
+            }
+        });
+        creatorTimer.start();
+
+    }
+
+    private void spawnBossWave() {
 
     }
 
@@ -89,13 +142,39 @@ public class Wave {
         Wave.startNewWave = startNewWave;
     }
 
+    private void createRandomEnemy() {
+        int randNum = random.nextInt(4);
+        int randX;
+        int randY;
+        do {
+            randX = 50 + random.nextInt(getGameFrame().getMainPanelWidth() - 50);
+        } while (isEpsilonThere(randX,EpsilonModel.getINSTANCE().getX()));
+        do {
+            randY = 50 + random.nextInt(getGameFrame().getMainPanelHeight() - 50);
+        } while (isEpsilonThere(randY,EpsilonModel.getINSTANCE().getY()));
+
+        switch (randNum) {
+            case 0 -> createRandomLocalEnemy();
+            case 1, 2, 3 -> new OmenoctModel(randX, randY, EpsilonModel.getINSTANCE().getLocalPanel());//todo randomize
+        }
+
+    }
+
+    private boolean isEpsilonThere(int randLoc, int epsilonLoc) {
+        return randLoc + 2 * EPSILON_RADIUS > epsilonLoc
+                && randLoc < epsilonLoc + 4 * EPSILON_RADIUS;
+    }
+
     public Wave() {
         startNewWave = false;
         level++;
         waves.add(this);
-        spawnWave();
+        if (level < 4) spawnWave();
+        else if (level < 9) spawnMiniBossWave();
+        else spawnBossWave();
     }
-    private enum Direction{
+
+    private enum Direction {
         TopLeft, TopRight, BottomLeft, BottomRight
     }
 }

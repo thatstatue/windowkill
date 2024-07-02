@@ -2,7 +2,6 @@ package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.panels.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 
 import java.awt.geom.Point2D;
@@ -60,7 +59,7 @@ public class EpsilonModel extends EntityModel {
         super(x, y);
         setRadius(EPSILON_RADIUS);
         setHp(100);
-        setAttackHp(10);
+        setMeleeAttackHp(10);
         setXp(xp);
         setLocalPanel(Application.getGameFrame().getMainGamePanel());
     }

@@ -1,4 +1,4 @@
-package org.windowkillproject.application.panels;
+package org.windowkillproject.application.panels.shop;
 
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -7,10 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 
 import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.application.panels.OptionPanel.SpecialtyName.*;
-import static org.windowkillproject.application.panels.SkillTreePanel.*;
+import static org.windowkillproject.application.panels.shop.OptionPanel.SpecialtyName.*;
+import static org.windowkillproject.application.panels.shop.SkillTreePanel.*;
 
-public class Button extends JButton {
+public class SelectButton extends JButton {
     private final Color color = Color.decode("#7C4F63");
 
     public boolean isPurchased() {
@@ -31,7 +31,7 @@ public class Button extends JButton {
         this.specialtyName = specialtyName;
     }
 
-    public Button(String name) {
+    public SelectButton(String name) {
         setText(name);
         setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         setBackground(color);

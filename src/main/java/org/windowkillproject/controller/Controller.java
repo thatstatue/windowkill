@@ -5,12 +5,14 @@ import org.windowkillproject.model.abilities.AbilityModel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.OmenoctModel;
 import org.windowkillproject.model.entities.enemies.SquarantineModel;
 import org.windowkillproject.model.entities.enemies.TrigorathModel;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.enemies.EnemyView;
 import org.windowkillproject.view.entities.EpsilonView;
+import org.windowkillproject.view.entities.enemies.OmenoctView;
 import org.windowkillproject.view.entities.enemies.SquarantineView;
 import org.windowkillproject.view.entities.enemies.TrigorathView;
 
@@ -42,6 +44,15 @@ public abstract class Controller {
                         squarantineModel.getY(),
                         squarantineModel.getWidth(),
                         squarantineModel.getHeight()
+                );
+            }else if (entityModel instanceof OmenoctModel){
+                var omenoctModel = (OmenoctModel) entityModel;
+                var omenoctView = new OmenoctView(id);
+                omenoctView.set(
+                        omenoctModel.getX(),
+                        omenoctModel.getY(),
+                        omenoctModel.getWidth(),
+                        omenoctModel.getHeight()
                 );
             }
         } else {
