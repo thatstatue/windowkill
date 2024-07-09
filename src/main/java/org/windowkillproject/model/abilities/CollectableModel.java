@@ -1,5 +1,6 @@
 package org.windowkillproject.model.abilities;
 
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.view.abilities.CollectableView;
 
 import java.util.ArrayList;
@@ -9,11 +10,11 @@ import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 
 public class CollectableModel extends AbilityModel{
     public static ArrayList<CollectableModel> collectableModels = new ArrayList<>();
-    public CollectableModel(int x, int y, int rewardXp) {
-        super(x, y);
+    public CollectableModel(GamePanel localPanel, int x, int y, int rewardXp) {
+        super(localPanel, x, y);
         this.rewardXp = rewardXp;
         collectableModels.add(this);
-        createAbilityView(CollectableView.class, id, x, y);
+        createAbilityView(/*CollectableView.class,*/ id, x, y);
         initSeconds = getTotalSeconds();
     }
     private int rewardXp;

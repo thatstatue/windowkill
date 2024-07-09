@@ -1,10 +1,12 @@
 package org.windowkillproject.view.abilities;
 
 
+import org.windowkillproject.application.panels.game.GamePanel;
+
 import java.awt.*;
 
 public class BulletView extends AbilityView {
-    public BulletView(String id, int x, int y) {
+    public BulletView(String id,int x, int y) {
         super(id, x, y);
     }
 

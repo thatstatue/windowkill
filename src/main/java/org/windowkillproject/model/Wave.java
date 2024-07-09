@@ -2,12 +2,12 @@ package org.windowkillproject.model;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.OmenoctModel;
-import org.windowkillproject.model.entities.enemies.SquarantineModel;
-import org.windowkillproject.model.entities.enemies.TrigorathModel;
+import org.windowkillproject.model.entities.enemies.*;
+import org.windowkillproject.view.entities.enemies.NecropickView;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
@@ -69,11 +69,13 @@ public class Wave {
         int dX = random.nextInt(Config.GAME_WIDTH);
         int dY = random.nextInt(Config.GAME_HEIGHT);
         switch (direction) {
-            case TopRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX, -dY);
-            case TopLeft -> new SquarantineModel(-dX, -dY);
-            case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getMainPanelHeight() + dY);
+            case TopRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX,
+                    -dY, getGameFrame().getMainGamePanel()); //todo rand?
+            case TopLeft -> new SquarantineModel(-dX, -dY, getGameFrame().getMainGamePanel());
+            case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getMainPanelHeight() + dY,
+                    getGameFrame().getMainGamePanel());
             case BottomRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX,
-                    getGameFrame().getMainPanelHeight() + dY);
+                    getGameFrame().getMainPanelHeight() + dY, getGameFrame().getMainGamePanel());
         }
         playCreateSound();
     }
@@ -155,7 +157,12 @@ public class Wave {
 
         switch (randNum) {
             case 0 -> createRandomLocalEnemy();
-            case 1, 2, 3 -> new OmenoctModel(randX, randY, EpsilonModel.getINSTANCE().getLocalPanel());//todo randomize
+            case 1, 2, 3 ->{
+                var n =  new WyrmModel(randX, randY);//todo randomize
+//                System.out.println("wyrm "+ n.getId() );
+//                System.out.println(Arrays.toString(n.getPolygon().xpoints));
+//                System.out.println(Arrays.toString(n.getPolygon().ypoints));
+            }
         }
 
     }

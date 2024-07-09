@@ -11,12 +11,15 @@ import org.windowkillproject.view.entities.EntityView;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.FRAME_STRETCH_SPEED;
+import static org.windowkillproject.controller.GameController.keepEpsilonInBounds;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
@@ -35,38 +38,66 @@ public abstract class GamePanel extends Panel {
         requestFocusInWindow();
         gamePanels.add(this);
         this.panelStatus = panelStatus;
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                updateEntities();
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                super.componentMoved(e);
+                updateEntities();
+            }
+        });
     }
 
     @Override
     protected ArrayList<Component> initComponents() {
         return null;
     }
-
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for (EntityView entityView : entityViews) {
-            entityView.paint(g);
+    private void updateEntities(){
+        for (EntityModel entityModel : entityModels){
+            if (entityModel.getLocalPanel().equals(this)){
+                System.out.println("okay im doing something");
+                entityModel.setLocalPanel(this);
+                keepEpsilonInBounds();
+            }
         }
     }
 
-    public void shrink() {
+//    @Override
+//    protected void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+//        for (EntityView entityView : entityViews) {
+//            if (entityView.getLocalPanel() == null){
+//                if (this instanceof MainGamePanel)
+//                    entityView.paint(g);
+//                System.out.println("null bud "+ entityView);
+//            } else if (entityView.getLocalPanel().equals(this)) {
+//                entityView.paint(g);
+//            }
+//        }
+//    }
 
-        int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;
-        int newY = getY() + Config.FRAME_SHRINKAGE_SPEED / 2;
-        int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED;
-        int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED;
-        if (getWidth() <= Config.GAME_MIN_SIZE) {
-            newWidth = Config.GAME_MIN_SIZE;
-            newX = getX();
-        }
-        if (getHeight() <= Config.GAME_MIN_SIZE) {
-            newHeight = Config.GAME_MIN_SIZE;
-            newY = getY();
-        }
-        if (!isStretching) {
-            this.setBounds(newX, newY, newWidth, newHeight);
+    public void shrink() {
+        if (panelStatus.equals(PanelStatus.shrinkable)) {
+            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;
+            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED / 2;
+            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED;
+            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED;
+            if (getWidth() <= Config.GAME_MIN_SIZE) {
+                newWidth = Config.GAME_MIN_SIZE;
+                newX = getX();
+            }
+            if (getHeight() <= Config.GAME_MIN_SIZE) {
+                newHeight = Config.GAME_MIN_SIZE;
+                newY = getY();
+            }
+            if (!isStretching) {
+                this.setBounds(newX, newY, newWidth, newHeight);
+            }
         }
     }
     public void setExploding(boolean exploding) {
@@ -75,49 +106,53 @@ public abstract class GamePanel extends Panel {
 
 
     public void stretch(int code) {
-        AtomicInteger count = new AtomicInteger();
-        Timer stretchTimer = new Timer(Config.FPS, null);
-        stretchTimer.addActionListener(e -> {
-            int newX = getX();
-            int newY = getY();
-            int newWidth = getWidth();
-            int newHeight = getHeight();
-            switch (code) {
-                case DOWN_CODE -> {
-                    newY += FRAME_STRETCH_SPEED / 2;
-                    newHeight += FRAME_STRETCH_SPEED;
+        if (panelStatus.equals(PanelStatus.shrinkable)) {
+
+            AtomicInteger count = new AtomicInteger();
+            Timer stretchTimer = new Timer(Config.FPS, null);
+            stretchTimer.addActionListener(e -> {
+                int newX = getX();
+                int newY = getY();
+                int newWidth = getWidth();
+                int newHeight = getHeight();
+                switch (code) {
+                    case DOWN_CODE -> {
+                        newY += FRAME_STRETCH_SPEED / 2;
+                        newHeight += FRAME_STRETCH_SPEED;
+                    }
+                    case LEFT_CODE -> {
+                        newX -= FRAME_STRETCH_SPEED;
+                        newWidth += FRAME_STRETCH_SPEED;
+                    }
+                    case RIGHT_CODE -> {
+                        newX += FRAME_STRETCH_SPEED / 2;
+                        newWidth += FRAME_STRETCH_SPEED;
+                    }
+                    case UP_CODE -> {
+                        newY -= FRAME_STRETCH_SPEED;
+                        newHeight += FRAME_STRETCH_SPEED;
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + code);
                 }
-                case LEFT_CODE -> {
-                    newX -= FRAME_STRETCH_SPEED;
-                    newWidth += FRAME_STRETCH_SPEED;
+                if (count.get() < 7) {
+                    isStretching = true;
+                    fixEntityPositionsInShotPanel( code);
+                    setBounds(newX, newY, newWidth, newHeight);
+                    count.getAndIncrement();
+                } else {
+                    isStretching = false;
+                    stretchTimer.stop();
                 }
-                case RIGHT_CODE -> {
-                    newX += FRAME_STRETCH_SPEED / 2;
-                    newWidth += FRAME_STRETCH_SPEED;
-                }
-                case UP_CODE -> {
-                    newY -= FRAME_STRETCH_SPEED;
-                    newHeight += FRAME_STRETCH_SPEED;
-                }
-                default -> throw new IllegalStateException("Unexpected value: " + code);
-            }
-            if (count.get() < 7) {
-                isStretching = true;
-                fixEntityPositionsInFrame(code);
-                setBounds(newX, newY, newWidth, newHeight);
-                count.getAndIncrement();
-            } else {
-                isStretching = false;
-                stretchTimer.stop();
-            }
-        });
-        stretchTimer.start();
+            });
+            stretchTimer.start();
+        }
     }
 
-    private static void fixEntityPositionsInFrame(int code) {
+    private void fixEntityPositionsInShotPanel(int code) {
         if (code == LEFT_CODE || code == UP_CODE) {
             for (EntityModel entityModel : entityModels) {
-                if (!(entityModel instanceof OmenoctModel)) {
+                if (!(entityModel instanceof OmenoctModel) &&
+                        entityModel.getLocalPanel().equals(this)) {
                     if (code == LEFT_CODE) {
                         entityModel.move(FRAME_STRETCH_SPEED, 0);
                     }
@@ -159,7 +194,7 @@ public abstract class GamePanel extends Panel {
                 EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
                 int deltaX = newWidth / 2 - epsilonModel.getXO() - epsilonModel.getRadius();
                 int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();
-                epsilonModel.move(deltaX, deltaY);
+//                epsilonModel.move(deltaX, deltaY);
             } else {
                 if (exploding) {
                     setVisible(false);

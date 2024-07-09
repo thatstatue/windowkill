@@ -5,6 +5,8 @@ import org.windowkillproject.application.listeners.EpsilonKeyListener;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 
 import org.windowkillproject.application.panels.etc.SettingsPanel;
+import org.windowkillproject.application.panels.game.MainGamePanel;
+import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.application.panels.shop.ShopPanel;
 import org.windowkillproject.application.panels.shop.SkillTreePanel;
 import org.windowkillproject.application.panels.etc.TutorialPanel;
@@ -58,6 +60,7 @@ public class Application implements Runnable {
 
     public static GameFrame getGameFrame() {
         if (gameFrame == null) gameFrame = new GameFrame();
+//        gameFrame.add(gameFrame.getMainGamePanel());
         return gameFrame;
     }
 

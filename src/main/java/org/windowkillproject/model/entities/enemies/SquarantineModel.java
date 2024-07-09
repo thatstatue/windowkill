@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
@@ -20,14 +21,11 @@ public class SquarantineModel extends EnemyModel {
         this.collision = collision;
     }
 
-    public SquarantineModel(int x, int y) {
-        super(x, y);
-        setRadius((int) (ENEMY_RADIUS * 0.8));
-        setHp(10);
-        setMeleeAttackHp(6);
-        setReward(1,5);
+    public SquarantineModel(int x, int y, GamePanel localPanel) {
+        super(localPanel,x, y, (int) (ENEMY_RADIUS * 0.8), 10, 6 , 1, 5);
+
         initVertices();
-        initPolygon(4);
+        initPolygon();
     }
 
 

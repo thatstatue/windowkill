@@ -10,19 +10,21 @@ import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Application.initScoreFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.listeners.EpsilonKeyListener.*;
+import static org.windowkillproject.controller.Controller.createEntityView;
 
 public class EpsilonModel extends EntityModel {
     private static EpsilonModel INSTANCE;
 
     public static EpsilonModel getINSTANCE() {
-        if (INSTANCE == null) INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, 0);
+
+        if (INSTANCE == null) INSTANCE = new EpsilonModel(CENTER_X / 2, CENTER_Y / 2, 0);
         return INSTANCE;
     }
 
     public static void newINSTANCE() {
         int xp = 0;
         if (INSTANCE != null) xp = INSTANCE.getXp();
-        INSTANCE = new EpsilonModel(GAME_WIDTH / 2, GAME_HEIGHT / 2, xp);
+        INSTANCE = new EpsilonModel(CENTER_X / 2, CENTER_Y / 2, xp);
         INSTANCE.setRadius(EPSILON_RADIUS);
     }
 
@@ -38,7 +40,7 @@ public class EpsilonModel extends EntityModel {
     }
 
     public void route() {
-        EpsilonModel eM = getINSTANCE();
+        EpsilonModel eM = getINSTANCE();//todo getGameFrame().getWidth()
 
         int endX = eM.getWidth() + eM.getX();
         int endY = eM.getHeight() + eM.getY();
@@ -56,12 +58,9 @@ public class EpsilonModel extends EntityModel {
     }
 
     private EpsilonModel(int x, int y, int xp) {
-        super(x, y);
-        setRadius(EPSILON_RADIUS);
-        setHp(100);
-        setMeleeAttackHp(10);
+        super(getGameFrame().getMainGamePanel(), x, y, EPSILON_RADIUS, 100, 10);
         setXp(xp);
-        setLocalPanel(Application.getGameFrame().getMainGamePanel());
+        createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
     }
 
     public void spawnVertex() {

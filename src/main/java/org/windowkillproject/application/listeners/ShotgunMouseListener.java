@@ -20,17 +20,17 @@ public class ShotgunMouseListener implements NativeMouseListener {
     public void nativeMouseClicked(NativeMouseEvent e) {
         if (getGameFrame().isVisible()) {
             Point2D mouseLoc = MouseInfo.getPointerInfo().getLocation();
-            Point2D relativePoint = new Point2D.Double(
-                    mouseLoc.getX() - getGameFrame().getMainPanelX(),
-                    mouseLoc.getY() - getGameFrame().getMainPanelY());
+//            Point2D relativePoint = new Point2D.Double(
+//                    mouseLoc.getX() - getGameFrame().getMainPanelX(),
+//                    mouseLoc.getY() - getGameFrame().getMainPanelY());
             EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
 
             BulletModel bulletModel = new BulletModel(
-                    epsilonModel.getXO(), epsilonModel.getYO(), relativePoint);
+                    epsilonModel.getXO(), epsilonModel.getYO(), mouseLoc);
             bulletModel.shoot();
             long deltaT = getTotalSeconds() - empowerInitSeconds;
             if (deltaT > 0 && deltaT <= 10) { //doesn't allow too many bullets
-                empowerBullets(epsilonModel, relativePoint);
+                empowerBullets(epsilonModel, mouseLoc);
             }
 
         }

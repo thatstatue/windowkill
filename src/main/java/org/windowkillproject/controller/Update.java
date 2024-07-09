@@ -3,6 +3,7 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.view.abilities.AbilityView;
@@ -10,6 +11,7 @@ import org.windowkillproject.view.entities.EntityView;
 
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
@@ -46,7 +48,13 @@ public class Update {
             setViewBounds(abilityView);
             if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
-        getGameFrame().repaint();
+        getGameFrame().revalidate();
+        for (int i = 0 ; i < gamePanels.size(); i++){
+            GamePanel gamePanel = gamePanels.get(i);
+            getGameFrame().repaint(gamePanel.getX(), gamePanel.getY(),
+                    gamePanel.getWidth(), gamePanel.getHeight());
+
+        }
     }
 
     public void updateModel() {
@@ -62,6 +70,7 @@ public class Update {
         for (int i = 0; i < projectileModels.size(); i++) {
             projectileModels.get(i).move();
         }
+        setEntitiesBoundsAllowed();
         keepEpsilonInBounds();
         specialtiesControl();
         writControl();
@@ -69,6 +78,7 @@ public class Update {
         epsilonIntersectionControl();
         enemyIntersectionControl();
         keepEpsilonInBounds();
+//        hideEntitiesOutsideBounds();
         if (Wave.isStartNewWave()) new Wave();
 
 

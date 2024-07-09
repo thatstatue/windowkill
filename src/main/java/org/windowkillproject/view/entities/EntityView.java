@@ -1,65 +1,20 @@
 package org.windowkillproject.view.entities;
 
-import org.windowkillproject.application.Application;
-import org.windowkillproject.application.frames.GameFrame;
-import org.windowkillproject.view.Viewable;
+import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.view.ObjectView;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public abstract class EntityView extends JLabel implements Viewable {
-    protected BufferedImage img;
-    String id;
-    protected int x, y, width, height;
-    private boolean enabled = true;
-    private GameFrame localFrame;
+public abstract class EntityView extends ObjectView {
 
-    public GameFrame getLocalFrame() {
-        return localFrame;
-    }
-
-    public void setLocalFrame(GameFrame localFrame) {
-        this.localFrame = localFrame;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public static ArrayList<EntityView> entityViews = new ArrayList<>();
 
-    public EntityView(String id, GameFrame localFrame) {
-        this.id = id;
-        entityViews.add(this);
-        this.localFrame = localFrame;
-    }
-
     public EntityView(String id) {
-        this(id, Application.getGameFrame());
+        super(id);
+        entityViews.add(this);
     }
-
-
-    public String getId() {
-        return id;
-    }
-
-
-    public BufferedImage getImg() {
-        return img;
-    }
-
-    public void setImg(BufferedImage img) {
-        this.img = img;
-    }
-
     public void set(int x, int y, int width, int height) {
         setX(x);
         setY(y);
@@ -67,36 +22,9 @@ public abstract class EntityView extends JLabel implements Viewable {
         setHeight(height);
 
     }
+//    @Override
+//    public void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+//    }
 
-    public int getX() {
-        return x;
     }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-}

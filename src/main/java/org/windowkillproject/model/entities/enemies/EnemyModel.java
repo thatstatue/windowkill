@@ -1,21 +1,27 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.entities.EntityModel;
 
 import java.awt.*;
 
 import static org.windowkillproject.application.SoundPlayer.playDestroySound;
+import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.GameController.random;
 
 public abstract class EnemyModel extends EntityModel {
-    protected EnemyModel(int x, int y) {
-        super(x, y);
+    public EnemyModel(GamePanel localPanel, int x, int y, int radius, int hp , int meleeAttackHp, int rewardCount, int rewardXps) {
+        super(localPanel,x, y, radius,hp, meleeAttackHp);
+        setReward(rewardCount, rewardXps);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
+        if (localPanel!= null) createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+
     }
-    protected void initPolygon(int vertices) {
+    protected void initPolygon() {
+        int vertices=getVertices().size();
         int[] xPoints = new int[vertices];
         int[] yPoints = new int[vertices];
         for (int i = 0; i < vertices; i++) {
@@ -71,7 +77,7 @@ public abstract class EnemyModel extends EntityModel {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();
 
-            new CollectableModel(x, y, rewardXps);
+            new CollectableModel(getLocalPanel(), x, y, rewardXps);
         }
     }
 

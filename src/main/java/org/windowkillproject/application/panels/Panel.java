@@ -15,6 +15,7 @@ public abstract class Panel extends JPanel {
     protected ArrayList<Component> components;
 
     public Panel() {
+        super();
         requestFocus();
         setLayout(null);
         components = initComponents();

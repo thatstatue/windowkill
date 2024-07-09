@@ -1,5 +1,6 @@
 package org.windowkillproject.model.entities.enemies;
 
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
@@ -12,14 +13,11 @@ import static org.windowkillproject.controller.Utils.routePoint;
 public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
 
-    public TrigorathModel(int x, int y) {
-        super(x, y);
-        setRadius(ENEMY_RADIUS);
-        setHp(15);
-        setMeleeAttackHp(10);
-        setReward(2, 5);
+    public TrigorathModel(int x, int y, GamePanel localPanel) {
+        super(localPanel, x, y, ENEMY_RADIUS , 15, 10, 2, 5);
+
         initVertices();
-        initPolygon(3);
+        initPolygon();
     }
 
 

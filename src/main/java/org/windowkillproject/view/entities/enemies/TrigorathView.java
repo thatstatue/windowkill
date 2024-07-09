@@ -1,5 +1,7 @@
 package org.windowkillproject.view.entities.enemies;
 
+import org.windowkillproject.application.panels.game.GamePanel;
+
 import java.awt.*;
 
 public class TrigorathView extends EnemyView {

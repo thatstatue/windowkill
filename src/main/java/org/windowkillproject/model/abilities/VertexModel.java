@@ -11,11 +11,11 @@ import static org.windowkillproject.controller.Controller.createAbilityView;
 public class VertexModel extends AbilityModel {
     private final EntityModel parentEntityModel;
     public VertexModel(int x, int y, EntityModel parentEntityModel) {
-        super(x, y);
+        super(parentEntityModel.getLocalPanel(), x, y); //todo probable
         this.parentEntityModel = parentEntityModel;
-        if (parentEntityModel instanceof EpsilonModel) createAbilityView(VertexView.class, id, x, y);
+        if (parentEntityModel instanceof EpsilonModel) createAbilityView(/*VertexView.class,*/ id, x, y);
     }
-    public static final double UNIT_DEGREE =0.084;
+
     public void rotate(double theta){
         double degree = Math.atan2( this.getY() - parentEntityModel.getYO(),this.getX() - parentEntityModel.getXO());
         degree += theta;

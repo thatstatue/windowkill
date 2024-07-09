@@ -1,5 +1,7 @@
 package org.windowkillproject.view.abilities;
 
+import org.windowkillproject.application.panels.game.GamePanel;
+
 import java.awt.*;
 
 public class VertexView extends AbilityView {

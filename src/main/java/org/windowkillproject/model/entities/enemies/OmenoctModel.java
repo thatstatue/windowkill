@@ -17,16 +17,11 @@ import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.controller.Utils.routePoint;
 
-public class OmenoctModel extends EnemyModel{
+public class OmenoctModel extends EnemyModel implements ProjectileOperator {
     public OmenoctModel(int x, int y, GamePanel localPanel) {
-        super(x, y);
-        setRadius((int) (ENEMY_RADIUS * 1.2));
-        setHp(20);
-        setMeleeAttackHp(6);
-        setReward(8, 4);
+        super(localPanel, x, y, (int) (ENEMY_RADIUS * 1.2), 20, 6, 8, 4);
         initVertices();
-        initPolygon(8);
-        setLocalPanel(localPanel);
+        initPolygon();
     }
 
     private long lastShot;
@@ -37,13 +32,9 @@ public class OmenoctModel extends EnemyModel{
         if (getLocalPanel() != null && getLocalPanel().equals(
                 EpsilonModel.getINSTANCE().getLocalPanel())) {
             Point2D routePoint = goToNearestEdge();
-            if (routePoint.getX() == 0 && routePoint.getY() == 0){
-                if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-                    shoot();
-                    lastShot = ElapsedTime.getTotalSeconds();
-                }
-            }
-            else {
+            if (routePoint.getX() == 0 && routePoint.getY() == 0) {
+                shoot();
+            } else {
                 move((int) routePoint.getX(), (int) routePoint.getY());
             }
         } else {
@@ -51,13 +42,18 @@ public class OmenoctModel extends EnemyModel{
         }
     }
 
-    private void shoot() {
-        new ProjectileModel(this, 4, true).shoot();
+    @Override
+    public void shoot() {
+        if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
+            new ProjectileModel(getLocalPanel(),this, 4, true, true, Color.red, Color.white).shoot();
+            lastShot = ElapsedTime.getTotalSeconds();
+        }
     }
-    public void hitWall(int code){
-        System.out.println(code + " and the edge is " + edgeCode );
+
+    public void hitWall(int code) {
         if (code == edgeCode) gotShoot();
     }
+
     private Point2D goToNearestEdge() {
         int distanceFromRight = getGameFrame().getMainPanelWidth() - getXO();
         int distanceFromDown = getGameFrame().getMainPanelHeight() - getYO();
@@ -87,13 +83,13 @@ public class OmenoctModel extends EnemyModel{
                 if (isToDown) y = MIN_ENEMY_SPEED;
                 else y = -MIN_ENEMY_SPEED;
             }
-        }else{
+        } else {
             setTheta(0);
         }
-        if (x == 0){
+        if (x == 0) {
             edgeCode = LEFT_CODE;
             if (isToRight) edgeCode = RIGHT_CODE;
-        } else if (y==0) {
+        } else if (y == 0) {
             edgeCode = UP_CODE;
             if (isToDown) edgeCode = DOWN_CODE;
         }

@@ -2,19 +2,22 @@ package org.windowkillproject.model.entities;
 
 import org.windowkillproject.application.SoundPlayer;
 import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.model.ObjectModel;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.Drawable;
+import org.windowkillproject.model.entities.enemies.NonRotatable;
 
+import java.awt.*;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.UUID;
 
-import static org.windowkillproject.controller.Controller.createEntityView;
-import static org.windowkillproject.model.abilities.VertexModel.UNIT_DEGREE;
+import static org.windowkillproject.application.Config.UNIT_DEGREE;
 
-public abstract class EntityModel implements Drawable {
-    protected int x, y, width, height;
+
+public abstract class EntityModel extends ObjectModel {
+
     private boolean isImpact = false;
 
     public boolean isImpact() {
@@ -27,21 +30,8 @@ public abstract class EntityModel implements Drawable {
 
     private int hp, meleeAttackHp;
     private double theta;
-    private GamePanel localPanel;
-
-    public GamePanel getLocalPanel() {
-        return localPanel;
-    }
-
-    public void setLocalPanel(GamePanel localPanel) {
-        this.localPanel = localPanel;
-    }
 
     protected ArrayList<VertexModel> vertices;
-
-    public String getId() {
-        return id;
-    }
 
     public void setVertices(ArrayList<VertexModel> vertices) {
         this.vertices = vertices;
@@ -58,7 +48,7 @@ public abstract class EntityModel implements Drawable {
         return v;
     }
 
-    private int radius, reduceCount;
+    private int radius, reduceCount, width, height;
     public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
     public abstract void route(); //if entity is local, implement is also local
@@ -83,18 +73,12 @@ public abstract class EntityModel implements Drawable {
     }
     public abstract Point2D getRoutePoint();
 
-    public Point2D getAnchor() {
-        return anchor;
-    }
 
-    public void setAnchor(Point2D anchor) {
-        this.anchor = anchor;
+    public void addToAllowedArea(GamePanel panel){
+        Area area = new Area(new Rectangle(panel.getX(), panel.getY(),
+                panel.getWidth(),panel.getHeight()));
+        getAllowedArea().add(area); //todo daijovah?
     }
-    public void setAnchor (double x, double y){
-        anchor.setLocation(x , y);
-    }
-
-
     public int getMeleeAttackHp() {
         return meleeAttackHp;
     }
@@ -140,44 +124,27 @@ public abstract class EntityModel implements Drawable {
         setAnchor(getAnchor().getX(), yO);
     }
 
-    private Point2D anchor = new Point2D.Double(0,0);
-    private final String id;
-
     public void rotate() {
         rotate(theta);
     }
 
     public void rotate(double theta){
-        if (getVertices() != null) {
+        if (!(this instanceof  NonRotatable || getVertices() == null)) {
             for (VertexModel vertexModel : getVertices()) {
                 vertexModel.rotate(theta);
             }
         }
     }
 
-    protected EntityModel(int x, int y) {
-        this.x = x;
-        this.y = y;
+    protected EntityModel(GamePanel localPanel, int x, int y, int radius, int hp, int meleeAttackHp) {
+        super(localPanel, x, y );
+
+        this.hp = hp;
+        this.meleeAttackHp = meleeAttackHp;
         vertices = new ArrayList<>();
-        this.id = UUID.randomUUID().toString();
+
         entityModels.add(this);
-        createEntityView(id);
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+        setRadius(radius);
     }
 
     public int getWidth() {

@@ -2,16 +2,14 @@ package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.Projectable;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.VertexModel;
-import org.windowkillproject.model.entities.enemies.EnemyModel;
-import org.windowkillproject.model.entities.enemies.SquarantineModel;
-import org.windowkillproject.view.entities.enemies.Hovering;
-import org.windowkillproject.view.entities.enemies.Unmovable;
+import org.windowkillproject.model.entities.enemies.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,12 +22,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.shop.ShopPanel.*;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
-import static org.windowkillproject.model.abilities.VertexModel.UNIT_DEGREE;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
@@ -85,13 +83,14 @@ public abstract class GameController {
         // rEaLiStiC impact on the colliding entities
         Point2D p1 = enemyModel.getRoutePoint();
         Point2D p2 = entityModel.getRoutePoint();
-        collidedEntitiesImpact(entityModel, enemyModel, p1, p2);
+        if (p1!= null && p2!= null) {
+            collidedEntitiesImpact(entityModel, enemyModel, p1, p2);
 
-        //torque
-        if (isOverlappingDetected(entityModel,enemyModel)) {
-            torqueOfCollision(entityModel, enemyModel, closestPointOfEnemy);
+            //torque
+            if (isOverlappingDetected(entityModel, enemyModel)) {
+                torqueOfCollision(entityModel, enemyModel, closestPointOfEnemy);
+            }
         }
-
         return closestPointOfEnemy;
     }
 
@@ -116,6 +115,9 @@ public abstract class GameController {
         Timer impactTimer2 = getImpactTimer(enemyModel, weighedVector(p2, s2), IMPACT_DURATION);
         if (isCollideAffected(entityModel)) impactTimer1.start();
         if (isCollideAffected(enemyModel)) impactTimer2.start();
+        if (entityModel instanceof WyrmModel) ((WyrmModel) entityModel).setMinusRotationSpeed();
+        if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
+
     }
 
     private static void torqueOfCollision(EntityModel entityModel, EnemyModel enemyModel, Point2D closestPointOfEnemy) {
@@ -175,7 +177,7 @@ public abstract class GameController {
     }
 
     private static boolean isImpactAffected(EntityModel not1, EntityModel not2, EntityModel entityModel) {
-        return !(entityModel.equals(not1) || entityModel.equals(not2) || entityModel instanceof Hovering);
+        return !(entityModel.equals(not1) || entityModel.equals(not2) || entityModel instanceof Unmovable);
     }
 
     public static void enemyIntersectionControl() {
@@ -195,7 +197,13 @@ public abstract class GameController {
                     impact(enemyModel, collidedEnemy);
                     tempCollision = true;
                 }
+                if (enemyModel instanceof WyrmModel &&
+                        enemyModel.getAnchor().distance(closestPointOnPolygon(enemyModel.getAnchor(),
+                                collidedEnemy.getPointVertices()))< enemyModel.getRadius()){
+                    impact(enemyModel,collidedEnemy);
+                }
             }
+
             //dash controller
             if (enemyModel instanceof SquarantineModel) {
                 var squarantine = (SquarantineModel) enemyModel;
@@ -218,26 +226,50 @@ public abstract class GameController {
             }
         }
     }
+    public static void setEntitiesBoundsAllowed(){
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
+            int t = 0;
+            for (int j = 0; j < gamePanels.size(); j++) {
+                GamePanel gamePanel = gamePanels.get(j);
+                if (entityPartlyInBounds(entityModel, gamePanel)) {
+                    entityModel.addToAllowedArea(gamePanel);
+                    t++;
+                }
+            }
+//            if (t>1) entityModel.setLocalPanel(null);
+        }
+    }
 
     public static void keepEpsilonInBounds() {
         if (!getGameFrame().isExploding()) {
             var epsilonModel = EpsilonModel.getINSTANCE();
             int endX = epsilonModel.getXO() + epsilonModel.getRadius();
             int endY = epsilonModel.getYO() + epsilonModel.getRadius();
-            if (endY > getGameFrame().getMainPanelHeight()) {
-                int deltaY = getGameFrame().getMainPanelHeight() - endY;
+//            System.out.println("eps is "+ endX + " "+ endY);
+
+            int localPanelX=epsilonModel.getLocalPanel().getX();
+            int localPanelY = epsilonModel.getLocalPanel().getY();
+            int endOfLocalPanelY= localPanelY+ epsilonModel.getLocalPanel().getHeight();
+            int endOfLocalPanelX = localPanelX+ epsilonModel.getLocalPanel().getWidth();
+
+            System.out.println("epsilon x is allowed from "+ localPanelX+ " to " +endOfLocalPanelX);
+//            System.out.println(" should be allowed from "+ gamePanels.get(1).getX()+ " to " +gamePanels.get(1).getX()+gamePanels.get(1).getWidth());
+
+            if (endY > endOfLocalPanelY) {
+                int deltaY = endOfLocalPanelY - endY;
                 epsilonModel.move(0, deltaY);
             }
-            if (endX > getGameFrame().getMainPanelWidth()) {
-                int deltaX = getGameFrame().getMainPanelWidth() - endX;
+            if (endX > endOfLocalPanelX) {
+                int deltaX = endOfLocalPanelX - endX;
                 epsilonModel.move(deltaX, 0);
             }
-            if (epsilonModel.getY() < 0) {
-                int deltaY = -epsilonModel.getY();
+            if (epsilonModel.getY() < localPanelY) {
+                int deltaY = localPanelY-epsilonModel.getY();
                 epsilonModel.move(0, deltaY);
             }
-            if (epsilonModel.getX() < 0) {
-                int deltaX = -epsilonModel.getX();
+            if (epsilonModel.getX() < localPanelX) {
+                int deltaX = localPanelX-epsilonModel.getX();
                 epsilonModel.move(deltaX, 0);
             }
             getGameFrame().setHpAmount(epsilonModel.getHp());
@@ -270,8 +302,14 @@ public abstract class GameController {
                         break;
                     }
                 }
+                System.out.println("impact start on epsilon and "+ enemyModel +"\n with: "+ enemyModel.getAnchor());
                 impact(epsilonModel, enemyModel);
                 break;
+            }
+            if (enemyModel instanceof WyrmModel &&
+                    enemyModel.getAnchor().distance(epsilonModel.getAnchor())<
+                            enemyModel.getRadius()+epsilonModel.getRadius()){
+                impact(epsilonModel, enemyModel);
             }
 
         }

@@ -12,7 +12,11 @@ public class Config {
     public static final int APP_HEIGHT = 600;
 
     public static final int GAME_WIDTH = 700;
+    public static final double UNIT_DEGREE =0.084;
+    public static final int WYRM_DISTANCE = 240;
     public static final int GAME_HEIGHT = 700;
+    public static final int CENTER_Y = Toolkit.getDefaultToolkit().getScreenSize().height/2;
+    public static final int CENTER_X = Toolkit.getDefaultToolkit().getScreenSize().width/2;
     public static final int OPTION_WIDTH = 300;
     public static final int OPTION_IMG_HEIGHT = 250;
     public static final int OPTION_HEIGHT = 700;
@@ -20,6 +24,7 @@ public class Config {
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;
     public static int ENEMY_RADIUS = 20;
+    public static int WYRM_RADIUS = 70;
     public static final int IMPACT_DURATION = 7;
     public static final int BANISH_DURATION = 13;
 

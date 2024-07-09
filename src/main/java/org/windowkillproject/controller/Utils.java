@@ -1,16 +1,19 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.model.entities.EntityModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.MIN_ENEMY_SPEED;
+import static org.windowkillproject.controller.GameController.random;
 
 public abstract class Utils {
-    public static Point2D unitVector(Point2D point, Point2D anchor) {
-        double dY = point.getY() - anchor.getY();
-        double dX = point.getX() - anchor.getX();
+    public static Point2D unitVector(Point2D goingPoint, Point2D anchor) {
+        double dY = goingPoint.getY() - anchor.getY();
+        double dX = goingPoint.getX() - anchor.getX();
         double magnitude = Math.sqrt(dX * dX + dY * dY);
         return new Point2D.Double(dX / magnitude, dY / magnitude);
     }
@@ -41,7 +44,9 @@ public abstract class Utils {
         int speed = (int) (d / 25 + 0.75);
         return Math.min(Config.MAX_ENEMY_SPEED, speed);
     }
-
+    public static int pickRandomSign(){
+        return random.nextInt(2)*2 - 1;
+    }
     public static Point2D routePoint(Point2D entity, Point2D other, boolean hasAccel) {
         double speed = MIN_ENEMY_SPEED;
         if (hasAccel) speed = accelSpeed(entity, other);
@@ -64,6 +69,12 @@ public abstract class Utils {
     public static double magnitude(Point2D point2D) {
         return Math.sqrt(point2D.getX() * point2D.getX() + point2D.getY() * point2D.getY());
     }
+    public static double magnitude(Point2D point, Point2D anchor) {
+        double dY = point.getY() - anchor.getY();
+        double dX = point.getX() - anchor.getX();
+        return Math.sqrt(dX * dX + dY * dY);
+    }
+
 
     private static double deltaSpeedAway(Point2D point, Point2D anchor) {
         double d1 = point.getX() - anchor.getX();
@@ -101,6 +112,35 @@ public abstract class Utils {
         else if (u <= 0.0) return (Point2D) head1.clone();
         else
             return new Point2D.Double(head2.getX() * u + head1.getX() * (1.0 - u) + 0.5, head2.getY() * u + head1.getY() * (1.0 - u) + 0.5);
+    }
+
+    public static boolean entityPartlyInBounds(EntityModel entityModel, GamePanel gamePanel){
+        int left = entityModel.getX();
+        int right = left + entityModel.getWidth();
+        int up = entityModel.getY();
+        int down = up+ entityModel.getHeight();
+        ArrayList<Point2D> edges = new ArrayList<>();
+        edges.add(new Point2D.Double(left,up));
+        edges.add(new Point2D.Double(right,up));
+        edges.add(new Point2D.Double(left,down));
+        edges.add(new Point2D.Double(right,down));
+
+        for (Point2D edge: edges) {
+            if (isPointInBounds(edge, gamePanel)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isPointInBounds(Point2D point2D, GamePanel panel){
+        int left = panel.getX();
+        int right = left + panel.getWidth();
+        int up = panel.getY();
+        int down = up+ panel.getHeight();
+        boolean isPointXInBounds = point2D.getX() > left &&
+                point2D.getX()< right;
+        boolean isPointYInBounds = point2D.getY() > up &&
+                point2D.getY()< down;
+        return isPointXInBounds && isPointYInBounds;
     }
 
 }

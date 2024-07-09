@@ -3,9 +3,11 @@ package org.windowkillproject.model.abilities;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.OmenoctModel;
-import org.windowkillproject.view.abilities.BulletView;
+import org.windowkillproject.model.entities.enemies.WyrmModel;
+
 
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
@@ -25,7 +27,6 @@ import static org.windowkillproject.model.entities.EntityModel.entityModels;
 public class BulletModel extends AbilityModel implements Projectable{
     private static int attackHp = BULLET_ATTACK_HP;
     private final Point2D mousePoint;
-    private GamePanel localPanel;
 
     public static void setAttackHp(int attackHp) {
         BulletModel.attackHp = attackHp;
@@ -64,10 +65,10 @@ public class BulletModel extends AbilityModel implements Projectable{
     }
 
     private void isFrameShot() {
-        boolean shotRight = getX() > getGameFrame().getMainPanelWidth();
-        boolean shotLeft = getX() < 0;
-        boolean shotUp = getY() < 0 ;
-        boolean shotDown = getY() > getGameFrame().getMainPanelHeight();
+        boolean shotRight = getX() > getLocalPanel().getX()+getLocalPanel().getWidth();
+        boolean shotLeft = getX() < getLocalPanel().getX();
+        boolean shotUp = getY() < getLocalPanel().getY() ;
+        boolean shotDown = getY() >  getLocalPanel().getY()+getLocalPanel().getHeight();
 
         if ( shotLeft|| shotRight ||shotUp || shotDown) {
             if (shotLeft) hit(LEFT_CODE);
@@ -99,7 +100,7 @@ public class BulletModel extends AbilityModel implements Projectable{
                 //not hitting vertices
                 boolean notHitVs = true;
                 for (VertexModel vertexModel : enemyModel.getVertices()) {
-                    if (Objects.equals(vertexModel.anchor, new Point2D.Double(getX(), getY()))) {
+                    if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
                         explode();
                         notHitVs = false;
                         break;
@@ -113,19 +114,25 @@ public class BulletModel extends AbilityModel implements Projectable{
                         explode();
                         break;
                     }
+                } if (enemyModel instanceof WyrmModel &&
+                        enemyModel.getAnchor().distance(getAnchor())< enemyModel.getRadius()){
+                    enemyModel.gotShoot();
+                    explode();
+                    break;
                 }
+
             }
         }
     }
 
-    public BulletModel(int x, int y, Point2D mousePoint) {
-        super(x, y);
+    public BulletModel( int x, int y, Point2D mousePoint) {
+        super(EpsilonModel.getINSTANCE().getLocalPanel(), x, y);
         anchor = new Point2D.Double(x + EPSILON_RADIUS / 2, y + EPSILON_RADIUS * 1.5);
         isShoot = false;
         bulletModels.add(this);
         this.mousePoint = mousePoint;
 //        localPanel = EpsilonModel.getINSTANCE().getLocalPanel();
-        createAbilityView(BulletView.class, id, x, y);
+        createAbilityView(/*BulletView.class,*/ id, x, y);
     }
 
     private boolean isShoot;

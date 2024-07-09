@@ -1,19 +1,34 @@
 package org.windowkillproject.application.frames;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.game.EntityPanel;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.application.panels.game.MainGamePanel;
+import org.windowkillproject.view.abilities.AbilityView;
+import org.windowkillproject.view.entities.EntityView;
+import org.windowkillproject.view.entities.EpsilonView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
+import static org.windowkillproject.application.Config.CENTER_X;
+import static org.windowkillproject.application.Config.CENTER_Y;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
+import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public class GameFrame extends JFrame {
 
- //   private JLayeredPane layeredPane = new JLayeredPane();
+    private JLayeredPane layeredPane = new JLayeredPane();
     private MainGamePanel mainGamePanel;
+    private EntityPanel entityPanel;
+
+    @Override
+    public JLayeredPane getLayeredPane() {
+        return layeredPane;
+    }
 
     public MainGamePanel getMainGamePanel() {
         return mainGamePanel;
@@ -33,23 +48,43 @@ public class GameFrame extends JFrame {
         setSize(Toolkit.getDefaultToolkit().getScreenSize());
         setBackground(new Color(0, 0, 0, 0));
         setLocationRelativeTo(null);
-//        layeredPane.setBounds(0, 0, 1600, 800);
 //        add(layeredPane, BorderLayout.CENTER);
         mainGamePanel = new MainGamePanel(PanelStatus.shrinkable);
-        add(mainGamePanel);
+        entityPanel = new EntityPanel();
+
+
+        layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0, 0, CENTER_X*2, CENTER_Y*2);
+        layeredPane.setLayout(null);
+        layeredPane.add(mainGamePanel, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.add(entityPanel, JLayeredPane.PALETTE_LAYER);
+        setContentPane(layeredPane);
+//        add(mainGamePanel);
 //        System.out.println(mainGamePanel.getX()+ " "+mainGamePanel.getY() + ">>>>>>");
 //        layeredPane.add(mainGamePanel, 0, 0);
     }
 
 
-    @Override
-    public void update(Graphics g) {
-        super.update(g);
-        for (GamePanel panel : gamePanels) {
-            panel.revalidate();
-            panel.repaint();
-        }
-    }
+//    @Override
+//    public void paintComponents(Graphics g) {
+//        super.paintComponents(g);
+//
+////        for (GamePanel panel : gamePanels) {
+////            panel.revalidate();
+////            panel.repaint();
+////        }
+//
+//
+////        for (EntityView entityView : entityViews){
+////            entityView.repaint();
+////        }
+////        for (AbilityView abilityView : abilityViews){
+////            abilityView.repaint();
+////        }
+////        repaint();
+//
+////        Objects.requireNonNull(EpsilonView.getInstance()).repaint();
+//    }
 
     public void setWaveLevel(int level) {
         mainGamePanel.setWaveLevel(level);
