@@ -1,4 +1,4 @@
-package org.windowkillproject.model.entities.enemies;
+package org.windowkillproject.model.entities.enemies.attackstypes;
 
 import org.windowkillproject.application.panels.game.GamePanel;
 

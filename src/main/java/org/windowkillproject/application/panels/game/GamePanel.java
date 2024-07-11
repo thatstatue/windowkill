@@ -38,19 +38,19 @@ public abstract class GamePanel extends Panel {
         requestFocusInWindow();
         gamePanels.add(this);
         this.panelStatus = panelStatus;
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                updateEntities();
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent e) {
-                super.componentMoved(e);
-                updateEntities();
-            }
-        });
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                super.componentResized(e);
+//                updateEntities();
+//            }
+//
+//            @Override
+//            public void componentMoved(ComponentEvent e) {
+//                super.componentMoved(e);
+//                updateEntities();
+//            }
+//        });
     }
 
     @Override
@@ -191,9 +191,9 @@ public abstract class GamePanel extends Panel {
             //keep epsilon in the middle
             if (!(stoppedX && stoppedY)) {
                 setBounds(newX, newY, newWidth, newHeight);
-                EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
-                int deltaX = newWidth / 2 - epsilonModel.getXO() - epsilonModel.getRadius();
-                int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();
+//                EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
+//                int deltaX = newWidth / 2 - epsilonModel.getXO() - epsilonModel.getRadius();
+//                int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();
 //                epsilonModel.move(deltaX, deltaY);
             } else {
                 if (exploding) {

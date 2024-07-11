@@ -4,6 +4,7 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.ArchmireModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.OmenoctModel;
 import org.windowkillproject.model.entities.enemies.WyrmModel;
@@ -114,7 +115,7 @@ public class BulletModel extends AbilityModel implements Projectable{
                         explode();
                         break;
                     }
-                } if (enemyModel instanceof WyrmModel &&
+                } if ((enemyModel instanceof WyrmModel || enemyModel instanceof ArchmireModel) &&
                         enemyModel.getAnchor().distance(getAnchor())< enemyModel.getRadius()){
                     enemyModel.gotShoot();
                     explode();

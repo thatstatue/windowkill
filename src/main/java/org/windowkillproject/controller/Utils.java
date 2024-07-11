@@ -1,12 +1,13 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.application.Config;
-import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.entities.EntityModel;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import static org.windowkillproject.application.Config.MAX_ENEMY_SPEED;
 import static org.windowkillproject.application.Config.MIN_ENEMY_SPEED;
 import static org.windowkillproject.controller.GameController.random;
 
@@ -42,14 +43,22 @@ public abstract class Utils {
         double d2 = entityModel.getY() - other.getY();
         double d = Math.sqrt(d1 * d1 + d2 * d2);
         int speed = (int) (d / 25 + 0.75);
-        return Math.min(Config.MAX_ENEMY_SPEED, speed);
+        return Math.min(MAX_ENEMY_SPEED, speed);
     }
     public static int pickRandomSign(){
         return random.nextInt(2)*2 - 1;
     }
-    public static Point2D routePoint(Point2D entity, Point2D other, boolean hasAccel) {
+    public static Point2D localRoutePoint(Point2D entity, Point2D other, boolean hasAccel) {
         double speed = MIN_ENEMY_SPEED;
         if (hasAccel) speed = accelSpeed(entity, other);
+        speed = Math.max(speed, MIN_ENEMY_SPEED);
+        Point2D vector = unitVector(other, entity);
+        return weighedVector(vector, speed);
+
+    }
+    public static Point2D globalRoutePoint(Point2D entity, Point2D other) {
+        double speed = (MAX_ENEMY_SPEED+ MIN_ENEMY_SPEED)/2.0;
+//        if (hasAccel) speed = accelSpeed(entity, other);
         speed = Math.max(speed, MIN_ENEMY_SPEED);
         Point2D vector = unitVector(other, entity);
         return weighedVector(vector, speed);
@@ -80,7 +89,7 @@ public abstract class Utils {
         double d1 = point.getX() - anchor.getX();
         double d2 = point.getY() - anchor.getY();
         double d = Math.sqrt(d1 * d1 + d2 * d2);
-        double speed = Config.MAX_ENEMY_SPEED - d / 50;
+        double speed = MAX_ENEMY_SPEED - d / 50;
         return Math.max(0, speed);
     }
 
@@ -113,8 +122,7 @@ public abstract class Utils {
         else
             return new Point2D.Double(head2.getX() * u + head1.getX() * (1.0 - u) + 0.5, head2.getY() * u + head1.getY() * (1.0 - u) + 0.5);
     }
-
-    public static boolean entityPartlyInBounds(EntityModel entityModel, GamePanel gamePanel){
+    public static boolean entityInBounds(EntityModel entityModel, Point2D center, int radius, boolean partly){
         int left = entityModel.getX();
         int right = left + entityModel.getWidth();
         int up = entityModel.getY();
@@ -126,16 +134,37 @@ public abstract class Utils {
         edges.add(new Point2D.Double(right,down));
 
         for (Point2D edge: edges) {
-            if (isPointInBounds(edge, gamePanel)) return true;
+            if (edge.distance(center)<radius){
+                if (partly) return true;
+            }else if (!partly) return false;
         }
-        return false;
+        return !partly;
     }
 
-    private static boolean isPointInBounds(Point2D point2D, GamePanel panel){
-        int left = panel.getX();
-        int right = left + panel.getWidth();
-        int up = panel.getY();
-        int down = up+ panel.getHeight();
+    public static boolean entityInBounds(EntityModel entityModel, Rectangle area, boolean partly){
+        int left = entityModel.getX();
+        int right = left + entityModel.getWidth();
+        int up = entityModel.getY();
+        int down = up+ entityModel.getHeight();
+        ArrayList<Point2D> edges = new ArrayList<>();
+        edges.add(new Point2D.Double(left,up));
+        edges.add(new Point2D.Double(right,up));
+        edges.add(new Point2D.Double(left,down));
+        edges.add(new Point2D.Double(right,down));
+
+        for (Point2D edge: edges) {
+            if (isPointInBounds(edge, area)) {
+                if (partly) return true;
+            }else if (!partly) return false;
+        }
+        return !partly;
+    }
+
+    private static boolean isPointInBounds(Point2D point2D, Rectangle area){
+        double left = area.getX();
+        double right = left + area.getWidth();
+        double up = area.getY();
+        double down = up+ area.getHeight();
         boolean isPointXInBounds = point2D.getX() > left &&
                 point2D.getX()< right;
         boolean isPointYInBounds = point2D.getY() > up &&

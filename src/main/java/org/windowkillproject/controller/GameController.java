@@ -10,6 +10,9 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.enemies.*;
+import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
+import org.windowkillproject.model.abilities.MomentModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +32,8 @@ import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.ArchmireModel.archmireModels;
+import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
 
 
 public abstract class GameController {
@@ -36,7 +41,8 @@ public abstract class GameController {
 
     public static ArrayList<EnemyModel> getEnemies() {
         ArrayList<EnemyModel> enemies = new ArrayList<>();
-        for (EntityModel entityModel : entityModels) {
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
             if (entityModel instanceof EnemyModel) {
                 enemies.add((EnemyModel) entityModel);
             }
@@ -45,7 +51,8 @@ public abstract class GameController {
     }
 
     public static void impact(Projectable projectable) {
-        for (EntityModel entity : entityModels) {
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entity = entityModels.get(i);
             Point2D bulletPoint = new Point2D.Double(projectable.getX(), projectable.getY());
             Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
             if (!(deltaS.getY() < 1 && deltaS.getX() < 1)) {
@@ -62,12 +69,15 @@ public abstract class GameController {
         Timer impactsTimer = getImpactsTimer(entityModels, entityModel, enemyModel, collisionPoint, IMPACT_DURATION);
         impactsTimer.start();
     }
-    private static boolean isCollideAffected(EntityModel entityModel){
+
+    private static boolean isCollideAffected(EntityModel entityModel) {
         return !(entityModel instanceof Hovering) && !(entityModel instanceof Unmovable);
     }
-    private static boolean isOverlappingDetected(EntityModel entityModel, EnemyModel enemyModel){
+
+    private static boolean isOverlappingDetected(EntityModel entityModel, EnemyModel enemyModel) {
         return !(entityModel instanceof Hovering) && !(enemyModel instanceof Hovering);
     }
+
     private static Point2D getCollisionPoint(EntityModel entityModel, EnemyModel enemyModel) {
         //control overlapping
         Point2D closestPointOfEnemy = closestPointOnPolygon(entityModel.getAnchor(), enemyModel.getPointVertices());
@@ -75,7 +85,7 @@ public abstract class GameController {
         delta = weighedVector(unitVector(entityModel.getAnchor(), closestPointOfEnemy),
                 entityModel.getRadius() - closestPointOfEnemy.distance(entityModel.getAnchor()) / 2.0);
 
-        if (isOverlappingDetected(entityModel,enemyModel)) {
+        if (isOverlappingDetected(entityModel, enemyModel)) {
             entityModel.move((int) delta.getX(), (int) delta.getY());
             enemyModel.move((int) -delta.getX(), (int) -delta.getY());
         }
@@ -83,7 +93,7 @@ public abstract class GameController {
         // rEaLiStiC impact on the colliding entities
         Point2D p1 = enemyModel.getRoutePoint();
         Point2D p2 = entityModel.getRoutePoint();
-        if (p1!= null && p2!= null) {
+        if (p1 != null && p2 != null) {
             collidedEntitiesImpact(entityModel, enemyModel, p1, p2);
 
             //torque
@@ -185,29 +195,33 @@ public abstract class GameController {
         for (int i = 0; i < enemies.size(); i++) {
             var enemyModel = enemies.get(i);
             Polygon p1 = enemyModel.getPolygon();
-            Area a1 = new Area(p1);
-            boolean tempCollision = false;
-            //impact controller
-            for (int j = i + 1; j < enemies.size(); j++) {
-                var collidedEnemy = enemies.get(j);
-                Polygon p2 = collidedEnemy.getPolygon();
-                Area a2 = new Area(p2);
-                a2.intersect(a1);
-                if (!a2.isEmpty()) {
-                    impact(enemyModel, collidedEnemy);
-                    tempCollision = true;
+            if (p1 != null) {
+                Area a1 = new Area(p1);
+                boolean tempCollision = false;
+                //impact controller
+                for (int j = i + 1; j < enemies.size(); j++) {
+                    var collidedEnemy = enemies.get(j);
+                    Polygon p2 = collidedEnemy.getPolygon();
+                    if (p2 != null) {
+                        Area a2 = new Area(p2);
+                        a2.intersect(a1);
+                        if (!a2.isEmpty()) {
+                            impact(enemyModel, collidedEnemy);
+                            tempCollision = true;
+                        }
+                    }
+                    if (enemyModel instanceof WyrmModel &&
+                            enemyModel.getAnchor().distance(closestPointOnPolygon(enemyModel.getAnchor(),
+                                    collidedEnemy.getPointVertices())) < enemyModel.getRadius()) {
+                        impact(enemyModel, collidedEnemy);
+                        tempCollision = true;
+                    }
                 }
-                if (enemyModel instanceof WyrmModel &&
-                        enemyModel.getAnchor().distance(closestPointOnPolygon(enemyModel.getAnchor(),
-                                collidedEnemy.getPointVertices()))< enemyModel.getRadius()){
-                    impact(enemyModel,collidedEnemy);
+                //dash controller
+                if (enemyModel instanceof SquarantineModel) {
+                    var squarantine = (SquarantineModel) enemyModel;
+                    squarantine.setCollision(tempCollision);
                 }
-            }
-
-            //dash controller
-            if (enemyModel instanceof SquarantineModel) {
-                var squarantine = (SquarantineModel) enemyModel;
-                squarantine.setCollision(tempCollision);
             }
         }
     }
@@ -226,18 +240,48 @@ public abstract class GameController {
             }
         }
     }
-    public static void setEntitiesBoundsAllowed(){
+
+    public static void setEntitiesBoundsAllowed() {
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entityModel = entityModels.get(i);
             int t = 0;
             for (int j = 0; j < gamePanels.size(); j++) {
                 GamePanel gamePanel = gamePanels.get(j);
-                if (entityPartlyInBounds(entityModel, gamePanel)) {
+                if (entityInBounds(entityModel, gamePanel.getBounds(), true)) {
                     entityModel.addToAllowedArea(gamePanel);
                     t++;
                 }
             }
 //            if (t>1) entityModel.setLocalPanel(null);
+        }
+    }
+    private static int lastAoEAttack ;
+
+    public static void areaOfEffectControl() {
+        for (int i = 0; i < MOMENT_MODELS.size(); i++) {
+            MomentModel momentModel = MOMENT_MODELS.get(i);
+            if (ElapsedTime.getTotalSeconds() > momentModel.getTime() + 5) MOMENT_MODELS.remove(momentModel);
+        }
+        //timeout
+        if (ElapsedTime.getTotalSeconds()-lastAoEAttack > AOE_TIMEOUT) {
+            lastAoEAttack = ElapsedTime.getTotalSeconds();
+            for (int j = 0; j < entityModels.size(); j++) {
+                EntityModel entityModel = entityModels.get(j);
+                //Drown
+                for (int k = 0; k < archmireModels.size(); k++) {
+                    ArchmireModel archmireModel = archmireModels.get(k);
+                    if (archmireModel.drown(entityModel)) break;
+                }
+
+                //AOE
+                for (int i = 0; i < MOMENT_MODELS.size(); i++) {
+                    MomentModel momentModel = MOMENT_MODELS.get(i);
+                    if (entityModel.getAnchor().distance(momentModel.getCenterOfArea()) < momentModel.getRadius()) {
+                        entityModel.gotHit(momentModel.getAttackHP());
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -248,12 +292,12 @@ public abstract class GameController {
             int endY = epsilonModel.getYO() + epsilonModel.getRadius();
 //            System.out.println("eps is "+ endX + " "+ endY);
 
-            int localPanelX=epsilonModel.getLocalPanel().getX();
+            int localPanelX = epsilonModel.getLocalPanel().getX();
             int localPanelY = epsilonModel.getLocalPanel().getY();
-            int endOfLocalPanelY= localPanelY+ epsilonModel.getLocalPanel().getHeight();
-            int endOfLocalPanelX = localPanelX+ epsilonModel.getLocalPanel().getWidth();
+            int endOfLocalPanelY = localPanelY + epsilonModel.getLocalPanel().getHeight();
+            int endOfLocalPanelX = localPanelX + epsilonModel.getLocalPanel().getWidth();
 
-            System.out.println("epsilon x is allowed from "+ localPanelX+ " to " +endOfLocalPanelX);
+//            System.out.println("epsilon x is allowed from " + localPanelX + " to " + endOfLocalPanelX);
 //            System.out.println(" should be allowed from "+ gamePanels.get(1).getX()+ " to " +gamePanels.get(1).getX()+gamePanels.get(1).getWidth());
 
             if (endY > endOfLocalPanelY) {
@@ -265,11 +309,11 @@ public abstract class GameController {
                 epsilonModel.move(deltaX, 0);
             }
             if (epsilonModel.getY() < localPanelY) {
-                int deltaY = localPanelY-epsilonModel.getY();
+                int deltaY = localPanelY - epsilonModel.getY();
                 epsilonModel.move(0, deltaY);
             }
             if (epsilonModel.getX() < localPanelX) {
-                int deltaX = localPanelX-epsilonModel.getX();
+                int deltaX = localPanelX - epsilonModel.getX();
                 epsilonModel.move(deltaX, 0);
             }
             getGameFrame().setHpAmount(epsilonModel.getHp());
@@ -283,32 +327,34 @@ public abstract class GameController {
         for (EnemyModel enemyModel : enemies) {
 
             //vertex of epsilon hit enemy
-            Area enemyA = new Area(enemyModel.getPolygon());
-            for (VertexModel epsilonV : epsilonModel.getVertices()) {
-                if (enemyA.contains(epsilonV.getX(), epsilonV.getY())) {
-                    enemyModel.gotHit(epsilonModel.getMeleeAttackHp());
+            if (enemyModel.getPolygon() != null) {
+                Area enemyA = new Area(enemyModel.getPolygon());
+                for (VertexModel epsilonV : epsilonModel.getVertices()) {
+                    if (enemyA.contains(epsilonV.getX(), epsilonV.getY())) {
+                        enemyModel.gotHit(epsilonModel.getMeleeAttackHp());
+                        impact(epsilonModel, enemyModel);
+                        break;
+                    }
+                }
+
+                //vertex of enemy hit epsilon
+                Point2D d = Utils.closestPointOnPolygon(
+                        epsilonModel.getAnchor(), enemyModel.getPointVertices());
+                if (Math.abs(d.distance(epsilonModel.getAnchor())) <= epsilonModel.getRadius()) {
+                    for (VertexModel vertexModel : enemyModel.getVertices()) {
+                        if (vertexModel.isCollectedByEpsilon()) {
+                            epsilonModel.gotHit(enemyModel.getMeleeAttackHp());
+                            break;
+                        }
+                    }
+                    System.out.println("impact start on epsilon and " + enemyModel + "\n with: " + enemyModel.getAnchor());
                     impact(epsilonModel, enemyModel);
                     break;
                 }
             }
-
-            //vertex of enemy hit epsilon
-            Point2D d = Utils.closestPointOnPolygon(
-                    epsilonModel.getAnchor(), enemyModel.getPointVertices());
-            if (Math.abs(d.distance(epsilonModel.getAnchor())) <= epsilonModel.getRadius()) {
-                for (VertexModel vertexModel : enemyModel.getVertices()) {
-                    if (vertexModel.isCollectedByEpsilon()) {
-                        epsilonModel.gotHit(enemyModel.getMeleeAttackHp());
-                        break;
-                    }
-                }
-                System.out.println("impact start on epsilon and "+ enemyModel +"\n with: "+ enemyModel.getAnchor());
-                impact(epsilonModel, enemyModel);
-                break;
-            }
             if (enemyModel instanceof WyrmModel &&
-                    enemyModel.getAnchor().distance(epsilonModel.getAnchor())<
-                            enemyModel.getRadius()+epsilonModel.getRadius()){
+                    enemyModel.getAnchor().distance(epsilonModel.getAnchor()) <
+                            enemyModel.getRadius() + epsilonModel.getRadius()) {
                 impact(epsilonModel, enemyModel);
             }
 

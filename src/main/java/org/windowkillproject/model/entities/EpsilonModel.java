@@ -24,7 +24,7 @@ public class EpsilonModel extends EntityModel {
     public static void newINSTANCE() {
         int xp = 0;
         if (INSTANCE != null) xp = INSTANCE.getXp();
-        INSTANCE = new EpsilonModel(CENTER_X / 2, CENTER_Y / 2, xp);
+        INSTANCE = new EpsilonModel(CENTER_X -5 , CENTER_Y- 5, xp);
         INSTANCE.setRadius(EPSILON_RADIUS);
     }
 

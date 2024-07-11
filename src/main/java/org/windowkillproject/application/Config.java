@@ -25,6 +25,7 @@ public class Config {
     public static final int WAVE_LOOP = 5 * 1000;
     public static int ENEMY_RADIUS = 20;
     public static int WYRM_RADIUS = 70;
+    public static int ARCHMIRE_RADIUS = 40;
     public static final int IMPACT_DURATION = 7;
     public static final int BANISH_DURATION = 13;
 
@@ -32,6 +33,8 @@ public class Config {
     public static int MAX_ENEMY_SPEED = 5;
     public static final int MAX_ENEMIES = 4;
     public static final int PROJECTILE_TIMEOUT = 1;
+    public static final double AOE_TIMEOUT = 0.5;
+
     public static final int MIN_ENEMY_SPEED = 2;
     public static int SENSITIVITY_RATE = 0;
 

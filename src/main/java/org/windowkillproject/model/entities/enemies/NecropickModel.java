@@ -1,21 +1,20 @@
 package org.windowkillproject.model.entities.enemies;
 
-import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Utils;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
+import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.controller.GameController.random;
-import static org.windowkillproject.controller.Utils.routePoint;
+import static org.windowkillproject.controller.Utils.localRoutePoint;
 
-public class NecropickModel extends EnemyModel implements ProjectileOperator, NonRotatable{
+public class NecropickModel extends EnemyModel implements ProjectileOperator, NonRotatable {
 
     public NecropickModel(int x, int y) {
         super(EpsilonModel.getINSTANCE().getLocalPanel(),
@@ -62,7 +61,7 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
 
     @Override
     public Point2D getRoutePoint() {
-        return routePoint(this.getAnchor(),
+        return localRoutePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
     }
 

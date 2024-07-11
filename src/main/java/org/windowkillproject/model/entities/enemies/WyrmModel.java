@@ -6,16 +6,18 @@ import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
+import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
+import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static java.lang.Math.*;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.controller.Controller.createEntityView;
-import static org.windowkillproject.controller.Utils.routePoint;
+import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable {
      public WyrmModel(int x, int y) {
@@ -84,7 +86,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
     @Override
     public Point2D getRoutePoint() {
-        return routePoint(this.getAnchor(),
+        return localRoutePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
     }
     @Override

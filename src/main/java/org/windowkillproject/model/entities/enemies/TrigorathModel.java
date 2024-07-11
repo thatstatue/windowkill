@@ -4,11 +4,10 @@ import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 
 import static org.windowkillproject.application.Config.ENEMY_RADIUS;
-import static org.windowkillproject.controller.Utils.routePoint;
+import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
@@ -27,7 +26,7 @@ public class TrigorathModel extends EnemyModel {
     }
 
     public Point2D getRoutePoint() {
-        return routePoint(this.getAnchor(),
+        return localRoutePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), true);
     }
 

@@ -6,13 +6,12 @@ import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Config.ENEMY_RADIUS;
 import static org.windowkillproject.controller.GameController.random;
-import static org.windowkillproject.controller.Utils.routePoint;
+import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class SquarantineModel extends EnemyModel {
     private boolean collision;
@@ -46,14 +45,14 @@ public class SquarantineModel extends EnemyModel {
     }
 
     public Point2D getRoutePoint() {
-        return routePoint(this.getAnchor(),
+        return localRoutePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
     }
 
     private void dash() {
         AtomicInteger count = new AtomicInteger();
         Timer dashTimer = new Timer(Config.FPS / 2, null);
-        Point2D deltaS = routePoint(this.getAnchor(),
+        Point2D deltaS = localRoutePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
 
         dashTimer.addActionListener(e -> {

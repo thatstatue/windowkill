@@ -1,12 +1,12 @@
 package org.windowkillproject.model.entities.enemies;
 
 
-import org.windowkillproject.application.Application;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static java.lang.Math.*;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.controller.Utils.routePoint;
+import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class OmenoctModel extends EnemyModel implements ProjectileOperator {
     public OmenoctModel(int x, int y, GamePanel localPanel) {
@@ -98,7 +98,7 @@ public class OmenoctModel extends EnemyModel implements ProjectileOperator {
 
     @Override
     public Point2D getRoutePoint() {
-        return routePoint(this.getAnchor(),
+        return localRoutePoint(this.getAnchor(),
                 EpsilonModel.getINSTANCE().getAnchor(), false);
     }
 

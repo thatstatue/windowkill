@@ -158,7 +158,7 @@ public class Wave {
         switch (randNum) {
             case 0 -> createRandomLocalEnemy();
             case 1, 2, 3 ->{
-                var n =  new WyrmModel(randX, randY);//todo randomize
+                var n =  new NecropickModel( randX, randY);//todo randomize
 //                System.out.println("wyrm "+ n.getId() );
 //                System.out.println(Arrays.toString(n.getPolygon().xpoints));
 //                System.out.println(Arrays.toString(n.getPolygon().ypoints));

@@ -24,5 +24,7 @@ public abstract class AbilityView extends ObjectView {
     public void set(int x, int y, int width, int height) {
         setX(x);
         setY(y);
+        setWidth(width);
+        setHeight(height);
     }
 }

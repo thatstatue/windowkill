@@ -2,11 +2,10 @@ package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.controller.Utils;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
-import org.windowkillproject.model.entities.enemies.ProjectileOperator;
+import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 
 
 import java.awt.*;
@@ -52,9 +51,11 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     public int getAttackHp() {
         return attackHp;
     }
+
     private final ProjectileOperator parent;
+
     public ProjectileModel(GamePanel localPanel, ProjectileOperator parent, int attackHp, boolean isHovering, boolean isTowardsEpsilon, Color topColor, Color bottomColor) {
-        super(localPanel,parent.getX() + parent.getRadius(), parent.getY()+ parent.getRadius());
+        super(localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
 //        anchor = new Point2D.Double(x, y);
         isShoot = false;
         projectileModels.add(this);
@@ -72,7 +73,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     @Override
     public void shoot() {
         setShoot(true);
-        for (int i = 0; i <parent.getRadius(); i+=BULLET_SPEED/3){
+        for (int i = 0; i < parent.getRadius(); i += BULLET_SPEED / 3) {
             move();
         }
 
@@ -81,9 +82,9 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     @Override
     public void move() {
         var anchor = EpsilonModel.getINSTANCE().getAnchor();
-        if (!isTowardsEpsilon){
-            anchor.setLocation(getX()+random.nextInt(500)-250,
-                    getY()+random.nextInt(500)-250);
+        if (!isTowardsEpsilon) {
+            anchor.setLocation(getX() + random.nextInt(500) - 250,
+                    getY() + random.nextInt(500) - 250);
         }
         if (isShoot()) {
             Point2D delta = unitVector(anchor, this.getAnchor());
@@ -95,28 +96,26 @@ public class ProjectileModel extends AbilityModel implements Projectable {
             isEntityShot();
 
             //frame getting shot
-            if (!isHovering) isFrameShot();
         }
+        if (!isHovering) isFrameShot();
     }
 
     private void isFrameShot() {
-        boolean shotRight = getX() > localPanel.getWidth();
-        boolean shotLeft = getX() < 0;
-        boolean shotUp = getY() < 0;
-        boolean shotDown = getY() > localPanel.getHeight();
+        if (localPanel != null) {
+            boolean shotRight = getX() > localPanel.getWidth();
+            boolean shotLeft = getX() < 0;
+            boolean shotUp = getY() < 0;
+            boolean shotDown = getY() > localPanel.getHeight();
 
-        if (shotLeft || shotRight || shotUp || shotDown) {
-//            if (shotLeft) getGameFrame().stretch(Config.LEFT_CODE);
-//            if (shotRight) getGameFrame().stretch(Config.RIGHT_CODE);
-//            if (shotUp) getGameFrame().stretch(Config.UP_CODE);
-//            if (shotDown) getGameFrame().stretch(Config.DOWN_CODE);
-            explode();
+            if (shotLeft || shotRight || shotUp || shotDown) {
+                explode();
+            }
         }
     }
 
     private void isEntityShot() {
-        for (int i = 0 ; i< entityModels.size(); i++) {
-            EntityModel entityModel= entityModels.get(i);
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
             if (!entityModel.equals(parent)) {
                 //not hitting vertices
                 boolean notHitVs = true;
@@ -166,7 +165,6 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     public void setShoot(boolean shoot) {
         isShoot = shoot;
     }
-
 
 
 }

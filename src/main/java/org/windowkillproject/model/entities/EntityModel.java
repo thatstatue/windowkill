@@ -5,8 +5,7 @@ import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.ObjectModel;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.VertexModel;
-import org.windowkillproject.model.Drawable;
-import org.windowkillproject.model.entities.enemies.NonRotatable;
+import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 
 import java.awt.*;
 import java.awt.geom.Area;

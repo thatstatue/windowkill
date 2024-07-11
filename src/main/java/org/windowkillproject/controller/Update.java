@@ -18,6 +18,7 @@ import static org.windowkillproject.model.Wave.isBetweenWaves;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.abilities.ProjectileModel.projectileModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
@@ -38,16 +39,19 @@ public class Update {
     }
 
     public void updateView() {
-        for (int i = 0; i < entityViews.size(); i++) {
-            EntityView entityView = entityViews.get(i);
-            setViewBounds(entityView);
-            if (!entityView.isEnabled()) entityViews.remove(entityView);
-        }
+
         for (int i = 0; i < abilityViews.size(); i++) {
             AbilityView abilityView = abilityViews.get(i);
             setViewBounds(abilityView);
             if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
+
+        for (int i = 0; i < entityViews.size(); i++) {
+            EntityView entityView = entityViews.get(i);
+            setViewBounds(entityView);
+            if (!entityView.isEnabled()) entityViews.remove(entityView);
+        }
+
         getGameFrame().revalidate();
         for (int i = 0 ; i < gamePanels.size(); i++){
             GamePanel gamePanel = gamePanels.get(i);
@@ -72,6 +76,7 @@ public class Update {
         }
         setEntitiesBoundsAllowed();
         keepEpsilonInBounds();
+        areaOfEffectControl();
         specialtiesControl();
         writControl();
         epsilonRewardControl();

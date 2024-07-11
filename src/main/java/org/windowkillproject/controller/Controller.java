@@ -1,11 +1,11 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Drawable;
 import org.windowkillproject.model.abilities.*;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
+import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.*;
 import org.windowkillproject.view.entities.EntityView;
@@ -21,70 +21,8 @@ import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
 public abstract class Controller {
-//    public static void createEntityView(String id) {
-//        var entityModel = findModel(id);
-//        if (entityModel instanceof EnemyModel) {
-//            if (entityModel instanceof TrigorathModel) {
-//                var trigorathModel = (TrigorathModel) entityModel;
-//                var trigorathView = new TrigorathView(id, trigorathModel.getLocalPanel());
-//                trigorathView.set(
-//                        trigorathModel.getX(),
-//                        trigorathModel.getY(),
-//                        trigorathModel.getWidth(),
-//                        trigorathModel.getHeight()
-//                );
-//            } else if (entityModel instanceof SquarantineModel) {
-//                var squarantineModel = (SquarantineModel) entityModel;
-//                var squarantineView = new SquarantineView(id, squarantineModel.getLocalPanel());
-//                squarantineView.set(
-//                        squarantineModel.getX(),
-//                        squarantineModel.getY(),
-//                        squarantineModel.getWidth(),
-//                        squarantineModel.getHeight()
-//                );
-//            } else if (entityModel instanceof OmenoctModel) {
-//                var omenoctModel = (OmenoctModel) entityModel;
-//                var omenoctView = new OmenoctView(id, omenoctModel.getLocalPanel());
-//                omenoctView.set(
-//                        omenoctModel.getX(),
-//                        omenoctModel.getY(),
-//                        omenoctModel.getWidth(),
-//                        omenoctModel.getHeight()
-//                );
-//            } else if (entityModel instanceof NecropickModel) {
-//                var necropickModel = (NecropickModel) entityModel;
-//                var necropickView = new NecropickView(id, necropickModel.getLocalPanel());
-//                necropickView.set(
-//                        necropickModel.getX(),
-//                        necropickModel.getY(),
-//                        necropickModel.getWidth(),
-//                        necropickModel.getHeight()
-//                );
-//            } else if (entityModel instanceof WyrmModel) {
-//                var wyrmModel = (WyrmModel) entityModel;
-//                var wyrmView = new WyrmView(id, wyrmModel.getLocalPanel());
-//                wyrmView.set(
-//                        wyrmModel.getX(),
-//                        wyrmModel.getY(),
-//                        wyrmModel.getWidth(),
-//                        wyrmModel.getHeight()
-//                );
-//            }
-//        } else {
-//            var epsilonModel = (EpsilonModel) entityModel;
-//            assert epsilonModel != null;
-//            var epsilonView = new EpsilonView(id, Application.getGameFrame().getMainGamePanel());
-//
-//            epsilonView.set(
-//                    epsilonModel.getX(),
-//                    epsilonModel.getY(),
-//                    epsilonModel.getWidth(),
-//                    epsilonModel.getHeight()
-//            );
-//        }
-//    }
 
-    public static <T extends EntityView> void createEntityView( String id, int x, int y, int width, int height) {
+    public static <T extends EntityView> void createEntityView(String id, int x, int y, int width, int height) {
         EntityModel entityModel = findModel(id);
 
         Class entityViewCls = getEntityViewClass(entityModel);
@@ -92,7 +30,7 @@ public abstract class Controller {
             try {
                 Constructor<T> constructor = (Constructor<T>) entityViewCls.getConstructor(String.class);
                 var entityView = constructor.newInstance(id);
-                entityView.set(x,y,width,height);
+                entityView.set(x, y, width, height);
 
             } catch (NoSuchMethodException | InstantiationException |
                      InvocationTargetException | IllegalAccessException e) {
@@ -113,8 +51,10 @@ public abstract class Controller {
             entityViewCls = OmenoctView.class;
         } else if (entityModel instanceof WyrmModel) {
             entityViewCls = WyrmView.class;
-        }else if (entityModel instanceof EpsilonModel) {
+        } else if (entityModel instanceof EpsilonModel) {
             entityViewCls = EpsilonView.class;
+        } else if (entityModel instanceof ArchmireModel) {
+            entityViewCls = ArchmireView.class;
         }
         return entityViewCls;
     }
@@ -129,6 +69,13 @@ public abstract class Controller {
                     Constructor<T> constructor = (Constructor<T>) abilityViewCls.getConstructor
                             (String.class, int.class, int.class, Color.class, Color.class);
                     constructor.newInstance(id, x, y, projectileModel.getTopColor(), projectileModel.getBottomColor());
+
+                } else if (abilityModel instanceof MomentModel) {
+                    MomentModel momentModel = (MomentModel) abilityModel;
+                    Constructor<T> constructor = (Constructor<T>) abilityViewCls.getConstructor
+                            (String.class, int.class, int.class, int.class);
+                    constructor.newInstance(id, x, y, momentModel.getRadius());
+
                 } else {
                     Constructor<T> constructor = (Constructor<T>) abilityViewCls.getConstructor
                             (String.class, int.class, int.class);
@@ -151,6 +98,8 @@ public abstract class Controller {
             abilityViewCls = VertexView.class;
         } else if (abilityModel instanceof ProjectileModel) {
             abilityViewCls = ProjectileView.class;
+        } else if (abilityModel instanceof MomentModel) {
+            abilityViewCls = MomentView.class;
         }
         return abilityViewCls;
     }
@@ -173,14 +122,28 @@ public abstract class Controller {
         } else if (findModel(view.getId()) instanceof AbilityModel) {
             AbilityModel abilityModel = findModel(view.getId());
             if (abilityModel != null) {
-                view.set(
-                        abilityModel.getX(),
-                        abilityModel.getY(),
-                        5, 5);
+                if (abilityModel instanceof MomentModel) {
+                    MomentModel momentModel = (MomentModel) abilityModel;
+                    view.set(
+                            momentModel.getX(),
+                            momentModel.getY(),
+                            momentModel.getRadius(),
+                            momentModel.getRadius()
+                    );
+                    MomentView momentView = (MomentView) view;
+                    momentView.setColorOpacity(100 - (ElapsedTime.getTotalSeconds()-momentModel.getTime())*17);
+                } else {
+                    view.set(
+                            abilityModel.getX(),
+                            abilityModel.getY(),
+                            5, 5);
+                }
             } else view.setEnabled(false);
+
         } else {
             view.setEnabled(false);
         }
+
     }
 
     public static <T extends Drawable> T findModel(String id) {
@@ -191,6 +154,10 @@ public abstract class Controller {
             AbilityModel abilityModel = abilityModels.get(i);
             if (abilityModel.getId().equals(id)) return (T) abilityModel;
         }
+//        for (int i = 0 ; i<MOMENT_MODELS.size(); i++){
+//            MomentModel momentModel = MOMENT_MODELS.get(i);
+//            if (momentModel.getId().equals(id)) return (T)momentModel;
+//        }
         return null;
     }
 }

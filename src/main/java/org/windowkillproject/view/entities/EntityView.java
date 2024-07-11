@@ -10,6 +10,15 @@ public abstract class EntityView extends ObjectView {
 
 
     public static ArrayList<EntityView> entityViews = new ArrayList<>();
+    private boolean hovering;
+
+    public void setHovering(boolean hovering) {
+        this.hovering = hovering;
+    }
+
+    public boolean isHovering() {
+        return hovering;
+    }
 
     public EntityView(String id) {
         super(id);
