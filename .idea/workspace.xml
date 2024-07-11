@@ -4,37 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4cb7147d-c2f7-4914-bd23-040476efc352" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/MomentModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/ArchmireModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/attackstypes/AoEAttacker.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/view/abilities/MomentView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/view/entities/enemies/ArchmireView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/panels/game/EntityPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/panels/game/EntityPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/panels/game/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/application/panels/game/GamePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Update.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Update.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/Wave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/BulletModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/BulletModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/ProjectileModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/abilities/ProjectileModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EntityModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EntityModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EpsilonModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/EpsilonModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/Hovering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/attackstypes/Hovering.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/NecropickModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/NecropickModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/NonRotatable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/attackstypes/NonRotatable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/OmenoctModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/OmenoctModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/ProjectileOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/attackstypes/ProjectileOperator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/SquarantineModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/SquarantineModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/TrigorathModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/TrigorathModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/Unmovable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/attackstypes/Unmovable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/WyrmModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/model/entities/enemies/WyrmModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/view/abilities/AbilityView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/view/abilities/AbilityView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/view/entities/EntityView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/view/entities/EntityView.java" afterDir="false" />
-    </list>
+    <list default="true" id="4cb7147d-c2f7-4914-bd23-040476efc352" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
