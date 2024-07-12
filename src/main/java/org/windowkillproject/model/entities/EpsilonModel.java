@@ -1,6 +1,6 @@
 package org.windowkillproject.model.entities;
 
-import org.windowkillproject.application.Application;
+
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.abilities.VertexModel;
 

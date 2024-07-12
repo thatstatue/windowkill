@@ -12,6 +12,7 @@ import org.windowkillproject.view.entities.EntityView;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
@@ -53,12 +54,12 @@ public class Update {
         }
 
         getGameFrame().revalidate();
-        for (int i = 0 ; i < gamePanels.size(); i++){
-            GamePanel gamePanel = gamePanels.get(i);
-            getGameFrame().repaint(gamePanel.getX(), gamePanel.getY(),
-                    gamePanel.getWidth(), gamePanel.getHeight());
-
-        }
+        //todo uncomment for repainting
+//        gamePanelsBounds.forEach((gamePanel, rectangle) -> {
+//            gamePanel.revalidate();
+//            getGameFrame().getLayeredPane().repaint(rectangle);
+//        });
+        getGameFrame().repaint();
     }
 
     public void updateModel() {
@@ -74,15 +75,16 @@ public class Update {
         for (int i = 0; i < projectileModels.size(); i++) {
             projectileModels.get(i).move();
         }
-        setEntitiesBoundsAllowed();
-        keepEpsilonInBounds();
+
         areaOfEffectControl();
         specialtiesControl();
         writControl();
         epsilonRewardControl();
         epsilonIntersectionControl();
         enemyIntersectionControl();
+
         keepEpsilonInBounds();
+//        keepEpsilonInBounds();
 //        hideEntitiesOutsideBounds();
         if (Wave.isStartNewWave()) new Wave();
 

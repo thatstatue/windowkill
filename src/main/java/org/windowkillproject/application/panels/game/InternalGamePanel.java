@@ -8,12 +8,12 @@ import java.awt.*;
 
 
 public class InternalGamePanel extends GamePanel{
-    public InternalGamePanel(PanelStatus panelStatus, int width, int height, int x, int y) {
+    public InternalGamePanel( int x, int y, int width, int height,PanelStatus panelStatus) {
         super(panelStatus);
+        setLocation(x,y);
         setPreferredSize(new Dimension(width, height));
         setSize(new Dimension(width, height));
 
-        setLocation(x,y);
         Application.getGameFrame().getLayeredPane().add(this, JLayeredPane.DEFAULT_LAYER);
     }
 }

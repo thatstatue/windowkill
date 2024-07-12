@@ -25,7 +25,7 @@ import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 public class ProjectileModel extends AbilityModel implements Projectable {
     private int attackHp;
-    private final boolean isHovering, isTowardsEpsilon;
+    private final boolean isHovering;
     private GamePanel localPanel;
 
 
@@ -53,6 +53,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private final ProjectileOperator parent;
+    private Point2D delta;
 
     public ProjectileModel(GamePanel localPanel, ProjectileOperator parent, int attackHp, boolean isHovering, boolean isTowardsEpsilon, Color topColor, Color bottomColor) {
         super(localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
@@ -64,15 +65,27 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         this.isHovering = isHovering;
         this.topColor = topColor;
         this.bottomColor = bottomColor;
-        this.isTowardsEpsilon = isTowardsEpsilon;
+        delta = unitVector(getPoint2D(isTowardsEpsilon), this.getAnchor());
+        delta = weighedVector(delta, Config.BULLET_SPEED / 2.0);
 //        localPanel = parent.getLocalPanel();
         createAbilityView(/*ProjectileView.class,*/ id, x, y);
 
     }
 
+    private Point2D getPoint2D(boolean isTowardsEpsilon) {
+        final Point2D headedPoint;
+        headedPoint = EpsilonModel.getINSTANCE().getAnchor();
+        if (!isTowardsEpsilon) {
+            headedPoint.setLocation(getX() + random.nextInt(500) - 250,
+                    getY() + random.nextInt(500) - 250);
+        }
+        return headedPoint;
+    }
+
     @Override
     public void shoot() {
         setShoot(true);
+        //move out of parent's area
         for (int i = 0; i < parent.getRadius(); i += BULLET_SPEED / 3) {
             move();
         }
@@ -81,14 +94,9 @@ public class ProjectileModel extends AbilityModel implements Projectable {
 
     @Override
     public void move() {
-        var anchor = EpsilonModel.getINSTANCE().getAnchor();
-        if (!isTowardsEpsilon) {
-            anchor.setLocation(getX() + random.nextInt(500) - 250,
-                    getY() + random.nextInt(500) - 250);
-        }
+
         if (isShoot()) {
-            Point2D delta = unitVector(anchor, this.getAnchor());
-            delta = weighedVector(delta, Config.BULLET_SPEED / 2.0);
+
             setX((int) (getX() + delta.getX()));
             setY((int) (getY() + delta.getY()));
 

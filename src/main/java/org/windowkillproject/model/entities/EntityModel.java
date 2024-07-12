@@ -13,6 +13,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.UNIT_DEGREE;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 
 
 public abstract class EntityModel extends ObjectModel {
@@ -46,8 +47,17 @@ public abstract class EntityModel extends ObjectModel {
         }
         return v;
     }
-
+    private ArrayList<GamePanel> allowedPanels = new ArrayList<>();
     private int radius, reduceCount, width, height;
+
+    public ArrayList<GamePanel> getAllowedPanels() {
+        return allowedPanels;
+    }
+
+    public void setAllowedPanels(ArrayList<GamePanel> allowedPanels) {
+        this.allowedPanels = allowedPanels;
+    }
+
     public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
     public abstract void route(); //if entity is local, implement is also local
@@ -74,8 +84,8 @@ public abstract class EntityModel extends ObjectModel {
 
 
     public void addToAllowedArea(GamePanel panel){
-        Area area = new Area(new Rectangle(panel.getX(), panel.getY(),
-                panel.getWidth(),panel.getHeight()));
+        allowedPanels.add(panel);
+        Area area = new Area(gamePanelsBounds.get(panel));
         getAllowedArea().add(area); //todo daijovah?
     }
     public int getMeleeAttackHp() {
@@ -94,7 +104,9 @@ public abstract class EntityModel extends ObjectModel {
         }
         SoundPlayer.playHitSound();
     }
-
+    public Area getArea(){
+        return new Area(new Rectangle(getX(),getY(),getWidth(),getHeight()));
+    }
     public void gotShoot(){
         setHp(getHp() - BulletModel.getAttackHp());
         if (getHp() <= 0) {

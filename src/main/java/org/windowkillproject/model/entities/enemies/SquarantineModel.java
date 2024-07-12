@@ -4,6 +4,7 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.Dashable;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
@@ -13,7 +14,7 @@ import static org.windowkillproject.application.Config.ENEMY_RADIUS;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
-public class SquarantineModel extends EnemyModel {
+public class SquarantineModel extends EnemyModel implements Dashable {
     private boolean collision;
 
     public void setCollision(boolean collision) {
@@ -49,7 +50,7 @@ public class SquarantineModel extends EnemyModel {
                 EpsilonModel.getINSTANCE().getAnchor(), false);
     }
 
-    private void dash() {
+    public void dash() {
         AtomicInteger count = new AtomicInteger();
         Timer dashTimer = new Timer(Config.FPS / 2, null);
         Point2D deltaS = localRoutePoint(this.getAnchor(),

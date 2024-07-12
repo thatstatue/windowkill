@@ -1,11 +1,14 @@
 package org.windowkillproject.model;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.game.InternalGamePanel;
+import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.view.entities.enemies.NecropickView;
 
 import javax.swing.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,6 +17,7 @@ import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.SoundPlayer.playCreateSound;
 import static org.windowkillproject.application.SoundPlayer.playEndWaveSound;
+import static org.windowkillproject.controller.GameController.panelsContain;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
@@ -146,19 +150,25 @@ public class Wave {
 
     private void createRandomEnemy() {
         int randNum = random.nextInt(4);
-        int randX;
-        int randY;
-        do {
-            randX = 50 + random.nextInt(getGameFrame().getMainPanelWidth() - 50);
-        } while (isEpsilonThere(randX,EpsilonModel.getINSTANCE().getX()));
-        do {
-            randY = 50 + random.nextInt(getGameFrame().getMainPanelHeight() - 50);
-        } while (isEpsilonThere(randY,EpsilonModel.getINSTANCE().getY()));
+
 
         switch (randNum) {
             case 0 -> createRandomLocalEnemy();
             case 1, 2, 3 ->{
-                var n =  new NecropickModel( randX, randY);//todo randomize
+                int randX;
+                int randY;
+                do {
+                    randX = 50 + random.nextInt(getGameFrame().getMainPanelWidth() - 50);
+                } while (isEpsilonThere(randX,EpsilonModel.getINSTANCE().getX()));
+                do {
+                    randY = 50 + random.nextInt(getGameFrame().getMainPanelHeight() - 50);
+                } while (isEpsilonThere(randY,EpsilonModel.getINSTANCE().getY()));
+                if (!panelsContain(new Point2D.Double(randX,randY))){
+                    int randWidth = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
+                    int randHeight = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
+                    new InternalGamePanel(randX - randWidth/2, randY - randHeight/2, randWidth, randHeight, PanelStatus.shrinkable);
+                }
+                var n =  new OmenoctModel( randX, randY, EpsilonModel.getINSTANCE().getLocalPanel());//todo randomize
 //                System.out.println("wyrm "+ n.getId() );
 //                System.out.println(Arrays.toString(n.getPolygon().xpoints));
 //                System.out.println(Arrays.toString(n.getPolygon().ypoints));

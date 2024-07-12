@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
@@ -25,10 +27,16 @@ import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public abstract class GamePanel extends Panel {
 
+    public PanelStatus getPanelStatus() {
+        return panelStatus;
+    }
+
     private boolean isStretching = false;
     protected PanelStatus panelStatus;
     public static ArrayList<GamePanel> gamePanels = new ArrayList<>();
     private boolean exploding = false;
+    public static Map<GamePanel, Rectangle> gamePanelsBounds = new HashMap<>();
+
 
 
     public GamePanel(PanelStatus panelStatus) {
@@ -37,6 +45,7 @@ public abstract class GamePanel extends Panel {
         setFocusable(true);
         requestFocusInWindow();
         gamePanels.add(this);
+        gamePanelsBounds.put(this, getBounds());
         this.panelStatus = panelStatus;
 //        addComponentListener(new ComponentAdapter() {
 //            @Override
@@ -62,7 +71,7 @@ public abstract class GamePanel extends Panel {
             if (entityModel.getLocalPanel().equals(this)){
                 System.out.println("okay im doing something");
                 entityModel.setLocalPanel(this);
-                keepEpsilonInBounds();
+//                keepEpsilonInBounds();
             }
         }
     }
@@ -97,6 +106,7 @@ public abstract class GamePanel extends Panel {
             }
             if (!isStretching) {
                 this.setBounds(newX, newY, newWidth, newHeight);
+                gamePanelsBounds.put(this, new Rectangle(newX,newY,newWidth,newHeight));
             }
         }
     }
@@ -138,6 +148,8 @@ public abstract class GamePanel extends Panel {
                     isStretching = true;
                     fixEntityPositionsInShotPanel( code);
                     setBounds(newX, newY, newWidth, newHeight);
+                    gamePanelsBounds.put(this, new Rectangle(newX,newY,newWidth,newHeight));
+
                     count.getAndIncrement();
                 } else {
                     isStretching = false;
@@ -191,6 +203,8 @@ public abstract class GamePanel extends Panel {
             //keep epsilon in the middle
             if (!(stoppedX && stoppedY)) {
                 setBounds(newX, newY, newWidth, newHeight);
+                gamePanelsBounds.put(this, new Rectangle(newX,newY,newWidth,newHeight));
+
 //                EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
 //                int deltaX = newWidth / 2 - epsilonModel.getXO() - epsilonModel.getRadius();
 //                int deltaY = newHeight / 2 - epsilonModel.getYO() - epsilonModel.getRadius();

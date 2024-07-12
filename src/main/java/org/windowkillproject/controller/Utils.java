@@ -4,6 +4,7 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.model.entities.EntityModel;
 
 import java.awt.*;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
@@ -154,6 +155,25 @@ public abstract class Utils {
 
         for (Point2D edge: edges) {
             if (isPointInBounds(edge, area)) {
+                if (partly) return true;
+            }else if (!partly) return false;
+        }
+        return !partly;
+    }
+
+    public static boolean entityInBounds(EntityModel entityModel, Area area, boolean partly){
+        int left = entityModel.getX();
+        int right = left + entityModel.getWidth();
+        int up = entityModel.getY();
+        int down = up+ entityModel.getHeight();
+        ArrayList<Point2D> edges = new ArrayList<>();
+        edges.add(new Point2D.Double(left,up));
+        edges.add(new Point2D.Double(right,up));
+        edges.add(new Point2D.Double(left,down));
+        edges.add(new Point2D.Double(right,down));
+
+        for (Point2D edge: edges) {
+            if (area.contains(edge.getX() , edge.getY())) {
                 if (partly) return true;
             }else if (!partly) return false;
         }

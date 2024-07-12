@@ -10,6 +10,7 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.enemies.*;
+import org.windowkillproject.model.entities.enemies.attackstypes.Dashable;
 import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
 import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
@@ -19,13 +20,16 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.application.panels.shop.ShopPanel.*;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
@@ -148,10 +152,10 @@ public abstract class GameController {
             if (count.get() < t) {
                 entityModel.setImpact(true);
                 entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
-                keepEpsilonInBounds();
+//                keepEpsilonInBounds();//todo prob
                 count.getAndIncrement();
             } else {
-                keepEpsilonInBounds();
+//                keepEpsilonInBounds();
                 entityModel.setImpact(false);
                 impactTimer.stop();
             }
@@ -171,7 +175,7 @@ public abstract class GameController {
                         entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
                     }
                 }
-                keepEpsilonInBounds();
+//                keepEpsilonInBounds();todo prob
                 count.getAndIncrement();
             } else {
                 for (EntityModel entityModel : entityModels) {
@@ -179,7 +183,7 @@ public abstract class GameController {
                         entityModel.setImpact(false);
                     }
                 }
-                keepEpsilonInBounds();
+//                keepEpsilonInBounds();
                 impactTimer.stop();
             }
         });
@@ -218,9 +222,8 @@ public abstract class GameController {
                     }
                 }
                 //dash controller
-                if (enemyModel instanceof SquarantineModel) {
-                    var squarantine = (SquarantineModel) enemyModel;
-                    squarantine.setCollision(tempCollision);
+                if (enemyModel instanceof Dashable) {
+                    ((Dashable) enemyModel).setCollision(tempCollision);
                 }
             }
         }
@@ -241,21 +244,26 @@ public abstract class GameController {
         }
     }
 
-    public static void setEntitiesBoundsAllowed() {
+    private static void setEntitiesBoundsAllowed() {
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entityModel = entityModels.get(i);
             int t = 0;
+            entityModel.setAllowedArea(new Area());
+            entityModel.setAllowedPanels(new ArrayList<>());
             for (int j = 0; j < gamePanels.size(); j++) {
                 GamePanel gamePanel = gamePanels.get(j);
-                if (entityInBounds(entityModel, gamePanel.getBounds(), true)) {
+                if (entityInBounds(entityModel, gamePanelsBounds.get(gamePanel), true)) {
                     entityModel.addToAllowedArea(gamePanel);
+//                    System.out.println("added panel "+ gamePanel.getX() + " to allowed area of "+ entityModel.getId());
                     t++;
                 }
             }
+//            System.out.println(gamePanelsBounds.get(entityModel.getAllowedPanels().get(0)));
 //            if (t>1) entityModel.setLocalPanel(null);
         }
     }
-    private static int lastAoEAttack ;
+
+    private static int lastAoEAttack;
 
     public static void areaOfEffectControl() {
         for (int i = 0; i < MOMENT_MODELS.size(); i++) {
@@ -263,7 +271,7 @@ public abstract class GameController {
             if (ElapsedTime.getTotalSeconds() > momentModel.getTime() + 5) MOMENT_MODELS.remove(momentModel);
         }
         //timeout
-        if (ElapsedTime.getTotalSeconds()-lastAoEAttack > AOE_TIMEOUT) {
+        if (ElapsedTime.getTotalSeconds() - lastAoEAttack > AOE_TIMEOUT) {
             lastAoEAttack = ElapsedTime.getTotalSeconds();
             for (int j = 0; j < entityModels.size(); j++) {
                 EntityModel entityModel = entityModels.get(j);
@@ -284,41 +292,121 @@ public abstract class GameController {
             }
         }
     }
+    public static GamePanelCorner getClosestPanelCorner(Point2D point2D){
+        final GamePanel[] closestPanel = {gamePanels.getFirst()};
+        final Point2D[] closestPoint = {new Point2D.Double(10000, 10000)};
+        final int[] indexOfCorner = {0};
+
+        gamePanelsBounds.forEach((panel, rectangle) -> {
+            ArrayList<Point2D> corners = new ArrayList<>();
+            corners.add(new Point2D.Double(rectangle.x, rectangle.y)); //tl 0
+            corners.add(new Point2D.Double(rectangle.x+rectangle.width, rectangle.y));//tr 1
+            corners.add(new Point2D.Double(rectangle.x, rectangle.y+rectangle.height)); //bl 2
+            corners.add(new Point2D.Double(rectangle.x+rectangle.width, rectangle.y+rectangle.height));//br 3
+            for (int i = 0; i < corners.size(); i++) {
+                if(point2D.distance(corners.get(i))< point2D.distance(closestPoint[0])){
+                    closestPoint[0] = corners.get(i);
+                    indexOfCorner[0] = i;
+                    closestPanel[0] = panel;
+                }
+            }
+        });
+        int code = DOWN_CODE;
+        switch (indexOfCorner[0]){
+            case 0 ->{
+                code = UP_CODE;
+                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
+                Math.abs(point2D.getY()-closestPoint[0].getY())) code =LEFT_CODE;
+            }
+            case 1 ->{
+                code = UP_CODE;
+                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
+                        Math.abs(point2D.getY()-closestPoint[0].getY())) code =RIGHT_CODE;
+            }
+            case 2 ->{
+                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
+                        Math.abs(point2D.getY()-closestPoint[0].getY())) code = LEFT_CODE;
+            }
+            case 3 ->{
+                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
+                        Math.abs(point2D.getY()-closestPoint[0].getY())) code = RIGHT_CODE;
+            }
+        }
+        return new GamePanelCorner(closestPanel[0], code);
+    }
+    private static void setEpsilonsLocalPanel(){
+        var epsilonModel = EpsilonModel.getINSTANCE();
+        AtomicInteger t = new AtomicInteger();
+        gamePanelsBounds.forEach((gamePanel, rectangle) -> {
+            if (entityInBounds(epsilonModel, rectangle, false)){
+                t.getAndIncrement();
+                epsilonModel.setLocalPanel(gamePanel);
+            }
+        });
+        if (t.get()>1) epsilonModel.setLocalPanel(null);
+    }
 
     public static void keepEpsilonInBounds() {
+        setEntitiesBoundsAllowed();
+        setEpsilonsLocalPanel();
         if (!getGameFrame().isExploding()) {
             var epsilonModel = EpsilonModel.getINSTANCE();
-            int endX = epsilonModel.getXO() + epsilonModel.getRadius();
-            int endY = epsilonModel.getYO() + epsilonModel.getRadius();
+
 //            System.out.println("eps is "+ endX + " "+ endY);
-
-            int localPanelX = epsilonModel.getLocalPanel().getX();
-            int localPanelY = epsilonModel.getLocalPanel().getY();
-            int endOfLocalPanelY = localPanelY + epsilonModel.getLocalPanel().getHeight();
-            int endOfLocalPanelX = localPanelX + epsilonModel.getLocalPanel().getWidth();
-
-//            System.out.println("epsilon x is allowed from " + localPanelX + " to " + endOfLocalPanelX);
-//            System.out.println(" should be allowed from "+ gamePanels.get(1).getX()+ " to " +gamePanels.get(1).getX()+gamePanels.get(1).getWidth());
-
-            if (endY > endOfLocalPanelY) {
-                int deltaY = endOfLocalPanelY - endY;
-                epsilonModel.move(0, deltaY);
-            }
-            if (endX > endOfLocalPanelX) {
-                int deltaX = endOfLocalPanelX - endX;
-                epsilonModel.move(deltaX, 0);
-            }
-            if (epsilonModel.getY() < localPanelY) {
-                int deltaY = localPanelY - epsilonModel.getY();
-                epsilonModel.move(0, deltaY);
-            }
-            if (epsilonModel.getX() < localPanelX) {
-                int deltaX = localPanelX - epsilonModel.getX();
-                epsilonModel.move(deltaX, 0);
+            System.out.println("epsilon panels are " + epsilonModel.getAllowedPanels().size());
+            Area allowedArea = epsilonModel.getAllowedArea();
+            if (!entityInBounds(epsilonModel, allowedArea, false)) {
+                if (epsilonModel.getLocalPanel() == null){
+//                    keepInPanel(epsilonModel.getAllowedPanels().get(0));todo cant shrink local
+                }else {
+                    keepInPanel(epsilonModel.getLocalPanel());
+                }
             }
             getGameFrame().setHpAmount(epsilonModel.getHp());
         }
 
+    }
+    public static boolean panelsContain(Point2D point2D){
+        AtomicBoolean ans = new AtomicBoolean(false);
+        gamePanelsBounds.forEach((gamePanel, rectangle) -> {
+            if (rectangle.contains(point2D)) ans.set(true);
+        });
+        return ans.get();
+    }
+    private static void keepInPanel(GamePanel panel){
+        var epsilonModel = EpsilonModel.getINSTANCE();
+        int endX = epsilonModel.getXO() + epsilonModel.getRadius();
+        int endY = epsilonModel.getYO() + epsilonModel.getRadius();
+
+        var localPanelBounds = gamePanelsBounds.get(panel);
+        int localPanelX = localPanelBounds.x;
+        int localPanelY = localPanelBounds.y;
+        int endOfLocalPanelY = localPanelY + localPanelBounds.height;
+        int endOfLocalPanelX = localPanelX + localPanelBounds.width;
+
+            System.out.println("epsilon x is allowed from " + localPanelX + " to " + endOfLocalPanelX);
+//            System.out.println(" should be allowed from "+ gamePanels.get(1).getX()+ " to " +gamePanels.get(1).getX()+gamePanels.get(1).getWidth());
+
+        if (endY > endOfLocalPanelY) {
+            int deltaY = endOfLocalPanelY - endY;
+            System.out.println("im moving y "+ deltaY);
+            epsilonModel.move(0, deltaY);
+        }
+        if (endX > endOfLocalPanelX) {
+            int deltaX = endOfLocalPanelX - endX;
+            System.out.println("im moving x "+ deltaX);
+            epsilonModel.move(deltaX, 0);
+        }
+        if (epsilonModel.getY() < localPanelY) {
+            int deltaY = localPanelY - epsilonModel.getY();
+            System.out.println("im moving y "+ deltaY);
+            epsilonModel.move(0, deltaY);
+        }
+        if (epsilonModel.getX() < localPanelX) {
+            int deltaX = localPanelX - epsilonModel.getX();
+            System.out.println("im moving x "+ deltaX);
+            epsilonModel.move(deltaX, 0);
+        }
     }
 
     public static void epsilonIntersectionControl() {

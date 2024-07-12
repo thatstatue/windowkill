@@ -40,12 +40,12 @@ public abstract class ObjectModel implements Drawable {
     private GamePanel localPanel;
 
     public GamePanel getLocalPanel() {
-        for (int i = 0 ; i < gamePanels.size(); i++){
-            GamePanel gamePanel = gamePanels.get(i);
-            if (localPanel.equals(gamePanel))
-                return gamePanel;
-        }
-        System.out.println("equals none of panels!!!!!!!!!!!!!!");
+//        for (int i = 0 ; i < gamePanels.size(); i++){
+//            GamePanel gamePanel = gamePanels.get(i);
+//            if (localPanel.equals(gamePanel))
+//                return gamePanel;
+//        }
+//        System.out.println("equals none of panels!!!!!!!!!!!!!!");
         return localPanel;
     }
 

@@ -16,6 +16,7 @@ import java.awt.geom.Point2D;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
@@ -28,8 +29,8 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 //         int panelX = random.nextInt( kitWidth/ 2)+ kitWidth/4;
 //         int panelY = random.nextInt( kitHeight/ 2)+ kitHeight/4;
 //         panelX = x; panelY = y;
-         setLocalPanel(new InternalGamePanel(PanelStatus.isometric,
-                 WYRM_RADIUS*3, WYRM_RADIUS*3, x, y
+         setLocalPanel(new InternalGamePanel(x, y,
+                 WYRM_RADIUS*3, WYRM_RADIUS*3, PanelStatus.isometric
                  ));
 //         getGameFrame().add(getLocalPanel());
 //         System.out.println(getLocalPanel());
@@ -94,6 +95,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
         super.destroy();
         getLocalPanel().setEnabled(false);
         gamePanels.remove(getLocalPanel());
+        gamePanelsBounds.remove(getLocalPanel());
         getGameFrame().getLayeredPane().remove(getLocalPanel());
     }
 

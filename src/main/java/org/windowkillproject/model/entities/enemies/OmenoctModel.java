@@ -22,10 +22,16 @@ public class OmenoctModel extends EnemyModel implements ProjectileOperator {
         super(localPanel, x, y, (int) (ENEMY_RADIUS * 1.2), 20, 6, 8, 4);
         initVertices();
         initPolygon();
+        omenoctModels.add(this);
     }
-
+public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     private long lastShot;
     private int edgeCode;
+    @Override
+    public void destroy(){
+        super.destroy();
+        omenoctModels.remove(this);
+    }
 
     @Override
     public void route() {

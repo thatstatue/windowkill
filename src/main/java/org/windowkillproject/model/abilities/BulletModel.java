@@ -2,6 +2,7 @@ package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.controller.GamePanelCorner;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.ArchmireModel;
@@ -19,11 +20,13 @@ import java.util.Objects;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.SoundPlayer.playBulletSound;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createAbilityView;
+import static org.windowkillproject.controller.GameController.getClosestPanelCorner;
 import static org.windowkillproject.controller.GameController.impact;
-import static org.windowkillproject.controller.Utils.unitVector;
-import static org.windowkillproject.controller.Utils.weighedVector;
+import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.OmenoctModel.omenoctModels;
 
 public class BulletModel extends AbilityModel implements Projectable{
     private static int attackHp = BULLET_ATTACK_HP;
@@ -66,31 +69,36 @@ public class BulletModel extends AbilityModel implements Projectable{
     }
 
     private void isFrameShot() {
-        boolean shotRight = getX() > getLocalPanel().getX()+getLocalPanel().getWidth();
-        boolean shotLeft = getX() < getLocalPanel().getX();
-        boolean shotUp = getY() < getLocalPanel().getY() ;
-        boolean shotDown = getY() >  getLocalPanel().getY()+getLocalPanel().getHeight();
-
-        if ( shotLeft|| shotRight ||shotUp || shotDown) {
-            if (shotLeft) hit(LEFT_CODE);
-            if (shotRight) hit(RIGHT_CODE);
-            if (shotUp) hit(UP_CODE);
-            if (shotDown) hit(DOWN_CODE);
+        if (!EpsilonModel.getINSTANCE().getAllowedArea().contains(getX(),getY())) {
+            var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(),getY()));
+//            var shotPanelBounds = gamePanelsBounds.get(gamePanelCorner.gamePanel());
+//            boolean shotRight = getX() > shotPanelBounds.getX() + shotPanelBounds.getWidth();
+//            boolean shotLeft = getX() < shotPanelBounds.getX();
+//            boolean shotUp = getY() < shotPanelBounds.getY();
+//            boolean shotDown = getY() > shotPanelBounds.getY() + shotPanelBounds.getHeight();
+            hit(gamePanelCorner.gamePanel(), gamePanelCorner.corner());
             explode();
+
+
+//            if (shotLeft || shotRight || shotUp || shotDown) {
+//                if (shotLeft) hit(LEFT_CODE);
+//                if (shotRight) hit(RIGHT_CODE);
+//                if (shotUp) hit(UP_CODE);
+//                if (shotDown) hit(DOWN_CODE);
+//
+//            }
         }
     }
 
-    private void hit(int code) {
-        getGameFrame().stretch(code);
-        hitWall(code);
+    private void hit(GamePanel gamePanel, int code) {
+        getGameFrame().stretch(gamePanel, code);
+        hitWall(gamePanel, code);
     }
 
-    private void hitWall(int code){
-    for (int i = 0; i < entityModels.size(); i++){
-        EntityModel entityModel = entityModels.get(i);
-        if (entityModel instanceof OmenoctModel){
-            var omenoctModel = (OmenoctModel) entityModel;
-            omenoctModel.hitWall(code);
+    private void hitWall(GamePanel gamePanel, int code){
+    for (int i = 0; i < omenoctModels.size(); i++){
+        if (omenoctModels.get(i).getLocalPanel().equals(gamePanel)) {
+            omenoctModels.get(i).hitWall(code);
         }
     }
 }

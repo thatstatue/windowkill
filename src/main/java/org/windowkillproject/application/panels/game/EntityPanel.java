@@ -28,13 +28,15 @@ public class EntityPanel extends Panel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        for (AbilityView abilityView : abilityViews){
-            abilityView.paint(g);
+        for (int i = 0; i < abilityViews.size(); i++) {
+            abilityViews.get(i).paint(g);
         }
-        for (EntityView entityView : entityViews){
+        for (int i = 0; i < entityViews.size(); i++) {
+            EntityView entityView = entityViews.get(i);
             if (entityView.isHovering()) entityView.paint(g);
         }
-        for (EntityView entityView : entityViews){
+        for (int i = 0; i < entityViews.size(); i++) {
+            EntityView entityView = entityViews.get(i);
             if (!entityView.isHovering()) entityView.paint(g);
         }
 

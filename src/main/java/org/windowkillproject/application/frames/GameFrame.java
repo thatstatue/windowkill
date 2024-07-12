@@ -49,12 +49,12 @@ public class GameFrame extends JFrame {
         setBackground(new Color(0, 0, 0, 0));
         setLocationRelativeTo(null);
 //        add(layeredPane, BorderLayout.CENTER);
-        mainGamePanel = new MainGamePanel(PanelStatus.shrinkable);
+        mainGamePanel = MainGamePanel.getInstance();
         entityPanel = new EntityPanel();
 
 
         layeredPane = new JLayeredPane();
-        layeredPane.setBounds(0, 0, CENTER_X*2, CENTER_Y*2);
+        layeredPane.setBounds(0, 0, CENTER_X * 2, CENTER_Y * 2);
         layeredPane.setLayout(null);
         layeredPane.add(mainGamePanel, JLayeredPane.DEFAULT_LAYER);
         layeredPane.add(entityPanel, JLayeredPane.PALETTE_LAYER);
@@ -101,17 +101,20 @@ public class GameFrame extends JFrame {
     public void setHpAmount(int hpAmount) {
         mainGamePanel.setHpAmount(hpAmount);
     }
-    public boolean isExploding(){
+
+    public boolean isExploding() {
         return mainGamePanel.isExploding();
     }
 
     public void setClockTime(String time) {
         mainGamePanel.setClockTime(time);
     }
-    public int getMainPanelX(){
+
+    public int getMainPanelX() {
         return mainGamePanel.getX();
     }
-    public int getMainPanelY(){
+
+    public int getMainPanelY() {
         return mainGamePanel.getY();
     }
 
@@ -120,19 +123,29 @@ public class GameFrame extends JFrame {
     }
 
     public void shrink() {
-        mainGamePanel.shrink();
+        for (GamePanel gamePanel : gamePanels) {
+            if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
+                gamePanel.shrink();
+            }
+        }
     }
 
     public void setXpAmount(int xpAmount) {
         mainGamePanel.setXpAmount(xpAmount);
     }
-    public void stretch(int code){
-        mainGamePanel.stretch(code);
+
+    public void stretch(GamePanel gamePanel, int code) {
+        if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
+            gamePanel.stretch(code);
+        }
+
     }
-    public int getMainPanelHeight(){
+
+    public int getMainPanelHeight() {
         return mainGamePanel.getHeight();
     }
-    public int getMainPanelWidth(){
+
+    public int getMainPanelWidth() {
         return mainGamePanel.getWidth();
     }
 

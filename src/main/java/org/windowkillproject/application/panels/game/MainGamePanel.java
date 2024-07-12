@@ -15,7 +15,12 @@ public class MainGamePanel extends GamePanel {
     private final JLabel hp = new JLabel("100 ♡");
     private final JLabel wave = new JLabel("~1");
 //todo currentAbility and ON writh to be added
-    public MainGamePanel(PanelStatus panelStatus) {
+    private static MainGamePanel mainGamePanel;
+    public static MainGamePanel getInstance(){
+        if (mainGamePanel==null) mainGamePanel = new MainGamePanel(PanelStatus.shrinkable);
+        return mainGamePanel;
+    }
+    private MainGamePanel(PanelStatus panelStatus) {
         super(panelStatus);
         setPreferredSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
         setSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
