@@ -6,11 +6,14 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.abilities.MomentModel;
+import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.*;
 import org.windowkillproject.view.entities.EntityView;
 import org.windowkillproject.view.entities.EpsilonView;
 import org.windowkillproject.view.entities.enemies.*;
+import org.windowkillproject.view.entities.enemies.minibosses.BarricadosView;
+import org.windowkillproject.view.entities.enemies.normals.*;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
@@ -55,6 +58,8 @@ public abstract class Controller {
             entityViewCls = EpsilonView.class;
         } else if (entityModel instanceof ArchmireModel) {
             entityViewCls = ArchmireView.class;
+        }else if (entityModel instanceof BarricadosModel){
+            entityViewCls = BarricadosView.class;
         }
         return entityViewCls;
     }

@@ -12,7 +12,10 @@ public class ImgData {
     private static ImgData data;
     private final String icons_dir = "icons/";
 
-    protected BufferedImage epsilon, trigorath, banish, empower, heal, ares, aceso, proteus, bg;
+    protected BufferedImage epsilon, trigorath, barricados,
+            banish, empower, heal,
+            ares, aceso, proteus,
+            bg;
 
 
     private ImgData() {
@@ -40,6 +43,14 @@ public class ImgData {
             String pathBackground = icons_dir+"Trigorath.png";
             File fileBackground = new File(pathBackground);
             trigorath = ImageIO.read(fileBackground);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String pathBackground = icons_dir+"Barricados.png";
+            File fileBackground = new File(pathBackground);
+            barricados = ImageIO.read(fileBackground);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,6 +145,9 @@ public class ImgData {
 
     public BufferedImage getTrigorath() {
         return trigorath;
+    }
+    public BufferedImage getBarricados() {
+        return barricados;
     }
 
     public BufferedImage getEpsilon() {

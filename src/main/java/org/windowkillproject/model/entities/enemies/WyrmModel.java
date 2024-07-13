@@ -18,6 +18,7 @@ import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createEntityView;
+import static org.windowkillproject.controller.Utils.globalRoutePoint;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable {
@@ -87,8 +88,8 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
     @Override
     public Point2D getRoutePoint() {
-        return localRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor(), false);
+        return globalRoutePoint(this.getAnchor(),
+                EpsilonModel.getINSTANCE().getAnchor(), MIN_ENEMY_SPEED+0.5);
     }
     @Override
     public void destroy() {
@@ -101,7 +102,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
 
     @Override
-    void initVertices() {
+    protected void initVertices() {
 
         int width = 110;
         int height = 20;

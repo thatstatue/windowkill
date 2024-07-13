@@ -13,6 +13,7 @@ import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.entities.enemies.attackstypes.Dashable;
 import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
 import org.windowkillproject.model.abilities.MomentModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
 
 import javax.swing.*;
@@ -61,7 +62,7 @@ public abstract class GameController {
             Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
             if (!(deltaS.getY() < 1 && deltaS.getX() < 1)) {
                 Timer impactTimer = getImpactTimer(entity, deltaS, IMPACT_DURATION);
-                impactTimer.start();
+                if (!(entity instanceof Unmovable)) impactTimer.start();
             }
         }
     }
@@ -90,8 +91,9 @@ public abstract class GameController {
                 entityModel.getRadius() - closestPointOfEnemy.distance(entityModel.getAnchor()) / 2.0);
 
         if (isOverlappingDetected(entityModel, enemyModel)) {
-            entityModel.move((int) delta.getX(), (int) delta.getY());
-            enemyModel.move((int) -delta.getX(), (int) -delta.getY());
+//
+            if (!(entityModel instanceof Unmovable))entityModel.move((int) delta.getX(), (int) delta.getY());
+            if (!(enemyModel instanceof Unmovable))enemyModel.move((int) -delta.getX(), (int) -delta.getY());
         }
 
         // rEaLiStiC impact on the colliding entities
@@ -141,8 +143,8 @@ public abstract class GameController {
         Point2D forceOfEnemy = calculateForce(
                 unitVector(closestPointOfEnemy, enemyModel.getAnchor()),
                 rotateI(closestPointOfEnemy, enemyModel.getRoutePoint()));
-        entityModel.setTheta(rotateI(entityModel.getAnchor(), forceOfEnemy) * 6 * UNIT_DEGREE);
-        enemyModel.setTheta(rotateI(enemyModel.getAnchor(), forceOfEntity) * 6 * UNIT_DEGREE);
+        if (!(entityModel instanceof NonRotatable)) entityModel.setTheta(rotateI(entityModel.getAnchor(), forceOfEnemy) * 6 * UNIT_DEGREE);
+        if (!(enemyModel instanceof NonRotatable)) enemyModel.setTheta(rotateI(enemyModel.getAnchor(), forceOfEntity) * 6 * UNIT_DEGREE);
     }
 
     private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS, int t) {
@@ -245,6 +247,9 @@ public abstract class GameController {
     }
 
     private static void setEntitiesBoundsAllowed() {
+        for (int j = 0; j < gamePanels.size(); j++) {
+            gamePanels.get(j).resetCanShrink();
+        }
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entityModel = entityModels.get(i);
             int t = 0;
@@ -252,14 +257,32 @@ public abstract class GameController {
             entityModel.setAllowedPanels(new ArrayList<>());
             for (int j = 0; j < gamePanels.size(); j++) {
                 GamePanel gamePanel = gamePanels.get(j);
-                if (entityInBounds(entityModel, gamePanelsBounds.get(gamePanel), true)) {
+                var rectangle = gamePanelsBounds.get(gamePanel);
+                if (entityInBounds(entityModel, rectangle , true)) {
                     entityModel.addToAllowedArea(gamePanel);
+                    if (entityModel instanceof EpsilonModel && t >0)
+                        checkShrinking(entityModel, rectangle, gamePanel);
 //                    System.out.println("added panel "+ gamePanel.getX() + " to allowed area of "+ entityModel.getId());
                     t++;
                 }
             }
 //            System.out.println(gamePanelsBounds.get(entityModel.getAllowedPanels().get(0)));
 //            if (t>1) entityModel.setLocalPanel(null);
+        }
+    }
+
+    private static void checkShrinking(EntityModel entityModel, Rectangle rectangle, GamePanel gamePanel) {
+        if (entityModel.getXO() >= rectangle.x + rectangle.width/2){
+            gamePanel.setCanShrinkRight(false);
+        }
+        if (entityModel.getXO() <= rectangle.x + rectangle.width/2){
+            gamePanel.setCanShrinkLeft(false);
+        }
+        if (entityModel.getYO() >= rectangle.y + rectangle.height/2){
+            gamePanel.setCanShrinkDown(false);
+        }
+        if (entityModel.getYO() <= rectangle.y + rectangle.height/2){
+            gamePanel.setCanShrinkUp(false);
         }
     }
 

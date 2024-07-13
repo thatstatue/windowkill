@@ -6,6 +6,7 @@ import org.windowkillproject.application.panels.Panel;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.OmenoctModel;
+import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 import org.windowkillproject.view.entities.EntityView;
 
 import javax.swing.*;
@@ -21,8 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.FRAME_STRETCH_SPEED;
+import static org.windowkillproject.application.panels.game.PanelStatus.isometric;
 import static org.windowkillproject.controller.GameController.keepEpsilonInBounds;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
 public abstract class GamePanel extends Panel {
@@ -36,7 +39,6 @@ public abstract class GamePanel extends Panel {
     public static ArrayList<GamePanel> gamePanels = new ArrayList<>();
     private boolean exploding = false;
     public static Map<GamePanel, Rectangle> gamePanelsBounds = new HashMap<>();
-
 
 
     public GamePanel(PanelStatus panelStatus) {
@@ -66,9 +68,10 @@ public abstract class GamePanel extends Panel {
     protected ArrayList<Component> initComponents() {
         return null;
     }
-    private void updateEntities(){
-        for (EntityModel entityModel : entityModels){
-            if (entityModel.getLocalPanel().equals(this)){
+
+    private void updateEntities() {
+        for (EntityModel entityModel : entityModels) {
+            if (entityModel.getLocalPanel().equals(this)) {
                 System.out.println("okay im doing something");
                 entityModel.setLocalPanel(this);
 //                keepEpsilonInBounds();
@@ -76,26 +79,49 @@ public abstract class GamePanel extends Panel {
         }
     }
 
-//    @Override
-//    protected void paintComponent(Graphics g) {
-//        super.paintComponent(g);
-//        for (EntityView entityView : entityViews) {
-//            if (entityView.getLocalPanel() == null){
-//                if (this instanceof MainGamePanel)
-//                    entityView.paint(g);
-//                System.out.println("null bud "+ entityView);
-//            } else if (entityView.getLocalPanel().equals(this)) {
-//                entityView.paint(g);
-//            }
-//        }
-//    }
+    public void resetCanShrink() {
+        canShrinkUp = true;
+        canShrinkDown = true;
+        canShrinkLeft = true;
+        canShrinkRight = true;
+    }
+
+    private boolean canShrinkUp = true,
+            canShrinkDown = true,
+            canShrinkLeft = true,
+            canShrinkRight = true;
+
+
+    public void setCanShrinkUp(boolean canShrinkUp) {
+        this.canShrinkUp = canShrinkUp;
+    }
+
+    public void setCanShrinkDown(boolean canShrinkDown) {
+        this.canShrinkDown = canShrinkDown;
+    }
+
+    public void setCanShrinkLeft(boolean canShrinkLeft) {
+        this.canShrinkLeft = canShrinkLeft;
+    }
+
+    public void setCanShrinkRight(boolean canShrinkRight) {
+        this.canShrinkRight = canShrinkRight;
+    }
 
     public void shrink() {
         if (panelStatus.equals(PanelStatus.shrinkable)) {
-            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED / 2;
-            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED / 2;
-            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED;
-            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED;
+            int newX = getX();
+            if (canShrinkLeft) newX += Config.FRAME_SHRINKAGE_SPEED / 2;
+            int newY = getY();
+            if (canShrinkUp) newY += Config.FRAME_SHRINKAGE_SPEED / 2;
+            int newWidth = getWidth();
+            if (canShrinkRight) newWidth -= Config.FRAME_SHRINKAGE_SPEED;
+            int newHeight = getHeight();
+            if (canShrinkDown) newHeight -= Config.FRAME_SHRINKAGE_SPEED;
+
+//            if (this instanceof MainGamePanel ||
+//                    (EpsilonModel.getINSTANCE().getLocalPanel()!= null &&
+//                            this.equals(EpsilonModel.getINSTANCE().getLocalPanel()))) {
             if (getWidth() <= Config.GAME_MIN_SIZE) {
                 newWidth = Config.GAME_MIN_SIZE;
                 newX = getX();
@@ -104,12 +130,14 @@ public abstract class GamePanel extends Panel {
                 newHeight = Config.GAME_MIN_SIZE;
                 newY = getY();
             }
+//            }
             if (!isStretching) {
                 this.setBounds(newX, newY, newWidth, newHeight);
-                gamePanelsBounds.put(this, new Rectangle(newX,newY,newWidth,newHeight));
+                gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
             }
         }
     }
+
     public void setExploding(boolean exploding) {
         this.exploding = exploding;
     }
@@ -146,10 +174,11 @@ public abstract class GamePanel extends Panel {
                 }
                 if (count.get() < 7) {
                     isStretching = true;
-                    fixEntityPositionsInShotPanel( code);
-                    setBounds(newX, newY, newWidth, newHeight);
-                    gamePanelsBounds.put(this, new Rectangle(newX,newY,newWidth,newHeight));
-
+                    if (!isStoppedByBarricados(code, newX,newY,newWidth,newHeight)) {
+//                        fixEntityPositionsInShotPanel(code); todo ?
+                        setBounds(newX, newY, newWidth, newHeight);
+                        gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
+                    }
                     count.getAndIncrement();
                 } else {
                     isStretching = false;
@@ -159,11 +188,54 @@ public abstract class GamePanel extends Panel {
             stretchTimer.start();
         }
     }
+    private boolean isStoppedByBarricados(int code, int newX, int newY, int newWidth, int newHeight) {
+        for (int i = 0; i < barricadosModels.size(); i++) {
+            var barricadosModel = barricadosModels.get(i);
+            if (!barricadosModel.getLocalPanel().getPanelStatus().equals(isometric)) {
+                continue;
+            }
+            int BX = barricadosModel.getX();
+            int BY = barricadosModel.getY();
+            int BW = barricadosModel.getWidth();
+            int BH = barricadosModel.getHeight();
+
+            boolean xOverlap = newX < BX + BW && newX + newWidth > BX;
+            boolean yOverlap = newY < BY + BH && newY + newHeight > BY;
+
+            switch (code) {
+                case DOWN_CODE -> {
+                    if (xOverlap && newY + newHeight > BY) {
+                        return true;
+                    }
+                }
+                case LEFT_CODE -> {
+                    if (yOverlap && newX < BX + BW) {
+                        return true;
+                    }
+                }
+                case RIGHT_CODE -> {
+                    if (yOverlap && newX + newWidth > BX) {
+                        return true;
+                    }
+                }
+                case UP_CODE -> {
+                    if (xOverlap && newY < BY + BH) {
+                        return true;
+                    }
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + code);
+            }
+        }
+        return false;
+    }
+
 
     private void fixEntityPositionsInShotPanel(int code) {
         if (code == LEFT_CODE || code == UP_CODE) {
             for (EntityModel entityModel : entityModels) {
-                if (!(entityModel instanceof OmenoctModel) &&
+                if (/*!(entityModel instanceof OmenoctModel ||*/
+                        !(entityModel instanceof BarricadosModel) &&
+                        entityModel.getLocalPanel() != null &&
                         entityModel.getLocalPanel().equals(this)) {
                     if (code == LEFT_CODE) {
                         entityModel.move(FRAME_STRETCH_SPEED, 0);
@@ -175,9 +247,11 @@ public abstract class GamePanel extends Panel {
             }
         }
     }
+
     public boolean isExploding() {
         return exploding;
     }
+
     public void shrinkFast() {
         if (exploding) {
             EpsilonModel.getINSTANCE().setRadius(0);
@@ -203,7 +277,7 @@ public abstract class GamePanel extends Panel {
             //keep epsilon in the middle
             if (!(stoppedX && stoppedY)) {
                 setBounds(newX, newY, newWidth, newHeight);
-                gamePanelsBounds.put(this, new Rectangle(newX,newY,newWidth,newHeight));
+                gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
 
 //                EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
 //                int deltaX = newWidth / 2 - epsilonModel.getXO() - epsilonModel.getRadius();
@@ -214,7 +288,7 @@ public abstract class GamePanel extends Panel {
                     setVisible(false);
 //                    initScoreFrame();
                     EpsilonModel.getINSTANCE().setRadius(Config.EPSILON_RADIUS);
-                    Config.GAME_MIN_SIZE = 300;
+                    Config.GAME_MIN_SIZE = 250;
                     Application.startGame(1);
                 }
                 shrinkFastTimer.stop();

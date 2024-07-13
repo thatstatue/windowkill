@@ -31,7 +31,7 @@ public class SquarantineModel extends EnemyModel implements Dashable {
 
 
     @Override
-    void initVertices() {
+    protected void initVertices() {
         getVertices().add(new VertexModel(getXO(), getYO() - getRadius(), this));
         getVertices().add(new VertexModel(getXO() - getRadius(), getYO(), this));
         getVertices().add(new VertexModel(getXO(), getYO() + getRadius(), this));

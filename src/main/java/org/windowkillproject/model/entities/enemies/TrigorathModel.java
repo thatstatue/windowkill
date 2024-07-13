@@ -31,7 +31,7 @@ public class TrigorathModel extends EnemyModel {
     }
 
     @Override
-    void initVertices() {
+    protected void initVertices() {
         getVertices().add(new VertexModel(getXO(), getYO() - getRadius(), this));
         getVertices().add(new VertexModel((int) (getXO() - (getRadius() * RAD3_ON_2)), getYO() + getRadius() / 2, this));
         getVertices().add(new VertexModel((int) (getXO() + (getRadius() * RAD3_ON_2)), getYO() + getRadius() / 2, this));

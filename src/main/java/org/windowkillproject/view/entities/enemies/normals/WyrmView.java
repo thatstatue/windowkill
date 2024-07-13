@@ -1,13 +1,14 @@
-package org.windowkillproject.view.entities.enemies;
+package org.windowkillproject.view.entities.enemies.normals;
 
 import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.view.entities.enemies.EnemyView;
 
 import java.awt.*;
 import java.util.Arrays;
 
 import static org.windowkillproject.application.Config.WYRM_RADIUS;
 
-public class WyrmView extends EnemyView{
+public class WyrmView extends EnemyView {
     public WyrmView(String id) {
         super(id);
     }

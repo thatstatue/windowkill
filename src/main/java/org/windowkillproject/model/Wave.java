@@ -3,14 +3,14 @@ package org.windowkillproject.model;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.InternalGamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
+import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
-import org.windowkillproject.view.entities.enemies.NecropickView;
+import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
@@ -19,6 +19,8 @@ import static org.windowkillproject.application.SoundPlayer.playCreateSound;
 import static org.windowkillproject.application.SoundPlayer.playEndWaveSound;
 import static org.windowkillproject.controller.GameController.panelsContain;
 import static org.windowkillproject.controller.GameController.random;
+import static org.windowkillproject.controller.Utils.isOccupied;
+import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
 
@@ -154,21 +156,20 @@ public class Wave {
 
         switch (randNum) {
             case 0 -> createRandomLocalEnemy();
-            case 1, 2, 3 ->{
+            case 1, 2, 3 -> {
                 int randX;
                 int randY;
-                do {
+//                do {
                     randX = 50 + random.nextInt(getGameFrame().getMainPanelWidth() - 50);
-                } while (isEpsilonThere(randX,EpsilonModel.getINSTANCE().getX()));
-                do {
                     randY = 50 + random.nextInt(getGameFrame().getMainPanelHeight() - 50);
-                } while (isEpsilonThere(randY,EpsilonModel.getINSTANCE().getY()));
-                if (!panelsContain(new Point2D.Double(randX,randY))){
-                    int randWidth = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
-                    int randHeight = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
-                    new InternalGamePanel(randX - randWidth/2, randY - randHeight/2, randWidth, randHeight, PanelStatus.shrinkable);
-                }
-                var n =  new OmenoctModel( randX, randY, EpsilonModel.getINSTANCE().getLocalPanel());//todo randomize
+//                } while (isEntityThere(randX, randY));
+//                if (!panelsContain(new Point2D.Double(randX,randY))){
+//                    int randWidth = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
+//                    int randHeight = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
+//                    new InternalGamePanel(randX - randWidth/2, randY - randHeight/2, randWidth, randHeight, PanelStatus.shrinkable);
+              if (!isEntityThere(randX,randY))
+                  new BarricadosModel(randX, randY);//todo randomize
+
 //                System.out.println("wyrm "+ n.getId() );
 //                System.out.println(Arrays.toString(n.getPolygon().xpoints));
 //                System.out.println(Arrays.toString(n.getPolygon().ypoints));
@@ -177,10 +178,18 @@ public class Wave {
 
     }
 
-    private boolean isEpsilonThere(int randLoc, int epsilonLoc) {
-        return randLoc + 2 * EPSILON_RADIUS > epsilonLoc
-                && randLoc < epsilonLoc + 4 * EPSILON_RADIUS;
+    private boolean isEntityThere(int randLocX, int randLocY) {
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
+            if (isOccupied(randLocX, entityModel.getX(), entityModel.getRadius())
+                    && isOccupied(randLocY, entityModel.getY(), entityModel.getRadius())) {
+                return true;
+            }
+        }
+        return false;
     }
+
+
 
     public Wave() {
         startNewWave = false;

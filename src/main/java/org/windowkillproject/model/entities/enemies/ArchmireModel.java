@@ -30,7 +30,7 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker {
     }
 
     @Override
-    void initVertices() {
+    protected void initVertices() {
 
     }
 

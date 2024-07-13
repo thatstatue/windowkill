@@ -78,7 +78,7 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
     }
 
     @Override
-    void initVertices() {
+    protected void initVertices() {
         int startX = getXO();
         int startY = getYO();
         int radius = getRadius();

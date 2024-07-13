@@ -57,14 +57,21 @@ public abstract class Utils {
         return weighedVector(vector, speed);
 
     }
-    public static Point2D globalRoutePoint(Point2D entity, Point2D other) {
-        double speed = (MAX_ENEMY_SPEED+ MIN_ENEMY_SPEED)/2.0;
+    public static Point2D globalRoutePoint(Point2D entity, Point2D other,double speed) {
 //        if (hasAccel) speed = accelSpeed(entity, other);
         speed = Math.max(speed, MIN_ENEMY_SPEED);
         Point2D vector = unitVector(other, entity);
         return weighedVector(vector, speed);
 
     }
+    public static boolean isOccupied(int randLoc, int entityLoc, int radius) {
+        return randLoc + 2 * radius > entityLoc
+                && randLoc < entityLoc + 4 * radius;
+    }
+    public static Point2D globalRoutePoint(Point2D entity, Point2D other){
+        return globalRoutePoint(entity, other,(MAX_ENEMY_SPEED+ MIN_ENEMY_SPEED)/2.0);
+    }
+
 
     public static Point2D impactPoint(Point2D entity, Point2D other) {
         double speed = deltaSpeedAway(entity, other);

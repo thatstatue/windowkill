@@ -190,7 +190,7 @@ public class Application implements Runnable {
         setKilledEnemiesInWave(0);
         nextLevel();
         Writ.resetInitSeconds();
-        Config.GAME_MIN_SIZE = 300;
+        Config.GAME_MIN_SIZE = 250;
         Wave.waves.clear();
         Wave.setLevel(0);
         Wave.setStartNewWave(false);

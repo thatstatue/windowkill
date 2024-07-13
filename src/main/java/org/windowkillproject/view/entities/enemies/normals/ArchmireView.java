@@ -1,4 +1,6 @@
-package org.windowkillproject.view.entities.enemies;
+package org.windowkillproject.view.entities.enemies.normals;
+
+import org.windowkillproject.view.entities.enemies.EnemyView;
 
 import java.awt.*;
 

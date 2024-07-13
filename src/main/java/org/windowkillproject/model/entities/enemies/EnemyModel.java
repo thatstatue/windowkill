@@ -81,7 +81,7 @@ public abstract class EnemyModel extends EntityModel {
         }
     }
 
-    abstract void initVertices();
+    protected abstract void initVertices();
 
     @Override
     public void rotate() {

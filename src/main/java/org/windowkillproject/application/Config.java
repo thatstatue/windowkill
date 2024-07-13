@@ -25,6 +25,8 @@ public class Config {
     public static final int WAVE_LOOP = 5 * 1000;
     public static int ENEMY_RADIUS = 20;
     public static int WYRM_RADIUS = 70;
+    public static int BARRICADOS_RADIUS = 70;
+
     public static int ARCHMIRE_RADIUS = 40;
     public static final int IMPACT_DURATION = 7;
     public static final int BANISH_DURATION = 13;
@@ -45,7 +47,7 @@ public class Config {
     public static int BOUND = 5;
 
     public static final int FRAME_STRETCH_SPEED = 3;
-    public static int GAME_MIN_SIZE = 300;
+    public static int GAME_MIN_SIZE = 250;
     public static final int BUTTON_WIDTH = 150;
     public static final int BUTTON_HEIGHT = 60;
     public static final int EPSILON_RADIUS = 14;

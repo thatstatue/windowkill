@@ -27,8 +27,9 @@ import static org.windowkillproject.controller.GameController.impact;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.OmenoctModel.omenoctModels;
+import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
-public class BulletModel extends AbilityModel implements Projectable{
+public class BulletModel extends AbilityModel implements Projectable {
     private static int attackHp = BULLET_ATTACK_HP;
     private final Point2D mousePoint;
 
@@ -45,14 +46,16 @@ public class BulletModel extends AbilityModel implements Projectable{
     public Point2D getMousePoint() {
         return mousePoint;
     }
-@Override
+
+    @Override
     public void shoot() {
         setShoot(true);
         move();
         move();
         move();
     }
-@Override
+
+    @Override
     public void move() {
         if (isShoot()) {
             Point2D delta = unitVector(getMousePoint(), this.getAnchor());
@@ -69,8 +72,8 @@ public class BulletModel extends AbilityModel implements Projectable{
     }
 
     private void isFrameShot() {
-        if (!EpsilonModel.getINSTANCE().getAllowedArea().contains(getX(),getY())) {
-            var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(),getY()));
+        if (!EpsilonModel.getINSTANCE().getAllowedArea().contains(getX(), getY())) {
+            var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(), getY()));
 //            var shotPanelBounds = gamePanelsBounds.get(gamePanelCorner.gamePanel());
 //            boolean shotRight = getX() > shotPanelBounds.getX() + shotPanelBounds.getWidth();
 //            boolean shotLeft = getX() < shotPanelBounds.getX();
@@ -95,13 +98,16 @@ public class BulletModel extends AbilityModel implements Projectable{
         hitWall(gamePanel, code);
     }
 
-    private void hitWall(GamePanel gamePanel, int code){
-    for (int i = 0; i < omenoctModels.size(); i++){
-        if (omenoctModels.get(i).getLocalPanel().equals(gamePanel)) {
-            omenoctModels.get(i).hitWall(code);
+    private void hitWall(GamePanel gamePanel, int code) {
+        for (int i = 0; i < omenoctModels.size(); i++) {
+            var omenoctModel = omenoctModels.get(i);
+            if (omenoctModel.getLocalPanel() != null &&
+                    omenoctModel.getLocalPanel().equals(gamePanel)) {
+                omenoctModel.hitWall(code);
+            }
         }
     }
-}
+
     private void isEnemyShot() {
         for (EntityModel entityModel : entityModels) {
             if (entityModel instanceof EnemyModel) {
@@ -109,22 +115,23 @@ public class BulletModel extends AbilityModel implements Projectable{
                 //not hitting vertices
                 boolean notHitVs = true;
                 for (VertexModel vertexModel : enemyModel.getVertices()) {
-                    if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
+                        if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
                         explode();
                         notHitVs = false;
                         break;
                     }
                 }
                 //hitting enemy
-                if (notHitVs && ((EnemyModel) entityModel).getPolygon()!=null) {
+                if (notHitVs && ((EnemyModel) entityModel).getPolygon() != null) {
                     Area enemyA = new Area(enemyModel.getPolygon());
                     if (enemyA.contains(this.getX(), this.getY())) {
                         enemyModel.gotShoot();
                         explode();
                         break;
                     }
-                } if ((enemyModel instanceof WyrmModel || enemyModel instanceof ArchmireModel) &&
-                        enemyModel.getAnchor().distance(getAnchor())< enemyModel.getRadius()){
+                }
+                if ((enemyModel instanceof WyrmModel || enemyModel instanceof ArchmireModel) &&
+                        enemyModel.getAnchor().distance(getAnchor()) < enemyModel.getRadius()) {
                     enemyModel.gotShoot();
                     explode();
                     break;
@@ -134,7 +141,7 @@ public class BulletModel extends AbilityModel implements Projectable{
         }
     }
 
-    public BulletModel( int x, int y, Point2D mousePoint) {
+    public BulletModel(int x, int y, Point2D mousePoint) {
         super(EpsilonModel.getINSTANCE().getLocalPanel(), x, y);
         anchor = new Point2D.Double(x + EPSILON_RADIUS / 2, y + EPSILON_RADIUS * 1.5);
         isShoot = false;
