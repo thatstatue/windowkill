@@ -17,6 +17,7 @@ import static org.windowkillproject.application.panels.game.GamePanel.gamePanels
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.application.panels.game.PanelStatus.*;
 import static org.windowkillproject.controller.Controller.createEntityView;
+import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
 public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovable {
@@ -25,7 +26,7 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
     public BarricadosModel( int x, int y) {
         super(null, x, y, BARRICADOS_RADIUS, Integer.MAX_VALUE, 0, 0, 0);
         PanelStatus panelStatus = isometric;
-//        if (random.nextInt(2) == 0) panelStatus = shrinkable; todo undo
+        if (random.nextInt(2) == 0) panelStatus = shrinkable;
         setLocalPanel(new InternalGamePanel(x, y,
                 BARRICADOS_RADIUS*2, BARRICADOS_RADIUS*2, panelStatus
         ));
