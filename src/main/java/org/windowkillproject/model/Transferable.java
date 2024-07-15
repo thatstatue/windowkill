@@ -10,5 +10,7 @@ public interface Transferable {
     int getWidth();
     int getHeight();
     void addToAllowedArea(GamePanel panel);
+    void setLocalPanel(GamePanel gamePanel);
+    GamePanel getLocalPanel();
     void setAllowedPanels(ArrayList<GamePanel> allowedPanels);
 }

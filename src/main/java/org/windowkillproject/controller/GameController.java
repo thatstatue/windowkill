@@ -63,10 +63,12 @@ public abstract class GameController {
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entity = entityModels.get(i);
             Point2D bulletPoint = new Point2D.Double(projectable.getX(), projectable.getY());
-            Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
-            if (!(deltaS.getY() < 1 && deltaS.getX() < 1)) {
-                Timer impactTimer = getImpactTimer(entity, deltaS, IMPACT_DURATION);
-                if (!(entity instanceof Unmovable || entity instanceof Hovering)) impactTimer.start();
+            if (entity.getAnchor()!=null && !(entity instanceof Hovering)) {
+                Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
+                if (!(deltaS.getY() < 1 && deltaS.getX() < 1)) {
+                    Timer impactTimer = getImpactTimer(entity, deltaS, IMPACT_DURATION);
+                    if (!(entity instanceof Unmovable)) impactTimer.start();
+                }
             }
         }
     }
@@ -188,7 +190,8 @@ public abstract class GameController {
                 for (EntityModel entityModel : entityModels) {
                     if (isImpactAffected(not1, not2, entityModel)) {
                         entityModel.setImpact(true);
-                        if (entityModel.getAnchor()!= null) {
+                        if (entityModel.getAnchor()!= null && closestPointOfEnemy!= null &&
+                                !(entityModel instanceof Hovering)) {
                             Point2D deltaS = impactPoint(entityModel.getAnchor(), closestPointOfEnemy);
                             entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
                         }
@@ -289,13 +292,10 @@ public abstract class GameController {
                     entityModel.addToAllowedArea(gamePanel);
                     if (entityModel instanceof EpsilonModel && t > 0)
                         checkShrinking(entityModel, rectangle, gamePanel);
-//                    System.out.println("added panel "+ gamePanel.getX() + " to allowed area of "+ entityModel.getId());
                     t++;
                 }
             }
-//            System.out.println(gamePanelsBounds.get(entityModel.getAllowedPanels().get(0)));
 //            if (t>1) entityModel.setLocalPanel(null);
-            System.out.println(EpsilonModel.getINSTANCE().getLocalPanel());
         }
     }
 
@@ -310,11 +310,11 @@ public abstract class GameController {
                 var rectangle = gamePanelsBounds.get(gamePanel);
                 if (isTransferableInBounds(bulletModel, rectangle, true)) {
                     bulletModel.addToAllowedArea(gamePanel);
-                    checkShrinking(bulletModel, rectangle, gamePanel);
+                    if (t>0) checkShrinking(bulletModel, rectangle, gamePanel);
                     t++;
                 }
             }
-            if (t > 1) bulletModel.setLocalPanel(null);
+//            if (t > 1) bulletModel.setLocalPanel(null);
         }
     }
 
@@ -415,21 +415,20 @@ public abstract class GameController {
         return new GamePanelCorner(closestPanel[0], code);
     }
 
-    private static void setEpsilonsLocalPanel() {
-        var epsilonModel = EpsilonModel.getINSTANCE();
+    private static void setTransferableLocalPanel(Transferable transferable) {
         AtomicInteger t = new AtomicInteger();
         gamePanelsBounds.forEach((gamePanel, rectangle) -> {
-            if (isTransferableInBounds(epsilonModel, rectangle, false)) {
+            if (isTransferableInBounds(transferable, rectangle, false)) {
                 t.getAndIncrement();
-                epsilonModel.setLocalPanel(gamePanel);
+                transferable.setLocalPanel(gamePanel);
             }
         });
-        if (t.get() > 1) epsilonModel.setLocalPanel(null);
+        if (t.get() > 1) transferable.setLocalPanel(null);
+        System.out.println(transferable.getLocalPanel());
     }
 
     public static void keepTransferableInBounds() {
         setTransferableBoundsAllowed();
-        setEpsilonsLocalPanel();
 
         if (!getGameFrame().isExploding()) {
             keepEpsilonInBounds();
@@ -440,6 +439,7 @@ public abstract class GameController {
 
     private static void keepEpsilonInBounds() {
         var epsilonModel = EpsilonModel.getINSTANCE();
+        setTransferableLocalPanel(epsilonModel);
 
         Area allowedArea = epsilonModel.getAllowedArea();
         if (!isTransferableInBounds(epsilonModel, allowedArea, false)) {
@@ -456,6 +456,7 @@ public abstract class GameController {
     private static void keepBulletsInBounds() {
         for (int i = 0; i < bulletModels.size(); i++) {
             BulletModel bulletModel = bulletModels.get(i);
+            setTransferableLocalPanel(bulletModel);
             Area bulletAllowedArea = bulletModel.getAllowedArea();
             if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
                 if (bulletModel.getLocalPanel() == null) {

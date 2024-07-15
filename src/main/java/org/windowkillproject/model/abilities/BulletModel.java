@@ -124,13 +124,14 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void isEnemyShot() {
-        for (EntityModel entityModel : entityModels) {
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
             if (entityModel instanceof EnemyModel) {
                 EnemyModel enemyModel = (EnemyModel) entityModel;
                 //not hitting vertices
                 boolean notHitVs = true;
                 for (VertexModel vertexModel : enemyModel.getVertices()) {
-                        if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
+                    if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
                         explode();
                         notHitVs = false;
                         break;
@@ -145,8 +146,8 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
                         break;
                     }
                 }
-                if (enemyModel instanceof Circular){
-                    if(enemyModel.getAnchor().distance(new Point2D.Double(getX(), getY())) < enemyModel.getRadius()) {
+                if (enemyModel instanceof Circular) {
+                    if (enemyModel.getAnchor().distance(new Point2D.Double(getX(), getY())) < enemyModel.getRadius()) {
                         enemyModel.gotShoot();
                         explode();
                         break;

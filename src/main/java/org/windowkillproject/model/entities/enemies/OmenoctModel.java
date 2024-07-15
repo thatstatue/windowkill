@@ -3,6 +3,7 @@ package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
+import org.windowkillproject.controller.Utils;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import static java.lang.Math.*;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class OmenoctModel extends EnemyModel implements ProjectileOperator {
@@ -35,8 +37,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
 
     @Override
     public void route() {
-        if (getLocalPanel() != null && getLocalPanel().equals(
-                EpsilonModel.getINSTANCE().getLocalPanel())) {
+        if (EpsilonModel.getINSTANCE().getLocalPanel()!=null) {
             Point2D routePoint = goToNearestEdge();
             if (routePoint.getX() == 0 && routePoint.getY() == 0) {
                 shoot();
@@ -61,16 +62,19 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     }
 
     private Point2D goToNearestEdge() {
-        int distanceFromRight = getGameFrame().getMainPanelWidth() - getXO();
-        int distanceFromDown = getGameFrame().getMainPanelHeight() - getYO();
+        Rectangle rectangle = gamePanelsBounds.get(EpsilonModel.getINSTANCE().getLocalPanel());
+        int distanceFromLeft = getXO() - rectangle.x ;
+        int distanceFromUp = getYO() - rectangle.y ;
+        int distanceFromRight = rectangle.x + rectangle.width - getXO();
+        int distanceFromDown = rectangle.y + rectangle.x - getYO();
 
-        boolean isInLeftBound = getXO() > 0;
+        boolean isInLeftBound = distanceFromLeft > 0;
         boolean isInRightBound = distanceFromRight > 0;
-        boolean isInUpBound = getYO() > 0;
+        boolean isInUpBound = distanceFromUp> 0;
         boolean isInDownBound = distanceFromDown > 0;
 
-        boolean isToRight = distanceFromRight < getXO();
-        boolean isToDown = distanceFromDown < getYO();
+        boolean isToRight = distanceFromRight < distanceFromLeft;
+        boolean isToDown = distanceFromDown < distanceFromUp;
 
         int x = 0;
         int y = 0;
@@ -78,8 +82,8 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
         if (!isInRightBound) x = -MIN_ENEMY_SPEED;
         if (!isInUpBound) y = MIN_ENEMY_SPEED;
         if (!isInDownBound) y = -MIN_ENEMY_SPEED;
-        if (!(min(abs(getXO()), abs(distanceFromRight)) < 5
-                || min(abs(getYO()), abs(distanceFromDown)) < 5)) {
+        if (!(min(abs(distanceFromLeft), abs(distanceFromRight)) < 5
+                || min(abs(distanceFromUp), abs(distanceFromDown)) < 5)) {
 
             if (isInLeftBound && isInRightBound) {
                 if (isToRight) x = MIN_ENEMY_SPEED;
@@ -104,8 +108,8 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
 
     @Override
     public Point2D getRoutePoint() {
-        return localRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor(), false);
+        return Utils.globalRoutePoint(this.getAnchor(),
+                EpsilonModel.getINSTANCE().getAnchor());
     }
 
     @Override
