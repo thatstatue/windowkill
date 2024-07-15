@@ -58,7 +58,7 @@ public class EpsilonModel extends EntityModel {
     }
 
     private EpsilonModel(int x, int y, int xp) {
-        super(getGameFrame().getMainGamePanel(), x, y, EPSILON_RADIUS, 100, 10);
+        super(getGameFrame().getMainGamePanel(), x, y, EPSILON_RADIUS, 1000, 10);
         setXp(xp);
         createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
     }

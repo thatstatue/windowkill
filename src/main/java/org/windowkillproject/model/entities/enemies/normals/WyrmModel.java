@@ -1,4 +1,4 @@
-package org.windowkillproject.model.entities.enemies;
+package org.windowkillproject.model.entities.enemies.normals;
 
 import org.windowkillproject.application.panels.game.InternalGamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
@@ -7,6 +7,7 @@ import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
@@ -19,6 +20,7 @@ import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createEntityView;
+import static org.windowkillproject.controller.Controller.deleteGamePanel;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
@@ -95,10 +97,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
     @Override
     public void destroy() {
         super.destroy();
-        getLocalPanel().setEnabled(false);
-        gamePanels.remove(getLocalPanel());
-        gamePanelsBounds.remove(getLocalPanel());
-        getGameFrame().getLayeredPane().remove(getLocalPanel());
+        deleteGamePanel(getLocalPanel());
     }
 
 

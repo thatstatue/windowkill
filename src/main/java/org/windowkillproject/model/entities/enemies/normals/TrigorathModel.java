@@ -1,8 +1,9 @@
-package org.windowkillproject.model.entities.enemies;
+package org.windowkillproject.model.entities.enemies.normals;
 
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
 
 import java.awt.geom.Point2D;
 

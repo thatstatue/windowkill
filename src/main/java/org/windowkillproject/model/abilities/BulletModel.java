@@ -2,15 +2,11 @@ package org.windowkillproject.model.abilities;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.controller.GamePanelCorner;
 import org.windowkillproject.model.Transferable;
 import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.ArchmireModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
-import org.windowkillproject.model.entities.enemies.OmenoctModel;
-import org.windowkillproject.model.entities.enemies.WyrmModel;
 
 
 import java.awt.geom.Area;
@@ -28,8 +24,7 @@ import static org.windowkillproject.controller.GameController.getClosestPanelCor
 import static org.windowkillproject.controller.GameController.impact;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.OmenoctModel.omenoctModels;
-import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
+import static org.windowkillproject.model.entities.enemies.normals.OmenoctModel.omenoctModels;
 
 public class BulletModel extends AbilityModel implements Projectable, Transferable {
     private static int attackHp = BULLET_ATTACK_HP;

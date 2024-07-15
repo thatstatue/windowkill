@@ -3,6 +3,7 @@ package org.windowkillproject.application.listeners;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
 import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
+import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
@@ -18,7 +19,7 @@ public class ShotgunMouseListener implements NativeMouseListener {
     public static long empowerInitSeconds = Long.MAX_VALUE;
 
     public void nativeMouseClicked(NativeMouseEvent e) {
-        if (getGameFrame().isVisible()) {
+        if (getGameFrame().isVisible()&& !Wave.isWelcome()) {
             Point2D mouseLoc = MouseInfo.getPointerInfo().getLocation();
 //            Point2D relativePoint = new Point2D.Double(
 //                    mouseLoc.getX() - getGameFrame().getMainPanelX(),

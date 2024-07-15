@@ -45,8 +45,10 @@ public abstract class Utils {
         int speed = (int) (d / 25 + 0.75);
         return Math.min(MAX_ENEMY_SPEED, speed);
     }
-    public static int pickRandomSign(){
-        return random.nextInt(2)*2 - 1;
+    public static int getSign(int number){
+        if (number>=0) return 1;
+        return -1;
+
     }
     public static Point2D localRoutePoint(Point2D entity, Point2D other, boolean hasAccel) {
         double speed = MIN_ENEMY_SPEED;

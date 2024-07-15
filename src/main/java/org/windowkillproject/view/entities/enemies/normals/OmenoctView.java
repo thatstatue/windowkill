@@ -18,8 +18,8 @@ public class OmenoctView extends EnemyView {
         g2D.setColor(Color.WHITE);
         g2D.setStroke(new BasicStroke(3));
         if (getPolygon() != null) {
-            g2D.fillPolygon(getPolygon());
-            g2D.setColor(Color.RED);
+            g2D.fillPolygon(getPolygon());            g2D.setColor(Color.RED);
+
             drawRedTriangles(g2D);
         }
     }

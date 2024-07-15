@@ -5,8 +5,6 @@ import org.windowkillproject.application.listeners.EpsilonKeyListener;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 
 import org.windowkillproject.application.panels.etc.SettingsPanel;
-import org.windowkillproject.application.panels.game.MainGamePanel;
-import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.application.panels.shop.ShopPanel;
 import org.windowkillproject.application.panels.shop.SkillTreePanel;
 import org.windowkillproject.application.panels.etc.TutorialPanel;
@@ -15,7 +13,6 @@ import org.windowkillproject.controller.Update;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
-import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
@@ -32,10 +29,9 @@ import static org.windowkillproject.controller.Update.modelUpdateTimer;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.ArchmireModel.archmireModels;
+import static org.windowkillproject.model.entities.enemies.normals.ArchmireModel.archmireModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
-import static org.windowkillproject.model.entities.enemies.OmenoctModel.omenoctModels;
-import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
+import static org.windowkillproject.model.entities.enemies.normals.OmenoctModel.omenoctModels;
 import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
 public class Application implements Runnable {
@@ -139,9 +135,6 @@ public class Application implements Runnable {
     public static void startGame(int t) {//doesn't reset time
         nextLevel();
         initGFrame();
-        for (int i = 0; i < t; i++) {
-            initIGFrame();
-        }
 
     }
 
@@ -149,7 +142,7 @@ public class Application implements Runnable {
 
     }
 
-    private static void initGFrame() {
+    public static void initGFrame() {
 
         gameFrame = new GameFrame();
         gameFrame.setVisible(true);
@@ -207,7 +200,7 @@ public class Application implements Runnable {
 
     }
 
-    private static void nextLevel() {
+    public static void nextLevel() {
         collectableModels = new ArrayList<>();
         abilityModels = new ArrayList<>();
         BulletModel.bulletModels = new ArrayList<>();

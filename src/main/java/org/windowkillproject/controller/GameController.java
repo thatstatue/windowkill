@@ -18,6 +18,8 @@ import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
 import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.model.entities.enemies.normals.ArchmireModel;
+import org.windowkillproject.model.entities.enemies.normals.WyrmModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,7 +42,7 @@ import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.ArchmireModel.archmireModels;
+import static org.windowkillproject.model.entities.enemies.normals.ArchmireModel.archmireModels;
 import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
 import static org.windowkillproject.model.entities.enemies.attackstypes.LaserOperator.LASER_LINES;
 
@@ -424,7 +426,7 @@ public abstract class GameController {
             }
         });
         if (t.get() > 1) transferable.setLocalPanel(null);
-        System.out.println(transferable.getLocalPanel());
+//        System.out.println(transferable.getLocalPanel());
     }
 
     public static void keepTransferableInBounds() {
@@ -477,7 +479,7 @@ public abstract class GameController {
         return ans.get();
     }
 
-    private static void keepInPanel(GamePanel panel) {
+    public static void keepInPanel(GamePanel panel) {
         var epsilonModel = EpsilonModel.getINSTANCE();
         int endX = epsilonModel.getXO() + epsilonModel.getRadius();
         int endY = epsilonModel.getYO() + epsilonModel.getRadius();
@@ -493,22 +495,22 @@ public abstract class GameController {
 
         if (endY > endOfLocalPanelY) {
             int deltaY = endOfLocalPanelY - endY;
-            System.out.println("im moving y " + deltaY);
+//            System.out.println("im moving y " + deltaY);
             epsilonModel.move(0, deltaY);
         }
         if (endX > endOfLocalPanelX) {
             int deltaX = endOfLocalPanelX - endX;
-            System.out.println("im moving x " + deltaX);
+//            System.out.println("im moving x " + deltaX);
             epsilonModel.move(deltaX, 0);
         }
         if (epsilonModel.getY() < localPanelY) {
             int deltaY = localPanelY - epsilonModel.getY();
-            System.out.println("im moving y " + deltaY);
+//            System.out.println("im moving y " + deltaY);
             epsilonModel.move(0, deltaY);
         }
         if (epsilonModel.getX() < localPanelX) {
             int deltaX = localPanelX - epsilonModel.getX();
-            System.out.println("im moving x " + deltaX);
+//            System.out.println("im moving x " + deltaX);
             epsilonModel.move(deltaX, 0);
         }
     }

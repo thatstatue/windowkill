@@ -5,6 +5,7 @@ import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import org.windowkillproject.application.Config;
+import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
 
@@ -59,7 +60,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        if (getGameFrame().isVisible()) {
+        if (getGameFrame().isVisible() && !Wave.isWelcome()) {
             int keyCode = e.getKeyCode();
             if (keyCode == LEFT_KEY) {
                 isLeftPressed = true;
@@ -82,7 +83,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
-        if(getGameFrame().isVisible() || getShopFrame().isVisible()) {
+        if((getGameFrame().isVisible() || getShopFrame().isVisible()) && !Wave.isWelcome()) {
             switch (keyCode) {
                 case NativeKeyEvent.VC_SPACE -> initShFrame();
                 case NativeKeyEvent.VC_ESCAPE -> hideShFrame();

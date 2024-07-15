@@ -15,15 +15,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.lang.Math.E;
+import static java.lang.Math.abs;
 import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.Application.nextLevel;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.FRAME_STRETCH_SPEED;
 import static org.windowkillproject.application.panels.game.PanelStatus.isometric;
 import static org.windowkillproject.application.panels.game.PanelStatus.shrinkable;
+import static org.windowkillproject.controller.GameController.keepInPanel;
+import static org.windowkillproject.controller.Utils.getSign;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
 public abstract class GamePanel extends Panel {
+
+    public void setFlexible(boolean flexible) {
+        this.flexible = flexible;
+    }
 
     public PanelStatus getPanelStatus() {
         return panelStatus;
@@ -262,19 +271,23 @@ public abstract class GamePanel extends Panel {
 
     }
 
+
     public void endingScene() {
+        System.out.println("IM ENDING BITCH");
         Timer endingTimer = new Timer(10, null);
 
         ActionListener actionListener = e -> {
             EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
-            if (epsilonModel.getRadius() < getGameFrame().getWidth() / 2 ||
-                    epsilonModel.getRadius() < getGameFrame().getHeight() / 2) {
+            if (epsilonModel.getRadius() < getGameFrame().getMainPanelWidth() / 2 ||
+                    epsilonModel.getRadius() < getGameFrame().getMainPanelHeight() / 2) {
                 epsilonModel.setRadius(epsilonModel.getRadius() + 6);
             } else {
 
                 setExploding(true);
                 shrinkFast();
                 endingTimer.stop();
+//                        cleanOutOtherObjects();
+
             }
         };
         endingTimer.addActionListener(actionListener);

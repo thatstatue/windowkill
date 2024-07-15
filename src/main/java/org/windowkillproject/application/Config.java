@@ -14,6 +14,7 @@ public class Config {
     public static final int GAME_WIDTH = 700;
     public static final double UNIT_DEGREE =0.084;
     public static final int WYRM_DISTANCE = 240;
+    public static final int MIN_HEAD_DISTANCE = 50;
     public static final int GAME_HEIGHT = 700;
     public static final int CENTER_Y = Toolkit.getDefaultToolkit().getScreenSize().height/2;
     public static final int CENTER_X = Toolkit.getDefaultToolkit().getScreenSize().width/2;
@@ -24,6 +25,7 @@ public class Config {
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;
     public static int ENEMY_RADIUS = 20;
+    public static int HAND_RADIUS = 50;
     public static int WYRM_RADIUS = 70;
     public static int BARRICADOS_RADIUS = 70;
     public static int ORB_RADIUS = 30;
@@ -38,9 +40,12 @@ public class Config {
     public static int MAX_ENEMY_SPEED = 5;
     public static final int MAX_ENEMIES = 4;
     public static final int PROJECTILE_TIMEOUT = 1;
+    public static final int SQUEEZE_TIMEOUT = 16;
+
     public static final double AOE_TIMEOUT = 0.5;
 
     public static final int MIN_ENEMY_SPEED = 2;
+    public static final int HAND_SPEED = 3;
     public static int SENSITIVITY_RATE = 0;
 
     public static int EPSILON_SPEED = 4;

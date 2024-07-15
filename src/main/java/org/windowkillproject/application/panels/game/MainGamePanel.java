@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import static java.awt.Toolkit.getDefaultToolkit;
+import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 
 public class MainGamePanel extends GamePanel {
@@ -16,8 +17,15 @@ public class MainGamePanel extends GamePanel {
     private final JLabel wave = new JLabel("~1");
 //todo currentAbility and ON writ to be added
     private static MainGamePanel mainGamePanel;
+    public static MainGamePanel newInstance(){
+        gamePanels.remove(mainGamePanel);
+        gamePanelsBounds.remove(mainGamePanel);
+        if (mainGamePanel!=null) mainGamePanel.setEnabled(false);
+        mainGamePanel = new MainGamePanel();
+        return mainGamePanel;
+    }
     public static MainGamePanel getInstance(){
-        if (mainGamePanel==null) mainGamePanel = new MainGamePanel();
+        if (mainGamePanel==null) return newInstance();
         return mainGamePanel;
     }
     private MainGamePanel() {

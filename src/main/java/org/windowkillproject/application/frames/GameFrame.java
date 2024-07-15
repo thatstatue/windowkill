@@ -16,6 +16,7 @@ import java.util.Objects;
 import static org.windowkillproject.application.Config.CENTER_X;
 import static org.windowkillproject.application.Config.CENTER_Y;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.view.entities.EntityView.entityViews;
 
@@ -49,7 +50,7 @@ public class GameFrame extends JFrame {
         setBackground(new Color(0, 0, 0, 0));
         setLocationRelativeTo(null);
 //        add(layeredPane, BorderLayout.CENTER);
-        mainGamePanel = MainGamePanel.getInstance();
+        mainGamePanel = MainGamePanel.newInstance();
         entityPanel = new EntityPanel();
 
 
@@ -111,11 +112,11 @@ public class GameFrame extends JFrame {
     }
 
     public int getMainPanelX() {
-        return mainGamePanel.getX();
+        return gamePanelsBounds.get(mainGamePanel).x;
     }
 
     public int getMainPanelY() {
-        return mainGamePanel.getY();
+        return gamePanelsBounds.get(mainGamePanel).y;
     }
 
     public void shrinkFast() {
@@ -142,11 +143,11 @@ public class GameFrame extends JFrame {
     }
 
     public int getMainPanelHeight() {
-        return mainGamePanel.getHeight();
+        return gamePanelsBounds.get(mainGamePanel).height;
     }
 
     public int getMainPanelWidth() {
-        return mainGamePanel.getWidth();
+        return gamePanelsBounds.get(mainGamePanel).width;
     }
 
     public void endingScene() {

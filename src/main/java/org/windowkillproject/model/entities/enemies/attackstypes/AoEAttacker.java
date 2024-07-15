@@ -11,10 +11,10 @@ public interface AoEAttacker {
 
 
     default void AOE(){
-        MOMENT_MODELS.add(new MomentModel(getAnchor(), ElapsedTime.getTotalSeconds(), getRadius(),getAoEAttackHP()));
+        MOMENT_MODELS.add(new MomentModel(getMoment(), ElapsedTime.getTotalSeconds(), getRadius(),getAoEAttackHP()));
     };
     int getAoEAttackHP();
-    Point2D getAnchor();
+    Point2D getMoment();
     int getRadius();
 
 

@@ -17,6 +17,7 @@ import static org.windowkillproject.application.panels.game.GamePanel.gamePanels
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.application.panels.game.PanelStatus.*;
 import static org.windowkillproject.controller.Controller.createEntityView;
+import static org.windowkillproject.controller.Controller.deleteGamePanel;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
@@ -31,7 +32,7 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
                 BARRICADOS_RADIUS*2, BARRICADOS_RADIUS*2,
                 panelStatus, false
         ));
-        System.out.println(panelStatus.name());
+//        System.out.println(panelStatus.name());
         initVertices();
         initPolygon();
         createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
@@ -44,8 +45,7 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
         super.destroy();
         barricadosModels.remove(this);
         if (getLocalPanel().getPanelStatus().equals(isometric)){
-            gamePanelsBounds.remove(getLocalPanel());
-            gamePanels.remove(getLocalPanel());
+            deleteGamePanel(getLocalPanel());
         }
     }
 

@@ -1,4 +1,4 @@
-package org.windowkillproject.model.entities.enemies;
+package org.windowkillproject.model.entities.enemies.normals;
 
 
 import org.windowkillproject.application.panels.game.GamePanel;
@@ -7,6 +7,7 @@ import org.windowkillproject.controller.Utils;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 
 import java.awt.*;
@@ -14,10 +15,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
-import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class OmenoctModel extends EnemyModel implements ProjectileOperator {
     public OmenoctModel(int x, int y, GamePanel localPanel) {
@@ -66,7 +65,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
         int distanceFromLeft = getXO() - rectangle.x ;
         int distanceFromUp = getYO() - rectangle.y ;
         int distanceFromRight = rectangle.x + rectangle.width - getXO();
-        int distanceFromDown = rectangle.y + rectangle.x - getYO();
+        int distanceFromDown = rectangle.y + rectangle.height - getYO();
 
         boolean isInLeftBound = distanceFromLeft > 0;
         boolean isInRightBound = distanceFromRight > 0;

@@ -1,9 +1,10 @@
-package org.windowkillproject.model.entities.enemies;
+package org.windowkillproject.model.entities.enemies.normals;
 
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker;
 import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
 
@@ -53,6 +54,12 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, 
     public int getAoEAttackHP() {
         return 2;
     }
+
+    @Override
+    public Point2D getMoment() {
+        return getAnchor();
+    }
+
     @Override
     public void destroy(){
         super.destroy();

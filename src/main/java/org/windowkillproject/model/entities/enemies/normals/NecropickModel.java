@@ -1,10 +1,11 @@
-package org.windowkillproject.model.entities.enemies;
+package org.windowkillproject.model.entities.enemies.normals;
 
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Utils;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 

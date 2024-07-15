@@ -1,18 +1,28 @@
 package org.windowkillproject.controller;
 
+import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Drawable;
 import org.windowkillproject.model.abilities.*;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.abilities.MomentModel;
+import org.windowkillproject.model.entities.enemies.finalboss.LeftHandModel;
+import org.windowkillproject.model.entities.enemies.finalboss.PunchFistModel;
+import org.windowkillproject.model.entities.enemies.finalboss.RightHandModel;
+import org.windowkillproject.model.entities.enemies.finalboss.SmileyHeadModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.model.entities.enemies.normals.*;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.*;
 import org.windowkillproject.view.entities.EntityView;
 import org.windowkillproject.view.entities.EpsilonView;
 import org.windowkillproject.view.entities.enemies.*;
+import org.windowkillproject.view.entities.enemies.finalboss.LeftHandView;
+import org.windowkillproject.view.entities.enemies.finalboss.PunchFistView;
+import org.windowkillproject.view.entities.enemies.finalboss.RightHandView;
+import org.windowkillproject.view.entities.enemies.finalboss.SmileyHeadView;
 import org.windowkillproject.view.entities.enemies.minibosses.BarricadosView;
 import org.windowkillproject.view.entities.enemies.minibosses.BlackOrbView;
 import org.windowkillproject.view.entities.enemies.normals.*;
@@ -21,6 +31,9 @@ import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
@@ -64,6 +77,14 @@ public abstract class Controller {
             entityViewCls = BarricadosView.class;
         }else if (entityModel instanceof BlackOrbModel){
             entityViewCls = BlackOrbView.class;
+        }else if (entityModel instanceof SmileyHeadModel){
+            entityViewCls = SmileyHeadView.class;
+        }else if (entityModel instanceof RightHandModel){
+            entityViewCls = RightHandView.class;
+        }else if (entityModel instanceof PunchFistModel){
+            entityViewCls = PunchFistView.class;
+        }else if (entityModel instanceof LeftHandModel){
+            entityViewCls = LeftHandView.class;
         }
         return entityViewCls;
     }
@@ -173,5 +194,13 @@ public abstract class Controller {
 //            if (momentModel.getId().equals(id)) return (T)momentModel;
 //        }
         return null;
+    }
+    public static void deleteGamePanel(GamePanel gamePanel) {
+        if (gamePanel!=null) {
+            gamePanelsBounds.remove(gamePanel);
+            gamePanels.remove(gamePanel);
+            gamePanel.setEnabled(false);
+            getGameFrame().getLayeredPane().remove(gamePanel);
+        }
     }
 }
