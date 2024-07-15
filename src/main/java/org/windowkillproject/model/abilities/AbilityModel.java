@@ -16,7 +16,7 @@ public abstract class AbilityModel extends ObjectModel {
 
 
 
-    protected AbilityModel(GamePanel localPanel, int x, int y) {
+    public AbilityModel(GamePanel localPanel, int x, int y) {
         super(localPanel,x,y);
         abilityModels.add(this);
     }

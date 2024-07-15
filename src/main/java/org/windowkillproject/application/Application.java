@@ -15,9 +15,13 @@ import org.windowkillproject.controller.Update;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
+import org.windowkillproject.model.abilities.MomentModel;
+import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
+import org.windowkillproject.view.entities.enemies.minibosses.BlackOrbView;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -28,7 +32,11 @@ import static org.windowkillproject.controller.Update.modelUpdateTimer;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.ArchmireModel.archmireModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
+import static org.windowkillproject.model.entities.enemies.OmenoctModel.omenoctModels;
+import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
+import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
 public class Application implements Runnable {
     private static PrimaryFrame primaryFrame;
@@ -203,9 +211,18 @@ public class Application implements Runnable {
         collectableModels = new ArrayList<>();
         abilityModels = new ArrayList<>();
         BulletModel.bulletModels = new ArrayList<>();
+        ProjectileModel.projectileModels = new ArrayList<>();
         entityModels = new ArrayList<>();
+        BlackOrbModel.blackOrbModels = new ArrayList<>();
+        BlackOrbModel.setComplete(false);
+        barricadosModels = new ArrayList<>();
+        archmireModels = new ArrayList<>();
+        omenoctModels = new ArrayList<>();
+
         AbilityView.abilityViews = new ArrayList<>();
         EntityView.entityViews = new ArrayList<>();
+
+        BlackOrbView.resetOrbViews();
         EpsilonModel.newINSTANCE();
         getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp());
 

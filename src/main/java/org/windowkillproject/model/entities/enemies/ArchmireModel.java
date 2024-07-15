@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import static org.windowkillproject.application.Config.ARCHMIRE_RADIUS;
 import static org.windowkillproject.controller.Utils.*;
 
-public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker {
+public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, Circular {
     public ArchmireModel(GamePanel localPanel, int x, int y) {
         super(localPanel, x, y,ARCHMIRE_RADIUS,30,0,5,6);
         archmireModels.add(this);
@@ -41,7 +42,7 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker {
     }
     public boolean drown(EntityModel entityModel){
         int drownAttackHP = 10;
-        if (entityInBounds(entityModel, getAnchor(), getRadius(), false)){
+        if (isTransferableInBounds(entityModel, getAnchor(), getRadius(), false)){
             entityModel.gotHit(drownAttackHP);
             return true;
         }

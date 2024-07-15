@@ -124,9 +124,9 @@ public class GameFrame extends JFrame {
 
     public void shrink() {
         for (GamePanel gamePanel : gamePanels) {
-            if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
+//            if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
                 gamePanel.shrink();
-            }
+//            }
         }
     }
 
@@ -135,9 +135,9 @@ public class GameFrame extends JFrame {
     }
 
     public void stretch(GamePanel gamePanel, int code) {
-        if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
+//        if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
             gamePanel.stretch(code);
-        }
+//        }
 
     }
 

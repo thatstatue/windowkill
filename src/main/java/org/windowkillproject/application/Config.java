@@ -26,7 +26,10 @@ public class Config {
     public static int ENEMY_RADIUS = 20;
     public static int WYRM_RADIUS = 70;
     public static int BARRICADOS_RADIUS = 70;
+    public static int ORB_RADIUS = 30;
+    public static int LASER_RADIUS = 30;
 
+    public static int LASER_ATTACK_HP = 12;
     public static int ARCHMIRE_RADIUS = 40;
     public static final int IMPACT_DURATION = 7;
     public static final int BANISH_DURATION = 13;

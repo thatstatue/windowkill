@@ -7,9 +7,9 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
+import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
 
 import javax.swing.*;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,12 +17,12 @@ import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.SoundPlayer.playCreateSound;
 import static org.windowkillproject.application.SoundPlayer.playEndWaveSound;
-import static org.windowkillproject.controller.GameController.panelsContain;
 import static org.windowkillproject.controller.GameController.random;
 import static org.windowkillproject.controller.Utils.isOccupied;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
+import static org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel.blackOrbModels;
 
 public class Wave {
     public static ArrayList<Wave> waves = new ArrayList<>();
@@ -72,16 +72,16 @@ public class Wave {
 
     private void createRandomLocalEnemy() {
         Direction direction = Direction.values()[random.nextInt(4)];
-        int dX = random.nextInt(Config.GAME_WIDTH);
-        int dY = random.nextInt(Config.GAME_HEIGHT);
+        int dX = random.nextInt(CENTER_X*2) - CENTER_X;
+        int dY = random.nextInt(CENTER_Y*2) - CENTER_Y;
         switch (direction) {
-            case TopRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX,
-                    -dY, getGameFrame().getMainGamePanel()); //todo rand?
+            case TopRight -> new TrigorathModel( CENTER_X + dX,
+                    CENTER_Y-dY, getGameFrame().getMainGamePanel()); //todo rand?
             case TopLeft -> new SquarantineModel(-dX, -dY, getGameFrame().getMainGamePanel());
-            case BottomLeft -> new TrigorathModel(-dX, getGameFrame().getMainPanelHeight() + dY,
+            case BottomLeft -> new TrigorathModel(-dX, CENTER_Y + dY,
                     getGameFrame().getMainGamePanel());
-            case BottomRight -> new TrigorathModel(getGameFrame().getMainPanelWidth() + dX,
-                    getGameFrame().getMainPanelHeight() + dY, getGameFrame().getMainGamePanel());
+            case BottomRight -> new TrigorathModel(CENTER_X + dX,
+                    CENTER_Y + dY, getGameFrame().getMainGamePanel());
         }
         playCreateSound();
     }
@@ -151,31 +151,62 @@ public class Wave {
     }
 
     private void createRandomEnemy() {
-        int randNum = random.nextInt(4);
+        int chanceOfMinyBoss = level/2;
 
+        int randNum = random.nextInt(10);
 
-        switch (randNum) {
-            case 0 -> createRandomLocalEnemy();
-            case 1, 2, 3 -> {
-                int randX;
-                int randY;
-//                do {
-                    randX = 50 + random.nextInt(getGameFrame().getMainPanelWidth() - 50);
-                    randY = 50 + random.nextInt(getGameFrame().getMainPanelHeight() - 50);
-//                } while (isEntityThere(randX, randY));
-//                if (!panelsContain(new Point2D.Double(randX,randY))){
-//                    int randWidth = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
-//                    int randHeight = GAME_MIN_SIZE/2 + random.nextInt(GAME_MIN_SIZE);
-//                    new InternalGamePanel(randX - randWidth/2, randY - randHeight/2, randWidth, randHeight, PanelStatus.shrinkable);
-              if (!isEntityThere(randX,randY))
-                  new BarricadosModel(randX, randY);//todo randomize
+        int randX;
+        int randY;
 
-//                System.out.println("wyrm "+ n.getId() );
-//                System.out.println(Arrays.toString(n.getPolygon().xpoints));
-//                System.out.println(Arrays.toString(n.getPolygon().ypoints));
+        randX = 50 + random.nextInt(CENTER_X*2 - 50);
+        randY = 50 + random.nextInt(CENTER_Y*2 - 50);
+        if (randNum > 10-chanceOfMinyBoss) {
+            spawnMiniBoss(randX, randY);
+        }else {
+            randNum = random.nextInt(5);
+
+            switch (randNum) {
+                case 0 -> createRandomLocalEnemy();
+                case 1 -> {
+                    var gamePanel = EpsilonModel.getINSTANCE().getLocalPanel();
+                    if (random.nextInt(2) == 0 || gamePanel == null)
+                        gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.shrinkable, true);
+                    new OmenoctModel(randX, randY, gamePanel);
+                }
+                case 2 -> {
+                    var gamePanel = EpsilonModel.getINSTANCE().getLocalPanel();
+                    if (random.nextInt(2) == 0 || gamePanel == null)
+                        gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.shrinkable, true);
+                    new ArchmireModel(gamePanel, randX, randY);
+                }
+                case 3 -> {
+                    new WyrmModel(randX, randY);
+                }
+                case 4 -> {
+//                    new NecropickModel(randX, randY);//todo debug
+                    createRandomLocalEnemy();
+                }
             }
         }
+    }
 
+    private static InternalGamePanel spawnInternalGamePanel(int randX, int randY, PanelStatus panelStatus, boolean flexible) {
+        int randWidth = GAME_MIN_SIZE / 2 + random.nextInt(GAME_MIN_SIZE);
+        int randHeight = GAME_MIN_SIZE / 2 + random.nextInt(GAME_MIN_SIZE);
+        return new InternalGamePanel(randX - randWidth / 2, randY - randHeight / 2,
+                randWidth, randHeight, panelStatus, flexible);
+    }
+    //todo clear the frames with no entities except the main
+    private void spawnMiniBoss(int randX, int randY){
+        int randNum = random.nextInt(3);
+        if (randNum == 0 && blackOrbModels.isEmpty()) {
+            new BlackOrbModel(randX, randY);
+        }
+        else {
+            if (!isEntityThere(randX, randY))
+                new BarricadosModel(randX, randY);
+            else createRandomLocalEnemy();
+        }
     }
 
     private boolean isEntityThere(int randLocX, int randLocY) {

@@ -7,12 +7,14 @@ import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
+import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
 import org.windowkillproject.view.*;
 import org.windowkillproject.view.abilities.*;
 import org.windowkillproject.view.entities.EntityView;
 import org.windowkillproject.view.entities.EpsilonView;
 import org.windowkillproject.view.entities.enemies.*;
 import org.windowkillproject.view.entities.enemies.minibosses.BarricadosView;
+import org.windowkillproject.view.entities.enemies.minibosses.BlackOrbView;
 import org.windowkillproject.view.entities.enemies.normals.*;
 
 import java.awt.*;
@@ -60,11 +62,13 @@ public abstract class Controller {
             entityViewCls = ArchmireView.class;
         }else if (entityModel instanceof BarricadosModel){
             entityViewCls = BarricadosView.class;
+        }else if (entityModel instanceof BlackOrbModel){
+            entityViewCls = BlackOrbView.class;
         }
         return entityViewCls;
     }
 
-    public static <T extends AbilityView> void createAbilityView(/*Class<T> tClass,*/ String id, int x, int y) {
+    public static <T extends AbilityView> void createAbilityView(String id, int x, int y) {
         AbilityModel abilityModel = findModel(id);
         Class abilityViewCls = getAbilityViewCls(abilityModel);
         if (abilityViewCls != null) {
@@ -122,6 +126,11 @@ public abstract class Controller {
                 if (entityModel instanceof EnemyModel) {
                     var enemyView = (EnemyView) view;
                     enemyView.setPolygon(((EnemyModel) entityModel).getPolygon());
+                }
+                if (entityModel instanceof BlackOrbModel){
+                    boolean visible = ((BlackOrbModel) entityModel).getVisible();
+                    var blackOrbView = (BlackOrbView) view;
+                    blackOrbView.setVisible(visible);
                 }
             } else view.setEnabled(false);
         } else if (findModel(view.getId()) instanceof AbilityModel) {

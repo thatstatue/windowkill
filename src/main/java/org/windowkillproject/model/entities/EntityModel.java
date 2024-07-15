@@ -3,6 +3,7 @@ package org.windowkillproject.model.entities;
 import org.windowkillproject.application.SoundPlayer;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.ObjectModel;
+import org.windowkillproject.model.Transferable;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
@@ -16,7 +17,7 @@ import static org.windowkillproject.application.Config.UNIT_DEGREE;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 
 
-public abstract class EntityModel extends ObjectModel {
+public abstract class EntityModel extends ObjectModel implements Transferable {
 
     private boolean isImpact = false;
 
@@ -81,7 +82,6 @@ public abstract class EntityModel extends ObjectModel {
         setAnchor(x + getRadius(), y + getRadius());
     }
     public abstract Point2D getRoutePoint();
-
 
     public void addToAllowedArea(GamePanel panel){
         allowedPanels.add(panel);
@@ -153,7 +153,6 @@ public abstract class EntityModel extends ObjectModel {
         this.hp = hp;
         this.meleeAttackHp = meleeAttackHp;
         vertices = new ArrayList<>();
-
         entityModels.add(this);
         setRadius(radius);
     }

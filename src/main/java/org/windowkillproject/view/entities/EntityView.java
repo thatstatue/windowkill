@@ -12,6 +12,18 @@ public abstract class EntityView extends ObjectView {
     public static ArrayList<EntityView> entityViews = new ArrayList<>();
     private boolean hovering;
 
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    private boolean visible = true;
+
     public void setHovering(boolean hovering) {
         this.hovering = hovering;
     }

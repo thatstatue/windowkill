@@ -1,7 +1,6 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.application.Config;
-import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.Transferable;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -130,11 +129,11 @@ public abstract class Utils {
         else
             return new Point2D.Double(head2.getX() * u + head1.getX() * (1.0 - u) + 0.5, head2.getY() * u + head1.getY() * (1.0 - u) + 0.5);
     }
-    public static boolean entityInBounds(EntityModel entityModel, Point2D center, int radius, boolean partly){
-        int left = entityModel.getX();
-        int right = left + entityModel.getWidth();
-        int up = entityModel.getY();
-        int down = up+ entityModel.getHeight();
+    public static boolean isTransferableInBounds(Transferable transferable, Point2D center, int radius, boolean partly){
+        int left = transferable.getX();
+        int right = left + transferable.getWidth();
+        int up = transferable.getY();
+        int down = up+ transferable.getHeight();
         ArrayList<Point2D> edges = new ArrayList<>();
         edges.add(new Point2D.Double(left,up));
         edges.add(new Point2D.Double(right,up));
@@ -149,11 +148,11 @@ public abstract class Utils {
         return !partly;
     }
 
-    public static boolean entityInBounds(EntityModel entityModel, Rectangle area, boolean partly){
-        int left = entityModel.getX();
-        int right = left + entityModel.getWidth();
-        int up = entityModel.getY();
-        int down = up+ entityModel.getHeight();
+    public static boolean isTransferableInBounds(Transferable transferable, Rectangle area, boolean partly){
+        int left = transferable.getX();
+        int right = left + transferable.getWidth();
+        int up = transferable.getY();
+        int down = up+ transferable.getHeight();
         ArrayList<Point2D> edges = new ArrayList<>();
         edges.add(new Point2D.Double(left,up));
         edges.add(new Point2D.Double(right,up));
@@ -168,11 +167,11 @@ public abstract class Utils {
         return !partly;
     }
 
-    public static boolean entityInBounds(EntityModel entityModel, Area area, boolean partly){
-        int left = entityModel.getX();
-        int right = left + entityModel.getWidth();
-        int up = entityModel.getY();
-        int down = up+ entityModel.getHeight();
+    public static boolean isTransferableInBounds(Transferable transferable, Area area, boolean partly){
+        int left = transferable.getX();
+        int right = left + transferable.getWidth();
+        int up = transferable.getY();
+        int down = up+ transferable.getHeight();
         ArrayList<Point2D> edges = new ArrayList<>();
         edges.add(new Point2D.Double(left,up));
         edges.add(new Point2D.Double(right,up));

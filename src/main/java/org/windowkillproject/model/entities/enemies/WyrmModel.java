@@ -5,6 +5,7 @@ import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
+import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
@@ -21,7 +22,7 @@ import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
-public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable {
+public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable, Circular {
      public WyrmModel(int x, int y) {
         super(null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
 
@@ -30,8 +31,8 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 //         int panelX = random.nextInt( kitWidth/ 2)+ kitWidth/4;
 //         int panelY = random.nextInt( kitHeight/ 2)+ kitHeight/4;
 //         panelX = x; panelY = y;
-         setLocalPanel(new InternalGamePanel(x, y,
-                 WYRM_RADIUS*3, WYRM_RADIUS*3, PanelStatus.isometric
+         setLocalPanel(new InternalGamePanel(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3,
+                 PanelStatus.isometric , true
                  ));
 //         getGameFrame().add(getLocalPanel());
 //         System.out.println(getLocalPanel());

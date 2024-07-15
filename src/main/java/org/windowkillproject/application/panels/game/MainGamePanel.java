@@ -14,14 +14,14 @@ public class MainGamePanel extends GamePanel {
     private final JLabel xp = new JLabel("✦0");
     private final JLabel hp = new JLabel("100 ♡");
     private final JLabel wave = new JLabel("~1");
-//todo currentAbility and ON writh to be added
+//todo currentAbility and ON writ to be added
     private static MainGamePanel mainGamePanel;
     public static MainGamePanel getInstance(){
-        if (mainGamePanel==null) mainGamePanel = new MainGamePanel(PanelStatus.shrinkable);
+        if (mainGamePanel==null) mainGamePanel = new MainGamePanel();
         return mainGamePanel;
     }
-    private MainGamePanel(PanelStatus panelStatus) {
-        super(panelStatus);
+    private MainGamePanel() {
+        super(PanelStatus.shrinkable, true);
         setPreferredSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
         setSize(new Dimension(Config.GAME_WIDTH, Config.GAME_HEIGHT));
         setLocation((getDefaultToolkit().getScreenSize().width - getWidth())/2,

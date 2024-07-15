@@ -28,7 +28,8 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
         PanelStatus panelStatus = isometric;
         if (random.nextInt(2) == 0) panelStatus = shrinkable;
         setLocalPanel(new InternalGamePanel(x, y,
-                BARRICADOS_RADIUS*2, BARRICADOS_RADIUS*2, panelStatus
+                BARRICADOS_RADIUS*2, BARRICADOS_RADIUS*2,
+                panelStatus, false
         ));
         System.out.println(panelStatus.name());
         initVertices();

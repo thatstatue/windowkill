@@ -3,9 +3,11 @@ package org.windowkillproject.controller;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.model.Transferable;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.Projectable;
+import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.VertexModel;
@@ -15,13 +17,13 @@ import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
 import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
+import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,10 +37,12 @@ import static org.windowkillproject.application.panels.shop.ShopPanel.*;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
+import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.ArchmireModel.archmireModels;
 import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
+import static org.windowkillproject.model.entities.enemies.attackstypes.LaserOperator.LASER_LINES;
 
 
 public abstract class GameController {
@@ -62,7 +66,7 @@ public abstract class GameController {
             Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
             if (!(deltaS.getY() < 1 && deltaS.getX() < 1)) {
                 Timer impactTimer = getImpactTimer(entity, deltaS, IMPACT_DURATION);
-                if (!(entity instanceof Unmovable)) impactTimer.start();
+                if (!(entity instanceof Unmovable || entity instanceof Hovering)) impactTimer.start();
             }
         }
     }
@@ -80,31 +84,39 @@ public abstract class GameController {
     }
 
     private static boolean isOverlappingDetected(EntityModel entityModel, EnemyModel enemyModel) {
-        return !(entityModel instanceof Hovering) && !(enemyModel instanceof Hovering);
+        return !(entityModel instanceof Hovering || enemyModel instanceof Hovering);
     }
 
     private static Point2D getCollisionPoint(EntityModel entityModel, EnemyModel enemyModel) {
         //control overlapping
         Point2D closestPointOfEnemy = closestPointOnPolygon(entityModel.getAnchor(), enemyModel.getPointVertices());
         Point2D delta;
-        delta = weighedVector(unitVector(entityModel.getAnchor(), closestPointOfEnemy),
-                entityModel.getRadius() - closestPointOfEnemy.distance(entityModel.getAnchor()) / 2.0);
+        if (closestPointOfEnemy == null) {
+            delta = weighedVector(unitVector(entityModel.getAnchor(), enemyModel.getAnchor()),
+                    entityModel.getRadius());
 
+        } else {
+            delta = weighedVector(unitVector(entityModel.getAnchor(), closestPointOfEnemy),
+                    entityModel.getRadius() - closestPointOfEnemy.distance(entityModel.getAnchor()) / 2.0);
+        }
         if (isOverlappingDetected(entityModel, enemyModel)) {
 //
-            if (!(entityModel instanceof Unmovable))entityModel.move((int) delta.getX(), (int) delta.getY());
-            if (!(enemyModel instanceof Unmovable))enemyModel.move((int) -delta.getX(), (int) -delta.getY());
+            if (!(entityModel instanceof Unmovable)) entityModel.move((int) delta.getX(), (int) delta.getY());
+            if (!(enemyModel instanceof Unmovable)) enemyModel.move((int) -delta.getX(), (int) -delta.getY());
         }
 
         // rEaLiStiC impact on the colliding entities
         Point2D p1 = enemyModel.getRoutePoint();
         Point2D p2 = entityModel.getRoutePoint();
         if (p1 != null && p2 != null) {
-            collidedEntitiesImpact(entityModel, enemyModel, p1, p2);
 
-            //torque
             if (isOverlappingDetected(entityModel, enemyModel)) {
-                torqueOfCollision(entityModel, enemyModel, closestPointOfEnemy);
+                collidedEntitiesImpact(entityModel, enemyModel, p1, p2);
+
+                //torque
+                if (closestPointOfEnemy != null) {
+                    torqueOfCollision(entityModel, enemyModel, closestPointOfEnemy);
+                }
             }
         }
         return closestPointOfEnemy;
@@ -132,7 +144,8 @@ public abstract class GameController {
         if (isCollideAffected(entityModel)) impactTimer1.start();
         if (isCollideAffected(enemyModel)) impactTimer2.start();
         if (entityModel instanceof WyrmModel) ((WyrmModel) entityModel).setMinusRotationSpeed();
-        if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
+        else if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
+
 
     }
 
@@ -143,8 +156,10 @@ public abstract class GameController {
         Point2D forceOfEnemy = calculateForce(
                 unitVector(closestPointOfEnemy, enemyModel.getAnchor()),
                 rotateI(closestPointOfEnemy, enemyModel.getRoutePoint()));
-        if (!(entityModel instanceof NonRotatable)) entityModel.setTheta(rotateI(entityModel.getAnchor(), forceOfEnemy) * 6 * UNIT_DEGREE);
-        if (!(enemyModel instanceof NonRotatable)) enemyModel.setTheta(rotateI(enemyModel.getAnchor(), forceOfEntity) * 6 * UNIT_DEGREE);
+        if (!(entityModel instanceof NonRotatable))
+            entityModel.setTheta(rotateI(entityModel.getAnchor(), forceOfEnemy) * 6 * UNIT_DEGREE);
+        if (!(enemyModel instanceof NonRotatable))
+            enemyModel.setTheta(rotateI(enemyModel.getAnchor(), forceOfEntity) * 6 * UNIT_DEGREE);
     }
 
     private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS, int t) {
@@ -173,8 +188,10 @@ public abstract class GameController {
                 for (EntityModel entityModel : entityModels) {
                     if (isImpactAffected(not1, not2, entityModel)) {
                         entityModel.setImpact(true);
-                        Point2D deltaS = impactPoint(entityModel.getAnchor(), closestPointOfEnemy);
-                        entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
+                        if (entityModel.getAnchor()!= null) {
+                            Point2D deltaS = impactPoint(entityModel.getAnchor(), closestPointOfEnemy);
+                            entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
+                        }
                     }
                 }
 //                keepEpsilonInBounds();todo prob
@@ -193,7 +210,7 @@ public abstract class GameController {
     }
 
     private static boolean isImpactAffected(EntityModel not1, EntityModel not2, EntityModel entityModel) {
-        return !(entityModel.equals(not1) || entityModel.equals(not2) || entityModel instanceof Unmovable);
+        return !(entityModel.equals(not1) || entityModel.equals(not2) || entityModel instanceof Unmovable || entityModel instanceof Hovering);
     }
 
     public static void enemyIntersectionControl() {
@@ -216,9 +233,14 @@ public abstract class GameController {
                             tempCollision = true;
                         }
                     }
-                    if (enemyModel instanceof WyrmModel &&
-                            enemyModel.getAnchor().distance(closestPointOnPolygon(enemyModel.getAnchor(),
-                                    collidedEnemy.getPointVertices())) < enemyModel.getRadius()) {
+                    if (enemyModel instanceof Circular && !
+                            (enemyModel instanceof Hovering
+                            || collidedEnemy instanceof Hovering
+                            || collidedEnemy instanceof Circular) &&
+                            enemyModel.getAnchor().distance(
+                                    closestPointOnPolygon(enemyModel.getAnchor(),
+                                    collidedEnemy.getPointVertices()))
+                                    < enemyModel.getRadius()) {
                         impact(enemyModel, collidedEnemy);
                         tempCollision = true;
                     }
@@ -246,10 +268,15 @@ public abstract class GameController {
         }
     }
 
-    private static void setEntitiesBoundsAllowed() {
+    private static void setTransferableBoundsAllowed() {
         for (int j = 0; j < gamePanels.size(); j++) {
             gamePanels.get(j).resetCanShrink();
         }
+        setEntitiesBoundsAllowed();
+        setBulletsBoundsAllowed();
+    }
+
+    private static void setEntitiesBoundsAllowed() {
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entityModel = entityModels.get(i);
             int t = 0;
@@ -258,9 +285,9 @@ public abstract class GameController {
             for (int j = 0; j < gamePanels.size(); j++) {
                 GamePanel gamePanel = gamePanels.get(j);
                 var rectangle = gamePanelsBounds.get(gamePanel);
-                if (entityInBounds(entityModel, rectangle , true)) {
+                if (isTransferableInBounds(entityModel, rectangle, true)) {
                     entityModel.addToAllowedArea(gamePanel);
-                    if (entityModel instanceof EpsilonModel && t >0)
+                    if (entityModel instanceof EpsilonModel && t > 0)
                         checkShrinking(entityModel, rectangle, gamePanel);
 //                    System.out.println("added panel "+ gamePanel.getX() + " to allowed area of "+ entityModel.getId());
                     t++;
@@ -268,20 +295,40 @@ public abstract class GameController {
             }
 //            System.out.println(gamePanelsBounds.get(entityModel.getAllowedPanels().get(0)));
 //            if (t>1) entityModel.setLocalPanel(null);
+            System.out.println(EpsilonModel.getINSTANCE().getLocalPanel());
         }
     }
 
-    private static void checkShrinking(EntityModel entityModel, Rectangle rectangle, GamePanel gamePanel) {
-        if (entityModel.getXO() >= rectangle.x + rectangle.width/2){
+    private static void setBulletsBoundsAllowed() {
+        for (int i = 0; i < bulletModels.size(); i++) {
+            BulletModel bulletModel = bulletModels.get(i);
+            int t = 0;
+            bulletModel.setAllowedArea(new Area());
+            bulletModel.setAllowedPanels(new ArrayList<>());
+            for (int j = 0; j < gamePanels.size(); j++) {
+                GamePanel gamePanel = gamePanels.get(j);
+                var rectangle = gamePanelsBounds.get(gamePanel);
+                if (isTransferableInBounds(bulletModel, rectangle, true)) {
+                    bulletModel.addToAllowedArea(gamePanel);
+                    checkShrinking(bulletModel, rectangle, gamePanel);
+                    t++;
+                }
+            }
+            if (t > 1) bulletModel.setLocalPanel(null);
+        }
+    }
+
+    private static void checkShrinking(Transferable transferable, Rectangle rectangle, GamePanel gamePanel) {
+        if (transferable.getX() + transferable.getWidth() / 2 >= rectangle.x + rectangle.width / 2) {
             gamePanel.setCanShrinkRight(false);
         }
-        if (entityModel.getXO() <= rectangle.x + rectangle.width/2){
+        if (transferable.getX() + transferable.getWidth() / 2 <= rectangle.x + rectangle.width / 2) {
             gamePanel.setCanShrinkLeft(false);
         }
-        if (entityModel.getYO() >= rectangle.y + rectangle.height/2){
+        if (transferable.getY() + transferable.getHeight() / 2 >= rectangle.y + rectangle.height / 2) {
             gamePanel.setCanShrinkDown(false);
         }
-        if (entityModel.getYO() <= rectangle.y + rectangle.height/2){
+        if (transferable.getY() + +transferable.getHeight() / 2 <= rectangle.y + rectangle.height / 2) {
             gamePanel.setCanShrinkUp(false);
         }
     }
@@ -312,10 +359,20 @@ public abstract class GameController {
                         break;
                     }
                 }
+                //LASER
+                for (int i = 0; i < LASER_LINES.size(); i++) {
+                    var laserPoint = LASER_LINES.get(i);
+                    if (!(entityModel instanceof BlackOrbModel) &&
+                            entityModel.getAnchor().distance(laserPoint) < LASER_RADIUS) {
+                        entityModel.gotHit(LASER_ATTACK_HP);
+                        break;
+                    }
+                }
             }
         }
     }
-    public static GamePanelCorner getClosestPanelCorner(Point2D point2D){
+
+    public static GamePanelCorner getClosestPanelCorner(Point2D point2D) {
         final GamePanel[] closestPanel = {gamePanels.getFirst()};
         final Point2D[] closestPoint = {new Point2D.Double(10000, 10000)};
         final int[] indexOfCorner = {0};
@@ -323,11 +380,11 @@ public abstract class GameController {
         gamePanelsBounds.forEach((panel, rectangle) -> {
             ArrayList<Point2D> corners = new ArrayList<>();
             corners.add(new Point2D.Double(rectangle.x, rectangle.y)); //tl 0
-            corners.add(new Point2D.Double(rectangle.x+rectangle.width, rectangle.y));//tr 1
-            corners.add(new Point2D.Double(rectangle.x, rectangle.y+rectangle.height)); //bl 2
-            corners.add(new Point2D.Double(rectangle.x+rectangle.width, rectangle.y+rectangle.height));//br 3
+            corners.add(new Point2D.Double(rectangle.x + rectangle.width, rectangle.y));//tr 1
+            corners.add(new Point2D.Double(rectangle.x, rectangle.y + rectangle.height)); //bl 2
+            corners.add(new Point2D.Double(rectangle.x + rectangle.width, rectangle.y + rectangle.height));//br 3
             for (int i = 0; i < corners.size(); i++) {
-                if(point2D.distance(corners.get(i))< point2D.distance(closestPoint[0])){
+                if (point2D.distance(corners.get(i)) < point2D.distance(closestPoint[0])) {
                     closestPoint[0] = corners.get(i);
                     indexOfCorner[0] = i;
                     closestPanel[0] = panel;
@@ -335,68 +392,91 @@ public abstract class GameController {
             }
         });
         int code = DOWN_CODE;
-        switch (indexOfCorner[0]){
-            case 0 ->{
+        switch (indexOfCorner[0]) {
+            case 0 -> {
                 code = UP_CODE;
-                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
-                Math.abs(point2D.getY()-closestPoint[0].getY())) code =LEFT_CODE;
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = LEFT_CODE;
             }
-            case 1 ->{
+            case 1 -> {
                 code = UP_CODE;
-                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
-                        Math.abs(point2D.getY()-closestPoint[0].getY())) code =RIGHT_CODE;
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = RIGHT_CODE;
             }
-            case 2 ->{
-                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
-                        Math.abs(point2D.getY()-closestPoint[0].getY())) code = LEFT_CODE;
+            case 2 -> {
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = LEFT_CODE;
             }
-            case 3 ->{
-                if (Math.abs(point2D.getX()-closestPoint[0].getX())<
-                        Math.abs(point2D.getY()-closestPoint[0].getY())) code = RIGHT_CODE;
+            case 3 -> {
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = RIGHT_CODE;
             }
         }
         return new GamePanelCorner(closestPanel[0], code);
     }
-    private static void setEpsilonsLocalPanel(){
+
+    private static void setEpsilonsLocalPanel() {
         var epsilonModel = EpsilonModel.getINSTANCE();
         AtomicInteger t = new AtomicInteger();
         gamePanelsBounds.forEach((gamePanel, rectangle) -> {
-            if (entityInBounds(epsilonModel, rectangle, false)){
+            if (isTransferableInBounds(epsilonModel, rectangle, false)) {
                 t.getAndIncrement();
                 epsilonModel.setLocalPanel(gamePanel);
             }
         });
-        if (t.get()>1) epsilonModel.setLocalPanel(null);
+        if (t.get() > 1) epsilonModel.setLocalPanel(null);
     }
 
-    public static void keepEpsilonInBounds() {
-        setEntitiesBoundsAllowed();
+    public static void keepTransferableInBounds() {
+        setTransferableBoundsAllowed();
         setEpsilonsLocalPanel();
-        if (!getGameFrame().isExploding()) {
-            var epsilonModel = EpsilonModel.getINSTANCE();
 
-//            System.out.println("eps is "+ endX + " "+ endY);
-            System.out.println("epsilon panels are " + epsilonModel.getAllowedPanels().size());
-            Area allowedArea = epsilonModel.getAllowedArea();
-            if (!entityInBounds(epsilonModel, allowedArea, false)) {
-                if (epsilonModel.getLocalPanel() == null){
-//                    keepInPanel(epsilonModel.getAllowedPanels().get(0));todo cant shrink local
-                }else {
-                    keepInPanel(epsilonModel.getLocalPanel());
-                }
-            }
-            getGameFrame().setHpAmount(epsilonModel.getHp());
+        if (!getGameFrame().isExploding()) {
+            keepEpsilonInBounds();
+            keepBulletsInBounds();
         }
 
     }
-    public static boolean panelsContain(Point2D point2D){
+
+    private static void keepEpsilonInBounds() {
+        var epsilonModel = EpsilonModel.getINSTANCE();
+
+        Area allowedArea = epsilonModel.getAllowedArea();
+        if (!isTransferableInBounds(epsilonModel, allowedArea, false)) {
+            if (epsilonModel.getLocalPanel() == null) {
+                System.out.println("NULL");
+//                    keepInPanel(epsilonModel.getAllowedPanels().get(0));todo cant shrink local
+            } else {
+                keepInPanel(epsilonModel.getLocalPanel());
+            }
+        }
+        getGameFrame().setHpAmount(epsilonModel.getHp());
+    }
+
+    private static void keepBulletsInBounds() {
+        for (int i = 0; i < bulletModels.size(); i++) {
+            BulletModel bulletModel = bulletModels.get(i);
+            Area bulletAllowedArea = bulletModel.getAllowedArea();
+            if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
+                if (bulletModel.getLocalPanel() == null) {
+                    System.out.println("NULL");
+//                    keepInPanel(bulletModel.getAllowedPanels().get(0));todo cant shrink local
+                } else {
+                    keepInPanel(bulletModel.getLocalPanel());
+                }
+            }
+        }
+    }
+
+    public static boolean panelsContain(Point2D point2D) {
         AtomicBoolean ans = new AtomicBoolean(false);
         gamePanelsBounds.forEach((gamePanel, rectangle) -> {
             if (rectangle.contains(point2D)) ans.set(true);
         });
         return ans.get();
     }
-    private static void keepInPanel(GamePanel panel){
+
+    private static void keepInPanel(GamePanel panel) {
         var epsilonModel = EpsilonModel.getINSTANCE();
         int endX = epsilonModel.getXO() + epsilonModel.getRadius();
         int endY = epsilonModel.getYO() + epsilonModel.getRadius();
@@ -407,27 +487,27 @@ public abstract class GameController {
         int endOfLocalPanelY = localPanelY + localPanelBounds.height;
         int endOfLocalPanelX = localPanelX + localPanelBounds.width;
 
-            System.out.println("epsilon x is allowed from " + localPanelX + " to " + endOfLocalPanelX);
+//            System.out.println("epsilon x is allowed from " + localPanelX + " to " + endOfLocalPanelX);
 //            System.out.println(" should be allowed from "+ gamePanels.get(1).getX()+ " to " +gamePanels.get(1).getX()+gamePanels.get(1).getWidth());
 
         if (endY > endOfLocalPanelY) {
             int deltaY = endOfLocalPanelY - endY;
-            System.out.println("im moving y "+ deltaY);
+            System.out.println("im moving y " + deltaY);
             epsilonModel.move(0, deltaY);
         }
         if (endX > endOfLocalPanelX) {
             int deltaX = endOfLocalPanelX - endX;
-            System.out.println("im moving x "+ deltaX);
+            System.out.println("im moving x " + deltaX);
             epsilonModel.move(deltaX, 0);
         }
         if (epsilonModel.getY() < localPanelY) {
             int deltaY = localPanelY - epsilonModel.getY();
-            System.out.println("im moving y "+ deltaY);
+            System.out.println("im moving y " + deltaY);
             epsilonModel.move(0, deltaY);
         }
         if (epsilonModel.getX() < localPanelX) {
             int deltaX = localPanelX - epsilonModel.getX();
-            System.out.println("im moving x "+ deltaX);
+            System.out.println("im moving x " + deltaX);
             epsilonModel.move(deltaX, 0);
         }
     }
@@ -463,7 +543,7 @@ public abstract class GameController {
                     break;
                 }
             }
-            if (enemyModel instanceof WyrmModel &&
+            if (enemyModel instanceof Circular &&
                     enemyModel.getAnchor().distance(epsilonModel.getAnchor()) <
                             enemyModel.getRadius() + epsilonModel.getRadius()) {
                 impact(epsilonModel, enemyModel);

@@ -3,6 +3,8 @@ package org.windowkillproject.model.abilities;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.controller.GamePanelCorner;
+import org.windowkillproject.model.Transferable;
+import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.ArchmireModel;
@@ -29,10 +31,11 @@ import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.OmenoctModel.omenoctModels;
 import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
-public class BulletModel extends AbilityModel implements Projectable {
+public class BulletModel extends AbilityModel implements Projectable, Transferable {
     private static int attackHp = BULLET_ATTACK_HP;
     private final Point2D mousePoint;
 
+    private ArrayList<GamePanel> allowedPanels = new ArrayList<>();
     public static void setAttackHp(int attackHp) {
         BulletModel.attackHp = attackHp;
     }
@@ -97,6 +100,18 @@ public class BulletModel extends AbilityModel implements Projectable {
         getGameFrame().stretch(gamePanel, code);
         hitWall(gamePanel, code);
     }
+    @Override
+    public void addToAllowedArea(GamePanel panel){
+        allowedPanels.add(panel);
+        Area area = new Area(gamePanelsBounds.get(panel));
+        getAllowedArea().add(area); //todo daijovah?
+    }
+
+    @Override
+    public void setAllowedPanels(ArrayList<GamePanel> allowedPanels) {
+        this.allowedPanels = allowedPanels;
+
+    }
 
     private void hitWall(GamePanel gamePanel, int code) {
         for (int i = 0; i < omenoctModels.size(); i++) {
@@ -130,11 +145,12 @@ public class BulletModel extends AbilityModel implements Projectable {
                         break;
                     }
                 }
-                if ((enemyModel instanceof WyrmModel || enemyModel instanceof ArchmireModel) &&
-                        enemyModel.getAnchor().distance(getAnchor()) < enemyModel.getRadius()) {
-                    enemyModel.gotShoot();
-                    explode();
-                    break;
+                if (enemyModel instanceof Circular){
+                    if(enemyModel.getAnchor().distance(new Point2D.Double(getX(), getY())) < enemyModel.getRadius()) {
+                        enemyModel.gotShoot();
+                        explode();
+                        break;
+                    }
                 }
 
             }
@@ -168,4 +184,15 @@ public class BulletModel extends AbilityModel implements Projectable {
     public void setShoot(boolean shoot) {
         isShoot = shoot;
     }
+
+    @Override
+    public int getWidth() {
+        return 5;
+    }
+
+    @Override
+    public int getHeight() {
+        return 5;
+    }
+
 }
