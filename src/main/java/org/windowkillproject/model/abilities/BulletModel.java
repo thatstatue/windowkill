@@ -72,22 +72,10 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     private void isFrameShot() {
         if (!EpsilonModel.getINSTANCE().getAllowedArea().contains(getX(), getY())) {
             var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(), getY()));
-//            var shotPanelBounds = gamePanelsBounds.get(gamePanelCorner.gamePanel());
-//            boolean shotRight = getX() > shotPanelBounds.getX() + shotPanelBounds.getWidth();
-//            boolean shotLeft = getX() < shotPanelBounds.getX();
-//            boolean shotUp = getY() < shotPanelBounds.getY();
-//            boolean shotDown = getY() > shotPanelBounds.getY() + shotPanelBounds.getHeight();
+
             hit(gamePanelCorner.gamePanel(), gamePanelCorner.corner());
             explode();
 
-
-//            if (shotLeft || shotRight || shotUp || shotDown) {
-//                if (shotLeft) hit(LEFT_CODE);
-//                if (shotRight) hit(RIGHT_CODE);
-//                if (shotUp) hit(UP_CODE);
-//                if (shotDown) hit(DOWN_CODE);
-//
-//            }
         }
     }
 
@@ -159,8 +147,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
         isShoot = false;
         bulletModels.add(this);
         this.mousePoint = mousePoint;
-//        localPanel = EpsilonModel.getINSTANCE().getLocalPanel();
-        createAbilityView(/*BulletView.class,*/ id, x, y);
+        createAbilityView(id, x, y);
     }
 
     private boolean isShoot;

@@ -108,7 +108,6 @@ public class ImgData {
             String pathBackground = icons_dir+"SmileyHead.png";
             File fileBackground = new File(pathBackground);
             smileyHead = ImageIO.read(fileBackground);
-//            smileyHead.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,7 +115,6 @@ public class ImgData {
             String pathBackground = icons_dir+"RightHand.png";
             File fileBackground = new File(pathBackground);
             rightHand = ImageIO.read(fileBackground);
-//            aceso.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,7 +122,6 @@ public class ImgData {
             String pathBackground = icons_dir+"LeftHand.png";
             File fileBackground = new File(pathBackground);
             leftHand = ImageIO.read(fileBackground);
-//            aceso.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -132,41 +129,12 @@ public class ImgData {
             String pathBackground = icons_dir+"PunchFist.png";
             File fileBackground = new File(pathBackground);
             punchFist = ImageIO.read(fileBackground);
-//            aceso.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-//    private void assignScaledImg(String image, BufferedImage imgName){
-//        assignImg(image,imgName);
-//        if (imgName.equals(proteus)) proteus.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
-//        else if (imgName.equals(aceso)) aceso.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
-//        else if (imgName.equals(ares)) ares.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
-//        else if (imgName.equals(heal)) heal.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
-//        else if (imgName.equals(empower)) empower.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
-//        else if (imgName.equals(banish)) banish.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
-//
-//    }
-//    private void assignImg(String image, BufferedImage imgName) {
-//        try {
-//            File fileBackground = new File(image);
-//            if (imgName.equals(epsilon)) epsilon = ImageIO.read(fileBackground);
-//            else if (imgName.equals(bg)) bg = ImageIO.read(fileBackground);
-//            else if (imgName.equals(trigorath)) trigorath = ImageIO.read(fileBackground);
-//            else if (imgName.equals(proteus)) proteus = ImageIO.read(fileBackground);
-//            else if (imgName.equals(aceso)) aceso= ImageIO.read(fileBackground);
-//            else if (imgName.equals(ares)) ares = ImageIO.read(fileBackground);
-//            else if (imgName.equals(heal)) heal = ImageIO.read(fileBackground);
-//            else if (imgName.equals(empower)) empower = ImageIO.read(fileBackground);
-//            else if (imgName.equals(banish)) banish = ImageIO.read(fileBackground);
-//
-//
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
     //singleton
     public static ImgData getData() {

@@ -81,8 +81,7 @@ public class Update {
         enemyIntersectionControl();
 
         keepTransferableInBounds();
-//        keepEpsilonInBounds();
-//        hideEntitiesOutsideBounds();
+//        todo hideEntitiesOutsideBounds();
         if (Wave.isStartNewWave()) new Wave();
 
 

@@ -95,7 +95,6 @@ public abstract class GamePanel extends Panel {
     }
 
     public void shrink() {
-//        if (flexible) {
         int newX = getX();
         int newY = getY();
         int newWidth = getWidth();
@@ -111,6 +110,7 @@ public abstract class GamePanel extends Panel {
         if (panelStatus.equals(shrinkable)
 //                && EpsilonModel.getINSTANCE().getLocalPanel() != null
 //                && this.equals(EpsilonModel.getINSTANCE().getLocalPanel())
+//                todo: if min size is only for epsilon's panel will uncomment
         ) {
             if (getWidth() <= Config.GAME_MIN_SIZE) {
                 newWidth = Config.GAME_MIN_SIZE;
@@ -126,7 +126,6 @@ public abstract class GamePanel extends Panel {
             this.setBounds(newX, newY, newWidth, newHeight);
             gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
         }
-//        }
     }
 
     public void setExploding(boolean exploding) {
@@ -185,7 +184,13 @@ public abstract class GamePanel extends Panel {
         }
     }
 
+    public void setForSmiley(boolean forSmiley) {
+        this.forSmiley = forSmiley;
+    }
+
+    private boolean forSmiley;
     private boolean isStoppedByRigidPanels(int code, int newX, int newY, int newWidth, int newHeight) {
+        if (forSmiley) return false;
         for (int i = 0; i < gamePanels.size(); i++) {
             var panel = gamePanels.get(i);
             var panelRectangle = gamePanelsBounds.get(panel);
@@ -259,7 +264,6 @@ public abstract class GamePanel extends Panel {
             } else {
                 if (exploding) {
                     setVisible(false);
-//                    initScoreFrame();
                     EpsilonModel.getINSTANCE().setRadius(Config.EPSILON_RADIUS);
                     Config.GAME_MIN_SIZE = 250;
                     Application.startGame(1);
@@ -273,7 +277,6 @@ public abstract class GamePanel extends Panel {
 
 
     public void endingScene() {
-        System.out.println("IM ENDING BITCH");
         Timer endingTimer = new Timer(10, null);
 
         ActionListener actionListener = e -> {
@@ -286,8 +289,6 @@ public abstract class GamePanel extends Panel {
                 setExploding(true);
                 shrinkFast();
                 endingTimer.stop();
-//                        cleanOutOtherObjects();
-
             }
         };
         endingTimer.addActionListener(actionListener);

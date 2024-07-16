@@ -13,8 +13,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.application.panels.game.PanelStatus.*;
 import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Controller.deleteGamePanel;
@@ -32,7 +30,6 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
                 BARRICADOS_RADIUS*2, BARRICADOS_RADIUS*2,
                 panelStatus, false
         ));
-//        System.out.println(panelStatus.name());
         initVertices();
         initPolygon();
         createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
@@ -71,8 +68,6 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
         getVertices().add(new VertexModel(getXO() + halfSideLength, getYO() - halfSideLength, this));
         getVertices().add(new VertexModel(getXO() + halfSideLength, getYO() + halfSideLength, this));
         getVertices().add(new VertexModel(getXO() - halfSideLength, getYO() + halfSideLength, this));
-
-//        rotate(Math.PI / 4);
 
     }
 }

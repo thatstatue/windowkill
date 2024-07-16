@@ -1,9 +1,7 @@
 package org.windowkillproject.view.entities;
 
-import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.view.ObjectView;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class EntityView extends ObjectView {
@@ -43,9 +41,4 @@ public abstract class EntityView extends ObjectView {
         setHeight(height);
 
     }
-//    @Override
-//    public void paintComponent(Graphics g) {
-//        super.paintComponent(g);
-//    }
-
     }

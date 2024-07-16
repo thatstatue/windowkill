@@ -1,15 +1,9 @@
 package org.windowkillproject.view;
 
-import org.windowkillproject.application.Application;
-import org.windowkillproject.application.frames.GameFrame;
-import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.view.Viewable;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 
 public abstract class ObjectView extends JLabel implements Viewable {
     protected BufferedImage img;

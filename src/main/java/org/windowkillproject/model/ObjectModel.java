@@ -4,10 +4,7 @@ import org.windowkillproject.application.panels.game.GamePanel;
 
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.UUID;
-
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 
 public abstract class ObjectModel implements Drawable {
     protected int x, y;
@@ -40,12 +37,6 @@ public abstract class ObjectModel implements Drawable {
     private GamePanel localPanel;
 
     public GamePanel getLocalPanel() {
-//        for (int i = 0 ; i < gamePanels.size(); i++){
-//            GamePanel gamePanel = gamePanels.get(i);
-//            if (localPanel.equals(gamePanel))
-//                return gamePanel;
-//        }
-//        System.out.println("equals none of panels!!!!!!!!!!!!!!");
         return localPanel;
     }
 

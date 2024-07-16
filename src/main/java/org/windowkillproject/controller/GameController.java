@@ -297,7 +297,6 @@ public abstract class GameController {
                     t++;
                 }
             }
-//            if (t>1) entityModel.setLocalPanel(null);
         }
     }
 
@@ -316,7 +315,6 @@ public abstract class GameController {
                     t++;
                 }
             }
-//            if (t > 1) bulletModel.setLocalPanel(null);
         }
     }
 
@@ -426,7 +424,6 @@ public abstract class GameController {
             }
         });
         if (t.get() > 1) transferable.setLocalPanel(null);
-//        System.out.println(transferable.getLocalPanel());
     }
 
     public static void keepTransferableInBounds() {
@@ -446,7 +443,6 @@ public abstract class GameController {
         Area allowedArea = epsilonModel.getAllowedArea();
         if (!isTransferableInBounds(epsilonModel, allowedArea, false)) {
             if (epsilonModel.getLocalPanel() == null) {
-                System.out.println("NULL");
 //                    keepInPanel(epsilonModel.getAllowedPanels().get(0));todo cant shrink local
             } else {
                 keepInPanel(epsilonModel.getLocalPanel());
@@ -462,8 +458,7 @@ public abstract class GameController {
             Area bulletAllowedArea = bulletModel.getAllowedArea();
             if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
                 if (bulletModel.getLocalPanel() == null) {
-                    System.out.println("NULL");
-//                    keepInPanel(bulletModel.getAllowedPanels().get(0));todo cant shrink local
+//                    keepInPanel(bulletModel.getAllowedPanels().get(0));todo
                 } else {
                     keepInPanel(bulletModel.getLocalPanel());
                 }
@@ -471,13 +466,6 @@ public abstract class GameController {
         }
     }
 
-    public static boolean panelsContain(Point2D point2D) {
-        AtomicBoolean ans = new AtomicBoolean(false);
-        gamePanelsBounds.forEach((gamePanel, rectangle) -> {
-            if (rectangle.contains(point2D)) ans.set(true);
-        });
-        return ans.get();
-    }
 
     public static void keepInPanel(GamePanel panel) {
         var epsilonModel = EpsilonModel.getINSTANCE();
@@ -490,27 +478,20 @@ public abstract class GameController {
         int endOfLocalPanelY = localPanelY + localPanelBounds.height;
         int endOfLocalPanelX = localPanelX + localPanelBounds.width;
 
-//            System.out.println("epsilon x is allowed from " + localPanelX + " to " + endOfLocalPanelX);
-//            System.out.println(" should be allowed from "+ gamePanels.get(1).getX()+ " to " +gamePanels.get(1).getX()+gamePanels.get(1).getWidth());
-
         if (endY > endOfLocalPanelY) {
             int deltaY = endOfLocalPanelY - endY;
-//            System.out.println("im moving y " + deltaY);
             epsilonModel.move(0, deltaY);
         }
         if (endX > endOfLocalPanelX) {
             int deltaX = endOfLocalPanelX - endX;
-//            System.out.println("im moving x " + deltaX);
             epsilonModel.move(deltaX, 0);
         }
         if (epsilonModel.getY() < localPanelY) {
             int deltaY = localPanelY - epsilonModel.getY();
-//            System.out.println("im moving y " + deltaY);
             epsilonModel.move(0, deltaY);
         }
         if (epsilonModel.getX() < localPanelX) {
             int deltaX = localPanelX - epsilonModel.getX();
-//            System.out.println("im moving x " + deltaX);
             epsilonModel.move(deltaX, 0);
         }
     }
@@ -541,7 +522,6 @@ public abstract class GameController {
                             break;
                         }
                     }
-                    System.out.println("impact start on epsilon and " + enemyModel + "\n with: " + enemyModel.getAnchor());
                     impact(epsilonModel, enemyModel);
                     break;
                 }

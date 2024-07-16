@@ -2,7 +2,6 @@ package org.windowkillproject.model.entities.enemies.minibosses;
 
 import org.windowkillproject.application.panels.game.InternalGamePanel;
 
-import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.MAX_ENEMY_SPEED;
 import static org.windowkillproject.application.Config.MIN_ENEMY_SPEED;
-import static org.windowkillproject.controller.GameController.random;
 
 public abstract class Utils {
     public static Point2D unitVector(Point2D goingPoint, Point2D anchor) {

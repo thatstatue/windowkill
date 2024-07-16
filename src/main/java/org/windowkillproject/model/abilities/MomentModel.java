@@ -1,9 +1,5 @@
 package org.windowkillproject.model.abilities;
 
-import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.model.ObjectModel;
-import org.windowkillproject.model.abilities.AbilityModel;
-
 import java.awt.geom.Point2D;
 
 import static org.windowkillproject.controller.Controller.createAbilityView;

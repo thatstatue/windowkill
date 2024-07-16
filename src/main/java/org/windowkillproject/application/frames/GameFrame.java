@@ -3,22 +3,17 @@ package org.windowkillproject.application.frames;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.EntityPanel;
 import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.application.panels.game.MainGamePanel;
-import org.windowkillproject.view.abilities.AbilityView;
-import org.windowkillproject.view.entities.EntityView;
-import org.windowkillproject.view.entities.EpsilonView;
+
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 import static org.windowkillproject.application.Config.CENTER_X;
 import static org.windowkillproject.application.Config.CENTER_Y;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
-import static org.windowkillproject.view.entities.EntityView.entityViews;
+
 
 public class GameFrame extends JFrame {
 
@@ -33,10 +28,6 @@ public class GameFrame extends JFrame {
 
     public MainGamePanel getMainGamePanel() {
         return mainGamePanel;
-    }
-
-    public void setMainGamePanel(MainGamePanel mainGamePanel) {
-        this.mainGamePanel = mainGamePanel;
     }
 
     public GameFrame() {
@@ -60,32 +51,7 @@ public class GameFrame extends JFrame {
         layeredPane.add(mainGamePanel, JLayeredPane.DEFAULT_LAYER);
         layeredPane.add(entityPanel, JLayeredPane.PALETTE_LAYER);
         setContentPane(layeredPane);
-//        add(mainGamePanel);
-//        System.out.println(mainGamePanel.getX()+ " "+mainGamePanel.getY() + ">>>>>>");
-//        layeredPane.add(mainGamePanel, 0, 0);
     }
-
-
-//    @Override
-//    public void paintComponents(Graphics g) {
-//        super.paintComponents(g);
-//
-////        for (GamePanel panel : gamePanels) {
-////            panel.revalidate();
-////            panel.repaint();
-////        }
-//
-//
-////        for (EntityView entityView : entityViews){
-////            entityView.repaint();
-////        }
-////        for (AbilityView abilityView : abilityViews){
-////            abilityView.repaint();
-////        }
-////        repaint();
-//
-////        Objects.requireNonNull(EpsilonView.getInstance()).repaint();
-//    }
 
     public void setWaveLevel(int level) {
         mainGamePanel.setWaveLevel(level);
@@ -111,23 +77,13 @@ public class GameFrame extends JFrame {
         mainGamePanel.setClockTime(time);
     }
 
-    public int getMainPanelX() {
-        return gamePanelsBounds.get(mainGamePanel).x;
-    }
-
-    public int getMainPanelY() {
-        return gamePanelsBounds.get(mainGamePanel).y;
-    }
-
     public void shrinkFast() {
         mainGamePanel.shrinkFast();
     }
 
     public void shrink() {
         for (GamePanel gamePanel : gamePanels) {
-//            if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
                 gamePanel.shrink();
-//            }
         }
     }
 
@@ -136,9 +92,7 @@ public class GameFrame extends JFrame {
     }
 
     public void stretch(GamePanel gamePanel, int code) {
-//        if (gamePanel.getPanelStatus().equals(PanelStatus.shrinkable)) {
             gamePanel.stretch(code);
-//        }
 
     }
 

@@ -286,9 +286,8 @@ public class Wave {
 
     public void welcomeBossScene() {
         welcome = true;
-        Timer welcome = new Timer(10, null);
+        Timer welcome = new Timer(FPS, null);
         //take epsilon to main panel
-
         cleanOutOtherObjects();
 
         var mainPanel = getGameFrame().getMainGamePanel();
@@ -332,11 +331,8 @@ public class Wave {
                     epsilonModel.move(0, dY);
                 }
             } else {
-//                    initScoreFrame();
-//                EpsilonModel.getINSTANCE().setRadius(Config.EPSILON_RADIUS);
-//                nextLevel();
+
                 Wave.welcome = false;
-//                cleanOutOtherObjects();
                 welcome.stop();
             }
         };
@@ -351,7 +347,7 @@ public class Wave {
         epsilonModel.move(x - epsilonModel.getX(), y - epsilonModel.getY());
         for (int i = 0; i < gamePanels.size(); i++) {
             GamePanel gamePanel = gamePanels.get(i);
-            if (!(gamePanel.equals(epsilonModel.getLocalPanel()))) {
+            if (gamePanel instanceof InternalGamePanel) {
                 deleteGamePanel(gamePanel);
             }
         }

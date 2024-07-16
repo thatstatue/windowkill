@@ -68,7 +68,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         delta = unitVector(getPoint2D(isTowardsEpsilon), this.getAnchor());
         delta = weighedVector(delta, Config.BULLET_SPEED / 2.0);
 //        localPanel = parent.getLocalPanel();
-        createAbilityView(/*ProjectileView.class,*/ id, x, y);
+        createAbilityView(id, x, y);
 
     }
 
@@ -76,8 +76,8 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         final Point2D headedPoint;
         headedPoint = EpsilonModel.getINSTANCE().getAnchor();
         if (!isTowardsEpsilon) {
-            headedPoint.setLocation(getX() + random.nextInt(500) - 250,
-                    getY() + random.nextInt(500) - 250);
+            headedPoint.setLocation(random.nextInt(CENTER_X*2),
+                     random.nextInt(CENTER_Y*2));
         }
         return headedPoint;
     }
@@ -146,7 +146,6 @@ public class ProjectileModel extends AbilityModel implements Projectable {
                     if (notHitVs && enemyModel.getPolygon() != null) {
                         Area enemyA = new Area(enemyModel.getPolygon());
                         if (enemyA.contains(this.getX(), this.getY())) {
-//                            enemyModel.gotShoot();
                             explode();
                             break;
                         }

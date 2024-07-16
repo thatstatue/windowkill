@@ -15,31 +15,17 @@ import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Controller.deleteGamePanel;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
-import static org.windowkillproject.controller.Utils.localRoutePoint;
 
 public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable, Circular {
      public WyrmModel(int x, int y) {
         super(null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
-
-//         int kitWidth =Toolkit.getDefaultToolkit().getScreenSize().width;
-//         int kitHeight =Toolkit.getDefaultToolkit().getScreenSize().height;
-//         int panelX = random.nextInt( kitWidth/ 2)+ kitWidth/4;
-//         int panelY = random.nextInt( kitHeight/ 2)+ kitHeight/4;
-//         panelX = x; panelY = y;
          setLocalPanel(new InternalGamePanel(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3,
                  PanelStatus.isometric , true
                  ));
-//         getGameFrame().add(getLocalPanel());
-//         System.out.println(getLocalPanel());
-//         move(getLocalPanel().getX()-getX()+getLocalPanel().getWidth()/2,
-//                 getLocalPanel().getY()-getY()+getLocalPanel().getHeight()/2);
          initVertices();
          initPolygon();
          createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
@@ -53,12 +39,6 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
         if (getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor())< WYRM_DISTANCE) {
             shoot();
             goRoundEpsilon();
-//            Point2D routePoint = goToNearestEdge();
-//            if (routePoint.getX() == 0 && routePoint.getY() == 0) {
-//                shoot();
-//            } else {
-//                move((int) routePoint.getX(), (int) routePoint.getY());
-//            }
         } else {
             move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         }
@@ -81,7 +61,6 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
     private void goRoundEpsilon() {
         var epsilonModel = EpsilonModel.getINSTANCE();
-//        double rotationRadius = getAnchor().distance(epsilonModel.getAnchor());
         double degree = Math.atan2( this.getYO() - epsilonModel.getYO(),this.getXO() - epsilonModel.getXO());
         degree += rotationSpeed;
         int finalX =epsilonModel.getXO() + (int)(WYRM_DISTANCE*0.8 * Math.cos(degree)) - getRadius();

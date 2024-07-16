@@ -41,6 +41,8 @@ public class Config {
     public static final int MAX_ENEMIES = 4;
     public static final int PROJECTILE_TIMEOUT = 1;
     public static final int SQUEEZE_TIMEOUT = 16;
+    public static final int ATTACK_TIMEOUT = 10;
+
 
     public static final double AOE_TIMEOUT = 0.5;
 

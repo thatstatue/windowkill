@@ -51,36 +51,6 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
 
     private long lastShot;
 
-//    private void startSqueezeTimer() {
-//        int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
-//        int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
-//        var bounds = gamePanelsBounds.get(EpsilonModel.getINSTANCE().getLocalPanel());
-//        int goX = bounds.x - panelWidth;
-//        if (this instanceof RightHandModel)
-//            goX += bounds.width + panelWidth;
-//        int goY = bounds.y + (bounds.height - panelHeight) / 2;
-//
-//        moveTowards(goX, goY).start();
-//    }
-
-//    private Timer moveTowards(int goX, int goY) {
-//        int times = 10;
-//        int handXSpeed = (goX - getX()) / times;
-//        int handYSpeed = (goY - getY()) / times;
-//
-//        AtomicInteger count = new AtomicInteger();
-//        Timer timer = new Timer(Config.FPS , null);
-//        timer.addActionListener(e -> {
-//            if (count.get() < times) {
-//                move(handXSpeed, handYSpeed);
-//                count.getAndIncrement();
-//            } else {
-//                timer.stop();
-//            }
-//        });
-//        return timer;
-//    }
-
     @Override
     public void route() {
 

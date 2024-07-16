@@ -189,10 +189,7 @@ public abstract class Controller {
             AbilityModel abilityModel = abilityModels.get(i);
             if (abilityModel.getId().equals(id)) return (T) abilityModel;
         }
-//        for (int i = 0 ; i<MOMENT_MODELS.size(); i++){
-//            MomentModel momentModel = MOMENT_MODELS.get(i);
-//            if (momentModel.getId().equals(id)) return (T)momentModel;
-//        }
+
         return null;
     }
     public static void deleteGamePanel(GamePanel gamePanel) {

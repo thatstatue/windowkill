@@ -6,9 +6,12 @@ import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 import static java.awt.Toolkit.getDefaultToolkit;
-import static org.windowkillproject.application.Application.getGameFrame;
+import static java.lang.Math.abs;
+import static org.windowkillproject.application.Config.FRAME_SHRINKAGE_SPEED;
+import static org.windowkillproject.application.Config.LEFT_CODE;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 
 public class MainGamePanel extends GamePanel {
@@ -82,6 +85,31 @@ public class MainGamePanel extends GamePanel {
         wave.setForeground(Color.red);
         wave.setBounds(140, 1, 300, 20);
         this.add(wave);
+
+    }
+    public void gotPunched(Point2D punchPoint){
+        int code = LEFT_CODE;
+        var rect = gamePanelsBounds.get(this);
+        if (rect == null) rect = getBounds();
+        double rightD = punchPoint.getX()- (rect.x + rect.width/2D); // if positive, is hitting the right
+        double bottomD = punchPoint.getY()- (rect.y + rect.height/2D); // if positive, is hitting the bottom
+
+        int newX = getX();
+        int newY = getY();
+        int newWidth = getWidth();
+        int newHeight = getHeight();
+
+        if (abs(rightD)< abs(bottomD)){
+            newWidth -= 2*FRAME_SHRINKAGE_SPEED;
+            if (rightD<0)
+                newX += FRAME_SHRINKAGE_SPEED;
+        }else{
+            newHeight -= 2*FRAME_SHRINKAGE_SPEED;
+            if (bottomD<0)
+                newY += FRAME_SHRINKAGE_SPEED;
+        }
+        this.setBounds(newX, newY, newWidth, newHeight);
+        gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
 
     }
 

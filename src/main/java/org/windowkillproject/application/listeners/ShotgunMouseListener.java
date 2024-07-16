@@ -21,9 +21,7 @@ public class ShotgunMouseListener implements NativeMouseListener {
     public void nativeMouseClicked(NativeMouseEvent e) {
         if (getGameFrame().isVisible()&& !Wave.isWelcome()) {
             Point2D mouseLoc = MouseInfo.getPointerInfo().getLocation();
-//            Point2D relativePoint = new Point2D.Double(
-//                    mouseLoc.getX() - getGameFrame().getMainPanelX(),
-//                    mouseLoc.getY() - getGameFrame().getMainPanelY());
+
             EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
 
             BulletModel bulletModel = new BulletModel(

@@ -1,7 +1,6 @@
 package org.windowkillproject.application.panels.game;
 
 import org.windowkillproject.application.panels.Panel;
-import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
 import java.awt.*;

@@ -1,10 +1,8 @@
 package org.windowkillproject.view.entities.enemies.normals;
 
-import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.view.entities.enemies.EnemyView;
 
 import java.awt.*;
-import java.util.Arrays;
 
 import static org.windowkillproject.application.Config.WYRM_RADIUS;
 
@@ -48,9 +46,6 @@ public class WyrmView extends EnemyView {
 
         xPoints[5] = getPolygon().xpoints[5]+1;
         yPoints[5] = getPolygon().ypoints[5];
-
-//        System.out.println("\n"+ Arrays.toString(xPoints));
-//        System.out.println(Arrays.toString(yPoints)+"\n");
 
         Polygon blackRect = new Polygon(xPoints,yPoints,6);
         g2D.setColor(Color.black);
