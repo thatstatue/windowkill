@@ -12,6 +12,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static org.windowkillproject.application.Config.ARCHMIRE_RADIUS;
+import static org.windowkillproject.application.Config.MAX_ENEMY_SPEED;
 import static org.windowkillproject.controller.Utils.*;
 
 public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, Circular {
@@ -22,13 +23,17 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, 
     public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
     @Override
     public void route() {
+        int x= getX(); int y= getY();
         move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         AOE();
+        moveBGPanel(x, y);
+
     }
+
 
     @Override
     public Point2D getRoutePoint() {
-        return globalRoutePoint(this.getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
+        return globalRoutePoint(this.getAnchor(), EpsilonModel.getINSTANCE().getAnchor(), MAX_ENEMY_SPEED-1);
     }
 
     @Override

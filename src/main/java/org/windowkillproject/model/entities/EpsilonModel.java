@@ -99,7 +99,7 @@ public class EpsilonModel extends EntityModel {
     @Override
     public void destroy() {
         super.destroy();
-        initScoreFrame();
+        initScoreFrame(false);
     }
 
     public void collected(int rewardXp) {

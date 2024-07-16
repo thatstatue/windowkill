@@ -22,11 +22,12 @@ public class ScorePanel extends Panel {
             score,clock,xp,enemy,wave
     };
 
-    public ScorePanel(JLabel[] jLabels){
+    public ScorePanel(JLabel[] jLabels, boolean won){
         super();
         setBackground(Color.black);
         setPreferredSize(new Dimension((int) (GAME_WIDTH*0.7), (int) (GAME_HEIGHT*0.7)));
         setLabels(jLabels);
+        if (won) score.setText("    << WINNER! >>   ");
         labels = new JLabel[]{score,clock,xp,enemy,wave};
         ArrayList<Component> components =new ArrayList<>(List.of(labels));
         components.add(buttonMaker("Menu", 150, 320, e -> initPFrame()));

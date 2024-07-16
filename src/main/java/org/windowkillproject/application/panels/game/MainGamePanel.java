@@ -1,6 +1,7 @@
 package org.windowkillproject.application.panels.game;
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
@@ -76,6 +77,7 @@ public class MainGamePanel extends GamePanel {
         hp.setBounds(180, 1, 300, 20);
         this.add(hp);
 
+        wave.setText("~" +Wave.getLevel());
         wave.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         wave.setForeground(Color.red);
         wave.setBounds(140, 1, 300, 20);

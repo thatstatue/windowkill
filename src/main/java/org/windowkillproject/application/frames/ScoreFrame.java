@@ -11,7 +11,7 @@ import static org.windowkillproject.application.Config.GAME_WIDTH;
 
 public class ScoreFrame extends JFrame {
 
-    public ScoreFrame(JLabel[] labels) {
+    public ScoreFrame(JLabel[] labels, boolean won) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(new Dimension((int) (GAME_WIDTH * 0.7), (int) (GAME_HEIGHT * 0.7)));
         setLocationRelativeTo(null);
@@ -19,7 +19,7 @@ public class ScoreFrame extends JFrame {
         setUndecorated(false);
         setTitle(Config.SCORE_TITLE);
         this.setLayout(null);
-        setContentPane(new ScorePanel(labels));
+        setContentPane(new ScorePanel(labels, won));
         this.setVisible(true);
     }
 

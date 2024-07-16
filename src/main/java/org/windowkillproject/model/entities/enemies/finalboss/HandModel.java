@@ -25,86 +25,70 @@ import static org.windowkillproject.controller.Controller.deleteGamePanel;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
-public class HandModel extends EnemyModel implements ProjectileOperator , NonRotatable {
+public class HandModel extends EnemyModel implements ProjectileOperator, NonRotatable {
     private static ArrayList<HandModel> hands = new ArrayList<>();
+
     protected HandModel(int x, int y) {
         super(null, x, y, Config.HAND_RADIUS, 100, 10, 10, 10);
-        setLocalPanel(new InternalGamePanel(x, y, HAND_RADIUS*3, HAND_RADIUS*3,
-                PanelStatus.isometric , true
+        setLocalPanel(new InternalGamePanel(x, y, HAND_RADIUS * 3, HAND_RADIUS * 3,
+                PanelStatus.isometric, true
         ));
 
         initVertices();
         initPolygon();
-        createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
         hands.add(this);
 
     }
-    private void squeeze(){
-        if (hands.size()==2){
+
+    public void squeeze() {
+        if (hands.size() == 2) {
             setVulnerable(false);
-            SmileyHeadModel.getInstance().setVulnerable(true);
-            long timePassed = getTotalSeconds()-lastSqueeze;
-            if(timePassed > SQUEEZE_TIMEOUT) {
-                lastSqueeze = getTotalSeconds();
-                getLocalPanel().setFlexible(false);
-                Timer squeezeTimer = getSqueezeTimer();
-                squeezeTimer.start();
-            }else if(timePassed > SQUEEZE_TIMEOUT/2){
-                getLocalPanel().setFlexible(true);
-                SmileyHeadModel.getInstance().setVulnerable(false);
-            }
+            getLocalPanel().setFlexible(false);
+            move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         }
     }
 
-    private long lastShot, lastSqueeze;
-    private Timer getSqueezeTimer(){
-        int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
-        int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
+    private long lastShot;
 
-        int goX = getGameFrame().getMainPanelX() - panelWidth;
-        if (this instanceof RightHandModel){
-            goX += getGameFrame().getMainPanelWidth() + panelWidth;
-        }
-        int goY = getGameFrame().getMainPanelY() + (getGameFrame().getMainPanelHeight()-panelHeight)/2;
+//    private void startSqueezeTimer() {
+//        int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
+//        int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
+//        var bounds = gamePanelsBounds.get(EpsilonModel.getINSTANCE().getLocalPanel());
+//        int goX = bounds.x - panelWidth;
+//        if (this instanceof RightHandModel)
+//            goX += bounds.width + panelWidth;
+//        int goY = bounds.y + (bounds.height - panelHeight) / 2;
+//
+//        moveTowards(goX, goY).start();
+//    }
 
-        return moveTowards(goX, goY);
-    }
-
-    private Timer moveTowards(int goX, int goY) {
-        int handXSpeed = (goX - getX())/5;
-        int handYSpeed = (goY - getY())/5;
-
-        AtomicInteger count = new AtomicInteger();
-        Timer timer = new Timer(Config.FPS / 5, null);
-        timer.addActionListener(e -> {
-            if (count.get() < 5) {
-                move(handXSpeed, handYSpeed);
-                count.getAndIncrement();
-            } else {
-                timer.stop();
-            }
-        });
-        return timer;
-    }
+//    private Timer moveTowards(int goX, int goY) {
+//        int times = 10;
+//        int handXSpeed = (goX - getX()) / times;
+//        int handYSpeed = (goY - getY()) / times;
+//
+//        AtomicInteger count = new AtomicInteger();
+//        Timer timer = new Timer(Config.FPS , null);
+//        timer.addActionListener(e -> {
+//            if (count.get() < times) {
+//                move(handXSpeed, handYSpeed);
+//                count.getAndIncrement();
+//            } else {
+//                timer.stop();
+//            }
+//        });
+//        return timer;
+//    }
 
     @Override
     public void route() {
-        if (PunchFistModel.isOn()){
 
-        }else {
-            var smileyAnchor =SmileyHeadModel.getInstance().getAnchor();
-            var epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
-            if (smileyAnchor.distance(epsilonAnchor) < WYRM_DISTANCE && smileyAnchor.getY()< epsilonAnchor.getY()){
-                squeeze();
-            }else {
-                projectile();
-            }
-        }
 
-        getLocalPanel().setLocation((int) (getXO()-getRadius()*1.5), (int) (getYO()-getRadius()*1.5));
+        getLocalPanel().setLocation((int) (getXO() - getRadius() * 1.5), (int) (getYO() - getRadius() * 1.5));
     }
 
-    private void projectile() {
+    public void projectile() {
         if (!hands.isEmpty()) {
             setVulnerable(true);
             shoot();
@@ -115,12 +99,13 @@ public class HandModel extends EnemyModel implements ProjectileOperator , NonRot
     @Override
     public void shoot() {
         if (getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-            new ProjectileModel(getLocalPanel(),this, 4, true, true,
+            new ProjectileModel(getLocalPanel(), this, 4, true, true,
                     Color.yellow, Color.gray).shoot();
             lastShot = getTotalSeconds();
         }
     }
-    private double rotationSpeed = UNIT_DEGREE/4;
+
+    private double rotationSpeed = UNIT_DEGREE / 4;
 
 
     public void setMinusRotationSpeed() {
@@ -129,19 +114,26 @@ public class HandModel extends EnemyModel implements ProjectileOperator , NonRot
 
     private void goRoundEpsilon() {
         var epsilonModel = EpsilonModel.getINSTANCE();
-//        double rotationRadius = getAnchor().distance(epsilonModel.getAnchor());
-        double degree = Math.atan2( this.getYO() - epsilonModel.getYO(),this.getXO() - epsilonModel.getXO());
+        double degree = Math.atan2(this.getYO() - epsilonModel.getYO(), this.getXO() - epsilonModel.getXO());
         degree += rotationSpeed;
-        int finalX =epsilonModel.getXO() + (int)(WYRM_DISTANCE*1.2 * Math.cos(degree)) - getRadius();
-        int finalY = epsilonModel.getYO() + (int) (WYRM_DISTANCE*1.2 * Math.sin(degree)) - getRadius();
+        int finalX = epsilonModel.getXO() + (int) (WYRM_DISTANCE * 0.8 * Math.cos(degree)) - getRadius();
+        int finalY = epsilonModel.getYO() + (int) (WYRM_DISTANCE * 0.8 * Math.sin(degree)) - getRadius();
         move(finalX - getX(), finalY - getY());
     }
 
     @Override
     public Point2D getRoutePoint() {
-        return globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor(), MIN_ENEMY_SPEED+0.5);
+        int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
+        int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
+        var bounds = gamePanelsBounds.get(getGameFrame().getMainGamePanel());
+        int goX = bounds.x - panelWidth;
+        if (this instanceof RightHandModel)
+            goX += bounds.width + panelWidth + 15;
+        int goY = bounds.y + (bounds.height - panelHeight) / 2;
+        return globalRoutePoint(new Point2D.Double(getX(), getY()),
+                new Point2D.Double(goX, goY));
     }
+
     @Override
     public void destroy() {
         super.destroy();
@@ -150,16 +142,17 @@ public class HandModel extends EnemyModel implements ProjectileOperator , NonRot
     }
 
     private boolean vulnerable;
+
     @Override
     public void gotHit(int attackHp) {
-        if(vulnerable) {
+        if (vulnerable) {
             super.gotHit(attackHp);
         }
     }
 
     @Override
     public void gotShoot() {
-        if(vulnerable) {
+        if (vulnerable) {
             super.gotShoot();
         }
     }
@@ -175,7 +168,7 @@ public class HandModel extends EnemyModel implements ProjectileOperator , NonRot
 
     @Override
     protected void initVertices() {
-        int halfSideLength = (int) (getRadius() / Math.sqrt(2)+14);
+        int halfSideLength = (int) (getRadius() / Math.sqrt(2) + 14);
 
 
         getVertices().add(new VertexModel(getXO() - halfSideLength, getYO() - halfSideLength, this));

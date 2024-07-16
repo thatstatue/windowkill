@@ -36,6 +36,8 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
 
     @Override
     public void route() {
+        int x= getX(); int y= getY();
+
         if (EpsilonModel.getINSTANCE().getLocalPanel()!=null) {
             Point2D routePoint = goToNearestEdge();
             if (routePoint.getX() == 0 && routePoint.getY() == 0) {
@@ -46,6 +48,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
         } else {
             move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         }
+        moveBGPanel(x, y);
     }
 
     @Override

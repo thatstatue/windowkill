@@ -101,10 +101,10 @@ public class Application implements Runnable {
         SoundPlayer.getSoundPlayer();
     }
 
-    public static void initScoreFrame() {
+    public static void initScoreFrame(boolean won) {
 
         getGameFrame().setVisible(false);
-        scoreFrame = new ScoreFrame(gameFrame.getLabels());
+        scoreFrame = new ScoreFrame(gameFrame.getLabels(), won);
         pauseUpdate();
     }
 

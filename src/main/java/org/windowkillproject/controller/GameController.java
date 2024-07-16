@@ -148,7 +148,7 @@ public abstract class GameController {
         if (isCollideAffected(entityModel)) impactTimer1.start();
         if (isCollideAffected(enemyModel)) impactTimer2.start();
         if (entityModel instanceof WyrmModel) ((WyrmModel) entityModel).setMinusRotationSpeed();
-        else if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
+        if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
 
 
     }

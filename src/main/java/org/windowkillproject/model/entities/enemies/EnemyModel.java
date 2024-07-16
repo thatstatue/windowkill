@@ -2,6 +2,7 @@ package org.windowkillproject.model.entities.enemies;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
+import org.windowkillproject.application.panels.game.InternalGamePanel;
 import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.entities.EntityModel;
 
@@ -33,6 +34,15 @@ public abstract class EnemyModel extends EntityModel {
 
     private int rewardCount, rewardXps;
     private static int killedEnemiesInWave;
+    private InternalGamePanel bgPanel;
+
+    public InternalGamePanel getBgPanel() {
+        return bgPanel;
+    }
+
+    public void setBgPanel(InternalGamePanel bgPanel) {
+        this.bgPanel = bgPanel;
+    }
 
     public static void setKilledEnemiesInWave(int killedEnemiesInWave) {
         EnemyModel.killedEnemiesInWave = killedEnemiesInWave;
@@ -82,6 +92,15 @@ public abstract class EnemyModel extends EntityModel {
     }
 
     protected abstract void initVertices();
+    protected void moveBGPanel(int x, int y) {
+        var bgPanel = getBgPanel();
+        if (bgPanel != null) {
+            var loc = bgPanel.getLocation();
+            bgPanel.setLocation(
+                    loc.x + getX()- x,
+                    loc.y +getY() - y);
+        }
+    }
 
     @Override
     public void rotate() {
@@ -90,28 +109,5 @@ public abstract class EnemyModel extends EntityModel {
             polygon.xpoints[i] = getVertices().get(i).getX();
             polygon.ypoints[i] = getVertices().get(i).getY();
         }
-
-
-        /*
-        BufferedImage buffer = getImg();
-        AffineTransform tx = new AffineTransform();
-
-        double rads = 0.084;
-        double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
-        int w = img.getWidth();
-        int h = img.getHeight();
-        int newWidth = (int) Math.ceil(w * cos + h * sin);
-        int newHeight = (int) Math.ceil(h * cos + w * sin);
-
-        tx.translate((newWidth - w) / 2, (newHeight - h) / 2);
-
-        int x = w / 2;
-        int y = h / 2;
-
-        tx.rotate(rads, x, y);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        setImg(op.filter(buffer, null));
-
-         */
     }
 }

@@ -24,7 +24,7 @@ public class WyrmView extends EnemyView {
         }
         g2D.drawArc(getX()+10 , getY()- 10, WYRM_RADIUS*2 - 20, WYRM_RADIUS*2 - 10, 180, 180);
         drawBlackRect(g2D);
-        g2D.fillOval(getX()+10 , getY() , WYRM_RADIUS*2 - 24, WYRM_RADIUS*2 - 34);
+        g2D.fillOval(getX()+25 , getY()+15 , WYRM_RADIUS*2 - 50, WYRM_RADIUS*2 - 40);
 
         g2D.setColor(Color.magenta);
         g2D.drawOval(getX()+WYRM_RADIUS- 5, getY() + (WYRM_RADIUS), 38, 38);

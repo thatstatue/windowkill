@@ -1,6 +1,5 @@
 package org.windowkillproject.model.entities.enemies.finalboss;
 
-import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.application.panels.game.InternalGamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.abilities.VertexModel;
@@ -31,6 +30,7 @@ public class PunchFistModel extends EnemyModel {
 
     @Override
     public void route() {
+        getLocalPanel().setLocation((int) (getXO()-getRadius()*1.5), (int) (getYO()-getRadius()*1.5));
 
     }
 
