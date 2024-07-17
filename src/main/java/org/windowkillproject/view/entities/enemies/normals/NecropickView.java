@@ -1,5 +1,6 @@
 package org.windowkillproject.view.entities.enemies.normals;
 
+import org.windowkillproject.model.entities.enemies.attackstypes.Hideable;
 import org.windowkillproject.view.entities.enemies.EnemyView;
 
 import java.awt.*;
@@ -11,14 +12,16 @@ public class NecropickView extends EnemyView {
     }
     @Override
     public void paint(Graphics g) {
-        Graphics2D g2D = (Graphics2D) g;
-        g2D.setColor(Color.gray);
-        g2D.setStroke(new BasicStroke(10));
-        if (getPolygon() != null) {
+        if (isVisible()) {
+            Graphics2D g2D = (Graphics2D) g;
+            g2D.setColor(Color.gray);
+            g2D.setStroke(new BasicStroke(10));
+            if (getPolygon() != null) {
 
-            g2D.fillPolygon(getPolygon());
-            g2D.setColor(Color.darkGray);
-            drawGreyRect(g2D);
+                g2D.fillPolygon(getPolygon());
+                g2D.setColor(Color.darkGray);
+                drawGreyRect(g2D);
+            }
         }
     }
 
@@ -34,4 +37,5 @@ public class NecropickView extends EnemyView {
         Polygon greyRect = new Polygon(xPoints,yPoints,4);
         g2D.fillPolygon(greyRect);
     }
+
 }

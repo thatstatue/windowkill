@@ -8,6 +8,7 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.finalboss.SmileyHeadModel;
 
 import java.awt.event.KeyEvent;
 
@@ -60,7 +61,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        if (getGameFrame().isVisible() && !Wave.isWelcome()) {
+        if (getGameFrame().isVisible() && !SmileyHeadModel.isAppearing()) {
             int keyCode = e.getKeyCode();
             if (keyCode == LEFT_KEY) {
                 isLeftPressed = true;
@@ -83,7 +84,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
-        if((getGameFrame().isVisible() || getShopFrame().isVisible()) && !Wave.isWelcome()) {
+        if((getGameFrame().isVisible() || getShopFrame().isVisible()) && !SmileyHeadModel.isAppearing()) {
             switch (keyCode) {
                 case NativeKeyEvent.VC_SPACE -> initShFrame();
                 case NativeKeyEvent.VC_ESCAPE -> hideShFrame();

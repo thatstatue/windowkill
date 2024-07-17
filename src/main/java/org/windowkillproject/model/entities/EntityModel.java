@@ -107,7 +107,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     public Area getArea(){
         return new Area(new Rectangle(getX(),getY(),getWidth(),getHeight()));
     }
-    public void gotShoot(){
+    public void gotShot(){
         setHp(getHp() - BulletModel.getAttackHp());
         if (getHp() <= 0) {
             setHp(0);

@@ -10,9 +10,9 @@ import java.awt.geom.Point2D;
 
 import static java.awt.Toolkit.getDefaultToolkit;
 import static java.lang.Math.abs;
-import static org.windowkillproject.application.Config.FRAME_SHRINKAGE_SPEED;
-import static org.windowkillproject.application.Config.LEFT_CODE;
+import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesTotal;
 
 public class MainGamePanel extends GamePanel {
     private final JLabel clock = new JLabel("0:00");
@@ -43,7 +43,7 @@ public class MainGamePanel extends GamePanel {
 
     public JLabel[] getLabels() {
         return new JLabel[]{new JLabel(""), clock, xp
-                , new JLabel(String.valueOf(getKilledEnemiesInWave())), wave};
+                , new JLabel(String.valueOf(getKilledEnemiesTotal())), wave};
     }
 
 
@@ -87,8 +87,12 @@ public class MainGamePanel extends GamePanel {
         this.add(wave);
 
     }
+
+    public boolean isPunched() {
+        return punched;
+    }
+
     public void gotPunched(Point2D punchPoint){
-        int code = LEFT_CODE;
         var rect = gamePanelsBounds.get(this);
         if (rect == null) rect = getBounds();
         double rightD = punchPoint.getX()- (rect.x + rect.width/2D); // if positive, is hitting the right
@@ -110,7 +114,8 @@ public class MainGamePanel extends GamePanel {
         }
         this.setBounds(newX, newY, newWidth, newHeight);
         gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
-
+        punched = true;
     }
+    private boolean punched;
 
 }

@@ -7,6 +7,7 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.abilities.MomentModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.Hideable;
 import org.windowkillproject.model.entities.enemies.finalboss.LeftHandModel;
 import org.windowkillproject.model.entities.enemies.finalboss.PunchFistModel;
 import org.windowkillproject.model.entities.enemies.finalboss.RightHandModel;
@@ -148,10 +149,10 @@ public abstract class Controller {
                     var enemyView = (EnemyView) view;
                     enemyView.setPolygon(((EnemyModel) entityModel).getPolygon());
                 }
-                if (entityModel instanceof BlackOrbModel){
-                    boolean visible = ((BlackOrbModel) entityModel).getVisible();
-                    var blackOrbView = (BlackOrbView) view;
-                    blackOrbView.setVisible(visible);
+                if (entityModel instanceof Hideable){
+                    boolean visible = ((Hideable) entityModel).isVisible();
+                    var entityView = (EntityView) view;
+                    entityView.setVisible(visible);
                 }
             } else view.setEnabled(false);
         } else if (findModel(view.getId()) instanceof AbilityModel) {

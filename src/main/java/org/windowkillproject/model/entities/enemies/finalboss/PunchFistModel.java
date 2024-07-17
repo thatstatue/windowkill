@@ -1,6 +1,7 @@
 package org.windowkillproject.model.entities.enemies.finalboss;
 
 import org.windowkillproject.application.panels.game.InternalGamePanel;
+import org.windowkillproject.application.panels.game.MainGamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -51,14 +52,15 @@ public class PunchFistModel extends EnemyModel {
     public void tightenEpsilonPanel(){
         getLocalPanel().setFlexible(false);
         Timer punch = new Timer(FPS/4, null);
+        AtomicInteger integer = new AtomicInteger();
         ActionListener punchListener = e -> {
-            AtomicInteger integer = new AtomicInteger();
+
             if (!isTransferableInBounds(this, EpsilonModel.getINSTANCE().getAllowedArea() , true)) {
                 move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
             }else{
                 integer.getAndIncrement();
-                if (integer.get()<2){
-                    getGameFrame().getMainGamePanel().gotPunched(getAnchor());
+                if (integer.get()<4){
+                    MainGamePanel.getInstance().gotPunched(getAnchor());
                     System.out.println("MANFI MIRAM"); //todo debug
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
                 }else if (integer.get()>ATTACK_TIMEOUT){
@@ -77,8 +79,9 @@ public class PunchFistModel extends EnemyModel {
         getLocalPanel().setFlexible(true);
         Timer slap = new Timer(FPS/4, null);
         int hp = EpsilonModel.getINSTANCE().getHp();
+        AtomicInteger integer = new AtomicInteger();
+
         ActionListener punchListener = e -> {
-            AtomicInteger integer = new AtomicInteger();
             if (EpsilonModel.getINSTANCE().getHp()== hp) {
                 move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
             }else{

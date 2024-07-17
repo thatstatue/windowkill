@@ -4,9 +4,9 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Transferable;
 import org.windowkillproject.model.entities.Circular;
-import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.Hideable;
 
 
 import java.awt.geom.Area;
@@ -20,10 +20,8 @@ import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.SoundPlayer.playBulletSound;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createAbilityView;
-import static org.windowkillproject.controller.GameController.getClosestPanelCorner;
-import static org.windowkillproject.controller.GameController.impact;
+import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.controller.Utils.*;
-import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.normals.OmenoctModel.omenoctModels;
 
 public class BulletModel extends AbilityModel implements Projectable, Transferable {
@@ -31,6 +29,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     private final Point2D mousePoint;
 
     private ArrayList<GamePanel> allowedPanels = new ArrayList<>();
+
     public static void setAttackHp(int attackHp) {
         BulletModel.attackHp = attackHp;
     }
@@ -57,7 +56,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     public void move() {
         if (isShoot()) {
             Point2D delta = unitVector(getMousePoint(), this.getAnchor());
-            delta = weighedVector(delta, Config.BULLET_SPEED);
+            delta = weighedVector(delta, BULLET_SPEED);
             setX((int) (getX() + delta.getX()));
             setY((int) (getY() + delta.getY()));
 
@@ -70,7 +69,13 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void isFrameShot() {
-        if (!EpsilonModel.getINSTANCE().getAllowedArea().contains(getX(), getY())) {
+        Area area = getAllowedArea();
+        System.out.println(area.getBounds());
+        Area epsilonArea = EpsilonModel.getINSTANCE().getAllowedArea();
+        area.subtract(epsilonArea);
+        if (area.isEmpty()) area = epsilonArea;
+        else area = getAllowedArea();
+        if (!area.contains(getX(), getY())) {
             var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(), getY()));
 
             hit(gamePanelCorner.gamePanel(), gamePanelCorner.corner());
@@ -83,8 +88,9 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
         getGameFrame().stretch(gamePanel, code);
         hitWall(gamePanel, code);
     }
+
     @Override
-    public void addToAllowedArea(GamePanel panel){
+    public void addToAllowedArea(GamePanel panel) {
         allowedPanels.add(panel);
         Area area = new Area(gamePanelsBounds.get(panel));
         getAllowedArea().add(area); //todo daijovah?
@@ -107,38 +113,39 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void isEnemyShot() {
-        for (int i = 0; i < entityModels.size(); i++) {
-            EntityModel entityModel = entityModels.get(i);
-            if (entityModel instanceof EnemyModel) {
-                EnemyModel enemyModel = (EnemyModel) entityModel;
-                //not hitting vertices
-                boolean notHitVs = true;
-                for (VertexModel vertexModel : enemyModel.getVertices()) {
-                    if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
-                        explode();
-                        notHitVs = false;
-                        break;
-                    }
+        var enemyModels = getEnemies();
+        for (int i = 0; i < enemyModels.size(); i++) {
+            EnemyModel enemyModel = enemyModels.get(i);
+            if (enemyModel instanceof Hideable && !((Hideable) enemyModel).isVisible())
+                continue;
+            //not hitting vertices
+            boolean notHitVs = true;
+            for (VertexModel vertexModel : enemyModel.getVertices()) {
+                if (Objects.equals(vertexModel.getAnchor(), new Point2D.Double(getX(), getY()))) {
+                    explode();
+                    notHitVs = false;
+                    break;
                 }
-                //hitting enemy
-                if (notHitVs && ((EnemyModel) entityModel).getPolygon() != null) {
-                    Area enemyA = new Area(enemyModel.getPolygon());
-                    if (enemyA.contains(this.getX(), this.getY())) {
-                        enemyModel.gotShoot();
-                        explode();
-                        break;
-                    }
-                }
-                if (enemyModel instanceof Circular) {
-                    if (enemyModel.getAnchor().distance(new Point2D.Double(getX(), getY())) < enemyModel.getRadius()) {
-                        enemyModel.gotShoot();
-                        explode();
-                        break;
-                    }
-                }
-
             }
+            //hitting enemy
+            if (notHitVs && enemyModel.getPolygon() != null) {
+                Area enemyA = new Area(enemyModel.getPolygon());
+                if (enemyA.contains(this.getX(), this.getY())) {
+                    enemyModel.gotShot();
+                    explode();
+                    break;
+                }
+            }
+            if (enemyModel instanceof Circular) {
+                if (enemyModel.getAnchor().distance(new Point2D.Double(getX(), getY())) < enemyModel.getRadius()) {
+                    enemyModel.gotShot();
+                    explode();
+                    break;
+                }
+            }
+
         }
+
     }
 
     public BulletModel(int x, int y, Point2D mousePoint) {

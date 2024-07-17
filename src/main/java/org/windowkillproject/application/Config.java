@@ -24,6 +24,7 @@ public class Config {
     public static final int FPS = 35;
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;
+    public static int EPSILON_HP = 1000;
     public static int ENEMY_RADIUS = 20;
     public static int HAND_RADIUS = 50;
     public static int WYRM_RADIUS = 70;

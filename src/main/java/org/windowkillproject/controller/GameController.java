@@ -12,11 +12,8 @@ import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.enemies.*;
-import org.windowkillproject.model.entities.enemies.attackstypes.Dashable;
-import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
+import org.windowkillproject.model.entities.enemies.attackstypes.*;
 import org.windowkillproject.model.abilities.MomentModel;
-import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
-import org.windowkillproject.model.entities.enemies.attackstypes.Unmovable;
 import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
 import org.windowkillproject.model.entities.enemies.normals.ArchmireModel;
 import org.windowkillproject.model.entities.enemies.normals.WyrmModel;
@@ -149,6 +146,10 @@ public abstract class GameController {
         if (isCollideAffected(enemyModel)) impactTimer2.start();
         if (entityModel instanceof WyrmModel) ((WyrmModel) entityModel).setMinusRotationSpeed();
         if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
+        if ( entityModel instanceof WyrmModel&& enemyModel instanceof WyrmModel) {
+            for (int i = 0 ; i < 5; i++)entityModel.route();
+        }
+
 
 
     }
@@ -222,6 +223,9 @@ public abstract class GameController {
         ArrayList<EnemyModel> enemies = getEnemies();
         for (int i = 0; i < enemies.size(); i++) {
             var enemyModel = enemies.get(i);
+            if (enemyModel instanceof Hideable && !((Hideable) enemyModel).isVisible())
+                continue;
+
             Polygon p1 = enemyModel.getPolygon();
             if (p1 != null) {
                 Area a1 = new Area(p1);
@@ -229,6 +233,8 @@ public abstract class GameController {
                 //impact controller
                 for (int j = i + 1; j < enemies.size(); j++) {
                     var collidedEnemy = enemies.get(j);
+                    if (collidedEnemy instanceof Hideable && !((Hideable) collidedEnemy).isVisible())
+                        continue;
                     Polygon p2 = collidedEnemy.getPolygon();
                     if (p2 != null) {
                         Area a2 = new Area(p2);
@@ -500,7 +506,8 @@ public abstract class GameController {
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         ArrayList<EnemyModel> enemies = getEnemies();
         for (EnemyModel enemyModel : enemies) {
-
+            if (enemyModel instanceof Hideable && !((Hideable) enemyModel).isVisible())
+                continue;
             //vertex of epsilon hit enemy
             if (enemyModel.getPolygon() != null) {
                 Area enemyA = new Area(enemyModel.getPolygon());

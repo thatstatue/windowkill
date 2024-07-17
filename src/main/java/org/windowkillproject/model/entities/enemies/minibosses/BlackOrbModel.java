@@ -100,7 +100,7 @@ public class BlackOrbModel extends EnemyModel implements Hideable, NonRotatable,
     }
 
     @Override
-    public boolean getVisible() {
+    public boolean isVisible() {
         return visible;
     }
 }

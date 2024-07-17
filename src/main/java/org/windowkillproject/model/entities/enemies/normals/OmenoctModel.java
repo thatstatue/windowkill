@@ -60,7 +60,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     }
 
     public void hitWall(int code) {
-        if (code == edgeCode) gotShoot();
+        if (code == edgeCode) gotShot();
     }
 
     private Point2D goToNearestEdge() {

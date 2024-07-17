@@ -5,6 +5,7 @@ import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.application.panels.game.InternalGamePanel;
 import org.windowkillproject.model.abilities.CollectableModel;
 import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
 
@@ -33,8 +34,16 @@ public abstract class EnemyModel extends EntityModel {
     }
 
     private int rewardCount, rewardXps;
-    private static int killedEnemiesInWave;
+    private static int killedEnemiesInWave, killedEnemiesTotal;
     private InternalGamePanel bgPanel;
+
+    public static int getKilledEnemiesTotal() {
+        return killedEnemiesTotal;
+    }
+
+    public static void setKilledEnemiesTotal(int killedEnemiesTotal) {
+        EnemyModel.killedEnemiesTotal = killedEnemiesTotal;
+    }
 
     public InternalGamePanel getBgPanel() {
         return bgPanel;
@@ -83,6 +92,7 @@ public abstract class EnemyModel extends EntityModel {
         super.destroy();
         playDestroySound();
         killedEnemiesInWave++;
+        killedEnemiesTotal++;
         for (int i = 0; i < rewardCount; i++) {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();
@@ -94,7 +104,8 @@ public abstract class EnemyModel extends EntityModel {
     protected abstract void initVertices();
     protected void moveBGPanel(int x, int y) {
         var bgPanel = getBgPanel();
-        if (bgPanel != null) {
+        var epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanel();
+        if (bgPanel != null && (epsilonPanel==null || !epsilonPanel.equals(bgPanel))) {
             var loc = bgPanel.getLocation();
             bgPanel.setLocation(
                     loc.x + getX()- x,

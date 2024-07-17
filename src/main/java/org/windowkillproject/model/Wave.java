@@ -1,6 +1,5 @@
 package org.windowkillproject.model;
 
-import org.windowkillproject.application.Application;
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.application.panels.game.InternalGamePanel;
@@ -8,7 +7,6 @@ import org.windowkillproject.application.panels.game.MainGamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.finalboss.SmileyHeadModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
@@ -46,16 +44,11 @@ public class Wave {
         return level;
     }
 
-    private static boolean welcome;
     private int END_OF_NORMAL = 1;
     private int END_OF_MINIBOSS = 2;
 
-    public static boolean isWelcome() {
-        return welcome;
-    }
 
     private void spawnWave() {
-        getGameFrame().setWaveLevel(level);
         AtomicInteger count = new AtomicInteger();
         Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * level)), null);
         creatorTimer.addActionListener(e -> {
@@ -103,48 +96,50 @@ public class Wave {
         int dY = random.nextInt(CENTER_Y * 2) - CENTER_Y;
         switch (direction) {
             case TopRight -> new TrigorathModel(CENTER_X + dX,
-                    CENTER_Y - dY, getGameFrame().getMainGamePanel()); //todo rand?
-            case TopLeft -> new SquarantineModel(-dX, -dY, getGameFrame().getMainGamePanel());
+                    CENTER_Y - dY, MainGamePanel.getInstance());
+            case TopLeft -> new SquarantineModel(-dX, -dY, MainGamePanel.getInstance());
             case BottomLeft -> new TrigorathModel(-dX, CENTER_Y + dY,
-                    getGameFrame().getMainGamePanel());
+
+                    MainGamePanel.getInstance());
             case BottomRight -> new TrigorathModel(CENTER_X + dX,
-                    CENTER_Y + dY, getGameFrame().getMainGamePanel());
+                    CENTER_Y + dY, MainGamePanel.getInstance());
         }
         playCreateSound();
     }
 
     private void spawnMiniBossWave() {
-        getGameFrame().setWaveLevel(level);
         AtomicInteger count = new AtomicInteger();
         Timer creatorTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * level)), null);
         creatorTimer.addActionListener(e -> {
             int boundKill = level * 2 + Config.BOUND;
             if (getKilledEnemiesInWave() < boundKill) {
-                createRandomEnemy();
-                count.getAndIncrement();
-            }
-            //waits until u kill the remaining enemies
-            else if (count.get() == getKilledEnemiesInWave()) {
+                //doesn't allow too many enemies
+                if (count.get() - getKilledEnemiesInWave() < MAX_ENEMIES) {
+                    createRandomEnemy();
+                    count.getAndIncrement();
+                }
+            } else if (count.get() > getKilledEnemiesInWave()) {
+                //waits until u kill the remaining enemies
+            } else if (count.get() == getKilledEnemiesInWave()) {
                 playEndWaveSound();
                 betweenWaves = true;
                 count.getAndIncrement();
             } else {
                 //10 secs between waves
-                if (count.get() < getKilledEnemiesInWave() + 2) {
-                    count.getAndIncrement();
-                } else {
-                    //time to go to the next level
-                    startNewWave = true;
-                    betweenWaves = false;
-                    if (level < END_OF_MINIBOSS) {
-                        setKilledEnemiesInWave(0);
-                    } else {
-                        welcomeBossScene();
-                        //waves.remove(this);
 
-                    }
-                    creatorTimer.stop();
+                //time to go to the next level
+                startNewWave = true;
+                betweenWaves = false;
+                if (level < END_OF_MINIBOSS) {
+                    setKilledEnemiesInWave(0);
                 }
+//                    else {
+//                        welcomeBossScene();
+//                        //waves.remove(this);
+//
+//                    }
+                creatorTimer.stop();
+
             }
         });
         creatorTimer.start();
@@ -152,15 +147,14 @@ public class Wave {
     }
 
     private void spawnBossWave() {
+
+        welcomeBossScene();
         SmileyHeadModel.getInstance().appear();
         Timer timer = new Timer(10, null);
-        ActionListener defeatChecker = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (SmileyHeadModel.isDefeated()) {
-                    initScoreFrame(true);
-                    timer.stop();
-                }
+        ActionListener defeatChecker = e -> {
+            if (SmileyHeadModel.isDefeated()) {
+                initScoreFrame(true);
+                timer.stop();
             }
         };
         timer.addActionListener(defeatChecker);
@@ -214,14 +208,14 @@ public class Wave {
                         gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.shrinkable, true);
                         temp = true;
                     }
-                    var omenoctModel =new OmenoctModel(randX, randY, gamePanel);
+                    var omenoctModel = new OmenoctModel(randX, randY, gamePanel);
                     if (temp) omenoctModel.setBgPanel((InternalGamePanel) gamePanel);
                 }
                 case 2 -> {
                     var gamePanel = EpsilonModel.getINSTANCE().getLocalPanel();
                     boolean temp = false;
                     if (random.nextInt(2) == 0 || gamePanel == null) {
-                        gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.shrinkable, true);
+                        gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.isometric, true);
                         temp = true;
                     }
                     var archmireModel = new ArchmireModel(gamePanel, randX, randY);
@@ -232,8 +226,8 @@ public class Wave {
                     new WyrmModel(randX, randY);
                 }
                 case 4 -> {
-//                    new NecropickModel(randX, randY);//todo debug
-                    createRandomLocalEnemy();
+                    new NecropickModel(randX, randY);
+//
                 }
             }
         }
@@ -247,7 +241,7 @@ public class Wave {
     }
 
 
-        //todo clear the frames with no entities except the main
+    //todo clear the frames with no entities except the main
     private void spawnMiniBoss(int randX, int randY) {
         int randNum = random.nextInt(3);
         if (randNum == 0 && blackOrbModels.isEmpty()) {
@@ -275,6 +269,7 @@ public class Wave {
         startNewWave = false;
         level++;
         waves.add(this);
+        getGameFrame().setWaveLevel(level);
         if (level <= END_OF_NORMAL) spawnWave();
         else if (level <= END_OF_MINIBOSS) spawnMiniBossWave();
         else spawnBossWave();
@@ -285,16 +280,15 @@ public class Wave {
     }
 
     public void welcomeBossScene() {
-        welcome = true;
         Timer welcome = new Timer(FPS, null);
         //take epsilon to main panel
         cleanOutOtherObjects();
+        nextLevel();
 
-        var mainPanel = getGameFrame().getMainGamePanel();
+        var mainPanel = MainGamePanel.getInstance();
 
         EpsilonModel.getINSTANCE().setLocalPanel(mainPanel);
         keepInPanel(EpsilonModel.getINSTANCE().getLocalPanel());
-
 
         ActionListener actionListener = getMoveToCenter(mainPanel, welcome);
         welcome.addActionListener(actionListener);
@@ -306,7 +300,8 @@ public class Wave {
         return e -> {
             int deltaX = -EpsilonModel.getINSTANCE().getX() + CENTER_X - EPSILON_RADIUS;
             int deltaY = -EpsilonModel.getINSTANCE().getY() + CENTER_Y - EPSILON_RADIUS;
-            int dX = 6 * getSign(deltaX); int dY = 6 * getSign(deltaY);
+            int dX = 6 * getSign(deltaX);
+            int dY = 6 * getSign(deltaY);
             if (abs(deltaX) > 5 || abs(deltaY) > 5) {
                 if (abs(deltaX) > 8) {
                     mainPanel.setBounds(mainPanel.getX() + dX, mainPanel.getY(),
@@ -331,8 +326,6 @@ public class Wave {
                     epsilonModel.move(0, dY);
                 }
             } else {
-
-                Wave.welcome = false;
                 welcome.stop();
             }
         };
@@ -343,17 +336,15 @@ public class Wave {
         int y = EpsilonModel.getINSTANCE().getY();
 
         var epsilonModel = EpsilonModel.getINSTANCE();
-        epsilonModel.setLocalPanel(getGameFrame().getMainGamePanel());
-        epsilonModel.move(x - epsilonModel.getX(), y - epsilonModel.getY());
+        epsilonModel.setLocalPanel(MainGamePanel.getInstance());
+//        epsilonModel.move(x - epsilonModel.getX(), y - epsilonModel.getY());
         for (int i = 0; i < gamePanels.size(); i++) {
             GamePanel gamePanel = gamePanels.get(i);
             if (gamePanel instanceof InternalGamePanel) {
                 deleteGamePanel(gamePanel);
             }
         }
-        nextLevel();
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package org.windowkillproject.model.entities.enemies.finalboss;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.game.InternalGamePanel;
+import org.windowkillproject.application.panels.game.MainGamePanel;
 import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
@@ -10,15 +11,12 @@ import org.windowkillproject.model.entities.enemies.EnemyModel;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Controller.deleteGamePanel;
@@ -45,7 +43,17 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
         if (hands.size() == 2) {
             setVulnerable(false);
             getLocalPanel().setFlexible(false);
-            move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
+
+//            //handle hands vica-versa
+//            var otherHand = hands.get(0);
+//            if (otherHand.equals(this)) otherHand = hands.get(1);
+//            if (this instanceof LeftHandModel && getX()>otherHand.getX()+2*HAND_RADIUS
+//                    || this instanceof RightHandModel && otherHand.getX()+2*HAND_RADIUS>getX()){
+//                var routePoint = otherHand.getRoutePoint();
+//                move((int) routePoint.getX(), (int) routePoint.getY());
+//            }else {
+                move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
+//            }
         }
     }
 
@@ -95,13 +103,14 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
     public Point2D getRoutePoint() {
         int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
         int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
-        var bounds = gamePanelsBounds.get(getGameFrame().getMainGamePanel());
+        var bounds = gamePanelsBounds.get(MainGamePanel.getInstance());
         int goX = bounds.x - panelWidth;
         if (this instanceof RightHandModel)
             goX += bounds.width + panelWidth + 15;
+
         int goY = bounds.y + (bounds.height - panelHeight) / 2;
         return globalRoutePoint(new Point2D.Double(getX(), getY()),
-                new Point2D.Double(goX, goY));
+                new Point2D.Double(goX, goY), MAX_ENEMY_SPEED*2);
     }
 
     @Override
@@ -121,9 +130,9 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
     }
 
     @Override
-    public void gotShoot() {
+    public void gotShot() {
         if (vulnerable) {
-            super.gotShoot();
+            super.gotShot();
         }
     }
 

@@ -2,6 +2,7 @@ package org.windowkillproject.model.entities;
 
 
 import org.windowkillproject.application.Config;
+import org.windowkillproject.application.panels.game.MainGamePanel;
 import org.windowkillproject.model.abilities.VertexModel;
 
 import java.awt.geom.Point2D;
@@ -22,10 +23,14 @@ public class EpsilonModel extends EntityModel {
     }
 
     public static void newINSTANCE() {
-        int xp = 0;
-        if (INSTANCE != null) xp = INSTANCE.getXp();
+        int xp = 0, hp = EPSILON_HP;
+        if (INSTANCE != null) {
+            xp = INSTANCE.getXp();
+            hp = INSTANCE.getHp();
+        }
         INSTANCE = new EpsilonModel(CENTER_X -5 , CENTER_Y- 5, xp);
         INSTANCE.setRadius(EPSILON_RADIUS);
+        INSTANCE.setHp(hp);
     }
 
     private int xp;
@@ -58,7 +63,7 @@ public class EpsilonModel extends EntityModel {
     }
 
     private EpsilonModel(int x, int y, int xp) {
-        super(getGameFrame().getMainGamePanel(), x, y, EPSILON_RADIUS, 1000, 10);
+        super(MainGamePanel.getInstance(), x, y, EPSILON_RADIUS, EPSILON_HP, 10);
         setXp(xp);
         createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
     }

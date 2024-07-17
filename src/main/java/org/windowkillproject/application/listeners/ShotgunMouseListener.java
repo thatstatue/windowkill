@@ -6,6 +6,7 @@ import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.finalboss.SmileyHeadModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -19,7 +20,7 @@ public class ShotgunMouseListener implements NativeMouseListener {
     public static long empowerInitSeconds = Long.MAX_VALUE;
 
     public void nativeMouseClicked(NativeMouseEvent e) {
-        if (getGameFrame().isVisible()&& !Wave.isWelcome()) {
+        if (getGameFrame().isVisible()&& !SmileyHeadModel.isAppearing()) {
             Point2D mouseLoc = MouseInfo.getPointerInfo().getLocation();
 
             EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();

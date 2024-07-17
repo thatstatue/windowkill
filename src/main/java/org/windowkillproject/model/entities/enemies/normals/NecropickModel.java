@@ -6,6 +6,7 @@ import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 import org.windowkillproject.model.entities.enemies.EnemyModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.Hideable;
 import org.windowkillproject.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.model.entities.enemies.attackstypes.ProjectileOperator;
 
@@ -16,7 +17,7 @@ import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
-public class NecropickModel extends EnemyModel implements ProjectileOperator, NonRotatable {
+public class NecropickModel extends EnemyModel implements ProjectileOperator, NonRotatable, Hideable {
 
     public NecropickModel(int x, int y) {
         super(EpsilonModel.getINSTANCE().getLocalPanel(),
@@ -27,33 +28,23 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
         appearanceTimeStart = ElapsedTime.getTotalSeconds();
     }
 
-    private boolean isSubtle = false;
-
-    public boolean isSubtle() {
-        return isSubtle;
-    }
-
-    public void setSubtle(boolean subtle) {
-        isSubtle = subtle;
-    }
 
     private int appearanceTimeStart, appearanceTimeEnd;
 
     @Override
     public void route() {
         setTheta(0);
-        if (isSubtle) {
+        if (!visible) {
             if (ElapsedTime.getTotalSeconds() - appearanceTimeEnd > 4) {
-                isSubtle = false;
+                visible = true;
                 appearanceTimeStart = ElapsedTime.getTotalSeconds();
-//                move(10000, 10000);
                 Point2D direction = Utils.unitVector(EpsilonModel.getINSTANCE().getAnchor(), getAnchor());
                 double distance = Utils.magnitude(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
-                Point2D vector = Utils.weighedVector(direction, distance);
+                Point2D vector = Utils.weighedVector(direction, distance-EPSILON_RADIUS-getRadius()-10);
                 double moveX = vector.getX();
                 double moveY = vector.getY();
-                if (vector.getX() < 8) moveX += 10 * EPSILON_RADIUS;
-                if (vector.getY() < 8) moveY += 10 * EPSILON_RADIUS;
+//                if (vector.getX() < 8) moveX += 4 * EPSILON_RADIUS;
+//                if (vector.getY() < 8) moveY += 4 * EPSILON_RADIUS;
                 setLocalPanel(EpsilonModel.getINSTANCE().getLocalPanel());
                 move((int) moveX, (int) moveY);
                 System.out.println("just outta subtle");
@@ -63,9 +54,8 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
             System.out.println("im not subtle");
             shoot();
             if (ElapsedTime.getTotalSeconds() - appearanceTimeStart > 8) {
-                isSubtle = true;
+                visible = false;
                 appearanceTimeEnd = ElapsedTime.getTotalSeconds();
-//                move(-10000, -10000);
                 System.out.println("im subtle again");
             }
         }
@@ -103,8 +93,19 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
     @Override
     public void shoot() {
         if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-            new ProjectileModel(getLocalPanel(), this, 5, false, false, Color.gray, Color.darkGray).shoot();
+//            new ProjectileModel(getLocalPanel(), this, 5, false, false, Color.gray, Color.darkGray).shoot();
             lastShot = ElapsedTime.getTotalSeconds();
         }
+    }
+
+    private boolean visible;
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
     }
 }

@@ -24,11 +24,12 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import static org.windowkillproject.controller.Update.frameUpdateTimer;
-import static org.windowkillproject.controller.Update.modelUpdateTimer;
+import static org.windowkillproject.application.Config.EPSILON_HP;
+import static org.windowkillproject.controller.Update.*;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesTotal;
 import static org.windowkillproject.model.entities.enemies.normals.ArchmireModel.archmireModels;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
 import static org.windowkillproject.model.entities.enemies.normals.OmenoctModel.omenoctModels;
@@ -168,6 +169,7 @@ public class Application implements Runnable {
     public static void pauseUpdate() {
         modelUpdateTimer.stop();
         frameUpdateTimer.stop();
+        emptyPanelEraser.stop();
         ElapsedTime.pause();
 
     }
@@ -179,6 +181,7 @@ public class Application implements Runnable {
         ElapsedTime.resume();
         modelUpdateTimer.start();
         frameUpdateTimer.start();
+        emptyPanelEraser.start();
 
     }
 
@@ -189,7 +192,9 @@ public class Application implements Runnable {
 
     public static void resetGame() {
         setKilledEnemiesInWave(0);
+        setKilledEnemiesTotal(0);
         nextLevel();
+        EpsilonModel.getINSTANCE().setHp(EPSILON_HP);
         Writ.resetInitSeconds();
         Config.GAME_MIN_SIZE = 250;
         Wave.waves.clear();

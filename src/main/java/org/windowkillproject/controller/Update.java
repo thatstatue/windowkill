@@ -3,6 +3,7 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
+import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.view.abilities.AbilityView;
@@ -22,6 +23,7 @@ import static org.windowkillproject.view.entities.EntityView.entityViews;
 public class Update {
     public static Timer modelUpdateTimer;
     public static Timer frameUpdateTimer;
+    public static EmptyPanelEraser emptyPanelEraser;
 
     public Update() {
         modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
@@ -32,6 +34,9 @@ public class Update {
             setCoalesce(true);
         }};
         frameUpdateTimer.start();
+
+        emptyPanelEraser = new EmptyPanelEraser();
+        emptyPanelEraser.start();
         new Wave();
     }
 

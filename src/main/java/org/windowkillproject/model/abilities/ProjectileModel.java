@@ -66,7 +66,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         this.topColor = topColor;
         this.bottomColor = bottomColor;
         delta = unitVector(getPoint2D(isTowardsEpsilon), this.getAnchor());
-        delta = weighedVector(delta, Config.BULLET_SPEED / 2.0);
+        delta = weighedVector(delta, BULLET_SPEED / 2.0);
 //        localPanel = parent.getLocalPanel();
         createAbilityView(id, x, y);
 
@@ -94,9 +94,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
 
     @Override
     public void move() {
-
         if (isShoot()) {
-
             setX((int) (getX() + delta.getX()));
             setY((int) (getY() + delta.getY()));
 

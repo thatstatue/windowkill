@@ -15,8 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.lang.Math.E;
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Application.nextLevel;
 import static org.windowkillproject.application.Config.*;
@@ -99,26 +98,31 @@ public abstract class GamePanel extends Panel {
         int newY = getY();
         int newWidth = getWidth();
         int newHeight = getHeight();
+        if (!(this instanceof MainGamePanel && MainGamePanel.getInstance().isPunched())) {
 
-        if (flexible) {
-            if (canShrinkLeft) newX += Config.FRAME_SHRINKAGE_SPEED / 2;
-            if (canShrinkUp) newY += Config.FRAME_SHRINKAGE_SPEED / 2;
-            if (canShrinkRight) newWidth -= Config.FRAME_SHRINKAGE_SPEED;
-            if (canShrinkDown) newHeight -= Config.FRAME_SHRINKAGE_SPEED;
-        }
+            if (flexible) {
+                if (canShrinkLeft) newX += FRAME_SHRINKAGE_SPEED / 2;
+                if (canShrinkUp) newY += FRAME_SHRINKAGE_SPEED / 2;
+                if (canShrinkRight) newWidth -= FRAME_SHRINKAGE_SPEED;
+                if (canShrinkDown) newHeight -= FRAME_SHRINKAGE_SPEED;
+            }
 
-        if (panelStatus.equals(shrinkable)
+            if (panelStatus.equals(shrinkable)
 //                && EpsilonModel.getINSTANCE().getLocalPanel() != null
 //                && this.equals(EpsilonModel.getINSTANCE().getLocalPanel())
 //                todo: if min size is only for epsilon's panel will uncomment
-        ) {
-            if (getWidth() <= Config.GAME_MIN_SIZE) {
-                newWidth = Config.GAME_MIN_SIZE;
-                newX = getX();
-            }
-            if (getHeight() <= Config.GAME_MIN_SIZE) {
-                newHeight = Config.GAME_MIN_SIZE;
-                newY = getY();
+            ) {
+                int minSize = GAME_MIN_SIZE;
+                if (getWidth() <= minSize) {
+                    newWidth = minSize;
+                    newX = getX();
+                }
+                if (getHeight() <= minSize) {
+                    newHeight = minSize;
+                    newY = getY();
+                }
+
+
             }
         }
 //            }
@@ -139,7 +143,7 @@ public abstract class GamePanel extends Panel {
     public void stretch(int code) {
         if (isFlexible()) {
             AtomicInteger count = new AtomicInteger();
-            Timer stretchTimer = new Timer(Config.FPS, null);
+            Timer stretchTimer = new Timer(FPS, null);
             stretchTimer.addActionListener(e -> {
                 int newX = getX();
                 int newY = getY();
@@ -189,6 +193,7 @@ public abstract class GamePanel extends Panel {
     }
 
     private boolean forSmiley;
+
     private boolean isStoppedByRigidPanels(int code, int newX, int newY, int newWidth, int newHeight) {
         if (forSmiley) return false;
         for (int i = 0; i < gamePanels.size(); i++) {
@@ -239,22 +244,22 @@ public abstract class GamePanel extends Panel {
     public void shrinkFast() {
         if (exploding) {
             EpsilonModel.getINSTANCE().setRadius(0);
-            Config.GAME_MIN_SIZE = 10;
+            GAME_MIN_SIZE = 10;
         }
         Timer shrinkFastTimer = new Timer(1, null);
         shrinkFastTimer.addActionListener(e -> {
-            int newX = getX() + Config.FRAME_SHRINKAGE_SPEED * 3 / 2;
-            int newY = getY() + Config.FRAME_SHRINKAGE_SPEED * 3 / 2;
-            int newWidth = getWidth() - Config.FRAME_SHRINKAGE_SPEED * 3;
-            int newHeight = getHeight() - Config.FRAME_SHRINKAGE_SPEED * 3;
+            int newX = getX() + FRAME_SHRINKAGE_SPEED * 3 / 2;
+            int newY = getY() + FRAME_SHRINKAGE_SPEED * 3 / 2;
+            int newWidth = getWidth() - FRAME_SHRINKAGE_SPEED * 3;
+            int newHeight = getHeight() - FRAME_SHRINKAGE_SPEED * 3;
             boolean stoppedX = false, stoppedY = false;
-            if (getWidth() <= Config.GAME_MIN_SIZE) {
-                newWidth = Config.GAME_MIN_SIZE;
+            if (getWidth() <= GAME_MIN_SIZE) {
+                newWidth = GAME_MIN_SIZE;
                 newX = getX();
                 stoppedX = true;
             }
-            if (getHeight() <= Config.GAME_MIN_SIZE) {
-                newHeight = Config.GAME_MIN_SIZE;
+            if (getHeight() <= GAME_MIN_SIZE) {
+                newHeight = GAME_MIN_SIZE;
                 newY = getY();
                 stoppedY = true;
             }
@@ -264,8 +269,8 @@ public abstract class GamePanel extends Panel {
             } else {
                 if (exploding) {
                     setVisible(false);
-                    EpsilonModel.getINSTANCE().setRadius(Config.EPSILON_RADIUS);
-                    Config.GAME_MIN_SIZE = 250;
+                    EpsilonModel.getINSTANCE().setRadius(EPSILON_RADIUS);
+                    GAME_MIN_SIZE = 250;
                     Application.startGame(1);
                 }
                 shrinkFastTimer.stop();
