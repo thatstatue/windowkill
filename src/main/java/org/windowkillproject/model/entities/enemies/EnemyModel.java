@@ -85,9 +85,16 @@ public abstract class EnemyModel extends EntityModel {
     public void setPolygon(Polygon polygon) {
         this.polygon = polygon;
     }
-
-
     @Override
+    public void gotHit(int attackHp) {
+        super.gotHit(attackHp);
+        var epsilonModel =EpsilonModel.getINSTANCE();
+        if (epsilonModel.isChironner())
+            epsilonModel.setHp(epsilonModel.getHp()+3);
+    }
+
+
+        @Override
     public void destroy() {
         super.destroy();
         playDestroySound();

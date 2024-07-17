@@ -523,12 +523,17 @@ public abstract class GameController {
                 Point2D d = Utils.closestPointOnPolygon(
                         epsilonModel.getAnchor(), enemyModel.getPointVertices());
                 if (Math.abs(d.distance(epsilonModel.getAnchor())) <= epsilonModel.getRadius()) {
+
                     for (VertexModel vertexModel : enemyModel.getVertices()) {
                         if (vertexModel.isCollectedByEpsilon()) {
+                            if (epsilonModel.isMelame()){
+                                if (random.nextInt(20) == 0) break; //%5 not hitting
+                            }
                             epsilonModel.gotHit(enemyModel.getMeleeAttackHp());
                             break;
                         }
                     }
+                    if (epsilonModel.isAstrapper()) enemyModel.gotHit(2);
                     impact(epsilonModel, enemyModel);
                     break;
                 }
@@ -549,21 +554,45 @@ public abstract class GameController {
                 case Ares -> {
                     BulletModel.setAttackHp(BULLET_ATTACK_HP + 2);
                 }
+                case Astrape -> {
+                    EpsilonModel.getINSTANCE().setAstrapper(true);
+                }
+                case Cerberus -> {
+                    //TODO
+                }
                 case Aceso -> {
                     if (now - Writ.getInitSeconds() >= Writ.getTimes() && Writ.getTimes() < 10) {
                         EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp() + 1);
                         Writ.timesAddIncrement();
                     }
                 }
+                case Melampus -> {
+                    EpsilonModel.getINSTANCE().setMelame(true);
+                }
+                case Chiron -> {
+                    EpsilonModel.getINSTANCE().setChironner(true);
+                }
+
                 case Proteus -> {
                     if (Writ.getTimes() < Writ.getAcceptedClicks()) {
                         EpsilonModel.getINSTANCE().spawnVertex();
                         Writ.timesAddIncrement();
                     }
                 }
+                case Empusa -> {
+                    EpsilonModel.getINSTANCE().setRadius((int) (EPSILON_RADIUS*0.9));
+                }
+                case Dolus -> {
+                    //todo
+                }
             }
         } else {
-            BulletModel.setAttackHp(BULLET_ATTACK_HP + 2);
+            BulletModel.setAttackHp(BULLET_ATTACK_HP /*+ 2*/);
+            EpsilonModel.getINSTANCE().setAstrapper(false);
+            EpsilonModel.getINSTANCE().setMelame(false);
+            EpsilonModel.getINSTANCE().setChironner(false);
+            EpsilonModel.getINSTANCE().setRadius(EPSILON_RADIUS);
+
         }
     }
 

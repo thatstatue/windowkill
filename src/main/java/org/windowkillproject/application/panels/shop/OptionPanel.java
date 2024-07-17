@@ -30,6 +30,10 @@ public class OptionPanel extends Panel {
     public void setPurchased(boolean purchased) {
         selectButton.setPurchased(purchased);
     }
+    public boolean isPurchased() {
+         return selectButton.isPurchased();
+    }
+
 
 
     public OptionPanel(SpecialtyName specialtyName, int xpAmount, BufferedImage img) {
@@ -41,7 +45,7 @@ public class OptionPanel extends Panel {
         this.xpAmount.setText("xp : " + xpAmount);
         selectButton.setXpAmount(xpAmount);
         selectButton.setSpecialtyName(specialtyName);
-        this.imgDisplay.setIcon(new ImageIcon(img));
+//        this.imgDisplay.setIcon(new ImageIcon(img));
 
     }
 
@@ -57,15 +61,14 @@ public class OptionPanel extends Panel {
         xpAmount = new JLabel();
         xpAmount.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         xpAmount.setForeground(Color.green);
-        xpAmount.setBounds(160, 60, OPTION_WIDTH, 20);
+        xpAmount.setBounds(160, 50, OPTION_WIDTH, 20);
         components.add(xpAmount);
-
-        imgDisplay = new JLabel();
-        imgDisplay.setBounds(40, 80, OPTION_WIDTH, OPTION_IMG_HEIGHT);
-        components.add(imgDisplay);
-
+//
+//        imgDisplay = new JLabel();
+//        imgDisplay.setBounds(40, 80, OPTION_WIDTH, OPTION_IMG_HEIGHT);
+//        components.add(imgDisplay);
         selectButton = new SelectButton("PURCHASE");
-        selectButton.setBounds(70, 330, 150, 50);
+        selectButton.setBounds(70, 80, 150, 50);
 
         components.add(selectButton);
         return components;
@@ -77,7 +80,17 @@ public class OptionPanel extends Panel {
         Heal("O' Apollo، Heal"),
         Ares("Writ of Ares"),
         Aceso("Writ of Aceso"),
-        Proteus("Writ of Proteus");
+        Proteus("Writ of Proteus"),
+        Astrape("Writ of Astrape"),
+        Cerberus("Writ of Cerberus"),
+        Melampus("Writ of Melampus"),
+        Chiron("Writ of Chiron"),
+        Empusa("Writ of Empusa"),
+        Dolus("Writ of Dolus"),
+        Deimos("O’ Deimos, Dismay"),
+        Hypnos("O’ Hypnos, Slumber"),
+        Slaughter("O’ Phonoi, Slaughter");
+
         private final String displayName;
 
         SpecialtyName(String displayName) {

@@ -61,6 +61,7 @@ public class SelectButton extends JButton {
     private void setSelectButtonListener() {
         addActionListener(e -> {
             setEnabled(false);
+            if (isUnlocked()){
             if (!isPurchased()) {
                 int result = showPurchasePopUP();
                 if (result == JOptionPane.OK_OPTION) {
@@ -80,22 +81,60 @@ public class SelectButton extends JButton {
             } else {
                 setOn(!on);
                 setWrit();
+            }}else{
+                JOptionPane.showMessageDialog(null,
+                        "you haven't unlocked this specialty yet");
             }
             setEnabled(true);
         });
     }
 
+    private boolean isUnlocked(){
+        //attack
+        if(specialtyName.equals(Astrape)||specialtyName.equals(Cerberus)){
+            if (!ares.isPurchased()) return false;
+            if (specialtyName.equals(Cerberus)) {
+                return astrape.isPurchased();
+            }
+        }
+
+        //defence
+        if(specialtyName.equals(Melampus)||specialtyName.equals(Chiron)){
+            if (!aceso.isPurchased()) return false;
+            if (specialtyName.equals(Chiron)) {
+                return melampus.isPurchased();
+            }
+        }
+
+        //morph
+        if(specialtyName.equals(Empusa)||specialtyName.equals(Dolus)){
+            if (!proteus.isPurchased()) return false;
+            if (specialtyName.equals(Dolus)) {
+                return empusa.isPurchased();
+            }
+        }
+        return true;
+    }
     private void setWrit() {
         if (specialtyName != null && (specialtyName.equals(Ares) || specialtyName.equals(Aceso)
                 || specialtyName.equals(Proteus))) {
             if (on) {
                 if (Writ.getChosenSkill() != null) {
-                    ares.setOn(false);
-                    aceso.setOn(false);
-                    proteus.setOn(false);
+                    for (int i = 0; i < 9; i++){
+                        skills[i].setOn(false);
+                    }
                     if (specialtyName.equals(Ares)) ares.setOn(true);
-                    if (specialtyName.equals(Aceso)) aceso.setOn(true);
+                    if (specialtyName.equals(Astrape)) astrape.setOn(true);
+                    if (specialtyName.equals(Cerberus)) cerberus.setOn(true);
+
                     if (specialtyName.equals(Proteus)) proteus.setOn(true);
+                    if (specialtyName.equals(Empusa)) empusa.setOn(true);
+                    if (specialtyName.equals(Dolus)) dolus.setOn(true);
+
+                    if (specialtyName.equals(Aceso)) aceso.setOn(true);
+                    if (specialtyName.equals(Melampus)) melampus.setOn(true);
+                    if (specialtyName.equals(Chiron)) chiron.setOn(true);
+
                 }
                 Writ.setChosenSkill(specialtyName);
             } else Writ.setChosenSkill(null);

@@ -15,6 +15,31 @@ import static org.windowkillproject.controller.Controller.createEntityView;
 
 public class EpsilonModel extends EntityModel {
     private static EpsilonModel INSTANCE;
+    private boolean astrapper, melame, chironner;
+
+    public boolean isChironner() {
+        return chironner;
+    }
+
+    public void setChironner(boolean chironner) {
+        this.chironner = chironner;
+    }
+
+    public boolean isMelame() {
+        return melame;
+    }
+
+    public void setMelame(boolean melame) {
+        this.melame = melame;
+    }
+
+    public boolean isAstrapper() {
+        return astrapper;
+    }
+
+    public void setAstrapper(boolean astrapper) {
+        this.astrapper = astrapper;
+    }
 
     public static EpsilonModel getINSTANCE() {
 
