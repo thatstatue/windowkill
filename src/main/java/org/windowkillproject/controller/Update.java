@@ -11,6 +11,7 @@ import org.windowkillproject.view.entities.EntityView;
 
 import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
@@ -40,7 +41,7 @@ public class Update {
         new Wave();
     }
 
-    public void updateView() {
+    public static void updateView() {
 
         for (int i = 0; i < abilityViews.size(); i++) {
             AbilityView abilityView = abilityViews.get(i);

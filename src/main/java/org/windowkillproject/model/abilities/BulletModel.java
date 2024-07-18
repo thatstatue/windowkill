@@ -69,13 +69,14 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void isFrameShot() {
-        Area area = getAllowedArea();
-        System.out.println(area.getBounds());
+//        Area area = getAllowedArea();
+//        System.out.println(area.getBounds());
         Area epsilonArea = EpsilonModel.getINSTANCE().getAllowedArea();
-        area.subtract(epsilonArea);
-        if (area.isEmpty()) area = epsilonArea;
-        else area = getAllowedArea();
-        if (!area.contains(getX(), getY())) {
+//        area.subtract(epsilonArea);
+//        if (area.isEmpty()) area = epsilonArea;
+//        else area = getAllowedArea();
+
+        if (!epsilonArea.contains(getX(), getY())) {
             var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(), getY()));
 
             hit(gamePanelCorner.gamePanel(), gamePanelCorner.corner());

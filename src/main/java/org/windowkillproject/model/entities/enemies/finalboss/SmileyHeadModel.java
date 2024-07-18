@@ -194,10 +194,9 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
                 instance.goRoundEpsilon();
                 rightHandModel.projectile();
                 leftHandModel.projectile();
-                if(!headUpper){
-                    rightHandModel.move(0 , 2*HAND_SPEED);
-                    leftHandModel.move(0, 2*HAND_SPEED);
-                }
+//                if(!headUpper){
+//                    instance.move(0 , -2*HAND_SPEED);
+//                }
             }
         }
     }
@@ -221,14 +220,14 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
         leftHandModel.squeeze();
     }
 
-    private double rotationSpeed = UNIT_DEGREE / 3;
+    private double rotationSpeed = UNIT_DEGREE / 2;
 
     private void goRoundEpsilon() {
         var epsilonModel = EpsilonModel.getINSTANCE();
         double degree = Math.atan2(this.getYO() - epsilonModel.getYO(), this.getXO() - epsilonModel.getXO());
         degree += rotationSpeed;
-        int finalX = epsilonModel.getXO() + (int) (WYRM_DISTANCE * 0.8 * Math.cos(degree)) - getRadius();
-        int finalY = epsilonModel.getYO() + (int) (WYRM_DISTANCE * 0.8 * Math.sin(degree)) - getRadius();
+        int finalX = epsilonModel.getXO() + (int) (WYRM_DISTANCE * 1.2 * Math.cos(degree)) - getRadius();
+        int finalY = epsilonModel.getYO() + (int) (WYRM_DISTANCE * 1.2 * Math.sin(degree)) - getRadius();
         move(finalX - getX(), finalY - getY());
     }
     private void attack(){

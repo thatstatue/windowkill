@@ -4,17 +4,29 @@ import org.windowkillproject.application.panels.game.GamePanel;
 
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
 
-public abstract class ObjectModel implements Drawable {
+public abstract class ObjectModel implements Drawable, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     protected int x, y;
     protected String id;
-
+    public static ArrayList<ObjectModel> objectModels = new ArrayList<>();
 
     protected Point2D anchor;
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject(); // Serialize the serializable fields
+    }
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject(); // Deserialize the serializable fields
+    }
 
-
-    private Area allowedArea = new Area();
+        private Area allowedArea = new Area();
 
     public Area getAllowedArea() {
         return allowedArea;
@@ -49,6 +61,7 @@ public abstract class ObjectModel implements Drawable {
         this.x = x;
         this.y = y;
         this.localPanel = localPanel;
+        objectModels.add(this);
 
         this.id = UUID.randomUUID().toString();
         anchor = new Point2D.Double(x, y);

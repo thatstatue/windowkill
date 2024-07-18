@@ -2,9 +2,15 @@ package org.windowkillproject.model;
 
 import org.windowkillproject.application.panels.shop.OptionPanel;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 
-public abstract class Writ {
+public abstract class Writ implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
     private static OptionPanel.SpecialtyName chosenSkill;
     private static long initSeconds = Long.MIN_VALUE;
     private static int times, acceptedClicks;

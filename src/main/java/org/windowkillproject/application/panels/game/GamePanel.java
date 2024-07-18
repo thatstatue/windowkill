@@ -10,6 +10,8 @@ import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,9 @@ import static org.windowkillproject.controller.Utils.getSign;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
-public abstract class GamePanel extends Panel {
+public abstract class GamePanel extends Panel implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public void setFlexible(boolean flexible) {
         this.flexible = flexible;
@@ -243,7 +247,7 @@ public abstract class GamePanel extends Panel {
 
     public void shrinkFast() {
         if (exploding) {
-            EpsilonModel.getINSTANCE().setRadius(0);
+            entityModels.remove(EpsilonModel.getINSTANCE());
             GAME_MIN_SIZE = 10;
         }
         Timer shrinkFastTimer = new Timer(1, null);
@@ -269,7 +273,6 @@ public abstract class GamePanel extends Panel {
             } else {
                 if (exploding) {
                     setVisible(false);
-                    EpsilonModel.getINSTANCE().setRadius(EPSILON_RADIUS);
                     GAME_MIN_SIZE = 250;
                     Application.startGame(1);
                 }

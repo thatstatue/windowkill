@@ -116,6 +116,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     }
 
     public void destroy() {
+        objectModels.remove(this);
         entityModels.remove(this);
     }
 

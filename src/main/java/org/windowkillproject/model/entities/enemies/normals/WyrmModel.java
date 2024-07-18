@@ -18,10 +18,17 @@ import java.awt.geom.Point2D;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Controller.deleteGamePanel;
+import static org.windowkillproject.controller.Utils.getSign;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
 public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable, Circular {
-     public WyrmModel(int x, int y) {
+    private static int count;
+
+    public static int getCount() {
+        return count;
+    }
+
+    public WyrmModel(int x, int y) {
         super(null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
          setLocalPanel(new InternalGamePanel(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3,
                  PanelStatus.isometric , true
@@ -29,7 +36,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
          initVertices();
          initPolygon();
          createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
-
+         count++;
      }
 
     private long lastShot;
@@ -58,6 +65,10 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
     public void setMinusRotationSpeed() {
         this.rotationSpeed = -rotationSpeed;
     }
+    public int getRotationSign() {
+        return getSign((int) rotationSpeed);
+    }
+
 
     private void goRoundEpsilon() {
         var epsilonModel = EpsilonModel.getINSTANCE();
@@ -77,6 +88,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
     public void destroy() {
         super.destroy();
         deleteGamePanel(getLocalPanel());
+        count--;
     }
 
 

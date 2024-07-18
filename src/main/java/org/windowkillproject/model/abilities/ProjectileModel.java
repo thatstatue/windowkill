@@ -73,10 +73,9 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private Point2D getPoint2D(boolean isTowardsEpsilon) {
-        final Point2D headedPoint;
-        headedPoint = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D headedPoint = EpsilonModel.getINSTANCE().getAnchor();
         if (!isTowardsEpsilon) {
-            headedPoint.setLocation(random.nextInt(CENTER_X*2),
+            headedPoint = new Point2D.Double(random.nextInt(CENTER_X*2),
                      random.nextInt(CENTER_Y*2));
         }
         return headedPoint;

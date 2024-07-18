@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 
 import static org.windowkillproject.application.Config.*;
+import static org.windowkillproject.controller.GameController.keepInPanel;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 import static org.windowkillproject.controller.Utils.localRoutePoint;
 
@@ -36,7 +37,6 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
         setTheta(0);
         if (!visible) {
             if (ElapsedTime.getTotalSeconds() - appearanceTimeEnd > 4) {
-                visible = true;
                 appearanceTimeStart = ElapsedTime.getTotalSeconds();
                 Point2D direction = Utils.unitVector(EpsilonModel.getINSTANCE().getAnchor(), getAnchor());
                 double distance = Utils.magnitude(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
@@ -47,18 +47,18 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
 //                if (vector.getY() < 8) moveY += 4 * EPSILON_RADIUS;
                 setLocalPanel(EpsilonModel.getINSTANCE().getLocalPanel());
                 move((int) moveX, (int) moveY);
-                System.out.println("just outta subtle");
             }
-            System.out.println("im subtle");
         } else {
-            System.out.println("im not subtle");
+            if (!EpsilonModel.getINSTANCE().getAllowedPanels().isEmpty()) {
+                var panel = EpsilonModel.getINSTANCE().getAllowedPanels().get(0);
+                if (panel != null) keepInPanel(this, panel);
+            }
             shoot();
             if (ElapsedTime.getTotalSeconds() - appearanceTimeStart > 8) {
                 visible = false;
                 appearanceTimeEnd = ElapsedTime.getTotalSeconds();
-                System.out.println("im subtle again");
             }
-        }
+        }//todo hide
 
     }
 
@@ -93,7 +93,7 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
     @Override
     public void shoot() {
         if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-//            new ProjectileModel(getLocalPanel(), this, 5, false, false, Color.gray, Color.darkGray).shoot();
+            new ProjectileModel(getLocalPanel(), this, 5, false, false, Color.gray, Color.darkGray).shoot();
             lastShot = ElapsedTime.getTotalSeconds();
         }
     }

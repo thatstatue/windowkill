@@ -10,6 +10,8 @@ import org.windowkillproject.application.panels.shop.SkillTreePanel;
 import org.windowkillproject.application.panels.etc.TutorialPanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Update;
+import org.windowkillproject.controller.data.GameSaveManager;
+import org.windowkillproject.controller.data.GameState;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.BulletModel;
@@ -20,12 +22,17 @@ import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 import org.windowkillproject.view.entities.enemies.minibosses.BlackOrbView;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.windowkillproject.application.Config.EPSILON_HP;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Update.*;
+import static org.windowkillproject.model.ObjectModel.objectModels;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
@@ -45,7 +52,15 @@ public class Application implements Runnable {
     private static SideFrame skillTreeFrame;
     private static SideFrame settingsFrame;
     private static SideFrame tutorialFrame;
+    private static GameState gameState;
 
+    public static GameState getGameState() {
+        return gameState;
+    }
+
+    public static void setGameState(GameState gameState) {
+        Application.gameState = gameState;
+    }
 
     public static SideFrame getSettingsFrame() {
         if (settingsFrame == null) settingsFrame = new SideFrame(SettingsPanel.class);
@@ -65,7 +80,6 @@ public class Application implements Runnable {
 
     public static GameFrame getGameFrame() {
         if (gameFrame == null) gameFrame = new GameFrame();
-//        gameFrame.add(gameFrame.getMainGamePanel());
         return gameFrame;
     }
 
@@ -129,18 +143,14 @@ public class Application implements Runnable {
             e.printStackTrace();
         }
         resetGame();
+//        loadOrNewGame();
         initGFrame();
         new Update();
     }
 
     public static void startGame(int t) {//doesn't reset time
-        nextLevel();
         initGFrame();
-
-    }
-
-    private static void initIGFrame() {
-
+        nextLevel();
     }
 
     public static void initGFrame() {
@@ -149,7 +159,6 @@ public class Application implements Runnable {
         gameFrame.setVisible(true);
         getGameFrame().initLabels();
         getGameFrame().shrinkFast();
-//        new InternalGameFrame(new Rectangle(100,100,300,300), PanelStatus.isometric);
 
     }
 
@@ -196,13 +205,21 @@ public class Application implements Runnable {
         nextLevel();
         EpsilonModel.getINSTANCE().setHp(EPSILON_HP);
         Writ.resetInitSeconds();
+
         Config.GAME_MIN_SIZE = 250;
+        gamePanelsBounds = new HashMap<>();
+        gamePanels = new ArrayList<>();
+
+        waveReset();
+        ElapsedTime.resetTime();
+
+    }
+
+    private static void waveReset() {
         Wave.waves.clear();
         Wave.setLevel(0);
         Wave.setStartNewWave(false);
         Wave.setBetweenWaves(true);
-        ElapsedTime.resetTime();
-
     }
 
     public static void nextLevel() {
@@ -226,5 +243,42 @@ public class Application implements Runnable {
 
     }
 
+    public static void checkpointSave() {//todo
+        GameSaveManager.saveGameState(gameState);
+    }
+
+    public static void loadOrNewGame() {
+        GameState savedState = GameSaveManager.loadGameState();
+        if (savedState != null) {
+            boolean continueGame = promptUserToContinue();
+            if (continueGame) {
+                gameState = savedState;
+                showGameStateForFewSeconds(gameState);
+            } else {
+                GameSaveManager.deleteSaveFile();
+                gameState = new GameState(objectModels, gamePanels, gamePanelsBounds);
+            }
+        } else {
+           gameState = new GameState(objectModels, gamePanels, gamePanelsBounds);
+        }
+    }
+
+    private static boolean promptUserToContinue() {
+        return JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(null,
+                "you have a pre-saved game, wanna continue that?"
+        );
+    }
+
+    private static void showGameStateForFewSeconds(GameState gameState) {
+        objectModels = gameState.getObjectModels();
+        gamePanels = gameState.getGamePanels();
+        gamePanelsBounds = gameState.getGamePanelsBounds();
+        Update.updateView();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

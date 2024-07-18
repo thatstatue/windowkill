@@ -147,7 +147,16 @@ public abstract class GameController {
         if (entityModel instanceof WyrmModel) ((WyrmModel) entityModel).setMinusRotationSpeed();
         if (enemyModel instanceof WyrmModel) ((WyrmModel) enemyModel).setMinusRotationSpeed();
         if ( entityModel instanceof WyrmModel&& enemyModel instanceof WyrmModel) {
-            for (int i = 0 ; i < 5; i++)entityModel.route();
+            var wyrm1 = (WyrmModel) entityModel;
+            var wyrm2 = (WyrmModel) enemyModel;
+            if(wyrm1.getRotationSign() == wyrm2.getRotationSign() ){
+                wyrm1.setMinusRotationSpeed();
+            }else{
+                for (int i = 0 ; i< 5; i++){
+                    wyrm1.route();
+                    wyrm2.route();
+                }
+            }
         }
 
 
@@ -472,11 +481,9 @@ public abstract class GameController {
         }
     }
 
-
-    public static void keepInPanel(GamePanel panel) {
-        var epsilonModel = EpsilonModel.getINSTANCE();
-        int endX = epsilonModel.getXO() + epsilonModel.getRadius();
-        int endY = epsilonModel.getYO() + epsilonModel.getRadius();
+    public static void keepInPanel(EntityModel entityModel, GamePanel panel){
+        int endX = entityModel.getXO() + entityModel.getRadius();
+        int endY = entityModel.getYO() + entityModel.getRadius();
 
         var localPanelBounds = gamePanelsBounds.get(panel);
         int localPanelX = localPanelBounds.x;
@@ -486,20 +493,24 @@ public abstract class GameController {
 
         if (endY > endOfLocalPanelY) {
             int deltaY = endOfLocalPanelY - endY;
-            epsilonModel.move(0, deltaY);
+            entityModel.move(0, deltaY);
         }
         if (endX > endOfLocalPanelX) {
             int deltaX = endOfLocalPanelX - endX;
-            epsilonModel.move(deltaX, 0);
+            entityModel.move(deltaX, 0);
         }
-        if (epsilonModel.getY() < localPanelY) {
-            int deltaY = localPanelY - epsilonModel.getY();
-            epsilonModel.move(0, deltaY);
+        if (entityModel.getY() < localPanelY) {
+            int deltaY = localPanelY - entityModel.getY();
+            entityModel.move(0, deltaY);
         }
-        if (epsilonModel.getX() < localPanelX) {
-            int deltaX = localPanelX - epsilonModel.getX();
-            epsilonModel.move(deltaX, 0);
+        if (entityModel.getX() < localPanelX) {
+            int deltaX = localPanelX - entityModel.getX();
+            entityModel.move(deltaX, 0);
         }
+    }
+
+    public static void keepInPanel(GamePanel panel) {
+        keepInPanel(EpsilonModel.getINSTANCE(), panel);
     }
 
     public static void epsilonIntersectionControl() {
@@ -549,38 +560,39 @@ public abstract class GameController {
 
     public static void writControl() {
         long now = getTotalSeconds();
+        var epsilon = EpsilonModel.getINSTANCE();
         if (Writ.getInitSeconds() > 0 && now - Writ.getInitSeconds() <= WRIT_DURATION) {
             switch (Writ.getChosenSkill()) {
                 case Ares -> {
                     BulletModel.setAttackHp(BULLET_ATTACK_HP + 2);
                 }
                 case Astrape -> {
-                    EpsilonModel.getINSTANCE().setAstrapper(true);
+                    epsilon.setAstrapper(true);
                 }
                 case Cerberus -> {
                     //TODO
                 }
                 case Aceso -> {
                     if (now - Writ.getInitSeconds() >= Writ.getTimes() && Writ.getTimes() < 10) {
-                        EpsilonModel.getINSTANCE().setHp(EpsilonModel.getINSTANCE().getHp() + 1);
+                        epsilon.setHp(EpsilonModel.getINSTANCE().getHp() + 1);
                         Writ.timesAddIncrement();
                     }
                 }
                 case Melampus -> {
-                    EpsilonModel.getINSTANCE().setMelame(true);
+                    epsilon.setMelame(true);
                 }
                 case Chiron -> {
-                    EpsilonModel.getINSTANCE().setChironner(true);
+                    epsilon.setChironner(true);
                 }
 
                 case Proteus -> {
                     if (Writ.getTimes() < Writ.getAcceptedClicks()) {
-                        EpsilonModel.getINSTANCE().spawnVertex();
+                        epsilon.spawnVertex();
                         Writ.timesAddIncrement();
                     }
                 }
                 case Empusa -> {
-                    EpsilonModel.getINSTANCE().setRadius((int) (EPSILON_RADIUS*0.9));
+                    epsilon.setRadius((int) (EPSILON_RADIUS*0.9));
                 }
                 case Dolus -> {
                     //todo
@@ -588,10 +600,11 @@ public abstract class GameController {
             }
         } else {
             BulletModel.setAttackHp(BULLET_ATTACK_HP /*+ 2*/);
-            EpsilonModel.getINSTANCE().setAstrapper(false);
-            EpsilonModel.getINSTANCE().setMelame(false);
-            EpsilonModel.getINSTANCE().setChironner(false);
-            EpsilonModel.getINSTANCE().setRadius(EPSILON_RADIUS);
+            epsilon.setAstrapper(false);
+            epsilon.setMelame(false);
+            epsilon.setChironner(false);
+            if (epsilon.getRadius()<EPSILON_RADIUS)
+                epsilon.setRadius(EPSILON_RADIUS);
 
         }
     }

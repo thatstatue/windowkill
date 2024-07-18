@@ -22,6 +22,7 @@ import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Controller.deleteGamePanel;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
+import static org.windowkillproject.controller.Utils.magnitude;
 
 public class HandModel extends EnemyModel implements ProjectileOperator, NonRotatable {
     private static ArrayList<HandModel> hands = new ArrayList<>();
@@ -52,6 +53,12 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
 //                var routePoint = otherHand.getRoutePoint();
 //                move((int) routePoint.getX(), (int) routePoint.getY());
 //            }else {
+            var main = MainGamePanel.getInstance();
+            Point2D panelLeft = new Point2D.Double(main.getX()-2, main.getY()+main.getHeight()/2D);
+            Point2D panelRight = new Point2D.Double(main.getX()+main.getWidth()+2, main.getY()+main.getHeight()/2D);
+
+            if(this instanceof RightHandModel && getAnchor().distance(panelRight)> getRadius()+3 ||
+                    this instanceof LeftHandModel && getAnchor().distance(panelLeft) > getRadius()+3)
                 move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
 //            }
         }
@@ -104,7 +111,7 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
         int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
         int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
         var bounds = gamePanelsBounds.get(MainGamePanel.getInstance());
-        int goX = bounds.x - panelWidth;
+        int goX = bounds.x - panelWidth -15;
         if (this instanceof RightHandModel)
             goX += bounds.width + panelWidth + 15;
 
