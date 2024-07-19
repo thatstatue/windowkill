@@ -24,7 +24,7 @@ public class Config {
     public static final int FPS = 35;
     public static final int UPS = 60;
     public static final int WAVE_LOOP = 5 * 1000;
-    public static int EPSILON_HP = 1000;
+    public static int EPSILON_HP = 100;
     public static int ENEMY_RADIUS = 20;
     public static int HAND_RADIUS = 50;
     public static int WYRM_RADIUS = 70;
@@ -70,7 +70,7 @@ public class Config {
     public static final int WRIT_DURATION = 15;
     public static final int WRIT_COOL_DOWN_SECONDS = 5*60;
 
-
+    public static final String LOCK = "jshehkf*#&e^278";
     public static final int BULLET_ATTACK_HP = 5;
     public static final int DOWN_CODE = 1;
     public static final int UP_CODE = 0;

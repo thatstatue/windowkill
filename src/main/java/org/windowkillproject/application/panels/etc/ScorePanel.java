@@ -19,7 +19,7 @@ public class ScorePanel extends Panel {
     private final JLabel score = new JLabel("   << GAME OVER! >>  ");
 
     private JLabel[] labels = new JLabel[]{
-            score,clock,xp,enemy,wave
+            score,clock,xp,enemy,wave,new JLabel()
     };
 
     public ScorePanel(JLabel[] jLabels, boolean won){
@@ -28,7 +28,7 @@ public class ScorePanel extends Panel {
         setPreferredSize(new Dimension((int) (GAME_WIDTH*0.7), (int) (GAME_HEIGHT*0.7)));
         setLabels(jLabels);
         if (won) score.setText("    << WINNER! >>   ");
-        labels = new JLabel[]{score,clock,xp,enemy,wave};
+        labels = new JLabel[]{score,clock,xp,enemy,wave, new JLabel()};
         ArrayList<Component> components =new ArrayList<>(List.of(labels));
         components.add(buttonMaker("Menu", 150, 320, e -> initPFrame()));
         setComponents(components);

@@ -48,7 +48,7 @@ public class EpsilonModel extends EntityModel {
     }
 
     public static void newINSTANCE() {
-        int xp = 0, hp = EPSILON_HP;
+        int xp = 10000, hp = EPSILON_HP;
         if (INSTANCE != null) {
             xp = INSTANCE.getXp();
             hp = INSTANCE.getHp();
@@ -70,7 +70,7 @@ public class EpsilonModel extends EntityModel {
     }
 
     public void route() {
-        EpsilonModel eM = getINSTANCE();//todo getGameFrame().getWidth()
+        EpsilonModel eM = getINSTANCE();
 
         int endX = eM.getWidth() + eM.getX();
         int endY = eM.getHeight() + eM.getY();

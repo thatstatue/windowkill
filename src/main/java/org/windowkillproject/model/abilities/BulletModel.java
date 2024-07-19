@@ -28,7 +28,12 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     private static int attackHp = BULLET_ATTACK_HP;
     private final Point2D mousePoint;
 
+    private boolean slaughter;
     private ArrayList<GamePanel> allowedPanels = new ArrayList<>();
+
+    public void setSlaughter(boolean slaughter) {
+        this.slaughter = slaughter;
+    }
 
     public static void setAttackHp(int attackHp) {
         BulletModel.attackHp = attackHp;
@@ -94,7 +99,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     public void addToAllowedArea(GamePanel panel) {
         allowedPanels.add(panel);
         Area area = new Area(gamePanelsBounds.get(panel));
-        getAllowedArea().add(area); //todo daijovah?
+        getAllowedArea().add(area);
     }
 
     @Override
@@ -132,14 +137,16 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
             if (notHitVs && enemyModel.getPolygon() != null) {
                 Area enemyA = new Area(enemyModel.getPolygon());
                 if (enemyA.contains(this.getX(), this.getY())) {
-                    enemyModel.gotShot();
+                    if (slaughter) enemyModel.gotShot(50);
+                    else enemyModel.gotShot();
                     explode();
                     break;
                 }
             }
             if (enemyModel instanceof Circular) {
                 if (enemyModel.getAnchor().distance(new Point2D.Double(getX(), getY())) < enemyModel.getRadius()) {
-                    enemyModel.gotShot();
+                    if (slaughter) enemyModel.gotShot(50);
+                    else enemyModel.gotShot();
                     explode();
                     break;
                 }

@@ -87,9 +87,9 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     }
 
     @Override
-    public void gotShot() {
+    public void gotShot(int attackHP) {
         if (vulnerable) {
-            super.gotShot();
+            super.gotShot(attackHP);
         }
     }
 
@@ -241,7 +241,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
         }
     }
     private void quake(){
-        //todo
+        //
     }
     private void vomit(){
         if (!vomiting) {
@@ -282,7 +282,6 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
             timer.addActionListener(actionListener);
             timer.start();
         }
-//        todo
     }
     private void slap(){
         if(isHandFree()){

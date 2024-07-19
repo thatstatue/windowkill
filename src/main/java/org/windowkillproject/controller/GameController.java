@@ -4,16 +4,14 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Transferable;
+import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
-import org.windowkillproject.model.abilities.BulletModel;
-import org.windowkillproject.model.abilities.Projectable;
+import org.windowkillproject.model.abilities.*;
 import org.windowkillproject.model.entities.Circular;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.enemies.*;
 import org.windowkillproject.model.entities.enemies.attackstypes.*;
-import org.windowkillproject.model.abilities.MomentModel;
 import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
 import org.windowkillproject.model.entities.enemies.normals.ArchmireModel;
 import org.windowkillproject.model.entities.enemies.normals.WyrmModel;
@@ -27,7 +25,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.Application.*;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
@@ -38,6 +36,7 @@ import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
+import static org.windowkillproject.model.abilities.PortalModel.lastPortal;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.model.entities.enemies.normals.ArchmireModel.archmireModels;
 import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
@@ -122,6 +121,7 @@ public abstract class GameController {
         }
         return closestPointOfEnemy;
     }
+    public static int hoverAwayInitSeconds= -200, pauseInitSeconds = -2000;
 
     private static void collidedEntitiesImpact(EntityModel entityModel, EnemyModel enemyModel, Point2D p1, Point2D p2) {
         if ((p1.getX() * p2.getX() > 0) || (p1.getY() * p2.getY() > 0)) {
@@ -183,10 +183,8 @@ public abstract class GameController {
             if (count.get() < t) {
                 entityModel.setImpact(true);
                 entityModel.move((int) deltaS.getX(), (int) deltaS.getY());
-//                keepEpsilonInBounds();//todo prob
                 count.getAndIncrement();
             } else {
-//                keepEpsilonInBounds();
                 entityModel.setImpact(false);
                 impactTimer.stop();
             }
@@ -209,7 +207,6 @@ public abstract class GameController {
                         }
                     }
                 }
-//                keepEpsilonInBounds();todo prob
                 count.getAndIncrement();
             } else {
                 for (EntityModel entityModel : entityModels) {
@@ -217,7 +214,6 @@ public abstract class GameController {
                         entityModel.setImpact(false);
                     }
                 }
-//                keepEpsilonInBounds();
                 impactTimer.stop();
             }
         });
@@ -272,6 +268,15 @@ public abstract class GameController {
             }
         }
     }
+    private static boolean checkPointOn;
+
+    public static boolean isCheckPointOn() {
+        return checkPointOn;
+    }
+
+    public static void setCheckPointOn(boolean checkPointOn) {
+        GameController.checkPointOn = checkPointOn;
+    }
 
     public static void epsilonRewardControl() {
         for (int i = 0; i < collectableModels.size(); i++) {
@@ -286,6 +291,34 @@ public abstract class GameController {
                 collectableModel.destroy();
             }
         }
+        if (checkPointOn) {
+            if (secondsPassed(lastPortal.getInitSeconds()) >= 10) {
+                checkPointOn = false;
+                lastPortal.destroy();
+            }
+            var rect = new Rectangle(lastPortal.getX(),
+                    lastPortal.getY(),
+                    lastPortal.getWidth(),
+                    lastPortal.getHeight());
+            var eps = EpsilonModel.getINSTANCE();
+
+            if (isTransferableInBounds(eps, rect, false)) {
+                pauseUpdate();
+                int result = showPRPopUP();
+                int currentXP = eps.getXp();
+                if (result == JOptionPane.OK_OPTION){
+                    if (currentXP> getPR()){
+                        eps.setXp(currentXP - getPR());
+                        eps.setHp(eps.getHp()+10);
+                        checkpointSave();
+                    }
+                }else eps.setXp(currentXP+(getPR()/10));
+                checkPointOn = false;
+                lastPortal.destroy();
+                resumeUpdate();
+
+            }
+        }
     }
 
     private static void setTransferableBoundsAllowed() {
@@ -294,6 +327,11 @@ public abstract class GameController {
         }
         setEntitiesBoundsAllowed();
         setBulletsBoundsAllowed();
+    }
+    private static int showPRPopUP() {
+        return JOptionPane.showConfirmDialog(null,
+                "do you wanna save your progress rate?"
+        );
     }
 
     private static void setEntitiesBoundsAllowed() {
@@ -457,9 +495,7 @@ public abstract class GameController {
 
         Area allowedArea = epsilonModel.getAllowedArea();
         if (!isTransferableInBounds(epsilonModel, allowedArea, false)) {
-            if (epsilonModel.getLocalPanel() == null) {
-//                    keepInPanel(epsilonModel.getAllowedPanels().get(0));todo cant shrink local
-            } else {
+            if (epsilonModel.getLocalPanel() != null){
                 keepInPanel(epsilonModel.getLocalPanel());
             }
         }
@@ -472,9 +508,7 @@ public abstract class GameController {
             setTransferableLocalPanel(bulletModel);
             Area bulletAllowedArea = bulletModel.getAllowedArea();
             if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
-                if (bulletModel.getLocalPanel() == null) {
-//                    keepInPanel(bulletModel.getAllowedPanels().get(0));todo
-                } else {
+                if (bulletModel.getLocalPanel() != null) {
                     keepInPanel(bulletModel.getLocalPanel());
                 }
             }
@@ -570,7 +604,7 @@ public abstract class GameController {
                     epsilon.setAstrapper(true);
                 }
                 case Cerberus -> {
-                    //TODO
+                    //
                 }
                 case Aceso -> {
                     if (now - Writ.getInitSeconds() >= Writ.getTimes() && Writ.getTimes() < 10) {
@@ -595,7 +629,7 @@ public abstract class GameController {
                     epsilon.setRadius((int) (EPSILON_RADIUS*0.9));
                 }
                 case Dolus -> {
-                    //todo
+                    //
                 }
             }
         } else {
@@ -630,6 +664,18 @@ public abstract class GameController {
             epsilon.setHp(epsilon.getHp() + 10);
             heal.setOn(false);
             heal.setPurchased(false);
+        }
+        if (dismay.isOn()) {
+            hoverAwayInitSeconds = getTotalSeconds();
+            dismay.setOn(false);
+        }
+        if (slaughter.isOn()) {
+            if (getTotalSeconds() - hoverAwayInitSeconds > 10) ShotgunMouseListener.slaughter = true;
+            slaughter.setOn(false);
+        }
+        if (slumber.isOn()) {
+            if (getTotalSeconds() - pauseInitSeconds > 120) pauseInitSeconds = getTotalSeconds();
+            slumber.setOn(false);
         }
     }
 }

@@ -1,11 +1,8 @@
 package org.windowkillproject.application.panels.game;
 
 import org.windowkillproject.application.Application;
-import org.windowkillproject.application.Config;
 import org.windowkillproject.application.panels.Panel;
-import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,17 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.lang.Math.*;
 import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.application.Application.nextLevel;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.Config.FRAME_STRETCH_SPEED;
 import static org.windowkillproject.application.panels.game.PanelStatus.isometric;
 import static org.windowkillproject.application.panels.game.PanelStatus.shrinkable;
-import static org.windowkillproject.controller.GameController.keepInPanel;
-import static org.windowkillproject.controller.Utils.getSign;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
 public abstract class GamePanel extends Panel implements Serializable {
     @Serial
@@ -54,8 +46,10 @@ public abstract class GamePanel extends Panel implements Serializable {
         setBackground(Color.black);
         setFocusable(true);
         requestFocusInWindow();
-        gamePanels.add(this);
-        gamePanelsBounds.put(this, getBounds());
+        synchronized (LOCK) {
+            gamePanels.add(this);
+            gamePanelsBounds.put(this, getBounds());
+        }
         this.panelStatus = panelStatus;
         this.flexible = flexible;
 

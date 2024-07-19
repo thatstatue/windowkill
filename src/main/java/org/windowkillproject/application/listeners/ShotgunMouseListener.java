@@ -18,6 +18,7 @@ import static org.windowkillproject.controller.Utils.weighedVector;
 
 public class ShotgunMouseListener implements NativeMouseListener {
     public static long empowerInitSeconds = Long.MAX_VALUE;
+    public static boolean slaughter;
 
     public void nativeMouseClicked(NativeMouseEvent e) {
         if (getGameFrame().isVisible()&& !SmileyHeadModel.isAppearing()) {
@@ -32,7 +33,10 @@ public class ShotgunMouseListener implements NativeMouseListener {
             if (deltaT > 0 && deltaT <= 10) { //doesn't allow too many bullets
                 empowerBullets(epsilonModel, mouseLoc);
             }
-
+            if (slaughter) {
+                bulletModel.setSlaughter(true);
+                slaughter = false;
+            }
         }
     }
 

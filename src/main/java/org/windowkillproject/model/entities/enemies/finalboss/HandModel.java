@@ -32,7 +32,7 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
         setLocalPanel(new InternalGamePanel(x, y, HAND_RADIUS * 3, HAND_RADIUS * 3,
                 PanelStatus.isometric, true
         ));
-
+        setBgPanel((InternalGamePanel) getLocalPanel());
         initVertices();
         initPolygon();
         createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
@@ -44,15 +44,6 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
         if (hands.size() == 2) {
             setVulnerable(false);
             getLocalPanel().setFlexible(false);
-
-//            //handle hands vica-versa
-//            var otherHand = hands.get(0);
-//            if (otherHand.equals(this)) otherHand = hands.get(1);
-//            if (this instanceof LeftHandModel && getX()>otherHand.getX()+2*HAND_RADIUS
-//                    || this instanceof RightHandModel && otherHand.getX()+2*HAND_RADIUS>getX()){
-//                var routePoint = otherHand.getRoutePoint();
-//                move((int) routePoint.getX(), (int) routePoint.getY());
-//            }else {
             var main = MainGamePanel.getInstance();
             Point2D panelLeft = new Point2D.Double(main.getX()-2, main.getY()+main.getHeight()/2D);
             Point2D panelRight = new Point2D.Double(main.getX()+main.getWidth()+2, main.getY()+main.getHeight()/2D);
@@ -108,8 +99,8 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
 
     @Override
     public Point2D getRoutePoint() {
-        int panelWidth = gamePanelsBounds.get(getLocalPanel()).width;
-        int panelHeight = gamePanelsBounds.get(getLocalPanel()).height;
+        int panelWidth = gamePanelsBounds.get(getBgPanel()).width;
+        int panelHeight = gamePanelsBounds.get(getBgPanel()).height;
         var bounds = gamePanelsBounds.get(MainGamePanel.getInstance());
         int goX = bounds.x - panelWidth -15;
         if (this instanceof RightHandModel)
@@ -137,9 +128,9 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
     }
 
     @Override
-    public void gotShot() {
+    public void gotShot(int attackHP) {
         if (vulnerable) {
-            super.gotShot();
+            super.gotShot(attackHP);
         }
     }
 

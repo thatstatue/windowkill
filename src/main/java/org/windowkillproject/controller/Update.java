@@ -6,6 +6,8 @@ import javax.swing.*;
 import org.windowkillproject.application.panels.game.PanelStatus;
 import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.entities.EntityModel;
+import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
 import org.windowkillproject.view.abilities.AbilityView;
 import org.windowkillproject.view.entities.EntityView;
 
@@ -13,8 +15,10 @@ import static org.windowkillproject.application.Application.getGameFrame;
 import static org.windowkillproject.application.Config.*;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.Controller.setViewBounds;
+import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.GameController.*;
 import static org.windowkillproject.model.Wave.isBetweenWaves;
+import static org.windowkillproject.model.Wave.waveTimer;
 import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.model.abilities.ProjectileModel.projectileModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
@@ -69,7 +73,12 @@ public class Update {
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entityModel = entityModels.get(i);
             entityModel.rotate();
-            if (!entityModel.isImpact()) entityModel.route();
+            if (!entityModel.isImpact()) {
+                if (entityModel instanceof Hovering || entityModel instanceof EpsilonModel ||
+                        getTotalSeconds() - hoverAwayInitSeconds > 10) {
+                    entityModel.route();
+                }
+            }
         }
         for (int i = 0; i < bulletModels.size(); i++) {
             bulletModels.get(i).move();
@@ -86,8 +95,18 @@ public class Update {
         epsilonIntersectionControl();
         enemyIntersectionControl();
 
+        if (getTotalSeconds() - pauseInitSeconds < 12) {
+            if (getTotalSeconds() - pauseInitSeconds < 10) {
+                if (waveTimer.isRunning()) waveTimer.stop();
+            }else if (!waveTimer.isRunning()) {
+                waveTimer.start();
+                pauseInitSeconds = -200;
+            }
+
+        }
+
+
         keepTransferableInBounds();
-//        todo hideEntitiesOutsideBounds();
         if (Wave.isStartNewWave()) new Wave();
 
 

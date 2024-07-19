@@ -2,6 +2,8 @@ package org.windowkillproject.application.panels.game;
 
 import org.windowkillproject.application.Config;
 import org.windowkillproject.model.Wave;
+import org.windowkillproject.model.Writ;
+import org.windowkillproject.model.abilities.PortalModel;
 import org.windowkillproject.model.entities.EpsilonModel;
 
 import javax.swing.*;
@@ -11,7 +13,6 @@ import java.awt.geom.Point2D;
 import static java.awt.Toolkit.getDefaultToolkit;
 import static java.lang.Math.abs;
 import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
 import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesTotal;
 
 public class MainGamePanel extends GamePanel {
@@ -19,7 +20,10 @@ public class MainGamePanel extends GamePanel {
     private final JLabel xp = new JLabel("✦0");
     private final JLabel hp = new JLabel("100 ♡");
     private final JLabel wave = new JLabel("~1");
-//todo currentAbility and ON writ to be added
+    private final JLabel writ = new JLabel("");
+    private final JLabel ability = new JLabel("");
+
+
     private static MainGamePanel mainGamePanel;
     public static MainGamePanel newInstance(){
         gamePanels.remove(mainGamePanel);
@@ -43,7 +47,7 @@ public class MainGamePanel extends GamePanel {
 
     public JLabel[] getLabels() {
         return new JLabel[]{new JLabel(""), clock, xp
-                , new JLabel(String.valueOf(getKilledEnemiesTotal())), wave};
+                , new JLabel(String.valueOf(getKilledEnemiesTotal())), wave, writ};
     }
 
 
@@ -85,6 +89,12 @@ public class MainGamePanel extends GamePanel {
         wave.setForeground(Color.red);
         wave.setBounds(140, 1, 300, 20);
         this.add(wave);
+
+        writ.setText("^" + Writ.getChosenSkill());
+        writ.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+        writ.setForeground(Color.yellow);
+        writ.setBounds(1, 50, 300, 20);
+        this.add(writ);
 
     }
 

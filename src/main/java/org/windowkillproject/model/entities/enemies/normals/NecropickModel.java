@@ -58,8 +58,7 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
                 visible = false;
                 appearanceTimeEnd = ElapsedTime.getTotalSeconds();
             }
-        }//todo hide
-
+        }
     }
 
     @Override

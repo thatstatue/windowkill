@@ -85,7 +85,7 @@ public class SkillTreePanel extends Panel {
         ares.setBounds(60, 100, 270, 150);
         components.add(ares);
 
-        astrape = new OptionPanel(Astrape, 1000, ImgData.getData().getAres());//todo
+        astrape = new OptionPanel(Astrape, 1000, ImgData.getData().getAres());
         astrape.setBounds(60, 260, 270, 150);
         components.add(astrape);
 

@@ -13,6 +13,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import static org.windowkillproject.application.Config.LOCK;
 import static org.windowkillproject.application.Config.UNIT_DEGREE;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 
@@ -49,7 +50,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         return v;
     }
     private ArrayList<GamePanel> allowedPanels = new ArrayList<>();
-    private int radius, reduceCount, width, height;
+    private int radius, reduceCount;
 
     public ArrayList<GamePanel> getAllowedPanels() {
         return allowedPanels;
@@ -86,7 +87,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     public void addToAllowedArea(GamePanel panel){
         allowedPanels.add(panel);
         Area area = new Area(gamePanelsBounds.get(panel));
-        getAllowedArea().add(area); //todo daijovah?
+        getAllowedArea().add(area);
     }
     public int getMeleeAttackHp() {
         return meleeAttackHp;
@@ -108,15 +109,20 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         return new Area(new Rectangle(getX(),getY(),getWidth(),getHeight()));
     }
     public void gotShot(){
-        setHp(getHp() - BulletModel.getAttackHp());
+        gotShot(BulletModel.getAttackHp());
+    }
+    public void gotShot(int attackHP) {
+        setHp(getHp() - attackHP);
         if (getHp() <= 0) {
             setHp(0);
             destroy();
         }
     }
 
-    public void destroy() {
-        objectModels.remove(this);
+        public void destroy() {
+        synchronized (LOCK) {
+            objectModels.remove(this);
+        }
         entityModels.remove(this);
     }
 
@@ -158,21 +164,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         setRadius(radius);
     }
 
-    public int getWidth() {
-        return width;
-    }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
 
     public void move(int deltaX, int deltaY){
         moveX(deltaX);

@@ -1,6 +1,8 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.model.Transferable;
+import org.windowkillproject.model.Wave;
+import org.windowkillproject.model.entities.EpsilonModel;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -149,6 +151,10 @@ public abstract class Utils {
         return !partly;
     }
 
+    public static int getPR(){
+        var eps = EpsilonModel.getINSTANCE();
+        return 10*eps.getXp()* Wave.getLevel()*ElapsedTime.getTotalSeconds()/eps.getHp();
+    }
     public static boolean isTransferableInBounds(Transferable transferable, Rectangle area, boolean partly){
         int left = transferable.getX();
         int right = left + transferable.getWidth();

@@ -2,6 +2,7 @@ package org.windowkillproject.controller;
 
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Drawable;
+import org.windowkillproject.model.ObjectModel;
 import org.windowkillproject.model.abilities.*;
 import org.windowkillproject.model.entities.EntityModel;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -33,6 +34,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.windowkillproject.application.Application.getGameFrame;
+import static org.windowkillproject.application.Config.LOCK;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
@@ -40,6 +42,12 @@ import static org.windowkillproject.model.entities.EntityModel.entityModels;
 
 
 public abstract class Controller {
+
+    public static <T extends ObjectView> void createObjectView(String id, int x, int y, int width, int height){
+        ObjectModel objectModel = findModel(id);
+        if (objectModel instanceof EntityModel) createEntityView(id, x, y, width, height);
+        else createAbilityView(id,x, y);
+    }
 
     public static <T extends EntityView> void createEntityView(String id, int x, int y, int width, int height) {
         EntityModel entityModel = findModel(id);
@@ -131,6 +139,8 @@ public abstract class Controller {
             abilityViewCls = ProjectileView.class;
         } else if (abilityModel instanceof MomentModel) {
             abilityViewCls = MomentView.class;
+        }else if (abilityModel instanceof PortalModel){
+            abilityViewCls = PortalView.class;
         }
         return abilityViewCls;
     }
@@ -195,8 +205,10 @@ public abstract class Controller {
     }
     public static void deleteGamePanel(GamePanel gamePanel) {
         if (gamePanel!=null) {
-            gamePanelsBounds.remove(gamePanel);
-            gamePanels.remove(gamePanel);
+            synchronized (LOCK) {
+                gamePanelsBounds.remove(gamePanel);
+                gamePanels.remove(gamePanel);
+            }
             gamePanel.setEnabled(false);
             getGameFrame().getLayeredPane().remove(gamePanel);
         }

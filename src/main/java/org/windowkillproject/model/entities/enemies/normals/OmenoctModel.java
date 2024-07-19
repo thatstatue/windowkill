@@ -4,6 +4,7 @@ package org.windowkillproject.model.entities.enemies.normals;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Utils;
+import org.windowkillproject.model.abilities.BulletModel;
 import org.windowkillproject.model.abilities.ProjectileModel;
 import org.windowkillproject.model.abilities.VertexModel;
 import org.windowkillproject.model.entities.EpsilonModel;
@@ -60,7 +61,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     }
 
     public void hitWall(int code) {
-        if (code == edgeCode) gotShot();
+        if (code == edgeCode) gotShot(BulletModel.getAttackHp());
     }
 
     private Point2D goToNearestEdge() {

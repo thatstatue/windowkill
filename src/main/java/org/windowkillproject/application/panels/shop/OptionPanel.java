@@ -78,6 +78,12 @@ public class OptionPanel extends Panel {
         Banish("O' Hephaestus، Banish"),
         Empower("O’ Athena، Empower"),
         Heal("O' Apollo، Heal"),
+        Dismay("O' Demios, Dismay"),
+        Slumber("O' Hypnos، Slumber"),
+        Slaughter("O' Phonoi، Slaughter"),
+
+
+
         Ares("Writ of Ares"),
         Aceso("Writ of Aceso"),
         Proteus("Writ of Proteus"),
@@ -86,10 +92,8 @@ public class OptionPanel extends Panel {
         Melampus("Writ of Melampus"),
         Chiron("Writ of Chiron"),
         Empusa("Writ of Empusa"),
-        Dolus("Writ of Dolus"),
-        Deimos("O’ Deimos, Dismay"),
-        Hypnos("O’ Hypnos, Slumber"),
-        Slaughter("O’ Phonoi, Slaughter");
+        Dolus("Writ of Dolus");
+
 
         private final String displayName;
 

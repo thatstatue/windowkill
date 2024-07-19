@@ -29,16 +29,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.windowkillproject.application.Config.EPSILON_HP;
+import static org.windowkillproject.application.Config.LOCK;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
 import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
+import static org.windowkillproject.controller.Controller.createObjectView;
 import static org.windowkillproject.controller.Update.*;
 import static org.windowkillproject.model.ObjectModel.objectModels;
+import static org.windowkillproject.model.Wave.waveTimer;
 import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
 import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesTotal;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.*;
+import static org.windowkillproject.model.entities.enemies.EnemyModel.getKilledEnemiesTotal;
 import static org.windowkillproject.model.entities.enemies.normals.ArchmireModel.archmireModels;
-import static org.windowkillproject.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
 import static org.windowkillproject.model.entities.enemies.normals.OmenoctModel.omenoctModels;
 import static org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel.barricadosModels;
 
@@ -55,6 +58,7 @@ public class Application implements Runnable {
     private static GameState gameState;
 
     public static GameState getGameState() {
+        System.out.println(gameState.getObjectModels().size() + "  -   -   "+ gameState.getObjectModels().getLast().getId());
         return gameState;
     }
 
@@ -117,7 +121,7 @@ public class Application implements Runnable {
     }
 
     public static void initScoreFrame(boolean won) {
-
+        GameSaveManager.deleteSaveFile();
         getGameFrame().setVisible(false);
         scoreFrame = new ScoreFrame(gameFrame.getLabels(), won);
         pauseUpdate();
@@ -143,7 +147,7 @@ public class Application implements Runnable {
             e.printStackTrace();
         }
         resetGame();
-//        loadOrNewGame();
+        loadOrNewGame();
         initGFrame();
         new Update();
     }
@@ -179,6 +183,7 @@ public class Application implements Runnable {
         modelUpdateTimer.stop();
         frameUpdateTimer.stop();
         emptyPanelEraser.stop();
+        waveTimer.stop();
         ElapsedTime.pause();
 
     }
@@ -187,11 +192,16 @@ public class Application implements Runnable {
         getShopFrame().setVisible(false);
         getGameFrame().setVisible(true);
 
+        resumeUpdate();
+
+    }
+
+    public static void resumeUpdate() {
         ElapsedTime.resume();
         modelUpdateTimer.start();
         frameUpdateTimer.start();
         emptyPanelEraser.start();
-
+        waveTimer.start();
     }
 
     public static void showSettings() {
@@ -243,7 +253,7 @@ public class Application implements Runnable {
 
     }
 
-    public static void checkpointSave() {//todo
+    public static void checkpointSave() {
         GameSaveManager.saveGameState(gameState);
     }
 
@@ -253,13 +263,15 @@ public class Application implements Runnable {
             boolean continueGame = promptUserToContinue();
             if (continueGame) {
                 gameState = savedState;
-                showGameStateForFewSeconds(gameState);
+                pauseOnGameState(gameState);
             } else {
                 GameSaveManager.deleteSaveFile();
-                gameState = new GameState(objectModels, gamePanels, gamePanelsBounds);
+                gameState = new GameState(objectModels, gamePanels, gamePanelsBounds, Wave.getLevel(),
+                        getKilledEnemiesInWave(), getKilledEnemiesTotal());
             }
         } else {
-           gameState = new GameState(objectModels, gamePanels, gamePanelsBounds);
+           gameState = new GameState(objectModels, gamePanels, gamePanelsBounds, Wave.getLevel(),
+                   getKilledEnemiesInWave(), getKilledEnemiesTotal());
         }
     }
 
@@ -269,16 +281,30 @@ public class Application implements Runnable {
         );
     }
 
-    private static void showGameStateForFewSeconds(GameState gameState) {
-        objectModels = gameState.getObjectModels();
-        gamePanels = gameState.getGamePanels();
-        gamePanelsBounds = gameState.getGamePanelsBounds();
-        Update.updateView();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    private static void pauseOnGameState(GameState gameState) {
+        synchronized (LOCK) {
+            objectModels = gameState.getObjectModels();
+            gamePanels = gameState.getGamePanels();
+            gamePanelsBounds = gameState.getGamePanelsBounds();
+            Wave.setLevel(gameState.getLevel());
+            setKilledEnemiesInWave(gameState.getKilledEnemiesInWave());
+            setKilledEnemiesTotal(gameState.getKilledEnemiesTotal());
+            for (int i = 0; i < objectModels.size() ; i++) {
+                var objectModel = objectModels.get(i);
+                createObjectView(objectModel.getId(),
+                        objectModel.getX(), objectModel.getY(),
+                        objectModel.getWidth(), objectModel.getHeight());
+            }
+            for (int i = 0 ; i< gamePanels.size(); i++){
+                var gamePanel = gamePanels.get(i);
+                gamePanel.setBounds(gamePanelsBounds.get(gamePanel));
+                getGameFrame().getLayeredPane().add(gamePanel);
+            }
+            System.out.println("    "+ Wave.getLevel());
+
         }
+        Update.updateView();
+
     }
 
 }

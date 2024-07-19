@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.windowkillproject.application.Config.LOCK;
+
 public abstract class ObjectModel implements Drawable, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    protected int x, y;
+    protected int x, y, width, height;
     protected String id;
     public static ArrayList<ObjectModel> objectModels = new ArrayList<>();
 
@@ -26,7 +28,7 @@ public abstract class ObjectModel implements Drawable, Serializable {
         in.defaultReadObject(); // Deserialize the serializable fields
     }
 
-        private Area allowedArea = new Area();
+    private transient Area allowedArea = new Area();
 
     public Area getAllowedArea() {
         return allowedArea;
@@ -61,8 +63,9 @@ public abstract class ObjectModel implements Drawable, Serializable {
         this.x = x;
         this.y = y;
         this.localPanel = localPanel;
-        objectModels.add(this);
-
+        synchronized (LOCK) {
+            objectModels.add(this);
+        }
         this.id = UUID.randomUUID().toString();
         anchor = new Point2D.Double(x, y);
     }
@@ -89,5 +92,20 @@ public abstract class ObjectModel implements Drawable, Serializable {
 
     public void setY(int y) {
         this.y = y;
+    }
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }

@@ -61,7 +61,6 @@ public class PunchFistModel extends EnemyModel {
                 integer.getAndIncrement();
                 if (integer.get()<4){
                     MainGamePanel.getInstance().gotPunched(getAnchor());
-                    System.out.println("MANFI MIRAM"); //todo debug
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
                 }else if (integer.get()>ATTACK_TIMEOUT){
                     SmileyHeadModel.setPunching(false);

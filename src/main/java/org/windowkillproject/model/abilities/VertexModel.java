@@ -11,7 +11,7 @@ import static org.windowkillproject.controller.Controller.createAbilityView;
 public class VertexModel extends AbilityModel {
     private final EntityModel parentEntityModel;
     public VertexModel(int x, int y, EntityModel parentEntityModel) {
-        super(parentEntityModel.getLocalPanel(), x, y); //todo probable
+        super(parentEntityModel.getLocalPanel(), x, y);
         this.parentEntityModel = parentEntityModel;
         if (parentEntityModel instanceof EpsilonModel) createAbilityView(/*VertexView.class,*/ id, x, y);
     }
