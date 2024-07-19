@@ -300,8 +300,6 @@ public class Application implements Runnable {
                 gamePanel.setBounds(gamePanelsBounds.get(gamePanel));
                 getGameFrame().getLayeredPane().add(gamePanel);
             }
-            System.out.println("    "+ Wave.getLevel());
-
         }
         Update.updateView();
 

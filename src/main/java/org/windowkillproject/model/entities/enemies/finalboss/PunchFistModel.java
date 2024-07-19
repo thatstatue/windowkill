@@ -86,7 +86,6 @@ public class PunchFistModel extends EnemyModel {
             }else{
                 integer.getAndIncrement();
                 if (integer.get()<2){
-                    System.out.println("MANFI MIRAM");
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
 
                 }else if (integer.get()> ATTACK_TIMEOUT){

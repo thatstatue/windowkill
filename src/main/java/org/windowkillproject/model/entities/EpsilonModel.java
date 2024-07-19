@@ -95,7 +95,6 @@ public class EpsilonModel extends EntityModel {
 
     public void spawnVertex() {
         vertices.add(new VertexModel(getXO(), getYO() - getRadius(), this));
-        System.out.println(vertices.size());
         double theta = Math.PI * 2 / (vertices.size() * 1D);
         for (int i = 0; i < vertices.size(); i++) {
             VertexModel vertexModel = vertices.get(i);

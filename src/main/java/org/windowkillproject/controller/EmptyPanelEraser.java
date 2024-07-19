@@ -40,12 +40,10 @@ public class EmptyPanelEraser extends Timer {
                     EntityModel entityModel = entityModels.get(i);
                     if (isTransferableInBounds(entityModel, rectangle, true)) {
                         hasEntity = true;
-                        System.out.println(gamePanel.getX() + " is full for now");
                         break;
                     }
                 }
                 if (!hasEntity) {
-                    System.out.println(gamePanel.getX() + " bye bye");
                     deleteGamePanel(gamePanel);
                 }
             }

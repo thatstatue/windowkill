@@ -117,7 +117,6 @@ public class Wave {
             if (getKilledEnemiesInWave() < boundKill) {
                 createRandomEnemy();
                 spawnedEnemies.getAndIncrement();
-                System.out.println("Enemy added. Total enemies spawned: " + spawnedEnemies);
             } else {
                 //wait for remaining ones to be killed
                 if (spawnedEnemies.get() <= getKilledEnemiesInWave()) {
@@ -139,7 +138,6 @@ public class Wave {
                 }
             }
             if (count.get() == 5) {
-                System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
                 new PortalModel(MainGamePanel.getInstance().getX()+40,
                         MainGamePanel.getInstance().getY()+40);
                 setCheckPointOn(true);
