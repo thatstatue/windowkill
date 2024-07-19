@@ -4,7 +4,6 @@ import org.windowkillproject.application.Config;
 import org.windowkillproject.application.listeners.ShotgunMouseListener;
 import org.windowkillproject.application.panels.game.GamePanel;
 import org.windowkillproject.model.Transferable;
-import org.windowkillproject.model.Wave;
 import org.windowkillproject.model.Writ;
 import org.windowkillproject.model.abilities.*;
 import org.windowkillproject.model.entities.Circular;
@@ -628,12 +627,10 @@ public abstract class GameController {
                 case Empusa -> {
                     epsilon.setRadius((int) (EPSILON_RADIUS*0.9));
                 }
-                case Dolus -> {
-                    //
-                }
+                case Dolus -> {}
             }
         } else {
-            BulletModel.setAttackHp(BULLET_ATTACK_HP /*+ 2*/);
+            BulletModel.setAttackHp(BULLET_ATTACK_HP );
             epsilon.setAstrapper(false);
             epsilon.setMelame(false);
             epsilon.setChironner(false);
