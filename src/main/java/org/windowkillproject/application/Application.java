@@ -263,7 +263,7 @@ public class Application implements Runnable {
             boolean continueGame = promptUserToContinue();
             if (continueGame) {
                 gameState = savedState;
-                pauseOnGameState(gameState);
+                pauseOnGameState(savedState);
             } else {
                 GameSaveManager.deleteSaveFile();
                 gameState = new GameState(objectModels, gamePanels, gamePanelsBounds, Wave.getLevel(),
@@ -283,6 +283,7 @@ public class Application implements Runnable {
 
     private static void pauseOnGameState(GameState gameState) {
         synchronized (LOCK) {
+            System.out.println(gameState.getObjectModels().size());
             objectModels = gameState.getObjectModels();
             gamePanels = gameState.getGamePanels();
             gamePanelsBounds = gameState.getGamePanelsBounds();
