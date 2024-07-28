@@ -3,27 +3,25 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
-import org.windowkillproject.application.panels.game.PanelStatus;
-import org.windowkillproject.model.Wave;
-import org.windowkillproject.model.entities.EntityModel;
-import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.attackstypes.Hovering;
-import org.windowkillproject.view.abilities.AbilityView;
-import org.windowkillproject.view.entities.EntityView;
+import org.windowkillproject.server.model.Wave;
+import org.windowkillproject.server.model.entities.EntityModel;
+import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.entities.enemies.attackstypes.Hovering;
+import org.windowkillproject.client.view.abilities.AbilityView;
+import org.windowkillproject.client.view.entities.EntityView;
 
-import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
+import static org.windowkillproject.client.ui.App.getGameFrame;
+import static org.windowkillproject.server.Config.*;
 import static org.windowkillproject.controller.Controller.setViewBounds;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.GameController.*;
-import static org.windowkillproject.model.Wave.isBetweenWaves;
-import static org.windowkillproject.model.Wave.waveTimer;
-import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
-import static org.windowkillproject.model.abilities.ProjectileModel.projectileModels;
-import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.view.abilities.AbilityView.abilityViews;
-import static org.windowkillproject.view.entities.EntityView.entityViews;
+import static org.windowkillproject.server.model.Wave.isBetweenWaves;
+import static org.windowkillproject.server.model.Wave.waveTimer;
+import static org.windowkillproject.server.model.abilities.BulletModel.bulletModels;
+import static org.windowkillproject.server.model.abilities.ProjectileModel.projectileModels;
+import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
+import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
 public class Update {
     public static Timer modelUpdateTimer;

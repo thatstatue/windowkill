@@ -1,19 +1,22 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.application.Config;
-import org.windowkillproject.application.listeners.ShotgunMouseListener;
-import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.model.Transferable;
-import org.windowkillproject.model.Writ;
-import org.windowkillproject.model.abilities.*;
-import org.windowkillproject.model.entities.Circular;
-import org.windowkillproject.model.entities.EntityModel;
-import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.*;
-import org.windowkillproject.model.entities.enemies.attackstypes.*;
-import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
-import org.windowkillproject.model.entities.enemies.normals.ArchmireModel;
-import org.windowkillproject.model.entities.enemies.normals.WyrmModel;
+import org.windowkillproject.server.Config;
+import org.windowkillproject.client.ui.listeners.ShotgunMouseListener;
+import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.server.model.Transferable;
+import org.windowkillproject.server.model.Writ;
+import org.windowkillproject.server.model.abilities.BulletModel;
+import org.windowkillproject.server.model.abilities.MomentModel;
+import org.windowkillproject.server.model.abilities.Projectable;
+import org.windowkillproject.server.model.abilities.VertexModel;
+import org.windowkillproject.server.model.entities.Circular;
+import org.windowkillproject.server.model.entities.EntityModel;
+import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.entities.enemies.EnemyModel;
+import org.windowkillproject.server.model.entities.enemies.attackstypes.*;
+import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel;
+import org.windowkillproject.server.model.entities.enemies.normals.WyrmModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,22 +26,21 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.windowkillproject.application.Application.*;
-import static org.windowkillproject.application.Config.*;
-import static org.windowkillproject.application.Config.BULLET_ATTACK_HP;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.application.panels.shop.ShopPanel.*;
+import static org.windowkillproject.Constants.*;
+import static org.windowkillproject.client.ui.panels.shop.ShopPanel.*;
+import static org.windowkillproject.server.Config.*;
+import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
 import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
 import static org.windowkillproject.controller.ElapsedTime.secondsPassed;
 import static org.windowkillproject.controller.Utils.*;
-import static org.windowkillproject.model.abilities.BulletModel.bulletModels;
-import static org.windowkillproject.model.abilities.CollectableModel.collectableModels;
-import static org.windowkillproject.model.abilities.PortalModel.lastPortal;
-import static org.windowkillproject.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.model.entities.enemies.normals.ArchmireModel.archmireModels;
-import static org.windowkillproject.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
-import static org.windowkillproject.model.entities.enemies.attackstypes.LaserOperator.LASER_LINES;
+import static org.windowkillproject.server.model.abilities.BulletModel.bulletModels;
+import static org.windowkillproject.server.model.abilities.CollectableModel.collectableModels;
+import static org.windowkillproject.server.model.abilities.PortalModel.lastPortal;
+import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel.archmireModels;
+import static org.windowkillproject.server.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
+import static org.windowkillproject.server.model.entities.enemies.attackstypes.LaserOperator.LASER_LINES;
 
 
 public abstract class GameController {
@@ -176,7 +178,7 @@ public abstract class GameController {
 
     private static Timer getImpactTimer(EntityModel entityModel, Point2D deltaS, int t) {
         AtomicInteger count = new AtomicInteger();
-        Timer impactTimer = new Timer(Config.FPS / 5, null);
+        Timer impactTimer = new Timer(FPS / 5, null);
         impactTimer.addActionListener(e -> {
             if (count.get() < t) {
                 entityModel.setImpact(true);
@@ -279,8 +281,9 @@ public abstract class GameController {
     public static void epsilonRewardControl() {
         for (int i = 0; i < collectableModels.size(); i++) {
             var collectableModel = collectableModels.get(i);
-            if (collectableModel.isCollectedByEpsilon()) {
-                EpsilonModel.getINSTANCE().collected(collectableModel.getRewardXp());
+            EpsilonModel collectingEpsilon=collectableModel.isCollectedByEpsilon();
+            if (collectingEpsilon!= null) {
+                collectingEpsilon.collected(collectableModel.getRewardXp());
                 collectableModels.remove(collectableModel);
                 collectableModel.destroy();
             }
@@ -493,8 +496,8 @@ public abstract class GameController {
 
         Area allowedArea = epsilonModel.getAllowedArea();
         if (!isTransferableInBounds(epsilonModel, allowedArea, false)) {
-            if (epsilonModel.getLocalPanel() != null){
-                keepInPanel(epsilonModel.getLocalPanel());
+            if (epsilonModel.getLocalPanelModel() != null){
+                keepInPanel(epsilonModel.getLocalPanelModel());
             }
         }
         getGameFrame().setHpAmount(epsilonModel.getHp());
@@ -506,8 +509,8 @@ public abstract class GameController {
             setTransferableLocalPanel(bulletModel);
             Area bulletAllowedArea = bulletModel.getAllowedArea();
             if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
-                if (bulletModel.getLocalPanel() != null) {
-                    keepInPanel(bulletModel.getLocalPanel());
+                if (bulletModel.getLocalPanelModel() != null) {
+                    keepInPanel(bulletModel.getLocalPanelModel());
                 }
             }
         }
@@ -656,7 +659,7 @@ public abstract class GameController {
             empower.setOn(false);
         }
         if (heal.isOn()) {
-            var epsilon = EpsilonModel.getINSTANCE();
+            var epsilon = EpsilonModel.clientEpsilonModelMap.get();
             epsilon.setHp(epsilon.getHp() + 10);
             heal.setOn(false);
             heal.setPurchased(false);

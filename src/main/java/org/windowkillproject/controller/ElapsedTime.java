@@ -2,8 +2,8 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
-import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.model.Wave.setBetweenWaves;
+import static org.windowkillproject.client.ui.App.getGameFrame;
+import static org.windowkillproject.server.model.Wave.setBetweenWaves;
 
 public abstract class ElapsedTime {
     private static int seconds, minutes;

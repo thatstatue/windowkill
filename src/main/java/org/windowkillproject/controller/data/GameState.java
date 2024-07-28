@@ -1,6 +1,6 @@
 package org.windowkillproject.controller.data;
-import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.model.ObjectModel;
+import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.server.model.ObjectModel;
 
 import java.awt.*;
 import java.io.Serial;
@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 
-import static org.windowkillproject.application.Config.LOCK;
+import static org.windowkillproject.Request.LOCK;
+
 
 public class GameState implements Serializable {
     @Serial

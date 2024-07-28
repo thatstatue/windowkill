@@ -1,49 +1,53 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.application.panels.game.GamePanel;
-import org.windowkillproject.model.Drawable;
-import org.windowkillproject.model.ObjectModel;
-import org.windowkillproject.model.abilities.*;
-import org.windowkillproject.model.entities.EntityModel;
-import org.windowkillproject.model.entities.EpsilonModel;
-import org.windowkillproject.model.entities.enemies.*;
-import org.windowkillproject.model.abilities.MomentModel;
-import org.windowkillproject.model.entities.enemies.attackstypes.Hideable;
-import org.windowkillproject.model.entities.enemies.finalboss.LeftHandModel;
-import org.windowkillproject.model.entities.enemies.finalboss.PunchFistModel;
-import org.windowkillproject.model.entities.enemies.finalboss.RightHandModel;
-import org.windowkillproject.model.entities.enemies.finalboss.SmileyHeadModel;
-import org.windowkillproject.model.entities.enemies.minibosses.BarricadosModel;
-import org.windowkillproject.model.entities.enemies.minibosses.BlackOrbModel;
-import org.windowkillproject.model.entities.enemies.normals.*;
-import org.windowkillproject.view.*;
-import org.windowkillproject.view.abilities.*;
-import org.windowkillproject.view.entities.EntityView;
-import org.windowkillproject.view.entities.EpsilonView;
-import org.windowkillproject.view.entities.enemies.*;
-import org.windowkillproject.view.entities.enemies.finalboss.LeftHandView;
-import org.windowkillproject.view.entities.enemies.finalboss.PunchFistView;
-import org.windowkillproject.view.entities.enemies.finalboss.RightHandView;
-import org.windowkillproject.view.entities.enemies.finalboss.SmileyHeadView;
-import org.windowkillproject.view.entities.enemies.minibosses.BarricadosView;
-import org.windowkillproject.view.entities.enemies.minibosses.BlackOrbView;
-import org.windowkillproject.view.entities.enemies.normals.*;
+import org.windowkillproject.client.ui.App;
+import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.client.view.ObjectView;
+import org.windowkillproject.client.view.Viewable;
+import org.windowkillproject.client.view.abilities.*;
+import org.windowkillproject.client.view.entities.enemies.EnemyView;
+import org.windowkillproject.client.view.entities.enemies.normals.*;
+import org.windowkillproject.server.model.Drawable;
+import org.windowkillproject.server.model.ObjectModel;
+import org.windowkillproject.server.model.abilities.*;
+import org.windowkillproject.server.model.entities.EntityModel;
+import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.entities.enemies.EnemyModel;
+import org.windowkillproject.server.model.entities.enemies.attackstypes.Hideable;
+import org.windowkillproject.server.model.entities.enemies.finalboss.LeftHandModel;
+import org.windowkillproject.server.model.entities.enemies.finalboss.PunchFistModel;
+import org.windowkillproject.server.model.entities.enemies.finalboss.RightHandModel;
+import org.windowkillproject.server.model.entities.enemies.finalboss.SmileyHeadModel;
+import org.windowkillproject.server.model.entities.enemies.minibosses.BarricadosModel;
+import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.server.model.entities.enemies.normals.*;
+import org.windowkillproject.client.view.entities.EntityView;
+import org.windowkillproject.client.view.entities.EpsilonView;
+import org.windowkillproject.client.view.entities.enemies.finalboss.LeftHandView;
+import org.windowkillproject.client.view.entities.enemies.finalboss.PunchFistView;
+import org.windowkillproject.client.view.entities.enemies.finalboss.RightHandView;
+import org.windowkillproject.client.view.entities.enemies.finalboss.SmileyHeadView;
+import org.windowkillproject.client.view.entities.enemies.minibosses.BarricadosView;
+import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.windowkillproject.application.Application.getGameFrame;
-import static org.windowkillproject.application.Config.LOCK;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.application.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.model.abilities.AbilityModel.abilityModels;
-import static org.windowkillproject.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.Request.LOCK;
+import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanels;
+import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
+import static org.windowkillproject.server.model.abilities.AbilityModel.abilityModels;
+import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
 
 
-public abstract class Controller {
+public class Controller {
+    private final App app;
+    public Controller(App app){
+        this.app = app;
+    }
 
-    public static <T extends ObjectView> void createObjectView(String id, int x, int y, int width, int height){
+    public <T extends ObjectView> void createObjectView(String id, int x, int y, int width, int height){
         ObjectModel objectModel = findModel(id);
         if (objectModel instanceof EntityModel) createEntityView(id, x, y, width, height);
         else createAbilityView(id,x, y);
@@ -203,14 +207,14 @@ public abstract class Controller {
 
         return null;
     }
-    public static void deleteGamePanel(GamePanel gamePanel) {
+    public void deleteGamePanel(GamePanel gamePanel) {
         if (gamePanel!=null) {
             synchronized (LOCK) {
                 gamePanelsBounds.remove(gamePanel);
                 gamePanels.remove(gamePanel);
             }
             gamePanel.setEnabled(false);
-            getGameFrame().getLayeredPane().remove(gamePanel);
+            app.getGameFrame().getLayeredPane().remove(gamePanel);
         }
     }
 }

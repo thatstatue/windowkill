@@ -1,16 +1,16 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.model.Transferable;
-import org.windowkillproject.model.Wave;
-import org.windowkillproject.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.Transferable;
+import org.windowkillproject.server.model.Wave;
+import org.windowkillproject.server.model.entities.EpsilonModel;
 
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import static org.windowkillproject.application.Config.MAX_ENEMY_SPEED;
-import static org.windowkillproject.application.Config.MIN_ENEMY_SPEED;
+import static org.windowkillproject.server.Config.MAX_ENEMY_SPEED;
+import static org.windowkillproject.server.Config.MIN_ENEMY_SPEED;
 
 public abstract class Utils {
     public static Point2D unitVector(Point2D goingPoint, Point2D anchor) {
