@@ -1,11 +1,12 @@
 package org.windowkillproject.client.ui.panels.shop;
 
-import org.windowkillproject.client.ui.App;
-import org.windowkillproject.server.model.Writ;
-import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.SpecialityName;
+import org.windowkillproject.client.GameClient;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static org.windowkillproject.Request.*;
 
 public class SelectButton extends JButton {
     private final Color color = Color.decode("#7C4F63");
@@ -19,16 +20,19 @@ public class SelectButton extends JButton {
         if (!purchased) setText("PURCHASE");
 
     }
-
+    private GameClient client;
     private boolean purchased, on;
     private int xpAmount;
-    private OptionPanel.SpecialtyName specialtyName = OptionPanel.SpecialtyName.Heal;
 
-    public void setSpecialtyName(OptionPanel.SpecialtyName specialtyName) {
+
+    private SpecialityName specialtyName = SpecialityName.Heal;
+
+    public void setSpecialtyName(SpecialityName specialtyName) {
         this.specialtyName = specialtyName;
     }
 
-    public SelectButton(String name) {
+    public SelectButton(String name, GameClient client) {
+        this.client = client;
         setText(name);
         setFont(new Font(Font.DIALOG, Font.BOLD, 20));
         setBackground(color);
@@ -62,13 +66,13 @@ public class SelectButton extends JButton {
             if (!isPurchased()) {
                 int result = showPurchasePopUP();
                 if (result == JOptionPane.OK_OPTION) {
-                    int epsilonXP = EpsilonModel.getINSTANCE().getXp();
-                    if (xpAmount <= epsilonXP) {
+                    var epsilonXp = client.getApp().getGameFrame().getXpAmount();
+                    if (xpAmount <= epsilonXp) {
                         setPurchased(true);
                         setOn(true);
                         setWrit();
-                        EpsilonModel.getINSTANCE().setXp(epsilonXP - xpAmount);
-                        App.getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp());
+                        client.sendMessage(RES_SET_EPSILON_XP + REGEX_SPLIT + (epsilonXp - xpAmount));
+                        setXpAmount(epsilonXp - xpAmount);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "you don't have enough xp");
@@ -88,53 +92,62 @@ public class SelectButton extends JButton {
 
     private boolean isUnlocked(){
         //attack
-        if(specialtyName.equals(OptionPanel.SpecialtyName.Astrape)||specialtyName.equals(OptionPanel.SpecialtyName.Cerberus)){
+        if(specialtyName.equals(SpecialityName.Astrape)||specialtyName.equals(SpecialityName.Cerberus)){
             if (!SkillTreePanel.ares.isPurchased()) return false;
-            if (specialtyName.equals(OptionPanel.SpecialtyName.Cerberus)) {
+            if (specialtyName.equals(SpecialityName.Cerberus)) {
                 return SkillTreePanel.astrape.isPurchased();
             }
         }
 
         //defence
-        if(specialtyName.equals(OptionPanel.SpecialtyName.Melampus)||specialtyName.equals(OptionPanel.SpecialtyName.Chiron)){
+        if(specialtyName.equals(SpecialityName.Melampus)||specialtyName.equals(SpecialityName.Chiron)){
             if (!SkillTreePanel.aceso.isPurchased()) return false;
-            if (specialtyName.equals(OptionPanel.SpecialtyName.Chiron)) {
+            if (specialtyName.equals(SpecialityName.Chiron)) {
                 return SkillTreePanel.melampus.isPurchased();
             }
         }
 
         //morph
-        if(specialtyName.equals(OptionPanel.SpecialtyName.Empusa)||specialtyName.equals(OptionPanel.SpecialtyName.Dolus)){
+        if(specialtyName.equals(SpecialityName.Empusa)||specialtyName.equals(SpecialityName.Dolus)){
             if (!SkillTreePanel.proteus.isPurchased()) return false;
-            if (specialtyName.equals(OptionPanel.SpecialtyName.Dolus)) {
+            if (specialtyName.equals(SpecialityName.Dolus)) {
                 return SkillTreePanel.empusa.isPurchased();
             }
         }
         return true;
     }
+    private boolean writChosen;
+
+    public void setWritChosen(boolean writChosen) {
+        this.writChosen = writChosen;
+    }
+
     private void setWrit() {
-        if (specialtyName != null && (specialtyName.equals(OptionPanel.SpecialtyName.Ares) || specialtyName.equals(OptionPanel.SpecialtyName.Aceso)
-                || specialtyName.equals(OptionPanel.SpecialtyName.Proteus))) {
+        client.sendMessage(REQ_WRIT_CHOSEN );
+        if (specialtyName != null && (!specialtyName.equals(SpecialityName.Heal))) {
             if (on) {
-                if (Writ.getChosenSkill() != null) {
+                if (writChosen) {
                     for (int i = 0; i < 9; i++){
                         SkillTreePanel.skills[i].setOn(false);
                     }
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Ares)) SkillTreePanel.ares.setOn(true);
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Astrape)) SkillTreePanel.astrape.setOn(true);
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Cerberus)) SkillTreePanel.cerberus.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Ares)) SkillTreePanel.ares.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Astrape)) SkillTreePanel.astrape.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Cerberus)) SkillTreePanel.cerberus.setOn(true);
 
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Proteus)) SkillTreePanel.proteus.setOn(true);
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Empusa)) SkillTreePanel.empusa.setOn(true);
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Dolus)) SkillTreePanel.dolus.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Proteus)) SkillTreePanel.proteus.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Empusa)) SkillTreePanel.empusa.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Dolus)) SkillTreePanel.dolus.setOn(true);
 
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Aceso)) SkillTreePanel.aceso.setOn(true);
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Melampus)) SkillTreePanel.melampus.setOn(true);
-                    if (specialtyName.equals(OptionPanel.SpecialtyName.Chiron)) SkillTreePanel.chiron.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Aceso)) SkillTreePanel.aceso.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Melampus)) SkillTreePanel.melampus.setOn(true);
+                    if (specialtyName.equals(SpecialityName.Chiron)) SkillTreePanel.chiron.setOn(true);
 
                 }
-                Writ.setChosenSkill(specialtyName);
-            } else Writ.setChosenSkill(null);
+                client.sendMessage(RES_WRIT_CHOSEN + REGEX_SPLIT +specialtyName);
+            } else {
+                client.sendMessage(RES_WRIT_CHOSEN + REGEX_SPLIT + null);
+                writChosen = false;
+            }
         }
     }
 

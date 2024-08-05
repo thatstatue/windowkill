@@ -13,10 +13,6 @@ public class GameClient implements Runnable{
     private static final int SERVER_PORT = 12345;
     private Socket socket;
 
-    public Socket getSocket() {
-        return socket;
-    }
-
     private PrintWriter out;
     private BufferedReader in;
     private final App app;
@@ -73,9 +69,5 @@ public class GameClient implements Runnable{
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
-        new GameClient();
     }
 }

@@ -3,77 +3,88 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
-import org.windowkillproject.server.model.Wave;
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Hovering;
 import org.windowkillproject.client.view.abilities.AbilityView;
 import org.windowkillproject.client.view.entities.EntityView;
+import org.windowkillproject.server.model.globe.GlobeModel;
 
-import static org.windowkillproject.client.ui.App.getGameFrame;
-import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.controller.Controller.setViewBounds;
-import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
-import static org.windowkillproject.controller.GameController.*;
-import static org.windowkillproject.server.model.Wave.isBetweenWaves;
-import static org.windowkillproject.server.model.Wave.waveTimer;
+import static org.windowkillproject.Constants.FRAME_UPDATE_TIME;
+import static org.windowkillproject.Constants.MODEL_UPDATE_TIME;
+import static org.windowkillproject.Request.REQ_REPAINT_GAME_FRAME;
+import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
+import static org.windowkillproject.controller.GameManager.*;
 import static org.windowkillproject.server.model.abilities.BulletModel.bulletModels;
 import static org.windowkillproject.server.model.abilities.ProjectileModel.projectileModels;
 import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
-public class Update {
-    public static Timer modelUpdateTimer;
-    public static Timer frameUpdateTimer;
-    public static EmptyPanelEraser emptyPanelEraser;
+public class GameLoop {
+    public Timer modelUpdateTimer;
+    public Timer frameUpdateTimer;
+    public EmptyPanelEraser emptyPanelEraser;
+    private GlobeModel globeModel;
 
-    public Update() {
+    public GameLoop(GlobeModel globeModel) {
+        this.globeModel = globeModel;
         modelUpdateTimer = new Timer((int) MODEL_UPDATE_TIME, e -> updateModel()) {{
             setCoalesce(true);
         }};
-        modelUpdateTimer.start();
         frameUpdateTimer = new Timer((int) FRAME_UPDATE_TIME, e -> updateView()) {{
             setCoalesce(true);
         }};
-        frameUpdateTimer.start();
-
-        emptyPanelEraser = new EmptyPanelEraser();
-        emptyPanelEraser.start();
-        new Wave();
+        emptyPanelEraser = new EmptyPanelEraser(globeModel);
     }
-
-    public static void updateView() {
+    public void start(){
+        modelUpdateTimer.start();
+        frameUpdateTimer.start();
+        globeModel.getWaveFactory().start();
+        emptyPanelEraser.start();
+    }
+    public void stop(){
+        modelUpdateTimer.stop();
+        frameUpdateTimer.stop();
+        globeModel.getWaveFactory().stop();
+        emptyPanelEraser.start();
+    }
+    public void updateView() {
+        for (int i =0 ; i< panelViews.size(); i++){ //todo how does it work
+            var panelView = panelViews.get(i);
+            globeModel.getGlobeController().setViewBounds(panelView);
+            panelView.revalidate();
+            panelView.repaint();
+        }
 
         for (int i = 0; i < abilityViews.size(); i++) {
             AbilityView abilityView = abilityViews.get(i);
-            setViewBounds(abilityView);
+            globeModel.getGlobeController().setViewBounds(abilityView);
             if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
 
         for (int i = 0; i < entityViews.size(); i++) {
             EntityView entityView = entityViews.get(i);
-            setViewBounds(entityView);
+            globeModel.getGlobeController().setViewBounds(entityView);
             if (!entityView.isEnabled()) entityViews.remove(entityView);
         }
 
-        getGameFrame().revalidate();
+        globeModel.performAction(REQ_REPAINT_GAME_FRAME);
         //todo uncomment for repainting
-//        gamePanelsBounds.forEach((gamePanel, rectangle) -> {
-//            gamePanel.revalidate();
+//        gamePanelsBounds.forEach((panelView, rectangle) -> {
+//            panelView.revalidate();
 //            getGameFrame().getLayeredPane().repaint(rectangle);
 //        });
-        getGameFrame().repaint();
     }
 
     public void updateModel() {
-        if (!isBetweenWaves()) getGameFrame().shrink();
+        if (!globeModel.getWaveFactory().isBetweenWaves()) globeModel.shrinkAll();
         for (int i = 0; i < entityModels.size(); i++) {
             EntityModel entityModel = entityModels.get(i);
             entityModel.rotate();
             if (!entityModel.isImpact()) {
                 if (entityModel instanceof Hovering || entityModel instanceof EpsilonModel ||
-                        getTotalSeconds() - hoverAwayInitSeconds > 10) {
+                        globeModel.getElapsedTime().getTotalSeconds() - hoverAwayInitSeconds > 10) {
                     entityModel.route();
                 }
             }
@@ -86,15 +97,16 @@ public class Update {
         }
 
 
-        areaOfEffectControl();
-        specialtiesControl();
-        writControl();
-        epsilonRewardControl();
-        epsilonIntersectionControl();
-        enemyIntersectionControl();
+        globeModel.getGameManager().areaOfEffectControl();
+        globeModel.getGameManager().specialtiesControl();
+        globeModel.getGameManager().writControl();
+        globeModel.getGameManager().epsilonsRewardControl();
+        globeModel.getGameManager().epsilonIntersectionControl();
+        globeModel.getGameManager().enemyIntersectionControl();
 
-        if (getTotalSeconds() - pauseInitSeconds < 12) {
-            if (getTotalSeconds() - pauseInitSeconds < 10) {
+        var waveTimer = globeModel.getWaveFactory().waveTimer;
+        if (globeModel.getElapsedTime().getTotalSeconds() - pauseInitSeconds < 12) {
+            if (globeModel.getElapsedTime().getTotalSeconds() - pauseInitSeconds < 10) {
                 if (waveTimer.isRunning()) waveTimer.stop();
             }else if (!waveTimer.isRunning()) {
                 waveTimer.start();
@@ -102,11 +114,7 @@ public class Update {
             }
 
         }
-
-
-        keepTransferableInBounds();
-        if (Wave.isStartNewWave()) new Wave();
-
+        globeModel.getGameManager().keepTransferableInBounds();
 
     }
 

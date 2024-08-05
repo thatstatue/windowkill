@@ -6,8 +6,8 @@ import java.awt.*;
 
 
 public class OmenoctView extends EnemyView {
-    public OmenoctView(String id) {
-        super(id);
+    public OmenoctView(String id, Polygon polygon) {
+        super(id,polygon);
     }
 
     @Override

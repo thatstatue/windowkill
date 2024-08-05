@@ -2,13 +2,14 @@ package org.windowkillproject.client.ui.panels.etc;
 
 import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.panels.Panel;
-import org.windowkillproject.client.ui.App;
+
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import static org.windowkillproject.server.Config.APP_HEIGHT;
-import static org.windowkillproject.server.Config.APP_WIDTH;
+import static org.windowkillproject.Constants.APP_HEIGHT;
+import static org.windowkillproject.Constants.APP_WIDTH;
+
 
 public class TutorialPanel extends Panel {
     public TutorialPanel(GameClient client) {
@@ -29,7 +30,7 @@ public class TutorialPanel extends Panel {
         components.add(jLabelMaker("}", 100, 350, 100, 50));
         components.add(jLabelMaker("if (isChangingADirection())", 100, 450, 280, 50));
         components.add(jLabelMaker("    use [escape] if you decided not to!", 380, 450, 400, 50));
-        components.add(buttonMaker("Menu", 730, 370, e -> App.initPFrame()));
+        components.add(buttonMaker("Menu", 730, 370, e -> client.getApp().initPFrame()));
 
 
         return components;

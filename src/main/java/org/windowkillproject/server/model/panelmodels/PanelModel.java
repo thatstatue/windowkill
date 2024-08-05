@@ -1,26 +1,24 @@
-package org.windowkillproject.client.ui.panels.game;
+package org.windowkillproject.server.model.panelmodels;
 
-import org.windowkillproject.Request;
-import org.windowkillproject.client.GameClient;
-import org.windowkillproject.client.ui.App;
-import org.windowkillproject.client.ui.panels.Panel;
+import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.windowkillproject.Constants.*;
-import static org.windowkillproject.Request.REQ_GET_EPSILON_RADIUS;
+import static org.windowkillproject.Constants.FRAME_SHRINKAGE_SPEED;
+import static org.windowkillproject.Request.REQ_START_GAME_1;
 
-public abstract class GamePanel extends Panel implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+
+public abstract class PanelModel {
+    private final GlobeModel globeModel;
+    private boolean flexible;
+    protected int x, y, width, height;
+    private final PanelStatus panelStatus;
 
     public void setFlexible(boolean flexible) {
         this.flexible = flexible;
@@ -31,33 +29,81 @@ public abstract class GamePanel extends Panel implements Serializable {
     }
 
     private boolean isStretching = false;
-    private boolean flexible = true;
-    protected PanelStatus panelStatus;
-    public static ArrayList<GamePanel> gamePanels = new ArrayList<>();
     private boolean exploding = false;
-    public static Map<GamePanel, Rectangle> gamePanelsBounds = new HashMap<>();
     private int GAME_MIN_SIZE = 250;
 
+    public int getX() {
+        return x;
+    }
 
-    public GamePanel(PanelStatus panelStatus, boolean flexible, GameClient client) {
-        super(client);
-        setBackground(Color.black);
-        setFocusable(true);
-        requestFocusInWindow();
-        synchronized (Request.LOCK) {
-            gamePanels.add(this);
-            gamePanelsBounds.put(this, getBounds());
-        }
-        this.panelStatus = panelStatus;
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public boolean isBackground() {
+        return background;
+    }
+
+    public void setBackground(boolean background) {
+        this.background = background;
+    }
+    private final String id = UUID.randomUUID().toString();
+
+    private boolean background;
+
+    public String getId() {
+        return id;
+    }
+
+    public PanelModel(GlobeModel globeModel, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
+        this.globeModel = globeModel;
         this.flexible = flexible;
-
+        this.panelStatus = panelStatus;
+        setBounds(bounds);
+        this.background = background;
+        this.globeModel.getPanelModels().add(this);
+        globeModel.getGlobeController().createPanelView(id,x,y,width,height);
     }
 
-    @Override
-    protected ArrayList<Component> initComponents() {
-        return null;
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
     }
 
+    public void setBounds(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    public void setBounds(Rectangle bounds) {
+        setBounds(bounds.x, bounds.y,
+                bounds.width, bounds.height);
+    }
 
     public void resetCanShrink() {
         boolean can = !panelStatus.equals(PanelStatus.isometric);
@@ -94,7 +140,7 @@ public abstract class GamePanel extends Panel implements Serializable {
         int newY = getY();
         int newWidth = getWidth();
         int newHeight = getHeight();
-        if (!(this instanceof MainGamePanel && MainGamePanel.getInstance().isPunched())) {
+        if (!(this instanceof MainPanelModel && ((MainPanelModel) this).isPunched())) {
 
             if (flexible) {
                 if (canShrinkLeft) newX += FRAME_SHRINKAGE_SPEED / 2;
@@ -104,11 +150,11 @@ public abstract class GamePanel extends Panel implements Serializable {
             }
 
             if (panelStatus.equals(PanelStatus.shrinkable)
-//                && EpsilonModel.getINSTANCE().getLocalPanel() != null
-//                && this.equals(EpsilonModel.getINSTANCE().getLocalPanel())
+//                && targetEpsilon.getLocalPanel() != null
+//                && this.equals(targetEpsilon.getLocalPanel())
 //                todo: if min size is only for epsilon's panel will uncomment
             ) {
-                int minSize = ;
+                int minSize = GAME_MIN_SIZE; //>>>>>>>>>>>>>>>?
                 if (getWidth() <= minSize) {
                     newWidth = minSize;
                     newX = getX();
@@ -124,7 +170,6 @@ public abstract class GamePanel extends Panel implements Serializable {
 //            }
         if (!isStretching) {
             this.setBounds(newX, newY, newWidth, newHeight);
-            gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
         }
     }
 
@@ -172,7 +217,6 @@ public abstract class GamePanel extends Panel implements Serializable {
                     }
                     if (!isStoppedByRigidPanels(code, newX, newY, newWidth, newHeight)) {
                         setBounds(newX, newY, newWidth, newHeight);
-                        gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
                     }
                     count.getAndIncrement();
                 } else {
@@ -192,16 +236,16 @@ public abstract class GamePanel extends Panel implements Serializable {
 
     private boolean isStoppedByRigidPanels(int code, int newX, int newY, int newWidth, int newHeight) {
         if (forSmiley) return false;
+        var gamePanels = globeModel.getPanelModels();
         for (int i = 0; i < gamePanels.size(); i++) {
             var panel = gamePanels.get(i);
-            var panelRectangle = gamePanelsBounds.get(panel);
             if (panel.isFlexible()) {
                 continue;
             }
-            double BX = panelRectangle.getX();
-            double BY = panelRectangle.getY();
-            double BW = panelRectangle.getWidth();
-            double BH = panelRectangle.getHeight();
+            double BX = panel.getX();
+            double BY = panel.getY();
+            double BW = panel.getWidth();
+            double BH = panel.getHeight();
 
             boolean xOverlap = newX < BX + BW && newX + newWidth > BX;
             boolean yOverlap = newY < BY + BH && newY + newHeight > BY;
@@ -239,7 +283,8 @@ public abstract class GamePanel extends Panel implements Serializable {
 
     public void shrinkFast() {
         if (exploding) {
-            entityModels.remove(EpsilonModel.getINSTANCE());
+            for(EpsilonModel epsilonModel: globeModel.getEpsilons())
+                globeModel.getEntityModels().remove(epsilonModel);
             GAME_MIN_SIZE = 10;
         }
         Timer shrinkFastTimer = new Timer(1, null);
@@ -261,12 +306,11 @@ public abstract class GamePanel extends Panel implements Serializable {
             }
             if (!(stoppedX && stoppedY)) {
                 setBounds(newX, newY, newWidth, newHeight);
-                gamePanelsBounds.put(this, new Rectangle(newX, newY, newWidth, newHeight));
             } else {
                 if (exploding) {
-                    setVisible(false);
+                    globeModel.getPanelModels().remove(this);
                     GAME_MIN_SIZE = 250;
-                    client.getApp().startGame(1);
+                    globeModel.performAction(REQ_START_GAME_1);
                 }
                 shrinkFastTimer.stop();
             }
@@ -279,16 +323,22 @@ public abstract class GamePanel extends Panel implements Serializable {
         Timer endingTimer = new Timer(10, null);
 
         ActionListener actionListener = e -> {
-            client.sendMessage(REQ_GET_EPSILON_RADIUS);
-            var epsilonRadius = client.getApp().getGameFrame().getMainGamePanel().getEpsilonRadius();
-            if (epsilonRadius < client.getApp().getGameFrame().getMainPanelWidth() / 2 ||
-                    epsilonRadius < client.getApp().getGameFrame().getMainPanelHeight() / 2) {
-                client.sendMessage(REQ_INCREASE_EPSILON_SPEED);
-            } else {
+            boolean temp = false;
+            for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
+                var mainPanel = globeModel.getMainPanelModel();
+                if (epsilonModel.getRadius() < mainPanel.getWidth() / 2 ||
+                        epsilonModel.getRadius() < mainPanel.getHeight() / 2) {
+                    epsilonModel.setRadius(epsilonModel.getRadius() + 6);
+                    temp = true;
+                }
+            }
+
+            if (!temp) {
                 setExploding(true);
                 shrinkFast();
                 endingTimer.stop();
             }
+
         };
         endingTimer.addActionListener(actionListener);
         endingTimer.start();

@@ -1,24 +1,24 @@
 package org.windowkillproject.server.model.abilities;
 
-import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.Transferable;
 import org.windowkillproject.server.model.entities.Circular;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Hideable;
 
 
+import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Objects;
 
 
-import static org.windowkillproject.client.ui.App.getGameFrame;
-import static org.windowkillproject.client.ui.SoundPlayer.playBulletSound;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.controller.Controller.createAbilityView;
-import static org.windowkillproject.controller.GameController.*;
+import static org.windowkillproject.Constants.*;
+import static org.windowkillproject.Request.REQ_PLAY_BULLET_SOUND;
+import static org.windowkillproject.controller.GameManager.*;
 import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.server.model.entities.enemies.normals.OmenoctModel.omenoctModels;
 
@@ -27,7 +27,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     private final Point2D mousePoint;
 
     private boolean slaughter;
-    private ArrayList<GamePanel> allowedPanels = new ArrayList<>();
+    private ArrayList<PanelModel> allowedPanels = new ArrayList<>();
 
     public void setSlaughter(boolean slaughter) {
         this.slaughter = slaughter;
@@ -74,43 +74,46 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     private void isFrameShot() {
 //        Area area = getAllowedArea();
 //        System.out.println(area.getBounds());
-        Area epsilonArea = EpsilonModel.getINSTANCE().getAllowedArea();
+        Area epsilonArea = shooterEpsilon.getAllowedArea();
 //        area.subtract(epsilonArea);
 //        if (area.isEmpty()) area = epsilonArea;
 //        else area = getAllowedArea();
 
         if (!epsilonArea.contains(getX(), getY())) {
-            var gamePanelCorner = getClosestPanelCorner(new Point2D.Double(getX(), getY()));
+            var gamePanelCorner = globeModel.getGameManager().getClosestPanelCorner(new Point2D.Double(getX(), getY()));
 
-            hit(gamePanelCorner.gamePanel(), gamePanelCorner.corner());
+            hit(gamePanelCorner.panelModel(), gamePanelCorner.corner());
             explode();
 
         }
     }
 
-    private void hit(GamePanel gamePanel, int code) {
-        getGameFrame().stretch(gamePanel, code);
-        hitWall(gamePanel, code);
+    private void hit(PanelModel panelModel, int code) {
+        globeModel.stretch(panelModel, code);
+        hitWall(panelModel, code);
     }
 
     @Override
-    public void addToAllowedArea(GamePanel panel) {
+    public void addToAllowedArea(PanelModel panel) {
         allowedPanels.add(panel);
-        Area area = new Area(gamePanelsBounds.get(panel));
+        Area area = new Area(
+                new Rectangle
+                (panel.getX(), panel.getY(),
+                panel.getWidth(), panel.getHeight()));
         getAllowedArea().add(area);
     }
 
     @Override
-    public void setAllowedPanels(ArrayList<GamePanel> allowedPanels) {
+    public void setAllowedPanelModels(ArrayList<PanelModel> allowedPanels) {
         this.allowedPanels = allowedPanels;
 
     }
 
-    private void hitWall(GamePanel gamePanel, int code) {
+    private void hitWall(PanelModel panelModel, int code) {
         for (int i = 0; i < omenoctModels.size(); i++) {
             var omenoctModel = omenoctModels.get(i);
             if (omenoctModel.getLocalPanelModel() != null &&
-                    omenoctModel.getLocalPanelModel().equals(gamePanel)) {
+                    omenoctModel.getLocalPanelModel().equals(panelModel)) {
                 omenoctModel.hitWall(code);
             }
         }
@@ -153,14 +156,15 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
         }
 
     }
-
-    public BulletModel(int x, int y, Point2D mousePoint) {
-        super(EpsilonModel.getINSTANCE().getLocalPanelModel(), x, y);
-        anchor = new Point2D.Double(x + EPSILON_RADIUS / 2, y + EPSILON_RADIUS * 1.5);
+    private final EpsilonModel shooterEpsilon;
+    public BulletModel(GlobeModel globeModel, int x, int y, Point2D mousePoint, EpsilonModel shooterEpsilon) {
+        super(globeModel, null, x, y);
+        anchor = new Point2D.Double(x + EPSILON_RADIUS / 2.0, y + EPSILON_RADIUS * 1.5);
         isShoot = false;
         bulletModels.add(this);
         this.mousePoint = mousePoint;
-        createAbilityView(id, x, y);
+        this.shooterEpsilon = shooterEpsilon;
+        globeModel.getGlobeController().createAbilityView(id, x, y);
     }
 
     private boolean isShoot;
@@ -173,7 +177,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     private void explode() {
         impact(this);
         bulletModels.remove(this);
-        playBulletSound();
+        globeModel.performAction(REQ_PLAY_BULLET_SOUND);
         destroy();
     }
 

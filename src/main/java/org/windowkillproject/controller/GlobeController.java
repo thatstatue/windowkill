@@ -1,14 +1,13 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.client.ui.App;
-import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.client.GameClient;
+import org.windowkillproject.client.ui.panels.game.PanelView;
 import org.windowkillproject.client.view.ObjectView;
 import org.windowkillproject.client.view.Viewable;
 import org.windowkillproject.client.view.abilities.*;
 import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import org.windowkillproject.client.view.entities.enemies.normals.*;
 import org.windowkillproject.server.model.Drawable;
-import org.windowkillproject.server.model.ObjectModel;
 import org.windowkillproject.server.model.abilities.*;
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
@@ -29,39 +28,63 @@ import org.windowkillproject.client.view.entities.enemies.finalboss.RightHandVie
 import org.windowkillproject.client.view.entities.enemies.finalboss.SmileyHeadView;
 import org.windowkillproject.client.view.entities.enemies.minibosses.BarricadosView;
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.globe.GlobesManager;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
-import static org.windowkillproject.Request.LOCK;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.server.model.abilities.AbilityModel.abilityModels;
-import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
+import static org.windowkillproject.client.GameClient.clients;
 
-
-public class Controller {
-    private final App app;
-    public Controller(App app){
-        this.app = app;
+public class GlobeController {
+    private final GlobeModel globeModel;
+    public GlobeController(GlobeModel globeModel){
+        this.globeModel = globeModel;
     }
 
-    public <T extends ObjectView> void createObjectView(String id, int x, int y, int width, int height){
-        ObjectModel objectModel = findModel(id);
-        if (objectModel instanceof EntityModel) createEntityView(id, x, y, width, height);
-        else createAbilityView(id,x, y);
+    public  <T extends ObjectView> void createObjectView(String id, int x, int y, int width, int height){
+//        ObjectModel objectModel = findModel(id);
+//        if (objectModel instanceof EntityModel) createEntityView(id, x, y, width, height);
+//        else createAbilityView(id,x, y);
     }
 
-    public static <T extends EntityView> void createEntityView(String id, int x, int y, int width, int height) {
+    public <T extends EntityView> void createEntityView(String id, int x, int y, int width, int height) {
         EntityModel entityModel = findModel(id);
 
         Class entityViewCls = getEntityViewClass(entityModel);
         if (entityViewCls != null) {
             try {
-                Constructor<T> constructor = (Constructor<T>) entityViewCls.getConstructor(String.class);
-                var entityView = constructor.newInstance(id);
+                EntityView entityView;
+                if (entityModel instanceof EnemyModel) {
+                    EnemyModel enemyModel = (EnemyModel) entityModel;
+                    Constructor<T> constructor = (Constructor<T>) entityViewCls.getConstructor(String.class, Polygon.class);
+                    entityView = constructor.newInstance(id, enemyModel.getPolygon());
+                }else {
+                    Constructor<T> constructor = (Constructor<T>) entityViewCls.getConstructor(String.class);
+                    entityView = constructor.newInstance(id);
+                }
                 entityView.set(x, y, width, height);
+
+            } catch (NoSuchMethodException | InstantiationException |
+                     InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    public void createPanelView(String id, int x, int y, int width, int height) {
+        PanelModel panelModel = findModel(id);
+        Class<PanelView> panelViewCls = PanelView.class;
+        if (panelModel != null) {
+            try {
+                Constructor<PanelView> constructor = panelViewCls.getConstructor(String.class, GameClient.class);
+                String globeId = GlobesManager.getIdFromGlobe(globeModel);
+                for (GameClient player : getPlayers(clients, globeId)) {
+                    var panelView = constructor.newInstance(id, player);
+                    panelView.set(x, y, width, height);
+                }
 
             } catch (NoSuchMethodException | InstantiationException |
                      InvocationTargetException | IllegalAccessException e) {
@@ -102,7 +125,7 @@ public class Controller {
         return entityViewCls;
     }
 
-    public static <T extends AbilityView> void createAbilityView(String id, int x, int y) {
+    public  <T extends AbilityView> void createAbilityView(String id, int x, int y) {
         AbilityModel abilityModel = findModel(id);
         Class abilityViewCls = getAbilityViewCls(abilityModel);
         if (abilityViewCls != null) {
@@ -149,7 +172,7 @@ public class Controller {
         return abilityViewCls;
     }
 
-    public static <T extends Viewable> void setViewBounds(T view) {
+    public  <T extends Viewable> void setViewBounds(T view) {
         if (findModel(view.getId()) instanceof EntityModel) {
             EntityModel entityModel = findModel(view.getId());
             if (entityModel != null) {
@@ -181,14 +204,27 @@ public class Controller {
                             momentModel.getRadius()
                     );
                     MomentView momentView = (MomentView) view;
-                    momentView.setColorOpacity(100 - (ElapsedTime.getTotalSeconds()-momentModel.getTime())*17);
+                  //  momentView.setColorOpacity(100 - (glapsedTime.getTotalSeconds()-momentModel.getTime())*17); todo for now isn't necessary
                 } else {
                     view.set(
                             abilityModel.getX(),
                             abilityModel.getY(),
                             5, 5);
                 }
-            } else view.setEnabled(false);
+            } else if(findModel(view.getId()) instanceof PanelModel) {
+                PanelModel panelModel = findModel(view.getId());
+                if (panelModel != null) {
+                    view.set(
+                            panelModel.getX(),
+                            panelModel.getY(),
+                            panelModel.getWidth(),
+                            panelModel.getHeight()
+                    );
+                }else view.setEnabled(false);
+            }
+            else{
+                view.setEnabled(false);
+            }
 
         } else {
             view.setEnabled(false);
@@ -196,25 +232,26 @@ public class Controller {
 
     }
 
-    public static <T extends Drawable> T findModel(String id) {
-        for (EntityModel entityModel : entityModels) {
+    public <T extends Drawable> T findModel(String id) {
+        for (EntityModel entityModel : globeModel.getEntityModels()) {
             if (entityModel.getId().equals(id)) return (T) entityModel;
         }
-        for (int i = 0; i < abilityModels.size(); i++) {
-            AbilityModel abilityModel = abilityModels.get(i);
+        for (int i = 0; i < globeModel.getAbilityModels().size(); i++) {
+            AbilityModel abilityModel = globeModel.getAbilityModels().get(i);
             if (abilityModel.getId().equals(id)) return (T) abilityModel;
+        }
+        for (int i = 0 ; i< globeModel.getPanelModels().size(); i++){
+            PanelModel panelModel = globeModel.getPanelModels().get(i);
+            if (panelModel.getId().equals(id)) return (T) panelModel;
         }
 
         return null;
     }
-    public void deleteGamePanel(GamePanel gamePanel) {
-        if (gamePanel!=null) {
-            synchronized (LOCK) {
-                gamePanelsBounds.remove(gamePanel);
-                gamePanels.remove(gamePanel);
-            }
-            gamePanel.setEnabled(false);
-            app.getGameFrame().getLayeredPane().remove(gamePanel);
+    private static ArrayList<GameClient> getPlayers(ArrayList<GameClient> clients, String globeId){
+        ArrayList<GameClient> ans = new ArrayList<>();
+        for (GameClient client: clients){
+            if (client.getApp().getGlobeId().equals(globeId)) ans.add(client);
         }
+        return ans;
     }
 }

@@ -4,7 +4,7 @@ import org.windowkillproject.client.view.ImgData;
 
 import java.awt.*;
 
-import static org.windowkillproject.server.Config.EPSILON_RADIUS;
+import static org.windowkillproject.Constants.EPSILON_RADIUS;
 
 public class EpsilonView extends EntityView {
     double radius;

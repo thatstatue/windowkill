@@ -7,8 +7,8 @@ import java.awt.*;
 import static org.windowkillproject.server.Config.WYRM_RADIUS;
 
 public class WyrmView extends EnemyView {
-    public WyrmView(String id) {
-        super(id);
+    public WyrmView(String id, Polygon polygon) {
+        super(id,polygon);
     }
     @Override
     public void paint(Graphics g) {

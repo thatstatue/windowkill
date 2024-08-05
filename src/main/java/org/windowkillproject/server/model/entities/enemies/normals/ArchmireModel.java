@@ -1,12 +1,12 @@
 package org.windowkillproject.server.model.entities.enemies.normals;
 
-import org.windowkillproject.client.ui.panels.game.GamePanel;
 import org.windowkillproject.server.model.entities.Circular;
 import org.windowkillproject.server.model.entities.EntityModel;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.AoEAttacker;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Hovering;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import static org.windowkillproject.server.Config.MAX_ENEMY_SPEED;
 import static org.windowkillproject.controller.Utils.*;
 
 public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, Circular {
-    public ArchmireModel(GamePanel localPanel, int x, int y) {
-        super(localPanel, x, y,ARCHMIRE_RADIUS,30,0,5,6);
+    public ArchmireModel(GlobeModel globeModel,PanelModel localPanel, int x, int y) {
+        super(globeModel, localPanel, x, y,ARCHMIRE_RADIUS,30,0,5,6);
         archmireModels.add(this);
     }
     public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
@@ -33,7 +33,7 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, 
 
     @Override
     public Point2D getRoutePoint() {
-        return globalRoutePoint(this.getAnchor(), EpsilonModel.getINSTANCE().getAnchor(), MAX_ENEMY_SPEED-1);
+        return globalRoutePoint(this.getAnchor(),targetEpsilon.getAnchor(), MAX_ENEMY_SPEED-1);
     }
 
     @Override
@@ -63,6 +63,11 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, 
     @Override
     public Point2D getMoment() {
         return getAnchor();
+    }
+
+    @Override
+    public int getInitSecond() {
+        return globeModel.getElapsedTime().getTotalSeconds();
     }
 
     @Override

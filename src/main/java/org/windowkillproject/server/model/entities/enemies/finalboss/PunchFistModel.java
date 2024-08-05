@@ -1,52 +1,54 @@
 package org.windowkillproject.server.model.entities.enemies.finalboss;
 
-import org.windowkillproject.client.ui.panels.game.InternalGamePanel;
-import org.windowkillproject.client.ui.panels.game.MainGamePanel;
-import org.windowkillproject.client.ui.panels.game.PanelStatus;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
+import org.windowkillproject.server.model.panelmodels.PanelStatus;
 import org.windowkillproject.controller.Utils;
 import org.windowkillproject.server.model.abilities.VertexModel;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
+import static org.windowkillproject.Constants.ATTACK_TIMEOUT;
+import static org.windowkillproject.Constants.FPS;
 import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.controller.Controller.createEntityView;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
-import static org.windowkillproject.controller.Utils.isTransferableInBounds;
+
 
 public class PunchFistModel extends EnemyModel {
-    private static boolean on;
-    public PunchFistModel(int x, int y) {
-        super(null, x, y, HAND_RADIUS, Integer.MAX_VALUE, 10, 0, 0);
-        setLocalPanelModel(new InternalGamePanel(x, y, HAND_RADIUS*3, HAND_RADIUS*3,
+    private boolean on;
+    public PunchFistModel(GlobeModel globeModel, int x, int y) {
+        super(globeModel, null, x, y, HAND_RADIUS, Integer.MAX_VALUE, 10, 0, 0);
+        setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(x, y, HAND_RADIUS*3, HAND_RADIUS*3),
                 PanelStatus.isometric , true
         ));
-
+        targetEpsilon = globeModel.getSmileyHeadModel().getTargetEpsilon();
         initVertices();
         initPolygon();
-        createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
         on = true;
     }
 
-    public static boolean isOn() {
+    public boolean isOn() {
         return on;
     }
 
     @Override
     public void route() {
-        getLocalPanelModel().setLocation((int) (getXO()-getRadius()*1.5), (int) (getYO()-getRadius()*1.5));
+        getLocalPanelModel().setX((int) (getXO()-getRadius()*1.5));
+        getLocalPanelModel().setY((int) (getYO()-getRadius()*1.5));
 
     }
 
     @Override
     public Point2D getRoutePoint() {
         return globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor());
+                targetEpsilon.getAnchor());
 
     }
     public void tightenEpsilonPanel(){
@@ -55,16 +57,16 @@ public class PunchFistModel extends EnemyModel {
         AtomicInteger integer = new AtomicInteger();
         ActionListener punchListener = e -> {
 
-            if (!Utils.isTransferableInBounds(this, EpsilonModel.getINSTANCE().getAllowedArea() , true)) {
+            if (!Utils.isTransferableInBounds(this,targetEpsilon.getAllowedArea() , true)) {
                 move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
             }else{
                 integer.getAndIncrement();
                 if (integer.get()<4){
-                    MainGamePanel.getInstance().gotPunched(getAnchor());
+                    globeModel.getMainPanelModel().gotPunched(getAnchor());
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
                 }else if (integer.get()>ATTACK_TIMEOUT){
-                    SmileyHeadModel.setPunching(false);
-                    SmileyHeadModel.getInstance().setVulnerable(false);
+                    globeModel.getSmileyHeadModel().setPunching(false);
+                    globeModel.getSmileyHeadModel().setVulnerable(false);
                     getLocalPanelModel().setFlexible(true);
                     punch.stop();
                 }
@@ -77,11 +79,11 @@ public class PunchFistModel extends EnemyModel {
     public void slap(){
         getLocalPanelModel().setFlexible(true);
         Timer slap = new Timer(FPS/4, null);
-        int hp = EpsilonModel.getINSTANCE().getHp();
+        int hp = targetEpsilon.getHp();
         AtomicInteger integer = new AtomicInteger();
 
         ActionListener punchListener = e -> {
-            if (EpsilonModel.getINSTANCE().getHp()== hp) {
+            if (targetEpsilon.getHp()== hp) {
                 move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
             }else{
                 integer.getAndIncrement();
@@ -89,8 +91,8 @@ public class PunchFistModel extends EnemyModel {
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
 
                 }else if (integer.get()> ATTACK_TIMEOUT){
-                    SmileyHeadModel.setSlapping(false);
-                    SmileyHeadModel.getInstance().setVulnerable(false);
+                    globeModel.getSmileyHeadModel().setSlapping(false);
+                    globeModel.getSmileyHeadModel().setVulnerable(false);
                     slap.stop();
                 }
             }

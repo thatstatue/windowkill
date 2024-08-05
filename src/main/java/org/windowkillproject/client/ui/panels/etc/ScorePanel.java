@@ -1,9 +1,7 @@
 package org.windowkillproject.client.ui.panels.etc;
 
-import org.windowkillproject.Constants;
 import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.panels.Panel;
-import org.windowkillproject.client.ui.App;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.windowkillproject.Constants.*;
-import static org.windowkillproject.server.Config.*;
 
 public class ScorePanel extends Panel {
     private final JLabel clock = new JLabel("Elapsed Time  ->     ");
@@ -25,7 +22,7 @@ public class ScorePanel extends Panel {
             score,clock,xp,enemy,wave,new JLabel()
     };
 
-    public ScorePanel(JLabel[] jLabels, boolean won, GameClient client) {
+    public ScorePanel(GameClient client, JLabel[] jLabels, boolean won ) {
         super(client);
         setBackground(Color.black);
         setPreferredSize(new Dimension((int) (GAME_WIDTH*0.7), (int) (GAME_HEIGHT*0.7)));

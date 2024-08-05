@@ -1,7 +1,9 @@
 package org.windowkillproject.server.model.entities.enemies.finalboss;
 
+import org.windowkillproject.server.model.globe.GlobeModel;
+
 public class LeftHandModel extends HandModel{
-    protected LeftHandModel( int x, int y) {
-        super( x, y);
+    protected LeftHandModel(GlobeModel globeModel, int x, int y) {
+        super(globeModel, x, y);
     }
 }

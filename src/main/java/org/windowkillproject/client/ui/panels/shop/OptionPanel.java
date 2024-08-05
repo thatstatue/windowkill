@@ -1,5 +1,6 @@
 package org.windowkillproject.client.ui.panels.shop;
 
+import org.windowkillproject.SpecialityName;
 import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.panels.Panel;
 
@@ -8,7 +9,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static org.windowkillproject.server.Config.*;
+import static org.windowkillproject.Constants.OPTION_HEIGHT;
+import static org.windowkillproject.Constants.OPTION_WIDTH;
 
 public class OptionPanel extends Panel {
 
@@ -36,7 +38,7 @@ public class OptionPanel extends Panel {
 
 
 
-    public OptionPanel(SpecialtyName specialtyName, int xpAmount, BufferedImage img, GameClient client) {
+    public OptionPanel(SpecialityName specialtyName, int xpAmount, BufferedImage img, GameClient client) {
         super(client);
         setBackground(Color.decode("#d3ab97"));
         setPreferredSize(new Dimension(OPTION_WIDTH, OPTION_HEIGHT));
@@ -48,7 +50,9 @@ public class OptionPanel extends Panel {
 //        this.imgDisplay.setIcon(new ImageIcon(img));
 
     }
-
+    public void setWritChosen(boolean specialityName){
+        selectButton.setWritChosen(specialityName);
+    }
     @Override
     protected ArrayList<Component> initComponents() {
         ArrayList<Component> components = new ArrayList<>();
@@ -67,43 +71,13 @@ public class OptionPanel extends Panel {
 //        imgDisplay = new JLabel();
 //        imgDisplay.setBounds(40, 80, OPTION_WIDTH, OPTION_IMG_HEIGHT);
 //        components.add(imgDisplay);
-        selectButton = new SelectButton("PURCHASE");
+        selectButton = new SelectButton("PURCHASE", client);
         selectButton.setBounds(70, 80, 150, 50);
 
         components.add(selectButton);
         return components;
     }
 
-    public enum SpecialtyName {
-        Banish("O' Hephaestus، Banish"),
-        Empower("O’ Athena، Empower"),
-        Heal("O' Apollo، Heal"),
-        Dismay("O' Demios, Dismay"),
-        Slumber("O' Hypnos، Slumber"),
-        Slaughter("O' Phonoi، Slaughter"),
 
-
-
-        Ares("Writ of Ares"),
-        Aceso("Writ of Aceso"),
-        Proteus("Writ of Proteus"),
-        Astrape("Writ of Astrape"),
-        Cerberus("Writ of Cerberus"),
-        Melampus("Writ of Melampus"),
-        Chiron("Writ of Chiron"),
-        Empusa("Writ of Empusa"),
-        Dolus("Writ of Dolus");
-
-
-        private final String displayName;
-
-        SpecialtyName(String displayName) {
-            this.displayName = displayName;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-    }
 
 }

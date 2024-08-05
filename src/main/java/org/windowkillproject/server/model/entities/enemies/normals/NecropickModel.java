@@ -1,31 +1,32 @@
 package org.windowkillproject.server.model.entities.enemies.normals;
 
-import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Utils;
 import org.windowkillproject.server.model.abilities.ProjectileModel;
 import org.windowkillproject.server.model.abilities.VertexModel;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Hideable;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.ProjectileOperator;
+import org.windowkillproject.server.model.globe.GlobeModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+import static org.windowkillproject.Constants.EPSILON_RADIUS;
+import static org.windowkillproject.Constants.PROJECTILE_TIMEOUT;
 import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.controller.GameController.keepInPanel;
+import static org.windowkillproject.controller.GameManager.keepInPanel;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
 public class NecropickModel extends EnemyModel implements ProjectileOperator, NonRotatable, Hideable {
 
-    public NecropickModel(int x, int y) {
-        super(EpsilonModel.getINSTANCE().getLocalPanelModel(),
-                x, y, (int) (ENEMY_RADIUS * 3), 10, 0, 4, 2);
+    public NecropickModel(GlobeModel globeModel, int x, int y) {
+        super(globeModel, null,
+                x, y, (ENEMY_RADIUS * 3), 10, 0, 4, 2);
         initVertices();
         initPolygon();
-
-        appearanceTimeStart = ElapsedTime.getTotalSeconds();
+        setLocalPanelModel(targetEpsilon.getLocalPanelModel());
+        appearanceTimeStart = globeModel.getElapsedTime().getTotalSeconds();
     }
 
 
@@ -35,27 +36,27 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
     public void route() {
         setTheta(0);
         if (!visible) {
-            if (ElapsedTime.getTotalSeconds() - appearanceTimeEnd > 4) {
-                appearanceTimeStart = ElapsedTime.getTotalSeconds();
-                Point2D direction = Utils.unitVector(EpsilonModel.getINSTANCE().getAnchor(), getAnchor());
-                double distance = Utils.magnitude(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
+            if (globeModel.getElapsedTime().getTotalSeconds() - appearanceTimeEnd > 4) {
+                appearanceTimeStart = globeModel.getElapsedTime().getTotalSeconds();
+                Point2D direction = Utils.unitVector(targetEpsilon.getAnchor(), getAnchor());
+                double distance = Utils.magnitude(getAnchor(), targetEpsilon.getAnchor());
                 Point2D vector = Utils.weighedVector(direction, distance-EPSILON_RADIUS-getRadius()-10);
                 double moveX = vector.getX();
                 double moveY = vector.getY();
 //                if (vector.getX() < 8) moveX += 4 * EPSILON_RADIUS;
 //                if (vector.getY() < 8) moveY += 4 * EPSILON_RADIUS;
-                setLocalPanelModel(EpsilonModel.getINSTANCE().getLocalPanelModel());
+                setLocalPanelModel(targetEpsilon.getLocalPanelModel());
                 move((int) moveX, (int) moveY);
             }
         } else {
-            if (!EpsilonModel.getINSTANCE().getAllowedPanelModels().isEmpty()) {
-                var panel = EpsilonModel.getINSTANCE().getAllowedPanelModels().get(0);
+            if (!targetEpsilon.getAllowedPanelModels().isEmpty()) {
+                var panel = targetEpsilon.getAllowedPanelModels().get(0);
                 if (panel != null) keepInPanel(this, panel);
             }
             shoot();
-            if (ElapsedTime.getTotalSeconds() - appearanceTimeStart > 8) {
+            if (globeModel.getElapsedTime().getTotalSeconds() - appearanceTimeStart > 8) {
                 visible = false;
-                appearanceTimeEnd = ElapsedTime.getTotalSeconds();
+                appearanceTimeEnd = globeModel.getElapsedTime().getTotalSeconds();
             }
         }
     }
@@ -63,7 +64,7 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
     @Override
     public Point2D getRoutePoint() {
         return globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor());
+                targetEpsilon.getAnchor());
     }
 
     @Override
@@ -90,9 +91,9 @@ public class NecropickModel extends EnemyModel implements ProjectileOperator, No
 
     @Override
     public void shoot() {
-        if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-            new ProjectileModel(getLocalPanelModel(), this, 5, false, false, Color.gray, Color.darkGray).shoot();
-            lastShot = ElapsedTime.getTotalSeconds();
+        if (globeModel.getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
+            new ProjectileModel(getLocalPanelModel(), this, 5, false, null, Color.gray, Color.darkGray).shoot();
+            lastShot = globeModel.getElapsedTime().getTotalSeconds();
         }
     }
 

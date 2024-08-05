@@ -1,7 +1,6 @@
 package org.windowkillproject.client.ui.panels;
 
 import org.windowkillproject.client.GameClient;
-import org.windowkillproject.server.Config;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -10,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import static org.windowkillproject.server.Config.TEXT_FONT;
+import static org.windowkillproject.Constants.*;
 
 public abstract class Panel extends JPanel {
     protected ArrayList<Component> components;
@@ -37,11 +36,11 @@ public abstract class Panel extends JPanel {
 
     protected final JButton buttonMaker(String name, int x, int y, ActionListener actionListener) {
         JButton jButton = new JButton(name);
-        jButton.setBounds(x, y, Config.BUTTON_WIDTH, Config.BUTTON_HEIGHT);
-        jButton.setFont(Config.BUTTON_FONT);
+        jButton.setBounds(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        jButton.setFont(BUTTON_FONT);
         jButton.setFocusPainted(false);
-        jButton.setBackground(Config.BUTTON_BG_COLOR);
-        jButton.setForeground(Config.BUTTON_FG_COLOR);
+        jButton.setBackground(BUTTON_BG_COLOR);
+        jButton.setForeground(BUTTON_FG_COLOR);
         jButton.addActionListener(actionListener);
         return jButton;
     }
@@ -50,7 +49,7 @@ public abstract class Panel extends JPanel {
         JLabel jLabel = new JLabel(name);
         jLabel.setBounds(x, y, width, height);
         jLabel.setFont(TEXT_FONT);
-        jLabel.setForeground(Config.BUTTON_FG_COLOR);
+        jLabel.setForeground(BUTTON_FG_COLOR);
         return jLabel;
     }
 

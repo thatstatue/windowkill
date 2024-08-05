@@ -1,39 +1,37 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.client.ui.App;
-import org.windowkillproject.client.ui.panels.game.GamePanel;
-import org.windowkillproject.client.ui.panels.game.MainGamePanel;
-import org.windowkillproject.controller.data.GameSaveManager;
-import org.windowkillproject.controller.data.GameState;
-import org.windowkillproject.server.model.Wave;
+import org.windowkillproject.client.ui.panels.game.PanelView;
+import org.windowkillproject.client.ui.panels.game.MainPanelView;
+
 import org.windowkillproject.server.model.entities.EntityModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.MainPanelModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
-import static org.windowkillproject.controller.Controller.deleteGamePanel;
+import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 import static org.windowkillproject.controller.Utils.isTransferableInBounds;
-import static org.windowkillproject.server.model.ObjectModel.objectModels;
+
 import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.server.model.entities.enemies.EnemyModel.getKilledEnemiesInWave;
-import static org.windowkillproject.server.model.entities.enemies.EnemyModel.getKilledEnemiesTotal;
 
 public class EmptyPanelEraser extends Timer {
+    private GlobeModel globeModel;
 
-    public EmptyPanelEraser() {
+    public EmptyPanelEraser(GlobeModel globeModel) {
         super(5000, null);
-        App.setGameState(new GameState(objectModels, gamePanels, gamePanelsBounds, Wave.getLevel(),
-                getKilledEnemiesInWave(), getKilledEnemiesTotal()));
+        this.globeModel = globeModel;
+//        App.setGameState(new GameState(objectModels, panelViews, gamePanelsBounds, Wave.getLevel(),
+//                getKilledEnemiesInWave(), getKilledEnemiesTotal()));
 
         ActionListener actionListener = e -> {
-            for (int j = 0 ; j< gamePanels.size(); j++) {
-                GamePanel gamePanel = gamePanels.get(j);
-                if (gamePanel instanceof MainGamePanel)
+            for (int j = 0; j< globeModel.getPanelModels().size(); j++) {
+                PanelModel panelModel = globeModel.getPanelModels().get(j);
+                if (panelModel instanceof MainPanelModel)
                     continue;
-                Rectangle rectangle = gamePanelsBounds.get(gamePanel);
+                Rectangle rectangle = panelModel.getBounds();
                 boolean hasEntity = false;
                 for (int i = 0; i < entityModels.size(); i++) {
                     EntityModel entityModel = entityModels.get(i);
@@ -43,10 +41,10 @@ public class EmptyPanelEraser extends Timer {
                     }
                 }
                 if (!hasEntity) {
-                    deleteGamePanel(gamePanel);
+                    globeModel.getGameManager().deleteGamePanel(panelModel);
                 }
             }
-            GameSaveManager.saveGameState(App.getGameState());
+         //   GameSaveManager.saveGameState(App.getGameState()); //todo move savings to server-side
         };
         addActionListener(actionListener);
     }

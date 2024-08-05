@@ -27,7 +27,7 @@ public class EntityPanel extends Panel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+// TODO URGENT add panelBounds here to just draw them, they'll be changed through id from their paired panelmodel
         for (int i = 0; i < abilityViews.size(); i++) {
             abilityViews.get(i).paint(g);
         }

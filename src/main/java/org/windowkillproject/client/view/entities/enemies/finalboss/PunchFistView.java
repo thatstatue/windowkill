@@ -6,8 +6,8 @@ import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import java.awt.*;
 
 public class PunchFistView extends EnemyView {
-    public PunchFistView(String id) {
-        super(id);
+    public PunchFistView(String id, Polygon polygon) {
+        super(id,polygon);
         setImg(ImgData.getData().getPunchFist());
     }
 

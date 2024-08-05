@@ -6,8 +6,8 @@ import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import java.awt.*;
 
 public class SmileyHeadView extends EnemyView {
-    public SmileyHeadView(String id) {
-        super(id);
+    public SmileyHeadView(String id, Polygon polygon) {
+        super(id,polygon);
         setImg(ImgData.getData().getSmileyHead());
     }
 

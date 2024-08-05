@@ -5,8 +5,8 @@ import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import java.awt.*;
 
 public class SquarantineView extends EnemyView {
-    public SquarantineView(String id) {
-        super(id);
+    public SquarantineView(String id, Polygon polygon) {
+        super(id,polygon);
     }
 
     @Override

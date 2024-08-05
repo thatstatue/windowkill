@@ -21,5 +21,7 @@ public class Config {
     public static int EPSILON_SPEED = 4;
     public static int BOUND = 5;
     public static int GAME_MIN_SIZE = 250;
+    public static int END_OF_NORMAL = 3;
+    public static int END_OF_MINIBOSS = 9;
 
 }

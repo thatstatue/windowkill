@@ -2,27 +2,27 @@ package org.windowkillproject.client.ui;
 
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import org.windowkillproject.server.Config;
 
 import javax.swing.*;
 
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.client.ui.listeners.EpsilonKeyListener.*;
 import static org.windowkillproject.client.ui.panels.etc.SettingsPanel.monoDialog;
 
 public class Setter {
     public static void setDifficulty(String rate) {
         if (rate.equals("LOW")) {
-            Config.ENEMY_RADIUS = 25;
-            Config.BOUND = 4;
-            Config.MAX_ENEMY_SPEED = 3;
+            ENEMY_RADIUS = 25;
+            BOUND = 4;
+            MAX_ENEMY_SPEED = 3;
         } else if (rate.equals("HIGH")) {
-            Config.ENEMY_RADIUS = 15;
-            Config.BOUND = 6;
-            Config.MAX_ENEMY_SPEED = 4;
+            ENEMY_RADIUS = 15;
+            BOUND = 6;
+            MAX_ENEMY_SPEED = 4;
         } else if (rate.equals("MEDIUM")) {
-            Config.ENEMY_RADIUS = 20;
-            Config.BOUND = 5;
-            Config.MAX_ENEMY_SPEED = 4;
+            ENEMY_RADIUS = 20;
+            BOUND = 5;
+            MAX_ENEMY_SPEED = 4;
         } else {
             System.out.println("didn't get any rate for difficulty");
         }
@@ -30,23 +30,23 @@ public class Setter {
 
     public static int key;
 
-    public static boolean setButton(int pressedKey, int code) {
+    public static boolean setButton(int pressedKey, int code) { //TODO WHY PASS PRESSED KEY
         if (buttonIsUsed(code)) {
             JOptionPane.showMessageDialog(null,
                     "this key is already used");
             return false;
         } else {
             switch (key) {
-                case Config.UP_CODE -> {
+                case UP_CODE -> {
                     UP_KEY = code;
                 }
-                case Config.DOWN_CODE -> {
+                case DOWN_CODE -> {
                     DOWN_KEY = code;
                 }
-                case Config.LEFT_CODE -> {
+                case LEFT_CODE -> {
                     LEFT_KEY = code;
                 }
-                case Config.RIGHT_CODE -> {
+                case RIGHT_CODE -> {
                     RIGHT_KEY = code;
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + key);

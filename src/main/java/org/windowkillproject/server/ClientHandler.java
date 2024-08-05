@@ -1,7 +1,6 @@
 package org.windowkillproject.server;
 
-import org.windowkillproject.client.GameClient;
-import org.windowkillproject.server.model.Writ;
+import org.windowkillproject.MessageQueue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,17 +12,15 @@ import java.util.Map;
 
 import static org.windowkillproject.Request.REGEX_SPLIT;
 
-public class ClientHandler extends Thread {
+public class ClientHandler{
     private final Socket socket;
     private final GameServer server;
     private PrintWriter out;
     private BufferedReader in;
-    public static Map<Socket, ClientHandler> socketClientHandlerMap = new HashMap<>();
-    private final Writ writ =new Writ(this);
+    private MessageQueue messageQueue = new MessageQueue();
 
-    public Writ getWrit() {
-        return writ;
-    }
+    public static Map<Socket, ClientHandler> socketClientHandlerMap = new HashMap<>();
+
 
     public ClientHandler(Socket clientSocket, GameServer server) {
         this.socket = clientSocket;
@@ -36,30 +33,49 @@ public class ClientHandler extends Thread {
         }
         socketClientHandlerMap.put(socket, this);
     }
-
-    @Override
-    public void run() {
-
-        try {
-            String message;
-            while ((message = in.readLine()) != null) {
-                System.out.println("Received: " + message);
-                new RequestHandler(this , message).run();
-//                server.broadcast(message);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            server.removeClient(this);
+    public void start(){
+        new Thread(new sendQueuedMessages(this)).start();
+        new Thread(new receiveClientMessages()).start();
+    }
+    private class receiveClientMessages implements Runnable{
+        @Override
+        public void run() {
             try {
-                socket.close();
+                String message;
+                while ((message = in.readLine()) != null){
+                    new RequestHandler(messageQueue, message).run();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    private class sendQueuedMessages implements Runnable{
+        private final ClientHandler clientHandler;
+        sendQueuedMessages(ClientHandler clientHandler){
+            this.clientHandler = clientHandler;
+        }
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    String message = messageQueue.dequeue();
+                    sendMessage(message);//sends every request from server side queued
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {// todo should i remove client?
+                server.removeClient(clientHandler);
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    public void sendMessage(String message) {
+    private void sendMessage(String message) {
         out.println(message + REGEX_SPLIT);
     }
 

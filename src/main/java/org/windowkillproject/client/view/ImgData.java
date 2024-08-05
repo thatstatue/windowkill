@@ -1,12 +1,13 @@
 package org.windowkillproject.client.view;
 
-import org.windowkillproject.server.Config;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import static org.windowkillproject.Constants.OPTION_IMG_HEIGHT;
+import static org.windowkillproject.Constants.OPTION_WIDTH;
 
 public class ImgData {
     private static ImgData data;
@@ -84,7 +85,7 @@ public class ImgData {
             String pathBackground = icons_dir+"Proteus.png";
             File fileBackground = new File(pathBackground);
             proteus = ImageIO.read(fileBackground);
-            proteus.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
+            proteus.getScaledInstance(OPTION_WIDTH, OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +93,7 @@ public class ImgData {
             String pathBackground = icons_dir+"Ares.png";
             File fileBackground = new File(pathBackground);
             ares = ImageIO.read(fileBackground);
-            ares.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
+            ares.getScaledInstance(OPTION_WIDTH, OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,7 +101,7 @@ public class ImgData {
             String pathBackground = icons_dir+"Aceso.png";
             File fileBackground = new File(pathBackground);
             aceso = ImageIO.read(fileBackground);
-            aceso.getScaledInstance(Config.OPTION_WIDTH, Config.OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
+            aceso.getScaledInstance(OPTION_WIDTH, OPTION_IMG_HEIGHT, Image.SCALE_DEFAULT);
 
         } catch (IOException e) {
             e.printStackTrace();

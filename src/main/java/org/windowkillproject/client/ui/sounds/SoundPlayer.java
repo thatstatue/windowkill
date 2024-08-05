@@ -1,4 +1,4 @@
-package org.windowkillproject.client.ui;
+package org.windowkillproject.client.ui.sounds;
 
 
 import javax.sound.sampled.*;
@@ -12,12 +12,13 @@ public class SoundPlayer {
 
     {
         try {
-            bgThemeAS = AudioSystem.getAudioInputStream(new File("BGTheme.wav"));
-            hitAS = AudioSystem.getAudioInputStream(new File("hit.wav"));
-            createAS = AudioSystem.getAudioInputStream(new File("create.wav"));
-            destroyAS = AudioSystem.getAudioInputStream(new File("destroy.wav"));
-            waveAS = AudioSystem.getAudioInputStream(new File("wave.wav"));
-            bulletAS = AudioSystem.getAudioInputStream(new File("bullet.wav"));
+            String root = "src/main/java/org/windowkillproject/client/ui/sounds/";
+            bgThemeAS = AudioSystem.getAudioInputStream(new File(root +"BGTheme.wav"));
+            hitAS = AudioSystem.getAudioInputStream(new File(root +"hit.wav"));
+            createAS = AudioSystem.getAudioInputStream(new File(root +"create.wav"));
+            destroyAS = AudioSystem.getAudioInputStream(new File(root +"destroy.wav"));
+            waveAS = AudioSystem.getAudioInputStream(new File(root +"wave.wav"));
+            bulletAS = AudioSystem.getAudioInputStream(new File(root +"bullet.wav"));
 
         } catch (UnsupportedAudioFileException | IOException e) {
             throw new RuntimeException(e);

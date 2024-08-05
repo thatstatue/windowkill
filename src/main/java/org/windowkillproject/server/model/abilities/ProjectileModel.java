@@ -1,7 +1,7 @@
 package org.windowkillproject.server.model.abilities;
 
-import org.windowkillproject.client.ui.panels.game.GamePanel;
-import org.windowkillproject.server.model.PanelModel;
+import org.windowkillproject.Request;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
@@ -15,22 +15,19 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.windowkillproject.Constants.*;
-import static org.windowkillproject.client.ui.SoundPlayer.playBulletSound;
-import static org.windowkillproject.controller.Controller.createAbilityView;
-import static org.windowkillproject.controller.GameController.impact;
-import static org.windowkillproject.controller.GameController.random;
+import static org.windowkillproject.controller.GameManager.impact;
+import static org.windowkillproject.controller.GameManager.random;
 import static org.windowkillproject.controller.Utils.unitVector;
 import static org.windowkillproject.controller.Utils.weighedVector;
 import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.server.model.entities.EpsilonModel.clientEpsilonModelMap;
 
 public class ProjectileModel extends AbilityModel implements Projectable {
     private int attackHp;
     private final boolean isHovering;
-    private GamePanel localPanel;
+    private PanelModel localPanel;
 
 
-    public void setLocalPanelBounds(GamePanel localPanelBounds) {
+    public void setLocalPanelBounds(PanelModel localPanelBounds) {
         this.localPanel = localPanelBounds;
     }
 
@@ -56,8 +53,8 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     private final ProjectileOperator parent;
     private Point2D delta;
 
-    public ProjectileModel(PanelModel localPanel, ProjectileOperator parent, int attackHp, boolean isHovering, boolean isTowardsEpsilon, Color topColor, Color bottomColor) {
-        super(parent.getTeam(), localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
+    public ProjectileModel(PanelModel localPanel, ProjectileOperator parent, int attackHp, boolean isHovering, EpsilonModel epsilonModel, Color topColor, Color bottomColor) {
+        super(parent.getGlobeModel(), localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
 //        anchor = new Point2D.Double(x, y);
         isShoot = false;
         projectileModels.add(this);
@@ -66,19 +63,19 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         this.isHovering = isHovering;
         this.topColor = topColor;
         this.bottomColor = bottomColor;
-        delta = unitVector(getPoint2D(isTowardsEpsilon), this.getAnchor());
+        delta = unitVector(getPoint2D(epsilonModel), this.getAnchor());
         delta = weighedVector(delta, BULLET_SPEED / 2.0);
 //        localPanel = parent.getLocalPanel();
-        createAbilityView(id, x, y);
+        globeModel.getGlobeController().createAbilityView(id, x, y);
 
     }
 
-    private Point2D getPoint2D(boolean isTowardsEpsilon) {
-        Point2D headedPoint = clientEpsilonModelMap.get(parent.getClientHandler().getAnchor();
-        if (!isTowardsEpsilon) {
+    private Point2D getPoint2D( EpsilonModel epsilonModel) {
+        Point2D headedPoint;
+        if (epsilonModel == null) {
             headedPoint = new Point2D.Double(random.nextInt(CENTER_X*2),
                      random.nextInt(CENTER_Y*2));
-        }
+        }else headedPoint = epsilonModel.getAnchor();
         return headedPoint;
     }
 
@@ -132,15 +129,16 @@ public class ProjectileModel extends AbilityModel implements Projectable {
                         break;
                     }
                 }
-                var epsilon = clientEpsilonModelMap.get(parent.getClientHandler());
-                if (notHitVs && entityModel instanceof EpsilonModel &&
-                        epsilon.getAnchor().
-                                distance(new Point2D.Double(getX(), getY())) < EPSILON_RADIUS) {
-                    epsilon.gotHit(attackHp);
-                    explode();
+                for (EpsilonModel epsilon :globeModel.getEpsilons()) {
+                    if (notHitVs && entityModel instanceof EpsilonModel &&
+                            epsilon.getAnchor().
+                                    distance(new Point2D.Double(getX(), getY())) < EPSILON_RADIUS) {
+                        epsilon.gotHit(attackHp);
+                        explode();
+                    }
                 }
                 //hitting enemy
-                else if (entityModel instanceof EnemyModel) {
+                if (entityModel instanceof EnemyModel) {
                     EnemyModel enemyModel = (EnemyModel) entityModel;
                     if (notHitVs && enemyModel.getPolygon() != null) {
                         Area enemyA = new Area(enemyModel.getPolygon());
@@ -164,7 +162,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     private void explode() {
         if (!isHovering) impact(this);
         projectileModels.remove(this);
-        playBulletSound();
+        globeModel.performAction(Request.REQ_PLAY_BULLET_SOUND);
         destroy();
     }
 

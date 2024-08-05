@@ -1,8 +1,8 @@
 package org.windowkillproject.server.model.entities;
 
-import org.windowkillproject.server.ClientHandlerTeam;
+import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.ObjectModel;
-import org.windowkillproject.server.model.PanelModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.Transferable;
 import org.windowkillproject.server.model.abilities.BulletModel;
 import org.windowkillproject.server.model.abilities.VertexModel;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import static org.windowkillproject.Constants.UNIT_DEGREE;
 import static org.windowkillproject.Request.LOCK;
+import static org.windowkillproject.Request.REQ_PLAY_HIT_SOUND;
 
 
 public abstract class EntityModel extends ObjectModel implements Transferable {
@@ -58,7 +59,6 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     public void setAllowedPanelModels(ArrayList<PanelModel> allowedPanelModels) {
         this.allowedPanelModels = allowedPanelModels;
     }
-
     public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
     public abstract void route(); //if entity is local, implement is also local
@@ -85,7 +85,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
 
     public void addToAllowedArea(PanelModel panel){
         allowedPanelModels.add(panel);
-        Area area = new Area(gamePanelsBounds.get(panel));
+        Area area = new Area(new Rectangle(panel.getX(), panel.getY(),panel.getWidth(),panel.getHeight()));
         getAllowedArea().add(area);
     }
     public int getMeleeAttackHp() {
@@ -102,7 +102,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
             setHp(0);
             destroy();
         }
-        clientHandler
+        globeModel.performAction(REQ_PLAY_HIT_SOUND);
     }
     public Area getArea(){
         return new Area(new Rectangle(getX(),getY(),getWidth(),getHeight()));
@@ -120,7 +120,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
 
         public void destroy() {
         synchronized (LOCK) {
-            objectModels.remove(this);
+            globeModel.getObjectModels().remove(this);
         }
         entityModels.remove(this);
     }
@@ -154,8 +154,8 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     }
 
 
-    protected EntityModel(ClientHandlerTeam team, PanelModel localPanel, int x, int y, int radius, int hp, int meleeAttackHp) {
-        super(team, localPanel, x, y );
+    public EntityModel(GlobeModel globeModel, PanelModel localPanel, int x, int y, int radius, int hp, int meleeAttackHp) {
+        super(globeModel, localPanel, x, y );
 
         this.hp = hp;
         this.meleeAttackHp = meleeAttackHp;

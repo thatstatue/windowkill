@@ -2,7 +2,7 @@ package org.windowkillproject.client.view.abilities;
 
 import java.awt.*;
 
-import static org.windowkillproject.server.Config.EPSILON_RADIUS;
+import static org.windowkillproject.Constants.EPSILON_RADIUS;
 
 public class PortalView extends AbilityView {
     public PortalView(String id, int x, int y) {

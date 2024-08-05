@@ -1,15 +1,12 @@
 package org.windowkillproject.server.model;
 
-import org.windowkillproject.server.ClientHandlerTeam;
-import org.windowkillproject.server.MessageQueue;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
-import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.windowkillproject.Request.LOCK;
@@ -19,9 +16,34 @@ public abstract class ObjectModel implements Drawable, Serializable {
     private static final long serialVersionUID = 1L;
     protected int x, y, width, height;
     protected String id;
-    public static Map<ClientHandlerTeam, ArrayList<ObjectModel>> objectModels = new HashMap<>();
-
     protected Point2D anchor;
+    protected GlobeModel globeModel;
+
+    public GlobeModel getGlobeModel() {
+        return globeModel;
+    }
+
+    private transient Area allowedArea = new Area();
+    private PanelModel localPanelModel;
+
+
+    protected ObjectModel(GlobeModel globeModel, PanelModel localPanelModel, int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.localPanelModel = localPanelModel;
+        this.globeModel =globeModel;
+        initGlobeModel();
+        this.id = UUID.randomUUID().toString();
+        anchor = new Point2D.Double(x, y);
+    }
+
+    private void initGlobeModel() {
+        synchronized (LOCK) {
+            if (globeModel.getObjectModels() == null) globeModel.setObjectModels(new ArrayList<>());
+            globeModel.getObjectModels().add(this);
+        }
+    }
+
     @Serial
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject(); // Serialize the serializable fields
@@ -30,8 +52,6 @@ public abstract class ObjectModel implements Drawable, Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject(); // Deserialize the serializable fields
     }
-
-    private transient Area allowedArea = new Area();
 
     public Area getAllowedArea() {
         return allowedArea;
@@ -51,35 +71,12 @@ public abstract class ObjectModel implements Drawable, Serializable {
     public void setAnchor (double x, double y){
         anchor.setLocation(x , y);
     }
-    private PanelModel localPanelModel;
-    private final ClientHandlerTeam team;
-
-    public ClientHandlerTeam getTeam() {
-        return team;
-    }
-
     public PanelModel getLocalPanelModel() {
         return localPanelModel;
     }
 
     public void setLocalPanelModel(PanelModel localPanelModel) {
         this.localPanelModel = localPanelModel;
-    }
-
-
-    protected ObjectModel(ClientHandlerTeam team, PanelModel localPanelModel, int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.localPanelModel = localPanelModel;
-
-        this.team = team;
-        var objModels = objectModels.get(team);
-        synchronized (LOCK) {
-            if (objModels == null) objModels = new ArrayList<>();
-            objModels.add(this);
-        }
-        this.id = UUID.randomUUID().toString();
-        anchor = new Point2D.Double(x, y);
     }
 
 
@@ -121,11 +118,6 @@ public abstract class ObjectModel implements Drawable, Serializable {
     public void setHeight(int height) {
         this.height = height;
     }
-    private MessageQueue messageQueue;
 
 
-    public void performAction(String message) {
-        // Some game logic
-        messageQueue.enqueue(message);
-    }
 }

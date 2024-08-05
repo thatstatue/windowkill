@@ -1,21 +1,19 @@
 package org.windowkillproject.server.model.abilities;
 
-import org.windowkillproject.client.ui.panels.game.MainGamePanel;
-import org.windowkillproject.controller.ElapsedTime;
+import org.windowkillproject.server.model.globe.GlobeModel;
 
-import static org.windowkillproject.server.Config.EPSILON_RADIUS;
-import static org.windowkillproject.controller.Controller.createAbilityView;
+import static org.windowkillproject.Constants.EPSILON_RADIUS;
 
 public class PortalModel extends AbilityModel{
     public static PortalModel lastPortal;
 
-    public PortalModel(int x, int y) {
-        super(MainGamePanel.getInstance(), x, y);
-        initSeconds = ElapsedTime.getTotalSeconds();
+    public PortalModel(GlobeModel globeModel,int x, int y) {
+        super(globeModel, globeModel.getMainPanelModel(), x, y);
+        initSeconds = globeModel.getElapsedTime().getTotalSeconds();
         setWidth(EPSILON_RADIUS*5);
         setHeight(EPSILON_RADIUS*5);
         lastPortal = this;
-        createAbilityView(getId(), getX(),getY());
+        globeModel.getGlobeController().createAbilityView(getId(), getX(),getY());
 
     }
 

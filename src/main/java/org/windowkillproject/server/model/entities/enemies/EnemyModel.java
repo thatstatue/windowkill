@@ -1,26 +1,41 @@
 package org.windowkillproject.server.model.entities.enemies;
 
-import org.windowkillproject.server.ClientHandlerTeam;
+import org.windowkillproject.Request;
 import org.windowkillproject.server.Config;
 import org.windowkillproject.server.model.abilities.CollectableModel;
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
-import static org.windowkillproject.controller.Controller.createEntityView;
-import static org.windowkillproject.controller.GameController.random;
-import static org.windowkillproject.server.model.entities.EpsilonModel.clientEpsilonModelMap;
+
+import static org.windowkillproject.controller.GameManager.random;
 
 public abstract class EnemyModel extends EntityModel {
-    public EnemyModel(ClientHandlerTeam team, Rectangle localPanel, int x, int y, int radius, int hp , int meleeAttackHp, int rewardCount, int rewardXps) {
-        super(team, localPanel,x, y, radius,hp, meleeAttackHp);
+    public EnemyModel(GlobeModel globeModel, PanelModel localPanel, int x, int y, int radius, int hp , int meleeAttackHp, int rewardCount, int rewardXps) {
+        super(globeModel, localPanel,x, y, radius,hp, meleeAttackHp);
         setReward(rewardCount, rewardXps);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
-        if (localPanel!= null) createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        if (localPanel!= null) globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        targetEpsilon = chooseRandomTarget(globeModel.getEpsilons());
 
     }
+    protected EpsilonModel targetEpsilon;
+    private EpsilonModel chooseRandomTarget(ArrayList<EpsilonModel> epsilonModels){
+        int rand = random.nextInt(epsilonModels.size());
+        return epsilonModels.get(rand);
+    }
+
+    public EpsilonModel getTargetEpsilon() {
+        return targetEpsilon;
+    }
+
     protected void initPolygon() {
         int vertices=getVertices().size();
         int[] xPoints = new int[vertices];
@@ -33,32 +48,16 @@ public abstract class EnemyModel extends EntityModel {
     }
 
     private int rewardCount, rewardXps;
-    private static int killedEnemiesInWave, killedEnemiesTotal;
-//    private InternalGamePanel bgPanel;
+    private InternalPanelModel bgPanel;
 
-    public static int getKilledEnemiesTotal() {
-        return killedEnemiesTotal;
+    public InternalPanelModel getBgPanel() {
+        return bgPanel;
     }
 
-    public static void setKilledEnemiesTotal(int killedEnemiesTotal) {
-        EnemyModel.killedEnemiesTotal = killedEnemiesTotal;
-    }
-//
-//    public InternalGamePanel getBgPanel() {
-//        return bgPanel;
-//    }
-//
-//    public void setBgPanel(InternalGamePanel bgPanel) {
-//        this.bgPanel = bgPanel;
-//    }
-
-    public static void setKilledEnemiesInWave(int killedEnemiesInWave) {
-        EnemyModel.killedEnemiesInWave = killedEnemiesInWave;
+    public void setBgPanel(InternalPanelModel bgPanel) {
+        this.bgPanel = bgPanel;
     }
 
-    public static int getKilledEnemiesInWave() {
-        return killedEnemiesInWave;
-    }
 
     protected void setReward(int rewardCount, int rewardXps) {
         this.rewardCount = rewardCount;
@@ -87,35 +86,43 @@ public abstract class EnemyModel extends EntityModel {
     @Override
     public void gotHit(int attackHp) {
         super.gotHit(attackHp);
-        var epsilonModel = clientEpsilonModelMap.get();
-        if (epsilonModel.isChironner())
-            epsilonModel.setHp(epsilonModel.getHp()+3);
+        for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
+            if (epsilonModel.isChironner())
+                epsilonModel.setHp(epsilonModel.getHp() + 3);
+        }
     }
 
 
         @Override
     public void destroy() {
         super.destroy();
-        playDestroySound();
-        killedEnemiesInWave++;
-        killedEnemiesTotal++;
+        globeModel.performAction(Request.REQ_PLAY_DESTROY_SOUND);
+        globeModel.addKilledEnemiesInWave();
+        globeModel.addKilledEnemiesTotal();
         for (int i = 0; i < rewardCount; i++) {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();
 
-            new CollectableModel(getLocalPanelModel(), x, y, rewardXps);
+            new CollectableModel(globeModel,getLocalPanelModel(), x, y, rewardXps);
         }
     }
 
     protected abstract void initVertices();
     protected void moveBGPanel(int x, int y) {
         var bgPanel = getBgPanel();
-        var epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanelModel();
-        if (bgPanel != null && (epsilonPanel==null || !epsilonPanel.equals(bgPanel))) {
-            var loc = bgPanel.getLocation();
-            bgPanel.setLocation(
-                    loc.x + getX()- x,
-                    loc.y +getY() - y);
+        boolean temp = false;
+        for (EpsilonModel epsilonModel : globeModel.getEpsilons()){
+            var epsilonPanel = epsilonModel.getLocalPanelModel();
+            if (epsilonPanel!=null && epsilonPanel.equals(bgPanel)) {
+                temp = true;
+                break;
+            }
+        }
+
+        if (bgPanel != null && !temp) {
+            var loc = new Point2D.Double(bgPanel.getX(), bgPanel.getY());
+            bgPanel.setX((int) (loc.x + getX()- x));
+            bgPanel.setY((int) (loc.y +getY() - y));
         }
     }
 

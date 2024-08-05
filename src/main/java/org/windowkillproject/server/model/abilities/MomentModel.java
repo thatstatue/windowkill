@@ -1,8 +1,9 @@
 package org.windowkillproject.server.model.abilities;
 
+import org.windowkillproject.server.model.globe.GlobeModel;
+
 import java.awt.geom.Point2D;
 
-import static org.windowkillproject.controller.Controller.createAbilityView;
 
 public class MomentModel extends AbilityModel {
     public Point2D getCenterOfArea() {
@@ -13,13 +14,13 @@ public class MomentModel extends AbilityModel {
         return time;
     }
 
-    public MomentModel(Point2D centerOfArea, int time, int radius, int attackHP) {
-        super( null, (int) (centerOfArea.getX()-radius), (int) (centerOfArea.getY()-radius));
+    public MomentModel(GlobeModel globeModel,Point2D centerOfArea, int time, int radius, int attackHP) {
+        super( globeModel,null, (int) (centerOfArea.getX()-radius), (int) (centerOfArea.getY()-radius));
         this.centerOfArea = centerOfArea;
         this.time = time;
         this.radius = radius;
         this.attackHP = attackHP;
-        createAbilityView(getId(), getX(),getY());
+        globeModel.getGlobeController().createAbilityView(getId(), getX(),getY());
     }
 
     public int getRadius() {

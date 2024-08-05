@@ -9,8 +9,8 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.server.Config.MAX_ENEMY_SPEED;
-import static org.windowkillproject.server.Config.MIN_ENEMY_SPEED;
 
 public abstract class Utils {
     public static Point2D unitVector(Point2D goingPoint, Point2D anchor) {
@@ -151,9 +151,12 @@ public abstract class Utils {
         return !partly;
     }
 
-    public static int getPR(){
-        var eps = EpsilonModel.getINSTANCE();
-        return 10*eps.getXp()* Wave.getLevel()*ElapsedTime.getTotalSeconds()/eps.getHp();
+    public static int getPR(EpsilonModel epsilonModel){
+        return 10*
+                epsilonModel.getXp()*
+                epsilonModel.getGlobeModel().getWaveFactory().getLevel()
+             //   *ElapsedTime.getTotalSeconds()/ //todo un-static
+                /epsilonModel.getHp();
     }
     public static boolean isTransferableInBounds(Transferable transferable, Rectangle area, boolean partly){
         int left = transferable.getX();
@@ -203,6 +206,30 @@ public abstract class Utils {
         boolean isPointYInBounds = point2D.getY() > up &&
                 point2D.getY()< down;
         return isPointXInBounds && isPointYInBounds;
+    }
+    public static int getMovementCode(Point2D point2D, int[] indexOfCorner, Point2D[] closestPoint) {
+        int code = DOWN_CODE;
+        switch (indexOfCorner[0]) {
+            case 0 -> {
+                code = UP_CODE;
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = LEFT_CODE;
+            }
+            case 1 -> {
+                code = UP_CODE;
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = RIGHT_CODE;
+            }
+            case 2 -> {
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = LEFT_CODE;
+            }
+            case 3 -> {
+                if (Math.abs(point2D.getX() - closestPoint[0].getX()) <
+                        Math.abs(point2D.getY() - closestPoint[0].getY())) code = RIGHT_CODE;
+            }
+        }
+        return code;
     }
 
 }

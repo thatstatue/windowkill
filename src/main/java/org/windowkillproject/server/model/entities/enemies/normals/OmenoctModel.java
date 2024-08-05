@@ -1,27 +1,27 @@
 package org.windowkillproject.server.model.entities.enemies.normals;
 
 
-import org.windowkillproject.client.ui.panels.game.GamePanel;
-import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.Utils;
 import org.windowkillproject.server.model.abilities.BulletModel;
 import org.windowkillproject.server.model.abilities.ProjectileModel;
 import org.windowkillproject.server.model.abilities.VertexModel;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.ProjectileOperator;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
+//todo in ctor set an epsilon in the game that this enemy will target
 
 public class OmenoctModel extends EnemyModel implements ProjectileOperator {
-    public OmenoctModel(int x, int y, GamePanel localPanel) {
-        super(localPanel, x, y, (int) (ENEMY_RADIUS * 1.2), 20, 6, 8, 4);
+    public OmenoctModel(GlobeModel globeModel, int x, int y, PanelModel localPanel) {
+        super(globeModel, localPanel, x, y, (int) (ENEMY_RADIUS * 1.2), 20, 6, 8, 4);
         initVertices();
         initPolygon();
         omenoctModels.add(this);
@@ -39,7 +39,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     public void route() {
         int x= getX(); int y= getY();
 
-        if (EpsilonModel.getINSTANCE().getLocalPanelModel()!=null) {
+        if (targetEpsilon.getLocalPanelModel()!=null) {
             Point2D routePoint = goToNearestEdge();
             if (routePoint.getX() == 0 && routePoint.getY() == 0) {
                 shoot();
@@ -53,10 +53,15 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     }
 
     @Override
+    public GlobeModel getGlobeModel() {
+        return globeModel;
+    }
+
+    @Override
     public void shoot() {
-        if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-            new ProjectileModel(getLocalPanelModel(),this, 4, true, true, Color.red, Color.white).shoot();
-            lastShot = ElapsedTime.getTotalSeconds();
+        if (globeModel.getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
+            new ProjectileModel(getLocalPanelModel(),this, 4, true, targetEpsilon, Color.red, Color.white).shoot();
+            lastShot = globeModel.getElapsedTime().getTotalSeconds();
         }
     }
 
@@ -65,7 +70,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     }
 
     private Point2D goToNearestEdge() {
-        Rectangle rectangle = gamePanelsBounds.get(EpsilonModel.getINSTANCE().getLocalPanelModel());
+        Rectangle rectangle = targetEpsilon.getLocalPanelModel().getBounds();
         int distanceFromLeft = getXO() - rectangle.x ;
         int distanceFromUp = getYO() - rectangle.y ;
         int distanceFromRight = rectangle.x + rectangle.width - getXO();
@@ -112,7 +117,7 @@ public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     @Override
     public Point2D getRoutePoint() {
         return Utils.globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor());
+                targetEpsilon.getAnchor());
     }
 
     @Override

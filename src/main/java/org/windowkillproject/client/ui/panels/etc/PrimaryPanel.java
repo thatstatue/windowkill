@@ -1,6 +1,5 @@
 package org.windowkillproject.client.ui.panels.etc;
 
-import org.windowkillproject.Constants;
 import org.windowkillproject.client.GameClient;
 
 import org.windowkillproject.client.ui.panels.Panel;

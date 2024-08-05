@@ -1,12 +1,11 @@
 package org.windowkillproject.server.model.entities.enemies.normals;
 
-import org.windowkillproject.client.ui.panels.game.InternalGamePanel;
-import org.windowkillproject.client.ui.panels.game.PanelStatus;
-import org.windowkillproject.controller.ElapsedTime;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
+import org.windowkillproject.server.model.panelmodels.PanelStatus;
 import org.windowkillproject.server.model.abilities.ProjectileModel;
 import org.windowkillproject.server.model.abilities.VertexModel;
 import org.windowkillproject.server.model.entities.Circular;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.ProjectileOperator;
@@ -15,11 +14,10 @@ import org.windowkillproject.server.model.entities.enemies.attackstypes.Unmovabl
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.controller.Controller.createEntityView;
-import static org.windowkillproject.controller.Controller.deleteGamePanel;
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.controller.Utils.getSign;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
+import static org.windowkillproject.server.Config.WYRM_RADIUS;
 
 public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovable, NonRotatable, Circular {
     private static int count;
@@ -28,14 +26,14 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
         return count;
     }
 
-    public WyrmModel(int x, int y) {
-        super(null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
-         setLocalPanelModel(new InternalGamePanel(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3,
+    public WyrmModel(GlobeModel globeModel, int x, int y) {
+        super(globeModel,null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
+         setLocalPanelModel(new InternalPanelModel(globeModel,new Rectangle(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3),
                  PanelStatus.isometric , true
                  ));
          initVertices();
          initPolygon();
-         createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
          count++;
      }
 
@@ -43,20 +41,21 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
     @Override
     public void route() {
-        if (getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor())< WYRM_DISTANCE) {
+        if (getAnchor().distance(targetEpsilon.getAnchor())< WYRM_DISTANCE) {
             shoot();
             goRoundEpsilon();
         } else {
             move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         }
-        getLocalPanelModel().setLocation((int) (getXO()-getRadius()*1.5), (int) (getYO()-getRadius()*1.5));
+        getLocalPanelModel().setX((int) (getXO()-getRadius()*1.5));
+        getLocalPanelModel().setY((int) (getYO()-getRadius()*1.5));
     }
 
     @Override
     public void shoot() {
-        if (ElapsedTime.getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
-            new ProjectileModel(getLocalPanelModel(),this, 4, true, true, Color.magenta, Color.magenta).shoot();
-            lastShot = ElapsedTime.getTotalSeconds();
+        if (globeModel.getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) { //todo epsilonmodel which
+            new ProjectileModel(getLocalPanelModel(),this, 4, true, null, Color.magenta, Color.magenta).shoot();
+            lastShot = globeModel.getElapsedTime().getTotalSeconds();
         }
     }
     private double rotationSpeed = UNIT_DEGREE/4;
@@ -71,7 +70,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
 
     private void goRoundEpsilon() {
-        var epsilonModel = EpsilonModel.getINSTANCE();
+        var epsilonModel = targetEpsilon;
         double degree = Math.atan2( this.getYO() - epsilonModel.getYO(),this.getXO() - epsilonModel.getXO());
         degree += rotationSpeed;
         int finalX =epsilonModel.getXO() + (int)(WYRM_DISTANCE*0.8 * Math.cos(degree)) - getRadius();
@@ -82,12 +81,12 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
     @Override
     public Point2D getRoutePoint() {
         return globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor(), MIN_ENEMY_SPEED+0.5);
+                targetEpsilon.getAnchor(), MIN_ENEMY_SPEED+0.5);
     }
     @Override
     public void destroy() {
         super.destroy();
-        deleteGamePanel(getLocalPanelModel());
+        globeModel.getGameManager().deleteGamePanel(getLocalPanelModel());
         count--;
     }
 

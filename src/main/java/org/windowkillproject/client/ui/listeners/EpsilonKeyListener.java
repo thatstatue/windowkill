@@ -6,15 +6,12 @@ import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.Setter;
-import org.windowkillproject.server.Config;
-
-import org.windowkillproject.server.model.entities.enemies.finalboss.SmileyHeadModel;
 
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Request.REQ_WRIT_INIT;
-import static org.windowkillproject.server.Config.*;
 import static org.windowkillproject.client.ui.panels.etc.SettingsPanel.monoDialog;
 
 public class EpsilonKeyListener implements NativeKeyListener {
@@ -25,6 +22,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
 
     private final GameClient client;
     private Point2D epsilonAnchor = new Point2D.Float(0, 0);
+    private int SENSITIVITY_RATE = 0;
 
     public void setEpsilonAnchor(Point2D epsilonAnchor) {
         this.epsilonAnchor = epsilonAnchor;
@@ -71,7 +69,7 @@ public class EpsilonKeyListener implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        if (client.getApp().getGameFrame().isVisible() && !SmileyHeadModel.isAppearing()) {
+        if (client.getApp().getGameFrame().isVisible() /*&& !SmileyHeadModel.isAppearing()*/) {
             int keyCode = e.getKeyCode();
             if (keyCode == LEFT_KEY) {
                 isLeftPressed = true;
@@ -90,11 +88,11 @@ public class EpsilonKeyListener implements NativeKeyListener {
     public void nativeKeyReleased(NativeKeyEvent e) {
         int keyCode = e.getKeyCode();
         try {
-            Thread.sleep(Config.SENSITIVITY_RATE);
+            Thread.sleep(SENSITIVITY_RATE);
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
-        if ((client.getApp().getGameFrame().isVisible() || client.getApp().getShopFrame().isVisible()) && !SmileyHeadModel.isAppearing()) {
+        if ((client.getApp().getGameFrame().isVisible() || client.getApp().getShopFrame().isVisible()) /*&& !smileyHeadModel.isAppearing()*/) {
             switch (keyCode) {
                 case NativeKeyEvent.VC_SPACE -> client.getApp().initShFrame();
                 case NativeKeyEvent.VC_ESCAPE -> client.getApp().hideShFrame();

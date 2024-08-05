@@ -1,20 +1,20 @@
 package org.windowkillproject.server.model.abilities;
 
-import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import java.util.ArrayList;
 
-import static org.windowkillproject.controller.Controller.createAbilityView;
-import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
+
 
 public class CollectableModel extends AbilityModel{
     public static ArrayList<CollectableModel> collectableModels = new ArrayList<>();
-    public CollectableModel(GamePanel localPanel, int x, int y, int rewardXp) {
-        super(localPanel, x, y);
+    public CollectableModel(GlobeModel globeModel,PanelModel localPanel, int x, int y, int rewardXp) {
+        super(globeModel,localPanel, x, y);
         this.rewardXp = rewardXp;
         collectableModels.add(this);
-        createAbilityView( id, x, y);
-        initSeconds = getTotalSeconds();
+        globeModel.getGlobeController().createAbilityView( id, x, y);
+        initSeconds = globeModel.getElapsedTime().getTotalSeconds();
     }
     private int rewardXp;
     private final long initSeconds;

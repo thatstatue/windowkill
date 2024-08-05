@@ -13,6 +13,7 @@ import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.frames.PrimaryFrame;
 import org.windowkillproject.client.ui.frames.ScoreFrame;
 
+import org.windowkillproject.client.ui.sounds.SoundPlayer;
 import org.windowkillproject.controller.data.GameSaveManager;
 import org.windowkillproject.controller.data.GameState;
 import org.windowkillproject.client.view.abilities.AbilityView;
@@ -24,14 +25,17 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.windowkillproject.Request.*;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanels;
-import static org.windowkillproject.client.ui.panels.game.GamePanel.gamePanelsBounds;
+import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 
 public class App implements Runnable {
     private PrimaryFrame primaryFrame;
+
+    public SoundPlayer getSoundPlayer() {
+        return soundPlayer;
+    }
+
     private final ShotgunMouseListener shotgunMouseListener;
     private final EpsilonKeyListener epsilonKeyListener;
     private GameFrame gameFrame;
@@ -39,9 +43,15 @@ public class App implements Runnable {
     private ScoreFrame scoreFrame;
     private SideFrame skillTreeFrame;
     private SideFrame settingsFrame;
+
+    public void setEmpowerInitSeconds(long empowerInitSeconds) {
+        shotgunMouseListener.setEmpowerInitSeconds(empowerInitSeconds);
+    }
+
     private SideFrame tutorialFrame;
-    private GameState gameState;
+    private GameState gameState;//todo move to server side
     private final GameClient client ;
+    private String globeId; //todo every game that starts, server aligns the globe id to its clients
     private final SoundPlayer soundPlayer;
 
     public App(GameClient client) {
@@ -49,6 +59,10 @@ public class App implements Runnable {
         shotgunMouseListener = new ShotgunMouseListener(client);
         epsilonKeyListener = new EpsilonKeyListener(client);
         soundPlayer = new SoundPlayer();
+    }
+
+    public String getGlobeId() {
+        return globeId;
     }
 
     public GameState getGameState() {
@@ -60,33 +74,33 @@ public class App implements Runnable {
     }
 
     public SideFrame getSettingsFrame() {
-        if (settingsFrame == null) settingsFrame = new SideFrame(SettingsPanel.class);
+        if (settingsFrame == null) settingsFrame = new SideFrame(SettingsPanel.class, client);
         return settingsFrame;
     }
 
     public SideFrame getTutFrame() {
-        if (tutorialFrame == null) tutorialFrame = new SideFrame(TutorialPanel.class);
+        if (tutorialFrame == null) tutorialFrame = new SideFrame(TutorialPanel.class, client);
         return tutorialFrame;
     }
 
 
     public PrimaryFrame getPrimaryFrame() {
-        if (primaryFrame == null) primaryFrame = new PrimaryFrame();
+        if (primaryFrame == null) primaryFrame = new PrimaryFrame(client);
         return primaryFrame;
     }
 
     public GameFrame getGameFrame() {
-        if (gameFrame == null) gameFrame = new GameFrame(client);
+        if (gameFrame == null) gameFrame = new GameFrame(globeId, client);
         return gameFrame;
     }
 
     public SideFrame getShopFrame() {
-        if (shopFrame == null) shopFrame = new SideFrame(ShopPanel.class);
+        if (shopFrame == null) shopFrame = new SideFrame(ShopPanel.class, client);
         return shopFrame;
     }
 
     public SideFrame getSkillTreeFrame() {
-        if (skillTreeFrame == null) skillTreeFrame = new SideFrame(SkillTreePanel.class);
+        if (skillTreeFrame == null) skillTreeFrame = new SideFrame(SkillTreePanel.class, client);
         return skillTreeFrame;
     }
 
@@ -104,8 +118,8 @@ public class App implements Runnable {
         if (!ShotgunMouseListener.isStarted()) shotgunMouseListener.startListener();
         scoreFrame = null;
 
-        gameFrame = new GameFrame(client);
-        shopFrame = new SideFrame(ShopPanel.class);
+        gameFrame = new GameFrame(globeId, client);
+        shopFrame = new SideFrame(ShopPanel.class, client);
 
         getSkillTreeFrame().setVisible(false);
         getSettingsFrame().setVisible(false);
@@ -115,7 +129,7 @@ public class App implements Runnable {
     public void initScoreFrame(boolean won) {
         GameSaveManager.deleteSaveFile();
         getGameFrame().setVisible(false);
-        scoreFrame = new ScoreFrame(gameFrame.getLabels(), won);
+        scoreFrame = new ScoreFrame(client, gameFrame.getLabels(), won);
         pauseUpdate();
     }
 
@@ -129,6 +143,13 @@ public class App implements Runnable {
         getPrimaryFrame().setVisible(false);
         getShopFrame().setVisible(false);
         //minimize tabs
+        minimize();
+        loadOrNewGame();
+        initGFrame(globeId);//todo
+        client.sendMessage(REQ_START_GAME_LOOP);
+    }
+
+    private void minimize() {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_WINDOWS);
@@ -139,22 +160,19 @@ public class App implements Runnable {
             e.printStackTrace();
         }
         resetGame();
-        loadOrNewGame();
-        initGFrame();
-        client.sendMessage(REQ_NEW_UPDATE);
     }
 
     public void startGame(int t) {//doesn't reset time
-        initGFrame();
+        initGFrame(globeId);
         nextLevel();
     }
 
-    public void initGFrame() {
-
-        gameFrame = new GameFrame(client);
+    public void initGFrame(String globeId) {//todo add battle mode and stuff
+        this.globeId = globeId;
+        gameFrame = new GameFrame(globeId,client);
         gameFrame.setVisible(true);
         getGameFrame().initLabels();
-        getGameFrame().shrinkFast();
+        client.sendMessage(REQ_SHRINK_FAST);
 
     }
 
@@ -193,11 +211,10 @@ public class App implements Runnable {
     }
 
     public void resetGame() {
-
+        globeId = "";
         nextLevel();
         waveReset();
-        gamePanelsBounds = new HashMap<>();
-        gamePanels = new ArrayList<>();
+        panelViews = new ArrayList<>();
         client.sendMessage(REQ_RESET_GAME);
     }
 
@@ -212,7 +229,7 @@ public class App implements Runnable {
 
         BlackOrbView.resetOrbViews();
         client.sendMessage(REQ_EPSILON_NEW_INSTANCE);
-//        getGameFrame().setXpAmount(EpsilonModel.getINSTANCE().getXp()); todo check if is on time
+//        getGameFrame().setXpAmount(targetEpsilon.getXp()); todo check if is on time
 
     }
 
@@ -225,15 +242,16 @@ public class App implements Runnable {
 //        if (savedState != null) {
 //            boolean continueGame = promptUserToContinue();
 //            if (continueGame) {
+//                globeId = savedId;
 //                gameState = savedState;
 //                pauseOnGameState(savedState);
 //            } else {
 //                GameSaveManager.deleteSaveFile();
-//                gameState = new GameState(objectModels, gamePanels, gamePanelsBounds, Wave.getLevel(),
+//                gameState = new GameState(objectModels, panelViews, gamePanelsBounds, Wave.getLevel(),
 //                        getKilledEnemiesInWave(), getKilledEnemiesTotal());
 //            }
 //        } else {
-//           gameState = new GameState(objectModels, gamePanels, gamePanelsBounds, Wave.getLevel(),
+//           gameState = new GameState(objectModels, panelViews, gamePanelsBounds, Wave.getLevel(),
 //                   getKilledEnemiesInWave(), getKilledEnemiesTotal());
 //        }
     }
@@ -248,7 +266,7 @@ public class App implements Runnable {
 //        synchronized (LOCK) { todo
 //            System.out.println(gameState.getObjectModels().size());
 //            objectModels = gameState.getObjectModels();
-//            gamePanels = gameState.getGamePanels();
+//            panelViews = gameState.getGamePanels();
 //            gamePanelsBounds = gameState.getGamePanelsBounds();
 //            Wave.setLevel(gameState.getLevel());
 //            setKilledEnemiesInWave(gameState.getKilledEnemiesInWave());
@@ -259,13 +277,13 @@ public class App implements Runnable {
 //                        objectModel.getX(), objectModel.getY(),
 //                        objectModel.getWidth(), objectModel.getHeight());
 //            }
-//            for (int i = 0 ; i< gamePanels.size(); i++){
-//                var gamePanel = gamePanels.get(i);
-//                gamePanel.setBounds(gamePanelsBounds.get(gamePanel));
-//                getGameFrame().getLayeredPane().add(gamePanel);
+//            for (int i = 0 ; i< panelViews.size(); i++){
+//                var panelView = panelViews.get(i);
+//                panelView.setBounds(gamePanelsBounds.get(panelView));
+//                getGameFrame().getLayeredPane().add(panelView);
 //            }
 //        }
-//        Update.updateView();
+//        GameLoop.updateView();
 
     }
     public void updateGame(String message){/*
@@ -275,23 +293,39 @@ public class App implements Runnable {
     */
         String[] parts = message.split(REGEX_SPLIT);
         switch (parts[0]){
-            case RES_SET_EPSILON_XP -> gameFrame.setXpAmount(Integer.parseInt(parts[1]));
             case REQ_ARE_KEYS_PRESSED -> handleKeysPressed();
             case RES_EPSILON_ANCHOR -> handleEpsilonAnchor(parts);
             case REQ_SET_WAVE_LEVEl -> gameFrame.setWaveLevel(Integer.parseInt(parts[1]));
             case REQ_PLAY_END_WAVE_SOUND -> soundPlayer.playEndWaveSound();
-            case REQ_ENDING_SCENE -> gameFrame.endingScene();
             case REQ_PLAY_CREATE_SOUND -> soundPlayer.playCreateSound();
             case REQ_INIT_SCORE_FRAME -> initScoreFrame(Boolean.parseBoolean(parts[1]));
-            case RES_EPSILON_XP -> gameFrame.getMainGamePanel().setXpAmount(Integer.parseInt(parts[1]));
+            case RES_SET_EPSILON_XP -> handleEpsilonXp(Integer.parseInt(parts[1]));
             case RES_WRIT_CHOSEN -> gameFrame.getMainGamePanel().setWrit(parts[1]);
+            case REQ_PLAY_HIT_SOUND -> soundPlayer.playHitSound();
+            case REQ_PLAY_BULLET_SOUND -> soundPlayer.playBulletSound();
+            case REQ_TOTAL_KILLS -> gameFrame.getMainGamePanel().setTotalKills(parts[1]);
+            case REQ_WAVE_LEVEL -> gameFrame.getMainGamePanel().setWaveLevel(parts[1]);
+            case RES_EPSILON_HP -> gameFrame.getMainGamePanel().setHpAmount(Integer.parseInt(parts[1]));
+            case REQ_START_GAME_1 -> startGame(1);
+            case REQ_PLAY_DESTROY_SOUND -> soundPlayer.playDestroySound();
+            case REQ_SET_CLOCK -> gameFrame.getMainGamePanel().setClockTime(parts[1]);
+            case REQ_REPAINT_GAME_FRAME -> handleRepaint();
+
+
         }
+    }
+    private void handleRepaint(){
+        gameFrame.revalidate();
+        gameFrame.repaint();
+    }
+    private void handleEpsilonXp(int xp){
+        gameFrame.setXpAmount(xp);
+
     }
 
     private void handleEpsilonAnchor(String[] parts){
         var anchor = new Point2D.Double(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
         epsilonKeyListener.setEpsilonAnchor(anchor);
-        shotgunMouseListener.setEpsilonAnchor(anchor);
     }
     private void handleKeysPressed(){
         client.sendMessage(RES_ARE_KEYS_PRESSED + REGEX_SPLIT+
@@ -300,5 +334,6 @@ public class App implements Runnable {
                 EpsilonKeyListener.isUpPressed + REGEX_SPLIT+
                 EpsilonKeyListener.isDownPressed);
     }
+
 
 }

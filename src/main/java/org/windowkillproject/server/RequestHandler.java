@@ -1,9 +1,7 @@
 package org.windowkillproject.server;
 
+import org.windowkillproject.MessageQueue;
 import org.windowkillproject.controller.ElapsedTime;
-import org.windowkillproject.controller.Update;
-import org.windowkillproject.server.model.Wave;
-import org.windowkillproject.server.model.Writ;
 import org.windowkillproject.server.model.abilities.AbilityModel;
 import org.windowkillproject.server.model.abilities.BulletModel;
 import org.windowkillproject.server.model.abilities.CollectableModel;
@@ -15,26 +13,24 @@ import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbMo
 import org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel;
 import org.windowkillproject.server.model.entities.enemies.normals.OmenoctModel;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.windowkillproject.Constants.WRIT_COOL_DOWN_SECONDS;
 import static org.windowkillproject.Request.*;
-import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
-import static org.windowkillproject.controller.Update.*;
 import static org.windowkillproject.server.Config.EPSILON_HP;
-import static org.windowkillproject.server.model.Wave.waveTimer;
-import static org.windowkillproject.server.model.entities.EpsilonModel.clientEpsilonModelMap;
-import static org.windowkillproject.server.model.entities.enemies.EnemyModel.setKilledEnemiesInWave;
-import static org.windowkillproject.server.model.entities.enemies.EnemyModel.setKilledEnemiesTotal;
+import static org.windowkillproject.server.model.entities.EpsilonModel.queueEpsilonModelMap;
 
 public class RequestHandler implements Runnable{
     private final String request;
-    private final ClientHandler clientHandler;
-    public RequestHandler(ClientHandler clientHandler , String request) {
-        this.clientHandler = clientHandler;
+    private final MessageQueue messageQueue;
+    RequestHandler(MessageQueue messageQueue , String request) {
+        this.messageQueue = messageQueue;
         this.request = request;
-
+        epsilonModel = queueEpsilonModelMap.get(messageQueue);
     }
+    private final EpsilonModel epsilonModel;
 
     @Override
     public void run() {
@@ -42,7 +38,7 @@ public class RequestHandler implements Runnable{
         switch (parts[0]){
             case REQ_PAUSE_UPDATE -> handlePauseUpdate();
             case REQ_RESUME_UPDATE -> handleResumeUpdate();
-            case REQ_NEW_UPDATE -> new Update();
+            case REQ_START_GAME_LOOP -> epsilonModel.getGlobeModel().getGameLoop().start();
             case REQ_EPSILON_NEW_INSTANCE -> handleEpsilonXP();
             case REQ_WAVE_RESET -> handleWaveReset();
             case REQ_NEXT_LEVEL -> handleNextLevel();
@@ -51,45 +47,86 @@ public class RequestHandler implements Runnable{
             case REQ_WRIT_INIT -> handleWritInit();
             case REQ_SENSITIVITY_SET -> handleSensitivitySet(parts[1]);
             case REQ_GET_EPSILON_RADIUS -> handleGetEpsilonRadius();
-            case REQ_EPSILON_XP -> handleEpsilonXp();
+            case REQ_GET_EPSILON_XP -> handleEpsilonXp();
             case REQ_WRIT_CHOSEN -> handleWritChosen();
             case REQ_INCREASE_EPSILON_RADIUS -> handleIncreaseEpsilonRadius();
-
             case RES_ARE_KEYS_PRESSED -> handleAreKeysPressed();
+            case REQ_REMOVE_EPSILON -> handleRemoveEpsilon(parts[1]);
+            case REQ_TOTAL_KILLS -> handleTotalKills();
+            case REQ_WAVE_LEVEL -> handleWaveLevel();
+            case REQ_SHRINK_FAST -> epsilonModel.getGlobeModel().shrinkFast();
+            case REQ_SHOOT_BULLET -> handleShootBullet(parts);
+
 
 
         }
     }
+    private void handleShootBullet(String[] parts){
+        var globe = epsilonModel.getGlobeModel();
+        if (!globe.getSmileyHeadModel().isAppearing()){
+            int empowerInitSeconds = Integer.parseInt(parts[1]);
+            Point2D mouseLoc = new Point2D.Double(Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+            BulletModel bulletModel = new BulletModel(globe,
+                    epsilonModel.getXO(), epsilonModel.getYO(), mouseLoc, epsilonModel);
+            bulletModel.shoot();
+            long deltaT = globe.getElapsedTime().getTotalSeconds() - empowerInitSeconds;
+            if (deltaT > 0 && deltaT <= 10) { //doesn't allow too many bullets
+                globe.getGameManager().empowerBullets(epsilonModel, mouseLoc);
+            }
+        }
+
+    }
+    private void handleTotalKills(){
+        messageQueue.enqueue(RES_TOTAL_KILLS+REGEX_SPLIT+epsilonModel.getGlobeModel().getKilledEnemiesTotal());
+    }
+    private void handleWaveLevel(){
+        messageQueue.enqueue(RES_WAVE_LEVEL+REGEX_SPLIT+epsilonModel.getGlobeModel().getWaveFactory().getLevel());
+    }
+    private void handleRemoveEpsilon(String epsilonId){
+        EpsilonModel epsilon = null;
+        for (Map.Entry<MessageQueue, EpsilonModel> entry : queueEpsilonModelMap.entrySet()) {
+            EpsilonModel epsilonModel = entry.getValue();
+            if (epsilonId.equals(epsilonModel.getId())) {
+                epsilon = epsilonModel;
+                break;
+            }
+        }
+        if (epsilon!=null){
+            var entityModels = epsilon.getGlobeModel().getEntityModels();
+            entityModels.remove(epsilon);
+        }
+
+    }
     private void handleIncreaseEpsilonRadius(){
-        var epsilon = clientEpsilonModelMap.get(clientHandler);
+        var epsilon = epsilonModel;
         epsilon.setRadius(epsilon.getRadius()+6);
     }
 
     private void handleWritChosen() {
-        clientHandler.sendMessage(RES_WRIT_CHOSEN+ REGEX_SPLIT+ clientHandler.getWrit().getChosenSkill());
+        messageQueue.enqueue(RES_WRIT_CHOSEN+ REGEX_SPLIT+
+                epsilonModel.getWrit().getChosenSkill());
     }
 
     private void handleEpsilonXp() {
-        clientHandler.sendMessage(RES_EPSILON_XP
-                + REGEX_SPLIT + clientEpsilonModelMap.get(clientHandler).getXp());
+        messageQueue.enqueue(RES_SET_EPSILON_XP + REGEX_SPLIT +
+                epsilonModel.getXp());
     }
 
     private void handleGetEpsilonRadius() {
-        clientHandler.sendMessage(RES_GET_EPSILON_RADIUS+ REGEX_SPLIT+
-                clientEpsilonModelMap.get(clientHandler).getRadius());
+        messageQueue.enqueue(RES_GET_EPSILON_RADIUS+ REGEX_SPLIT+
+                epsilonModel.getRadius());
     }
 
     private void handleEpsilonAnchor(){
-        var epsilonModel = clientEpsilonModelMap.get(clientHandler);
         int xo = epsilonModel.getXO();
         int yo = epsilonModel.getYO();
-        clientHandler.sendMessage(RES_EPSILON_ANCHOR + REGEX_SPLIT+
+        messageQueue.enqueue(RES_EPSILON_ANCHOR + REGEX_SPLIT+
                 xo +REGEX_SPLIT + yo);
     }
     private void handleWritInit(){
-        var writ = clientHandler.getWrit();
+        var writ = epsilonModel.getWrit();
         if (writ.getChosenSkill() != null) {
-            long deltaT = getTotalSeconds() - writ.getInitSeconds();
+            long deltaT = epsilonModel.getGlobeModel().getElapsedTime().getTotalSeconds() - writ.getInitSeconds();
             if (deltaT <= 0 || deltaT >= WRIT_COOL_DOWN_SECONDS) {
                 writ.setInitSeconds();
                 writ.acceptedClicksAddIncrement();
@@ -98,20 +135,16 @@ public class RequestHandler implements Runnable{
     }
 
     private void handleResetGame(){
-        var epsilonModel = clientEpsilonModelMap.get(clientHandler);
         epsilonModel.setHp(EPSILON_HP);
-
-        clientHandler.getWrit().resetInitSeconds();
+        epsilonModel.getWrit().resetInitSeconds();
         Config.GAME_MIN_SIZE = 250;
-
-        ElapsedTime.resetTime();
-        setKilledEnemiesInWave(0);
-        setKilledEnemiesTotal(0);
+        var globe = epsilonModel.getGlobeModel();
+        globe.getElapsedTime().resetTime();
+        globe.resetKilledEnemiesInWave();
+        globe.resetKilledEnemiesTotal();
     }
     private void handleAreKeysPressed(){
         String[] parts = request.split(REGEX_SPLIT);
-        var epsilonModel = clientEpsilonModelMap.get(clientHandler);
-
         epsilonModel.setLeftPressed(Boolean.parseBoolean(parts[1]));
         epsilonModel.setRightPressed(Boolean.parseBoolean(parts[2]));
         epsilonModel.setUpPressed(Boolean.parseBoolean(parts[3]));
@@ -120,31 +153,29 @@ public class RequestHandler implements Runnable{
 
     }
     private void handleEpsilonXP() {
-        var epsilonModel = clientEpsilonModelMap.get(clientHandler);
         int xp = 0;
         if (epsilonModel != null) xp = epsilonModel.getXp();
-        clientHandler.sendMessage(RES_SET_EPSILON_XP+REGEX_SPLIT+xp);
+        messageQueue.enqueue(RES_SET_EPSILON_XP +REGEX_SPLIT+xp);
     }
 
-    private static void handlePauseUpdate() {
-        modelUpdateTimer.stop();
-        frameUpdateTimer.stop();
-        emptyPanelEraser.stop();
-        waveTimer.stop();
-        ElapsedTime.pause();
+    private  void handlePauseUpdate() {
+        var globe = epsilonModel.getGlobeModel();
+        globe.getGameLoop().stop();
+        globe.getWaveFactory().waveTimer.stop();
+        globe.getElapsedTime().pause();
     }
-    private static void handleResumeUpdate() {
-        ElapsedTime.resume();
-        modelUpdateTimer.start();
-        frameUpdateTimer.start();
-        emptyPanelEraser.start();
-        waveTimer.start();
+    private void handleResumeUpdate() {
+        var globe = epsilonModel.getGlobeModel();
+        globe.getElapsedTime().resume();
+        globe.getGameLoop().start();
+        globe.getWaveFactory().waveTimer.start();
     }
-    private static void handleWaveReset(){
-        Wave.waves.clear();
-        Wave.setLevel(0);
-        Wave.setStartNewWave(false);
-        Wave.setBetweenWaves(true);
+    private void handleWaveReset(){
+        var waveFactory = epsilonModel.getGlobeModel().getWaveFactory();
+        waveFactory.getWaves().clear();
+        waveFactory.setLevel(0);
+        waveFactory.setStartNewWave(false);
+        waveFactory.setBetweenWaves(true);
     }
     private static void handleNextLevel(){
         CollectableModel.collectableModels = new ArrayList<>();
@@ -166,4 +197,5 @@ public class RequestHandler implements Runnable{
             default -> System.out.println("error: undefined sensitivity rate");
         }
     }
+
 }

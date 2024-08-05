@@ -1,6 +1,6 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.client.ui.panels.game.GamePanel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
-public record GamePanelCorner(GamePanel gamePanel, int corner) {
+public record GamePanelCorner(PanelModel panelModel, int corner) {
 }

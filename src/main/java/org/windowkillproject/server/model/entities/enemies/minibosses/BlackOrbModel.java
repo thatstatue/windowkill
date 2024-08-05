@@ -1,21 +1,21 @@
 package org.windowkillproject.server.model.entities.enemies.minibosses;
 
 import org.windowkillproject.server.model.entities.Circular;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Hideable;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.LaserOperator;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.NonRotatable;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Unmovable;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.client.ui.panels.game.PanelStatus.isometric;
-import static org.windowkillproject.controller.Controller.createEntityView;
-import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
+import static org.windowkillproject.server.model.panelmodels.PanelStatus.isometric;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
 public class BlackOrbModel extends EnemyModel implements Hideable, NonRotatable, Unmovable, LaserOperator, Circular {
@@ -45,26 +45,26 @@ public class BlackOrbModel extends EnemyModel implements Hideable, NonRotatable,
     private int lastSpawnTime;
     private boolean visible;
 
-    public BlackOrbModel(int x, int y) {
-        super(null, x, y, ORB_RADIUS, 30, 0, 1, 30);
+    public BlackOrbModel(GlobeModel globeModel, int x, int y) {
+        super(globeModel,null, x, y, ORB_RADIUS, 30, 0, 1, 30);
 
         move(getXPoints()[blackOrbModels.size()]-x, getYPoints()[blackOrbModels.size()]-y);
         blackOrbModels.add(this);
 
-        setLocalPanelModel(new Rectangle(getX()-ORB_RADIUS*2, getY()-ORB_RADIUS*2,
-                ORB_RADIUS*6, ORB_RADIUS*6, isometric , true
+        setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(getX()-ORB_RADIUS*2, getY()-ORB_RADIUS*2,
+                ORB_RADIUS*6, ORB_RADIUS*6), isometric , true
         ));
-        createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
-        lastSpawnTime = getTotalSeconds();
+        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        lastSpawnTime = globeModel.getElapsedTime().getTotalSeconds();
     }
     private static boolean complete;
     @Override
     public void route() {
         if (blackOrbModels.get(0).equals(this) &&
-                getTotalSeconds() - lastSpawnTime > 1 &&
+                globeModel.getElapsedTime().getTotalSeconds() - lastSpawnTime > 1 &&
                 blackOrbModels.size() < 5 && !complete){
-            new BlackOrbModel(x,y);
-            lastSpawnTime = getTotalSeconds();
+            new BlackOrbModel(globeModel,x,y);
+            lastSpawnTime = globeModel.getElapsedTime().getTotalSeconds();
             if (blackOrbModels.size() == 5) {
                 for (BlackOrbModel blackOrbModel : blackOrbModels) {
                     blackOrbModel.setVisible(true);
@@ -85,7 +85,7 @@ public class BlackOrbModel extends EnemyModel implements Hideable, NonRotatable,
     @Override
     public Point2D getRoutePoint() {
         return globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor());
+               targetEpsilon.getAnchor());
     }
 
     @Override

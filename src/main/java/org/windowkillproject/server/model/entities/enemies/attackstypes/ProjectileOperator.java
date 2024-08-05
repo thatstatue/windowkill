@@ -1,16 +1,12 @@
 package org.windowkillproject.server.model.entities.enemies.attackstypes;
 
-import org.windowkillproject.server.ClientHandler;
-import org.windowkillproject.server.ClientHandlerTeam;
-import org.windowkillproject.server.model.PanelModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
 
 public interface ProjectileOperator {
 
     int getX();
     int getY();
     int getRadius();
-    PanelModel getLocalPanel();
-    ClientHandler getClientHandler();
-    ClientHandlerTeam getTeam();
+    GlobeModel getGlobeModel();
     void shoot();
 }

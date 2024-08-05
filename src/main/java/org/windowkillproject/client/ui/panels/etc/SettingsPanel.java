@@ -1,9 +1,7 @@
 package org.windowkillproject.client.ui.panels.etc;
 
 import org.windowkillproject.client.GameClient;
-import org.windowkillproject.client.ui.App;
 import org.windowkillproject.client.ui.Setter;
-import org.windowkillproject.client.ui.SoundPlayer;
 import org.windowkillproject.client.ui.listeners.EpsilonKeyListener;
 import org.windowkillproject.client.ui.panels.Panel;
 
@@ -12,9 +10,9 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static org.windowkillproject.Constants.APP_HEIGHT;
-import static org.windowkillproject.Constants.APP_WIDTH;
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Request.REGEX_SPLIT;
+import static org.windowkillproject.Request.REQ_SENSITIVITY_SET;
 
 public class SettingsPanel extends Panel {
     public SettingsPanel(GameClient client) {
@@ -56,9 +54,9 @@ public class SettingsPanel extends Panel {
             ChangeListener changeListener = e -> {
                 JSlider source = (JSlider) e.getSource();
                 switch (source.getValue()) {
-                    case 0 -> SoundPlayer.setSoundVolume("LOW");
-                    case 1 -> SoundPlayer.setSoundVolume("MEDIUM");
-                    case 2 -> SoundPlayer.setSoundVolume("HIGH");
+                    case 0 -> client.getApp().getSoundPlayer().setSoundVolume("LOW");
+                    case 1 -> client.getApp().getSoundPlayer().setSoundVolume("MEDIUM");
+                    case 2 -> client.getApp().getSoundPlayer().setSoundVolume("HIGH");
                 }
             };
             JSlider slider = sliderMaker(changeListener, 200, 450);
@@ -69,12 +67,12 @@ public class SettingsPanel extends Panel {
 
         JLabel name = jLabelMaker("SETTINGS", 50, 20, 200, 50);
         name.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 35));
-        name.setForeground(Config.BUTTON_BG_COLOR);
+        name.setForeground(BUTTON_BG_COLOR);
         componentArrayList.add(name);
 
-        componentArrayList.add(buttonMaker("Menu", 790, 20, e -> App.initPFrame()));
+        componentArrayList.add(buttonMaker("Menu", 790, 20, e -> client.getApp().initPFrame()));
 
-        componentArrayList.add(buttonMaker("Menu", 790, 20, e -> App.initPFrame()));
+        componentArrayList.add(buttonMaker("Menu", 790, 20, e -> client.getApp().initPFrame()));
 
         componentArrayList.add(buttonMaker("UP KEY", 600, 150, e -> {
             Setter.key = UP_CODE;
@@ -107,7 +105,7 @@ public class SettingsPanel extends Panel {
     }
 
     public JDialog showKeyPopup(String keyName, String keyNameB4) {
-        JDialog dialog = new JDialog(App.getSettingsFrame());
+        JDialog dialog = new JDialog(client.getApp().getSettingsFrame());
         dialog.getContentPane().setBackground(Color.decode("#7C4F63"));
         dialog.setLocationRelativeTo(null);
         dialog.setFocusable(true);

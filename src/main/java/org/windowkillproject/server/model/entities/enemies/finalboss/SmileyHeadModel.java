@@ -1,12 +1,11 @@
 package org.windowkillproject.server.model.entities.enemies.finalboss;
 
-import org.windowkillproject.server.Config;
-import org.windowkillproject.client.ui.panels.game.InternalGamePanel;
-import org.windowkillproject.client.ui.panels.game.MainGamePanel;
-import org.windowkillproject.client.ui.panels.game.PanelStatus;
+import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
+
+import org.windowkillproject.server.model.panelmodels.PanelStatus;
 import org.windowkillproject.server.model.abilities.ProjectileModel;
 import org.windowkillproject.server.model.entities.Circular;
-import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.AoEAttacker;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.NonRotatable;
@@ -18,49 +17,48 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.controller.Controller.createEntityView;
-import static org.windowkillproject.controller.ElapsedTime.getTotalSeconds;
-import static org.windowkillproject.controller.GameController.random;
+
+import static org.windowkillproject.controller.GameManager.random;
 import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
 public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatable, AoEAttacker, ProjectileOperator {
-    private static SmileyHeadModel instance;
 
-    public static boolean isAppearing() {
+    public boolean isAppearing() {
         return appearing;
     }
 
-    public static boolean isDefeated() {
+    public boolean isDefeated() {
         return defeated;
     }
 
-    private static boolean defeated, appearing;
+    private boolean created, defeated, appearing;
 
-    public static void setPunching(boolean punching) {
-        SmileyHeadModel.punching = punching;
+    public void setPunching(boolean punching) {
+        this.punching = punching;
     }
 
-    private static RightHandModel rightHandModel;
-    private static LeftHandModel leftHandModel;
-    private static PunchFistModel punchFistModel;
-
-    public static SmileyHeadModel getInstance() {
-        if (instance == null && !defeated) {
-            instance = new SmileyHeadModel(CENTER_X, HAND_RADIUS);
-            leftHandModel = new LeftHandModel(instance.getX() - HAND_RADIUS * 3, instance.getY() + MIN_HEAD_DISTANCE * 2);
-            rightHandModel = new RightHandModel(instance.getX() + HAND_RADIUS * 3, instance.getY() + MIN_HEAD_DISTANCE * 2);
+    private RightHandModel rightHandModel;
+    private LeftHandModel leftHandModel;
+    private PunchFistModel punchFistModel;
+    public void initHands() {
+        if (!created && !defeated) {
+            leftHandModel = new LeftHandModel(globeModel,getX() - HAND_RADIUS * 3, getY() + MIN_HEAD_DISTANCE * 2);
+            rightHandModel = new RightHandModel(globeModel, getX() + HAND_RADIUS * 3, getY() + MIN_HEAD_DISTANCE * 2);
+            created = true ;
         }
-        return instance;
+
     }
 
-    private SmileyHeadModel(int x, int y) {
-        super(null, x, y, (int) (HAND_RADIUS * 1.5), 300, 0, 0, 0);
-        setLocalPanelModel(new InternalGamePanel(x, y, HAND_RADIUS * 3, HAND_RADIUS * 3,
+    public SmileyHeadModel(GlobeModel globeModel) {
+        super(globeModel, null, CENTER_X, HAND_RADIUS, (int) (HAND_RADIUS * 1.5), 300, 0, 0, 0);
+        setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(x, y, HAND_RADIUS * 3, HAND_RADIUS * 3),
                 PanelStatus.shrinkable, true
         ));
+        initHands();
         getLocalPanelModel().setForSmiley(true);
-        createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
+        globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
     }
 
     private boolean vulnerable;
@@ -77,12 +75,12 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
         super.destroy();
         rightHandModel.destroy();
         leftHandModel.destroy();
-        EpsilonModel.getINSTANCE().setXp(EpsilonModel.getINSTANCE().getXp() + 250);
+        targetEpsilon.setXp(targetEpsilon.getXp() + 250);
         defeated = true;
     }
 
-    public static void setSlapping(boolean slapping) {
-        SmileyHeadModel.slapping = slapping;
+    public void setSlapping(boolean slapping) {
+        this.slapping = slapping;
     }
 
     @Override
@@ -104,11 +102,11 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
         appearing = true;
         int times = (CENTER_Y / 3) / HAND_SPEED;
         AtomicInteger count = new AtomicInteger();
-        Timer timer = new Timer(Config.FPS , null);
+        Timer timer = new Timer(FPS , null);
         timer.addActionListener(e -> {
             if (count.get() < times) {
-                if (instance.getYO() +instance.getRadius()*2 < MainGamePanel.getInstance().getY())
-                    instance.move(0, HAND_SPEED);
+                if (getYO() +getRadius()*2 < globeModel.getMainPanelModel().getY())
+                    move(0, HAND_SPEED);
                 rightHandModel.move(0, HAND_SPEED);
                 leftHandModel.move(0, HAND_SPEED);
                 count.getAndIncrement();
@@ -125,8 +123,8 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     @Override
     public void route() {
         if (!appearing) {
-            if (PunchFistModel.isOn()) {
-                if (getTotalSeconds() - lastVomit > ATTACK_TIMEOUT) {
+            if (punchFistModel.isOn()) {
+                if (globeModel.getElapsedTime().getTotalSeconds() - lastVomit > ATTACK_TIMEOUT) {
                     vomiting = false;
                     vulnerable = false;
                 }
@@ -150,25 +148,26 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
             if (!vomiting) {
                 moveTowardsEpsilon();
             }
-            if (getHp() < 200 && !PunchFistModel.isOn()) {
-                punchFistModel = new PunchFistModel(getX(), getY() + 3 * getHeight());
+            if (getHp() < 200 && !punchFistModel.isOn()) {
+                punchFistModel = new PunchFistModel(globeModel, getX(), getY() + 3 * getHeight());
             }
-            getLocalPanelModel().setLocation((int) (getXO() - getRadius() * 1.5), (int) (getYO() - getRadius() * 1.5));
+            getLocalPanelModel().setX((int) (getXO() - getRadius() * 1.5));
+            getLocalPanelModel().setY((int) (getYO() - getRadius() * 1.5));
 
         }
     }
 
     private void moveTowardsEpsilon() {
-        if (EpsilonModel.getINSTANCE().getAnchor().distance(getAnchor()) > 2 * (MIN_HEAD_DISTANCE + 2 * getRadius())) {
+        if (targetEpsilon.getAnchor().distance(getAnchor()) > 2 * (MIN_HEAD_DISTANCE + 2 * getRadius())) {
             move((int) getRoutePoint().getX(), (int) getRoutePoint().getY());
         }
     }
 
-    private static int squeezeChangeMoment, lastVomit;
-    private static boolean squeezing , vomiting,  punching, slapping, firing ;
+    private int squeezeChangeMoment, lastVomit;
+    private boolean squeezing , vomiting,  punching, slapping, firing ;
 
-    private static void squeezeProjectile() {
-        long timePassed = getTotalSeconds() - squeezeChangeMoment;
+    private void squeezeProjectile() {
+        long timePassed = globeModel.getElapsedTime().getTotalSeconds() - squeezeChangeMoment;
 
         if (squeezing) {
             if (timePassed > SQUEEZE_TIMEOUT / 2) {
@@ -177,44 +176,44 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
                 squeezeHands();
             }
 
-        }else if (instance.isHandFree()){
-            var epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanelModel();
-            if (epsilonPanel== null) epsilonPanel = MainGamePanel.getInstance();
+        }else if (isHandFree()){
+           // var epsilonPanel = targetEpsilon.getLocalPanelModel(); //todo
+            /*if (epsilonPanel== null)*/var epsilonPanel = globeModel.getMainPanelModel();
             var rect = epsilonPanel.getBounds();
             Point2D anchor = new Point2D.Double(rect.x+rect.width/2D, rect.y);
             boolean smileyNear =
-                    instance.getAnchor().distance(anchor) < WYRM_DISTANCE
-                            && instance.getY() < anchor.getY();
-            boolean headUpper = instance.getY() + instance.getRadius()< Math.min(rightHandModel.getY(), leftHandModel.getY());
+                    getAnchor().distance(anchor) < WYRM_DISTANCE
+                            && getY() < anchor.getY();
+            boolean headUpper = getY() + getRadius()< Math.min(rightHandModel.getY(), leftHandModel.getY());
 
             if (timePassed > SQUEEZE_TIMEOUT && smileyNear && headUpper) {
                 startSqueezing();
             } else {
-                instance.goRoundEpsilon();
+                goRoundEpsilon();
                 rightHandModel.projectile();
                 leftHandModel.projectile();
 //                if(!headUpper){
-//                    instance.move(0 , -2*HAND_SPEED);
+//                    move(0 , -2*HAND_SPEED);
 //                }
             }
         }
     }
 
-    private static void stopSqueezing() {
+    private void stopSqueezing() {
         squeezing = false;
         leftHandModel.getLocalPanelModel().setFlexible(true);
         rightHandModel.getLocalPanelModel().setFlexible(true);
-        instance.setVulnerable(false);
+        setVulnerable(false);
     }
 
-    private static void startSqueezing() {
-        instance.setVulnerable(true);
-        squeezeChangeMoment = getTotalSeconds();
+    private void startSqueezing() {
+        setVulnerable(true);
+        squeezeChangeMoment = globeModel.getElapsedTime().getTotalSeconds();
         squeezing = true;
         squeezeHands();
     }
 
-    private static void squeezeHands() {
+    private void squeezeHands() {
         rightHandModel.squeeze();
         leftHandModel.squeeze();
     }
@@ -222,11 +221,10 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     private double rotationSpeed = UNIT_DEGREE / 2;
 
     private void goRoundEpsilon() {
-        var epsilonModel = EpsilonModel.getINSTANCE();
-        double degree = Math.atan2(this.getYO() - epsilonModel.getYO(), this.getXO() - epsilonModel.getXO());
+        double degree = Math.atan2(this.getYO() - targetEpsilon.getYO(), this.getXO() - targetEpsilon.getXO());
         degree += rotationSpeed;
-        int finalX = epsilonModel.getXO() + (int) (WYRM_DISTANCE * 1.2 * Math.cos(degree)) - getRadius();
-        int finalY = epsilonModel.getYO() + (int) (WYRM_DISTANCE * 1.2 * Math.sin(degree)) - getRadius();
+        int finalX = targetEpsilon.getXO() + (int) (WYRM_DISTANCE * 1.2 * Math.cos(degree)) - getRadius();
+        int finalY = targetEpsilon.getYO() + (int) (WYRM_DISTANCE * 1.2 * Math.sin(degree)) - getRadius();
         move(finalX - getX(), finalY - getY());
     }
     private void attack(){
@@ -244,10 +242,10 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     }
     private void vomit(){
         if (!vomiting) {
-            if (EpsilonModel.getINSTANCE().getAnchor().distance(getAnchor()) < 2 *
+            if (targetEpsilon.getAnchor().distance(getAnchor()) < 2 *
                     (MIN_HEAD_DISTANCE + 2 * getRadius())) {
                 vomiting = true;
-                lastVomit = getTotalSeconds();
+                lastVomit = globeModel.getElapsedTime().getTotalSeconds();
                 vulnerable = true;
                 for (int i = 0; i < 50; i++) {
                     AOE();
@@ -296,7 +294,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     @Override
     public Point2D getRoutePoint() {
         return globalRoutePoint(this.getAnchor(),
-                EpsilonModel.getINSTANCE().getAnchor(), MIN_ENEMY_SPEED + 1);
+                targetEpsilon.getAnchor(), MIN_ENEMY_SPEED + 1);
     }
 
     @Override
@@ -318,7 +316,12 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     }
 
     @Override
+    public int getInitSecond() {
+        return globeModel.getElapsedTime().getTotalSeconds();
+    }
+
+    @Override
     public void shoot() {
-        new ProjectileModel(getLocalPanelModel(), this, 5, false, false, Color.yellow, Color.yellow).shoot();
+        new ProjectileModel(getLocalPanelModel(), this, 5, false, null, Color.yellow, Color.yellow).shoot();
     }
 }
