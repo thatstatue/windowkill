@@ -11,11 +11,8 @@ import org.windowkillproject.server.model.panelmodels.PanelModel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-
-import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 import static org.windowkillproject.controller.Utils.isTransferableInBounds;
 
-import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
 
 public class EmptyPanelEraser extends Timer {
     private GlobeModel globeModel;
@@ -33,8 +30,8 @@ public class EmptyPanelEraser extends Timer {
                     continue;
                 Rectangle rectangle = panelModel.getBounds();
                 boolean hasEntity = false;
-                for (int i = 0; i < entityModels.size(); i++) {
-                    EntityModel entityModel = entityModels.get(i);
+                for (int i = 0; i < globeModel.entityModels.size(); i++) {
+                    EntityModel entityModel = globeModel.entityModels.get(i);
                     if (isTransferableInBounds(entityModel, rectangle, true)) {
                         hasEntity = true;
                         break;

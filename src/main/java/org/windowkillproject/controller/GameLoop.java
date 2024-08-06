@@ -15,9 +15,6 @@ import static org.windowkillproject.Constants.MODEL_UPDATE_TIME;
 import static org.windowkillproject.Request.REQ_REPAINT_GAME_FRAME;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 import static org.windowkillproject.controller.GameManager.*;
-import static org.windowkillproject.server.model.abilities.BulletModel.bulletModels;
-import static org.windowkillproject.server.model.abilities.ProjectileModel.projectileModels;
-import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
 import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
@@ -36,6 +33,7 @@ public class GameLoop {
             setCoalesce(true);
         }};
         emptyPanelEraser = new EmptyPanelEraser(globeModel);
+        globeModel.shrinkFast();
     }
     public void start(){
         modelUpdateTimer.start();
@@ -79,8 +77,8 @@ public class GameLoop {
 
     public void updateModel() {
         if (!globeModel.getWaveFactory().isBetweenWaves()) globeModel.shrinkAll();
-        for (int i = 0; i < entityModels.size(); i++) {
-            EntityModel entityModel = entityModels.get(i);
+        for (int i = 0; i < globeModel.entityModels.size(); i++) {
+            EntityModel entityModel = globeModel.entityModels.get(i);
             entityModel.rotate();
             if (!entityModel.isImpact()) {
                 if (entityModel instanceof Hovering || entityModel instanceof EpsilonModel ||
@@ -89,11 +87,11 @@ public class GameLoop {
                 }
             }
         }
-        for (int i = 0; i < bulletModels.size(); i++) {
-            bulletModels.get(i).move();
+        for (int i = 0; i < globeModel.bulletModels.size(); i++) {
+            globeModel.bulletModels.get(i).move();
         }
-        for (int i = 0; i < projectileModels.size(); i++) {
-            projectileModels.get(i).move();
+        for (int i = 0; i < globeModel.projectileModels.size(); i++) {
+            globeModel.projectileModels.get(i).move();
         }
 
 

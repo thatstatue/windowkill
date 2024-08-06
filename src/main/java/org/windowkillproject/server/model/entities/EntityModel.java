@@ -59,7 +59,6 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     public void setAllowedPanelModels(ArrayList<PanelModel> allowedPanelModels) {
         this.allowedPanelModels = allowedPanelModels;
     }
-    public static ArrayList<EntityModel> entityModels=new ArrayList<>();
 
     public abstract void route(); //if entity is local, implement is also local
 
@@ -122,7 +121,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         synchronized (LOCK) {
             globeModel.getObjectModels().remove(this);
         }
-        entityModels.remove(this);
+            globeModel.entityModels.remove(this);
     }
 
     public int getXO() {
@@ -160,7 +159,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         this.hp = hp;
         this.meleeAttackHp = meleeAttackHp;
         vertices = new ArrayList<>();
-        entityModels.add(this);
+        if(this.globeModel!= null)this.globeModel.entityModels.add(this);
         setRadius(radius);
     }
 

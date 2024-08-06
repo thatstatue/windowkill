@@ -20,14 +20,20 @@ public class EpsilonModel extends EntityModel {
     public static Map<MessageQueue, EpsilonModel> queueEpsilonModelMap = new HashMap<>();
     private boolean astrapper, melame, chironner;
     protected MessageQueue messageQueue;
+    public void setGlobeModel(GlobeModel globeModel){
+        this.globeModel = globeModel;
+        this.globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+    }
 
     public MessageQueue getMessageQueue() {
         return messageQueue;
     }
 
-    public static void newINSTANCE(MessageQueue messageQueue ) {
-        var globe = GlobesManager.getGlobeFromId(messageQueue.getGlobeId());
-        queueEpsilonModelMap.put(messageQueue,  new EpsilonModel(messageQueue, globe, null, EPSILON_HP, 0));//todo is it dangerous to set the local to null?
+    public static EpsilonModel newINSTANCE(MessageQueue messageQueue, GlobeModel globeModel) {
+        //var globe = GlobesManager.getGlobeFromId(messageQueue.getGlobeId());
+        var epsilon =  new EpsilonModel(messageQueue, globeModel, null, EPSILON_HP, 0);
+        queueEpsilonModelMap.put(messageQueue, epsilon);//todo is it dangerous to set the local to null?
+        return epsilon;
     }
     private int xp;
     public int panelWidth=GAME_WIDTH, panelHeight=GAME_HEIGHT;
@@ -58,7 +64,7 @@ public class EpsilonModel extends EntityModel {
         this.messageQueue = messageQueue;
         writ = new Writ(messageQueue);
         setXp(xp);
-        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        if (this.globeModel!= null)this.globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
     }
 
     public void spawnVertex() {

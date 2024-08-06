@@ -7,7 +7,11 @@ import org.windowkillproject.controller.GlobeController;
 import org.windowkillproject.server.model.ObjectModel;
 import org.windowkillproject.server.model.WaveFactory;
 import org.windowkillproject.server.model.abilities.AbilityModel;
+import org.windowkillproject.server.model.abilities.ProjectileModel;
 import org.windowkillproject.server.model.entities.enemies.finalboss.SmileyHeadModel;
+import org.windowkillproject.server.model.entities.enemies.minibosses.BarricadosModel;
+import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.server.model.entities.enemies.normals.OmenoctModel;
 import org.windowkillproject.server.model.panelmodels.MainPanelModel;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.abilities.BulletModel;
@@ -18,12 +22,20 @@ import org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel
 
 
 import java.util.ArrayList;
+import java.util.UUID;
+
 public abstract class GlobeModel {
-    protected ArrayList<EpsilonModel> team1 = new ArrayList<>();
+    public ArrayList<EpsilonModel> team1 = new ArrayList<>();
 
     public ArrayList<EpsilonModel> getTeam1() {
         return team1;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    private final String id = UUID.randomUUID().toString();
 
     public ArrayList<EpsilonModel> getEpsilons() {
         return new ArrayList<>(team1);
@@ -32,9 +44,13 @@ public abstract class GlobeModel {
         return collectableModels;
     }
 
-    protected ArrayList<ObjectModel> objectModels;
-    protected ArrayList<EntityModel> entityModels;
-    protected ArrayList<AbilityModel> abilityModels;
+    public ArrayList<ObjectModel> objectModels;
+    public ArrayList<EntityModel> entityModels;
+    public ArrayList<AbilityModel> abilityModels;
+    public ArrayList<ProjectileModel> projectileModels;
+    public ArrayList<OmenoctModel> omenoctModels;
+    public ArrayList<BlackOrbModel> blackOrbModels;
+    public ArrayList<BarricadosModel> barricadosModels;
 
     public ArrayList<AbilityModel> getAbilityModels() {
         return abilityModels;
@@ -45,10 +61,10 @@ public abstract class GlobeModel {
         return globeController;
     }
 
-    protected ArrayList<CollectableModel> collectableModels;
-    protected ArrayList<ArchmireModel> archmireModels;
-    protected ArrayList<BulletModel> bulletModels;
-    protected SmileyHeadModel smileyHeadModel;
+    public ArrayList<CollectableModel> collectableModels;
+    public ArrayList<ArchmireModel> archmireModels;
+    public ArrayList<BulletModel> bulletModels;
+    public SmileyHeadModel smileyHeadModel;
 
     public SmileyHeadModel getSmileyHeadModel() {
         return smileyHeadModel;
@@ -58,10 +74,10 @@ public abstract class GlobeModel {
         return gameLoop;
     }
 
-    protected ArrayList<PanelModel> panelModels;
-    protected MainPanelModel mainPanelModel;
-    protected WaveFactory waveFactory;
-    protected GameLoop gameLoop;
+    public ArrayList<PanelModel> panelModels;
+    public MainPanelModel mainPanelModel;
+    public WaveFactory waveFactory;
+    public GameLoop gameLoop;
     private GameManager gameManager;
     private ElapsedTime elapsedTime;
 
@@ -109,15 +125,25 @@ public abstract class GlobeModel {
         team1.add(epsilon1);
         objectModels = new ArrayList<>();
         entityModels = new ArrayList<>();
+        abilityModels = new ArrayList<>();
+        panelModels = new ArrayList<>();
+        mainPanelModel = new MainPanelModel(this);
+        smileyHeadModel = new SmileyHeadModel(this);
+        smileyHeadModel.initHands();
         archmireModels = new ArrayList<>();
         bulletModels = new ArrayList<>();
         collectableModels = new ArrayList<>();
-        panelModels = new ArrayList<>();
+
+        blackOrbModels = new ArrayList<>();
+        omenoctModels = new ArrayList<>();
+        barricadosModels = new ArrayList<>();
+        projectileModels = new ArrayList<>();
+
         waveFactory = new WaveFactory(this);
         gameLoop = new GameLoop(this);
         gameManager = new GameManager(this);
         elapsedTime = new ElapsedTime(this);
-        smileyHeadModel = new SmileyHeadModel(this);
+
     }
 
     public void performAction(String message) {

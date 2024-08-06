@@ -10,23 +10,6 @@ import static org.windowkillproject.client.ui.listeners.EpsilonKeyListener.*;
 import static org.windowkillproject.client.ui.panels.etc.SettingsPanel.monoDialog;
 
 public class Setter {
-    public static void setDifficulty(String rate) {
-        if (rate.equals("LOW")) {
-            ENEMY_RADIUS = 25;
-            BOUND = 4;
-            MAX_ENEMY_SPEED = 3;
-        } else if (rate.equals("HIGH")) {
-            ENEMY_RADIUS = 15;
-            BOUND = 6;
-            MAX_ENEMY_SPEED = 4;
-        } else if (rate.equals("MEDIUM")) {
-            ENEMY_RADIUS = 20;
-            BOUND = 5;
-            MAX_ENEMY_SPEED = 4;
-        } else {
-            System.out.println("didn't get any rate for difficulty");
-        }
-    }
 
     public static int key;
 

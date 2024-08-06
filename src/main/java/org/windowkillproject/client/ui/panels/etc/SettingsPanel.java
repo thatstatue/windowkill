@@ -11,8 +11,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import static org.windowkillproject.Constants.*;
-import static org.windowkillproject.Request.REGEX_SPLIT;
-import static org.windowkillproject.Request.REQ_SENSITIVITY_SET;
+import static org.windowkillproject.Request.*;
 
 public class SettingsPanel extends Panel {
     public SettingsPanel(GameClient client) {
@@ -39,11 +38,9 @@ public class SettingsPanel extends Panel {
         {
             ChangeListener changeListener = e -> {
                 JSlider source = (JSlider) e.getSource();
-                switch (source.getValue()) {
-                    case 0 -> Setter.setDifficulty("LOW");
-                    case 1 -> Setter.setDifficulty("MEDIUM");
-                    case 2 -> Setter.setDifficulty("HIGH");
-                }
+                client.sendMessage(REQ_DIFFICULTY
+                        + REGEX_SPLIT + source.getValue());
+
             };
             JSlider slider = sliderMaker(changeListener, 200, 350);
             JLabel label = jLabelMaker("Difficulty", 50, 340, 100, 50);

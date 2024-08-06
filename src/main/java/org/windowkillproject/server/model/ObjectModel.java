@@ -32,7 +32,7 @@ public abstract class ObjectModel implements Drawable, Serializable {
         this.y = y;
         this.localPanelModel = localPanelModel;
         this.globeModel =globeModel;
-        initGlobeModel();
+       // initGlobeModel(); //todo ??
         this.id = UUID.randomUUID().toString();
         anchor = new Point2D.Double(x, y);
     }

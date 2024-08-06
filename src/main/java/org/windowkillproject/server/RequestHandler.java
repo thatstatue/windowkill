@@ -1,17 +1,11 @@
 package org.windowkillproject.server;
 
 import org.windowkillproject.MessageQueue;
-import org.windowkillproject.controller.ElapsedTime;
-import org.windowkillproject.server.model.abilities.AbilityModel;
+
 import org.windowkillproject.server.model.abilities.BulletModel;
-import org.windowkillproject.server.model.abilities.CollectableModel;
-import org.windowkillproject.server.model.abilities.ProjectileModel;
-import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
-import org.windowkillproject.server.model.entities.enemies.minibosses.BarricadosModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
-import org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel;
-import org.windowkillproject.server.model.entities.enemies.normals.OmenoctModel;
+import org.windowkillproject.server.model.globe.GlobesManager;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -19,7 +13,7 @@ import java.util.Map;
 
 import static org.windowkillproject.Constants.WRIT_COOL_DOWN_SECONDS;
 import static org.windowkillproject.Request.*;
-import static org.windowkillproject.server.Config.EPSILON_HP;
+import static org.windowkillproject.server.Config.*;
 import static org.windowkillproject.server.model.entities.EpsilonModel.queueEpsilonModelMap;
 
 public class RequestHandler implements Runnable{
@@ -30,11 +24,12 @@ public class RequestHandler implements Runnable{
         this.request = request;
         epsilonModel = queueEpsilonModelMap.get(messageQueue);
     }
-    private final EpsilonModel epsilonModel;
+    private EpsilonModel epsilonModel;
 
     @Override
     public void run() {
         String[] parts = request.split(REGEX_SPLIT);
+        System.out.println("ok lets "+ parts[0]);
         switch (parts[0]){
             case REQ_PAUSE_UPDATE -> handlePauseUpdate();
             case REQ_RESUME_UPDATE -> handleResumeUpdate();
@@ -54,12 +49,19 @@ public class RequestHandler implements Runnable{
             case REQ_REMOVE_EPSILON -> handleRemoveEpsilon(parts[1]);
             case REQ_TOTAL_KILLS -> handleTotalKills();
             case REQ_WAVE_LEVEL -> handleWaveLevel();
-            case REQ_SHRINK_FAST -> epsilonModel.getGlobeModel().shrinkFast();
+            //case REQ_SHRINK_FAST -> epsilonModel.getGlobeModel().shrinkFast();
             case REQ_SHOOT_BULLET -> handleShootBullet(parts);
-
-
-
+            case REQ_DIFFICULTY -> handleDifficulty(parts[1]);
+            case REQ_NEW_GAME_SINGLE -> handleNewGameSingle();
         }
+    }
+    private void handleNewGameSingle(){
+        var id = GlobesManager.newGlobe(messageQueue, null,"");
+        epsilonModel = EpsilonModel.newINSTANCE(messageQueue, GlobesManager.getGlobeFromId(id));
+        messageQueue.enqueue(RES_GLOBE_ID+REGEX_SPLIT+id);
+
+        epsilonModel.getGlobeModel().getGameLoop().start();
+
     }
     private void handleShootBullet(String[] parts){
         var globe = epsilonModel.getGlobeModel();
@@ -177,24 +179,45 @@ public class RequestHandler implements Runnable{
         waveFactory.setStartNewWave(false);
         waveFactory.setBetweenWaves(true);
     }
-    private static void handleNextLevel(){
-        CollectableModel.collectableModels = new ArrayList<>();
-        AbilityModel.abilityModels = new ArrayList<>();
-        BulletModel.bulletModels = new ArrayList<>();
-        ProjectileModel.projectileModels = new ArrayList<>();
-        EntityModel.entityModels = new ArrayList<>();
-        BlackOrbModel.blackOrbModels = new ArrayList<>();
+    private void handleNextLevel(){
+        var globe = epsilonModel.getGlobeModel();
+        globe.collectableModels = new ArrayList<>();
+        globe.abilityModels = new ArrayList<>();
+        globe.bulletModels = new ArrayList<>();
+        globe.projectileModels = new ArrayList<>();
+        globe.entityModels = new ArrayList<>();
+        globe.blackOrbModels = new ArrayList<>();
         BlackOrbModel.setComplete(false);
-        BarricadosModel.barricadosModels = new ArrayList<>();
-        ArchmireModel.archmireModels = new ArrayList<>();
-        OmenoctModel.omenoctModels = new ArrayList<>();
+        globe.barricadosModels = new ArrayList<>();
+        globe.archmireModels = new ArrayList<>();
+        globe.omenoctModels = new ArrayList<>();
     }
     private static void handleSensitivitySet (String value){
         switch (value) {
-            case "0" -> Config.SENSITIVITY_RATE = 100;
-            case "1" -> Config.SENSITIVITY_RATE = 50;
-            case "2" -> Config.SENSITIVITY_RATE = 0;
+            case "0" -> SENSITIVITY_RATE = 100;
+            case "1" -> SENSITIVITY_RATE = 50;
+            case "2" -> SENSITIVITY_RATE = 0;
             default -> System.out.println("error: undefined sensitivity rate");
+        }
+    }
+    private static void handleDifficulty(String value){
+        switch (value){
+            case "0" -> {
+                Config.ENEMY_RADIUS = 25;
+                BOUND = 4;
+                MAX_ENEMY_SPEED = 3;
+            }
+            case "1" -> {
+                ENEMY_RADIUS = 20;
+                BOUND = 5;
+                MAX_ENEMY_SPEED = 4;
+            }
+            case "2" -> {
+                ENEMY_RADIUS = 15;
+                BOUND = 6;
+                MAX_ENEMY_SPEED = 4;
+            }
+            default -> System.out.println("didn't get any rate for difficulty");
         }
     }
 

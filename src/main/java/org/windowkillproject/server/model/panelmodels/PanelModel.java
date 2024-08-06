@@ -1,5 +1,6 @@
 package org.windowkillproject.server.model.panelmodels;
 
+import org.windowkillproject.server.model.Drawable;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.globe.GlobeModel;
 
@@ -14,7 +15,7 @@ import static org.windowkillproject.Constants.FRAME_SHRINKAGE_SPEED;
 import static org.windowkillproject.Request.REQ_START_GAME_1;
 
 
-public abstract class PanelModel {
+public abstract class PanelModel implements Drawable {
     private final GlobeModel globeModel;
     private boolean flexible;
     protected int x, y, width, height;

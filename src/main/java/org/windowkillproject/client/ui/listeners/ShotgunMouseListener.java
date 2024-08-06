@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 
 import static org.windowkillproject.Request.*;
 public class ShotgunMouseListener implements NativeMouseListener {
-    public long empowerInitSeconds = Long.MAX_VALUE;
+    public long empowerInitSeconds = -300;
     public boolean slaughter;
     private final GameClient client;
 

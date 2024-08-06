@@ -21,7 +21,6 @@ import static org.windowkillproject.server.model.panelmodels.PanelStatus.shrinka
 
 public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovable {
     private final int beginTime;
-    public static ArrayList<BarricadosModel> barricadosModels = new ArrayList<>();
     public BarricadosModel(GlobeModel globeModel, int x, int y) {
         super(globeModel,null, x, y, BARRICADOS_RADIUS, Integer.MAX_VALUE, 0, 0, 0);
         PanelStatus panelStatus = isometric;
@@ -34,13 +33,13 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
         initPolygon();
         globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
         beginTime = globeModel.getElapsedTime().getTotalSeconds();
-        barricadosModels.add(this);
+        globeModel.barricadosModels.add(this);
 
     }
     @Override
     public void destroy() {
         super.destroy();
-        barricadosModels.remove(this);
+        globeModel.barricadosModels.remove(this);
         if (getLocalPanelModel().getPanelStatus().equals(isometric)){
             globeModel.getGameManager().deleteGamePanel(getLocalPanelModel());
         }

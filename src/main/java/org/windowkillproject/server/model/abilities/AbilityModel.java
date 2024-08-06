@@ -5,17 +5,14 @@ import org.windowkillproject.server.model.ObjectModel;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 
-import java.util.ArrayList;
 
 public abstract class AbilityModel extends ObjectModel {
-
-    public static ArrayList<AbilityModel> abilityModels = new ArrayList<>();
 
 
 
     public AbilityModel(GlobeModel globeModel, PanelModel localPanel, int x, int y) {
         super(globeModel, localPanel,x,y);
-        abilityModels.add(this);
+        globeModel.abilityModels.add(this);
     }
 
     public boolean isCollectedByEpsilon(EpsilonModel epsilonModel) {
@@ -24,7 +21,7 @@ public abstract class AbilityModel extends ObjectModel {
     }
 
     public void destroy() {
-        abilityModels.remove(this);
+        globeModel.abilityModels.remove(this);
     }
 
 

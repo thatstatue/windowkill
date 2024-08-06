@@ -28,11 +28,7 @@ import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.server.Config.*;
 import static org.windowkillproject.controller.Utils.*;
-import static org.windowkillproject.server.model.abilities.BulletModel.bulletModels;
-import static org.windowkillproject.server.model.abilities.CollectableModel.collectableModels;
 import static org.windowkillproject.server.model.abilities.PortalModel.lastPortal;
-import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
-import static org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel.archmireModels;
 import static org.windowkillproject.server.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
 import static org.windowkillproject.server.model.entities.enemies.attackstypes.LaserOperator.LASER_LINES;
 
@@ -45,10 +41,10 @@ public class GameManager {
     private final GlobeModel globeModel;
     public static Random random = new Random();
 
-    public static ArrayList<EnemyModel> getEnemies() {
+    public ArrayList<EnemyModel> getEnemies() {
         ArrayList<EnemyModel> enemies = new ArrayList<>();
-        for (int i = 0; i < entityModels.size(); i++) {
-            EntityModel entityModel = entityModels.get(i);
+        for (int i = 0; i < globeModel.entityModels.size(); i++) {
+            EntityModel entityModel = globeModel.entityModels.get(i);
             if (entityModel instanceof EnemyModel) {
                 enemies.add((EnemyModel) entityModel);
             }
@@ -56,9 +52,9 @@ public class GameManager {
         return enemies;
     }
 
-    public static void impact(Projectable projectable) {
-        for (int i = 0; i < entityModels.size(); i++) {
-            EntityModel entity = entityModels.get(i);
+    public void impact(Projectable projectable) {
+        for (int i = 0; i < globeModel.entityModels.size(); i++) {
+            EntityModel entity = globeModel.entityModels.get(i);
             Point2D bulletPoint = new Point2D.Double(projectable.getX(), projectable.getY());
             if (entity.getAnchor() != null && !(entity instanceof Hovering)) {
                 Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
@@ -70,11 +66,11 @@ public class GameManager {
         }
     }
 
-    public static void impact(EntityModel entityModel, EnemyModel enemyModel) {
+    public void impact(EntityModel entityModel, EnemyModel enemyModel) {
         Point2D collisionPoint = getCollisionPoint(entityModel, enemyModel);
 
         //impact wave of collision
-        Timer impactsTimer = getImpactsTimer(entityModels, entityModel, enemyModel, collisionPoint, IMPACT_DURATION);
+        Timer impactsTimer = getImpactsTimer(globeModel.entityModels, entityModel, enemyModel, collisionPoint, IMPACT_DURATION);
         impactsTimer.start();
     }
 
@@ -278,15 +274,15 @@ public class GameManager {
 
     public void epsilonsRewardControl() {
         for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
-            for (int i = 0; i < collectableModels.size(); i++) {
-                var collectableModel = collectableModels.get(i);
+            for (int i = 0; i < globeModel.collectableModels.size(); i++) {
+                var collectableModel = globeModel.collectableModels.get(i);
                 if(collectableModel.isCollectedByEpsilon(epsilonModel)){
                     epsilonModel.collected(collectableModel.getRewardXp());
-                    collectableModels.remove(collectableModel);
+                    globeModel.collectableModels.remove(collectableModel);
                     collectableModel.destroy();
                 }
                 if (globeModel.getElapsedTime().secondsPassed(collectableModel.getInitSeconds()) >= 10) {
-                    collectableModels.remove(collectableModel);
+                    globeModel.collectableModels.remove(collectableModel);
                     collectableModel.destroy();
                 }
             }
@@ -336,8 +332,8 @@ public class GameManager {
     }
 
     private void setEntitiesBoundsAllowed() {
-        for (int i = 0; i < entityModels.size(); i++) {
-            EntityModel entityModel = entityModels.get(i);
+        for (int i = 0; i < globeModel.entityModels.size(); i++) {
+            EntityModel entityModel = globeModel.entityModels.get(i);
             int t = 0;
             entityModel.setAllowedArea(new Area());
             entityModel.setAllowedPanelModels(new ArrayList<>());
@@ -355,8 +351,8 @@ public class GameManager {
     }
 
     private void setBulletsBoundsAllowed() {
-        for (int i = 0; i < bulletModels.size(); i++) {
-            BulletModel bulletModel = bulletModels.get(i);
+        for (int i = 0; i < globeModel.bulletModels.size(); i++) {
+            BulletModel bulletModel = globeModel.bulletModels.get(i);
             int t = 0;
             bulletModel.setAllowedArea(new Area());
             bulletModel.setAllowedPanelModels(new ArrayList<>());
@@ -382,7 +378,7 @@ public class GameManager {
         if (transferable.getY() + transferable.getHeight() / 2 >= rectangle.y + rectangle.height / 2) {
             panelModel.setCanShrinkDown(false);
         }
-        if (transferable.getY() + +transferable.getHeight() / 2 <= rectangle.y + rectangle.height / 2) {
+        if (transferable.getY() + transferable.getHeight() / 2 <= rectangle.y + rectangle.height / 2) {
             panelModel.setCanShrinkUp(false);
         }
     }
@@ -397,11 +393,11 @@ public class GameManager {
         //timeout
         if (globeModel.getElapsedTime().getTotalSeconds() - lastAoEAttack > AOE_TIMEOUT) {
             lastAoEAttack = globeModel.getElapsedTime().getTotalSeconds();
-            for (int j = 0; j < entityModels.size(); j++) {
-                EntityModel entityModel = entityModels.get(j);
+            for (int j = 0; j < globeModel.entityModels.size(); j++) {
+                EntityModel entityModel = globeModel.entityModels.get(j);
                 //Drown
-                for (int k = 0; k < archmireModels.size(); k++) {
-                    ArchmireModel archmireModel = archmireModels.get(k);
+                for (int k = 0; k < globeModel.archmireModels.size(); k++) {
+                    ArchmireModel archmireModel = globeModel.archmireModels.get(k);
                     if (archmireModel.drown(entityModel)) break;
                 }
 
@@ -490,8 +486,8 @@ public class GameManager {
     }
 
     private void keepBulletsInBounds() {
-        for (int i = 0; i < bulletModels.size(); i++) {
-            BulletModel bulletModel = bulletModels.get(i);
+        for (int i = 0; i < globeModel.bulletModels.size(); i++) {
+            BulletModel bulletModel = globeModel.bulletModels.get(i);
             setTransferableLocalPanel(bulletModel);
             Area bulletAllowedArea = bulletModel.getAllowedArea();
             if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
@@ -589,8 +585,11 @@ public class GameManager {
     }
 
     public void writControl() {
-        for (EpsilonModel epsilon : globeModel.getEpsilons())
-             epsilon.getWrit().check();
+        ArrayList<EpsilonModel> epsilons = globeModel.getEpsilons();
+        for (int i = 0; i < epsilons.size(); i++) {
+            EpsilonModel epsilon = epsilons.get(i);
+            epsilon.getWrit().check();
+        }
     }
     public void deleteGamePanel(PanelModel panelModel) {
         if (panelModel !=null) {

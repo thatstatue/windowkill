@@ -6,6 +6,7 @@ import org.windowkillproject.client.ui.listeners.EpsilonKeyListener;
 import org.windowkillproject.client.ui.listeners.ShotgunMouseListener;
 
 import org.windowkillproject.client.ui.panels.etc.SettingsPanel;
+import org.windowkillproject.client.ui.panels.game.PanelView;
 import org.windowkillproject.client.ui.panels.shop.ShopPanel;
 import org.windowkillproject.client.ui.panels.shop.SkillTreePanel;
 import org.windowkillproject.client.ui.panels.etc.TutorialPanel;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
+import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
 public class App implements Runnable {
     private PrimaryFrame primaryFrame;
@@ -145,8 +147,9 @@ public class App implements Runnable {
         //minimize tabs
         minimize();
         loadOrNewGame();
-        initGFrame(globeId);//todo
-        client.sendMessage(REQ_START_GAME_LOOP);
+        client.sendMessage(REQ_NEW_GAME_SINGLE);
+        resetGame();
+        initGFrame();//todo
     }
 
     private void minimize() {
@@ -159,16 +162,14 @@ public class App implements Runnable {
         } catch (AWTException e) {
             e.printStackTrace();
         }
-        resetGame();
     }
 
     public void startGame(int t) {//doesn't reset time
-        initGFrame(globeId);
+        initGFrame();
         nextLevel();
     }
 
-    public void initGFrame(String globeId) {//todo add battle mode and stuff
-        this.globeId = globeId;
+    public void initGFrame() {//todo add battle mode and stuff
         gameFrame = new GameFrame(globeId,client);
         gameFrame.setVisible(true);
         getGameFrame().initLabels();
@@ -225,9 +226,9 @@ public class App implements Runnable {
     public void nextLevel() {
         client.sendMessage(REQ_NEXT_LEVEL);
         AbilityView.abilityViews = new ArrayList<>();
-        EntityView.entityViews = new ArrayList<>();
-
+        entityViews = new ArrayList<>();
         BlackOrbView.resetOrbViews();
+
         client.sendMessage(REQ_EPSILON_NEW_INSTANCE);
 //        getGameFrame().setXpAmount(targetEpsilon.getXp()); todo check if is on time
 
@@ -237,10 +238,10 @@ public class App implements Runnable {
         GameSaveManager.saveGameState(gameState);
     }
 
-    public void loadOrNewGame() {
-//        GameState savedState = GameSaveManager.loadGameState(); todo
+    public boolean loadOrNewGame() {
+        GameState savedState = GameSaveManager.loadGameState(); //todo
 //        if (savedState != null) {
-//            boolean continueGame = promptUserToContinue();
+            return promptUserToContinue();
 //            if (continueGame) {
 //                globeId = savedId;
 //                gameState = savedState;
@@ -300,22 +301,26 @@ public class App implements Runnable {
             case REQ_PLAY_CREATE_SOUND -> soundPlayer.playCreateSound();
             case REQ_INIT_SCORE_FRAME -> initScoreFrame(Boolean.parseBoolean(parts[1]));
             case RES_SET_EPSILON_XP -> handleEpsilonXp(Integer.parseInt(parts[1]));
-            case RES_WRIT_CHOSEN -> gameFrame.getMainGamePanel().setWrit(parts[1]);
+            case RES_WRIT_CHOSEN -> gameFrame.getMainPanelView().setWrit(parts[1]);
             case REQ_PLAY_HIT_SOUND -> soundPlayer.playHitSound();
             case REQ_PLAY_BULLET_SOUND -> soundPlayer.playBulletSound();
-            case REQ_TOTAL_KILLS -> gameFrame.getMainGamePanel().setTotalKills(parts[1]);
-            case REQ_WAVE_LEVEL -> gameFrame.getMainGamePanel().setWaveLevel(parts[1]);
-            case RES_EPSILON_HP -> gameFrame.getMainGamePanel().setHpAmount(Integer.parseInt(parts[1]));
+            case REQ_TOTAL_KILLS -> gameFrame.getMainPanelView().setTotalKills(parts[1]);
+            case REQ_WAVE_LEVEL -> gameFrame.getMainPanelView().setWaveLevel(parts[1]);
+            case RES_EPSILON_HP -> gameFrame.getMainPanelView().setHpAmount(Integer.parseInt(parts[1]));
             case REQ_START_GAME_1 -> startGame(1);
             case REQ_PLAY_DESTROY_SOUND -> soundPlayer.playDestroySound();
-            case REQ_SET_CLOCK -> gameFrame.getMainGamePanel().setClockTime(parts[1]);
+            case REQ_SET_CLOCK -> gameFrame.getMainPanelView().setClockTime(parts[1]);
             case REQ_REPAINT_GAME_FRAME -> handleRepaint();
+            case RES_GLOBE_ID -> globeId = parts[1];
 
 
         }
     }
     private void handleRepaint(){
         gameFrame.revalidate();
+        System.out.println(panelViews.size() + " is panel views size");
+        System.out.println(entityViews.size() + " is entity views size");
+
         gameFrame.repaint();
     }
     private void handleEpsilonXp(int xp){

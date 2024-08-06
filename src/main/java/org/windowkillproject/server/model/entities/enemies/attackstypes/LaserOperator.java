@@ -1,6 +1,7 @@
 package org.windowkillproject.server.model.entities.enemies.attackstypes;
 
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -12,8 +13,8 @@ public interface LaserOperator {
     default void setLaserEnds() {
         LASER_ENDS.clear();
 
-        for (int i = 0; i < BlackOrbModel.blackOrbModels.size(); i++) {
-            BlackOrbModel blackOrbModel = BlackOrbModel.blackOrbModels.get(i);
+        for (int i = 0; i < getGlobeModel().blackOrbModels.size(); i++) {
+            BlackOrbModel blackOrbModel = getGlobeModel().blackOrbModels.get(i);
             Point2D anchor = blackOrbModel.getAnchor();
             LASER_ENDS.add(anchor);
         }
@@ -39,5 +40,5 @@ public interface LaserOperator {
     }
 
     Point2D getAnchor();
-
+    GlobeModel getGlobeModel();
 }

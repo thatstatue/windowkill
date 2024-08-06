@@ -40,13 +40,15 @@ public class ClientHandler{
     private class receiveClientMessages implements Runnable{
         @Override
         public void run() {
-            try {
-                String message;
-                while ((message = in.readLine()) != null){
-                    new RequestHandler(messageQueue, message).run();
+            while (true) {
+                try {
+                    String message;
+                    while ((message = in.readLine()) != null) {
+                        new RequestHandler(messageQueue, message).run();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
     }
@@ -60,6 +62,7 @@ public class ClientHandler{
             try {
                 while (true) {
                     String message = messageQueue.dequeue();
+                    System.out.println("message is "+ message);
                     sendMessage(message);//sends every request from server side queued
                 }
             } catch (InterruptedException e) {
@@ -76,7 +79,7 @@ public class ClientHandler{
     }
 
     private void sendMessage(String message) {
-        out.println(message + REGEX_SPLIT);
+        out.println(message);
     }
 
 }

@@ -225,7 +225,7 @@ public class Wave {
 
     private void spawnMiniBoss(int randX, int randY) {
         int randNum = random.nextInt(3);
-        if (randNum == 0 && BlackOrbModel.blackOrbModels.isEmpty()) {
+        if (randNum == 0 && globeModel.blackOrbModels.isEmpty()) {
             new BlackOrbModel(globeModel, randX, randY);
         } else {
             if (!isEntityThere(randX, randY))
@@ -235,8 +235,8 @@ public class Wave {
     }
 
     private boolean isEntityThere(int randLocX, int randLocY) {
-        for (int i = 0; i < EntityModel.entityModels.size(); i++) {
-            EntityModel entityModel = EntityModel.entityModels.get(i);
+        for (int i = 0; i < globeModel.entityModels.size(); i++) {
+            EntityModel entityModel = globeModel.entityModels.get(i);
             if (isOccupied(randLocX, entityModel.getX(), entityModel.getRadius())
                     && isOccupied(randLocY, entityModel.getY(), entityModel.getRadius())) {
                 return true;

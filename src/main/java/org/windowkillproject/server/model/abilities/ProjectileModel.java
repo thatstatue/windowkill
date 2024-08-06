@@ -11,15 +11,12 @@ import org.windowkillproject.server.model.entities.enemies.attackstypes.Projecti
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.windowkillproject.Constants.*;
-import static org.windowkillproject.controller.GameManager.impact;
 import static org.windowkillproject.controller.GameManager.random;
 import static org.windowkillproject.controller.Utils.unitVector;
 import static org.windowkillproject.controller.Utils.weighedVector;
-import static org.windowkillproject.server.model.entities.EntityModel.entityModels;
 
 public class ProjectileModel extends AbilityModel implements Projectable {
     private int attackHp;
@@ -27,15 +24,10 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     private PanelModel localPanel;
 
 
-    public void setLocalPanelBounds(PanelModel localPanelBounds) {
-        this.localPanel = localPanelBounds;
-    }
-
     public void setAttackHp(int attackHp) {
         this.attackHp = attackHp;
     }
 
-    public static ArrayList<ProjectileModel> projectileModels = new ArrayList<>();
     private final Color topColor, bottomColor;
 
     public Color getTopColor() {
@@ -57,7 +49,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         super(parent.getGlobeModel(), localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
 //        anchor = new Point2D.Double(x, y);
         isShoot = false;
-        projectileModels.add(this);
+        globeModel.projectileModels.add(this);
         this.parent = parent;
         this.attackHp = attackHp;
         this.isHovering = isHovering;
@@ -117,8 +109,8 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private void isEntityShot() {
-        for (int i = 0; i < entityModels.size(); i++) {
-            EntityModel entityModel = entityModels.get(i);
+        for (int i = 0; i < globeModel.entityModels.size(); i++) {
+            EntityModel entityModel = globeModel.entityModels.get(i);
             if (!entityModel.equals(parent)) {
                 //not hitting vertices
                 boolean notHitVs = true;
@@ -160,8 +152,8 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private void explode() {
-        if (!isHovering) impact(this);
-        projectileModels.remove(this);
+        if (!isHovering) globeModel.getGameManager().impact(this);
+        globeModel.projectileModels.remove(this);
         globeModel.performAction(Request.REQ_PLAY_BULLET_SOUND);
         destroy();
     }

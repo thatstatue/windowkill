@@ -5,12 +5,18 @@ import org.windowkillproject.server.model.globe.GlobeModel;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+import static java.awt.Toolkit.getDefaultToolkit;
 import static java.lang.Math.abs;
-import static org.windowkillproject.Constants.FRAME_SHRINKAGE_SPEED;
+import static org.windowkillproject.Constants.*;
 
 public class MainPanelModel extends PanelModel{
-    public MainPanelModel(GlobeModel globeModel, Rectangle bounds, boolean flexible, boolean background) {
-        super(globeModel, bounds,PanelStatus.shrinkable, flexible, background);
+    public MainPanelModel(GlobeModel globeModel) {
+        super(globeModel,
+                new Rectangle(
+                        getDefaultToolkit().getScreenSize().width - GAME_WIDTH/2,
+                        getDefaultToolkit().getScreenSize().height - GAME_HEIGHT/2,
+                        GAME_WIDTH, GAME_HEIGHT
+                ), PanelStatus.shrinkable, true, false);
     }
     public boolean isPunched() {
         return punched;

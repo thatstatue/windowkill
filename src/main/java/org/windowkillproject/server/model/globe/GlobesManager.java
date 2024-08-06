@@ -10,35 +10,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.windowkillproject.server.model.entities.EpsilonModel.newINSTANCE;
 import static org.windowkillproject.server.model.entities.EpsilonModel.queueEpsilonModelMap;
 
 public class GlobesManager {
     private static Map<String, GlobeModel> globeModelMap = new HashMap<>();
+
     public static String newGlobe(MessageQueue queue1, MessageQueue queue2, String battleMode){
+
         var eps1 = queueEpsilonModelMap.get(queue1);
+        if (queue1 != null && eps1 == null){
+            eps1 = newINSTANCE(queue1,null);
+        }
         var eps2 = queueEpsilonModelMap.get(queue2);
+        if (queue2 != null && eps2 == null){
+            eps2 = newINSTANCE(queue2,null);
+        }
         GlobeModel globeModel;
 
         if (battleMode.equals(BattleMode.monomachia.name())){
             globeModel = new MonomachiaGlobe(eps1, eps2);
+            eps2.setGlobeModel(globeModel);
+            globeModel.entityModels.add(eps2);
         }else if (battleMode.equals(BattleMode.colosseum.name())){
             globeModel = new ColosseumGlobe(eps1,eps2);
+            eps2.setGlobeModel(globeModel);
+            globeModel.entityModels.add(eps2);
         }else globeModel = new SingleGlobe(eps1);
-        var Id = UUID.randomUUID().toString();
-        globeModelMap.put(Id, globeModel);
-        return Id;
+
+        eps1.setGlobeModel(globeModel);
+        globeModelMap.put(globeModel.getId(), globeModel);
+        return globeModel.getId();
     }
 
     public static GlobeModel getGlobeFromId(String id) {
         return globeModelMap.get(id);
     }
-    public static String getIdFromGlobe(GlobeModel globeModel) {
-        String[] ans = new String[1];
-        globeModelMap.forEach((s, globeModel1) -> {
-            if (globeModel.equals(globeModel1)) ans[0] = s;
-        });
-        return ans[0];
-    }
+
 
 
 

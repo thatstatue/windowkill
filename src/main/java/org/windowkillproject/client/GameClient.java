@@ -6,8 +6,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-import static org.windowkillproject.Request.REGEX_SPLIT;
-
 public class GameClient implements Runnable{
     private static final String SERVER_ADDRESS = "localhost";
     private static final int SERVER_PORT = 12345;
@@ -38,7 +36,8 @@ public class GameClient implements Runnable{
     }
 
     public void sendMessage(String message) {
-        out.println(message + REGEX_SPLIT);
+        out.println(message);
+        System.out.println("i sent the message "+ message);
 
     }
 
@@ -57,6 +56,7 @@ public class GameClient implements Runnable{
             try {
                 String message;
                 while ((message = in.readLine()) != null) {
+                    System.out.println(message );
                     app.updateGame(message);
                 }
             } catch (IOException e) {

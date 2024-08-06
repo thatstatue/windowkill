@@ -18,9 +18,8 @@ import static org.windowkillproject.controller.Utils.*;
 public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, Circular {
     public ArchmireModel(GlobeModel globeModel,PanelModel localPanel, int x, int y) {
         super(globeModel, localPanel, x, y,ARCHMIRE_RADIUS,30,0,5,6);
-        archmireModels.add(this);
+        globeModel.archmireModels.add(this);
     }
-    public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
     @Override
     public void route() {
         int x= getX(); int y= getY();
@@ -73,6 +72,6 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, 
     @Override
     public void destroy(){
         super.destroy();
-        archmireModels.remove(this);
+        globeModel.archmireModels.remove(this);
     }
 }

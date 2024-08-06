@@ -80,7 +80,7 @@ public class GlobeController {
         if (panelModel != null) {
             try {
                 Constructor<PanelView> constructor = panelViewCls.getConstructor(String.class, GameClient.class);
-                String globeId = GlobesManager.getIdFromGlobe(globeModel);
+                String globeId = globeModel.getId();
                 for (GameClient player : getPlayers(clients, globeId)) {
                     var panelView = constructor.newInstance(id, player);
                     panelView.set(x, y, width, height);

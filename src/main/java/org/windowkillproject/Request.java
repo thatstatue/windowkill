@@ -42,6 +42,9 @@ public class Request {
     public static final String REQ_SET_CLOCK = "37";
     public static final String REQ_SHOOT_BULLET = "38";
     public static final String REQ_REPAINT_GAME_FRAME = "39";
+    public static final String REQ_DIFFICULTY = "40";
+    public static final String REQ_NEW_GAME_SINGLE = "41";
+    public static final String RES_GLOBE_ID = "42";
 
 
 

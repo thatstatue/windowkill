@@ -31,6 +31,7 @@ public class GameServer implements Runnable {
             System.out.println("Server started on port " + PORT);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println("Connecteeeeddd inside ohohohoooohohohooh");
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 clientHandlers.add(clientHandler);
                 clientHandler.start();

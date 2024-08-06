@@ -14,7 +14,7 @@ import static org.windowkillproject.Constants.GAME_TITLE;
 public class GameFrame extends JFrame {
 
     private JLayeredPane layeredPane;
-    private MainPanelView mainGamePanel;
+    private MainPanelView mainPanelView;
     private EntityPanel entityPanel;
 
     @Override
@@ -22,8 +22,8 @@ public class GameFrame extends JFrame {
         return layeredPane;
     }
 
-    public MainPanelView getMainGamePanel() {
-        return mainGamePanel;
+    public MainPanelView getMainPanelView() {
+        return mainPanelView;
     }
 
     public GameFrame(String id, GameClient client) {
@@ -37,7 +37,7 @@ public class GameFrame extends JFrame {
         setBackground(new Color(0, 0, 0, 0));
         setLocationRelativeTo(null);
 
-        mainGamePanel = new MainPanelView(id ,client);
+        mainPanelView = new MainPanelView(id ,client);
         entityPanel = new EntityPanel(client);
 
         initLayeredPane();
@@ -47,29 +47,29 @@ public class GameFrame extends JFrame {
         layeredPane = new JLayeredPane();
         layeredPane.setBounds(0, 0, CENTER_X * 2, CENTER_Y * 2);
         layeredPane.setLayout(null);
-        layeredPane.add(mainGamePanel, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.add(mainPanelView, JLayeredPane.DEFAULT_LAYER);
         layeredPane.add(entityPanel, JLayeredPane.PALETTE_LAYER);
         setContentPane(layeredPane);
     }
 
     public void setWaveLevel(int level) {
-        mainGamePanel.setWaveLevel(level);
+        mainPanelView.setWaveLevel(level);
     }
 
     public void initLabels() {
-        mainGamePanel.initLabels();
+        mainPanelView.initLabels();
     }
 
     public JLabel[] getLabels() {
-        return mainGamePanel.getLabels();
+        return mainPanelView.getLabels();
     }
 
 
     public void setXpAmount(int xpAmount) {
-        mainGamePanel.setXpAmount(xpAmount);
+        mainPanelView.setXpAmount(xpAmount);
     }
     public int getXpAmount(){
-        return mainGamePanel.getXpAmount();
+        return mainPanelView.getXpAmount();
     }
 
 
