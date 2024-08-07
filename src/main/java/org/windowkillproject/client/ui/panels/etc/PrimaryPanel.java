@@ -45,6 +45,11 @@ public class PrimaryPanel extends Panel {
             JButton button = buttonMaker("Tutorial", 630, 200, actionListener);
             componentArrayList.add(button);
         }
+        {
+            ActionListener actionListener = e -> client.getApp().showLeague();
+            JButton button = buttonMaker("League", 400, 480, actionListener);
+            componentArrayList.add(button);
+        }
 
         JLabel imgDisplay = new JLabel(new ImageIcon(ImgData.getData().getBg()));
         imgDisplay.setBounds(-20,-200, 1000, 1000);

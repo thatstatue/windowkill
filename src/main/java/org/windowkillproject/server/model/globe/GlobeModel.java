@@ -1,9 +1,12 @@
 package org.windowkillproject.server.model.globe;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.windowkillproject.client.view.Viewable;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.GameLoop;
 import org.windowkillproject.controller.GameManager;
 import org.windowkillproject.controller.GlobeController;
+import org.windowkillproject.json.JacksonMapper;
 import org.windowkillproject.server.model.ObjectModel;
 import org.windowkillproject.server.model.WaveFactory;
 import org.windowkillproject.server.model.abilities.AbilityModel;
@@ -23,6 +26,8 @@ import org.windowkillproject.server.model.entities.enemies.normals.ArchmireModel
 
 import java.util.ArrayList;
 import java.util.UUID;
+
+import static org.windowkillproject.Request.*;
 
 public abstract class GlobeModel {
     public ArrayList<EpsilonModel> team1 = new ArrayList<>();
@@ -150,6 +155,25 @@ public abstract class GlobeModel {
         for (EpsilonModel epsilonModel : team1) {
             epsilonModel.getMessageQueue().enqueue(message);
         }
+    }
+    public void sendObject(Viewable viewable, Class cls){
+        String json;
+        try {
+            json = JacksonMapper.getInstance().writeValueAsString(viewable);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        performAction(REQ_SEND_OBJECT+ REGEX_SPLIT+ json + REGEX_SPLIT + cls);
+
+    }
+    public void modifyObject(Viewable viewable, Class cls){
+        String json;
+        try {
+            json = JacksonMapper.getInstance().writeValueAsString(viewable);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        performAction(REQ_MODIFY_OBJECT+ REGEX_SPLIT+ json + REGEX_SPLIT + cls);
     }
     public void shrinkAll(){
         for (PanelModel panelModel :panelModels)

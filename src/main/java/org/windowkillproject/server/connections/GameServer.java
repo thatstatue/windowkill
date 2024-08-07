@@ -1,4 +1,4 @@
-package org.windowkillproject.server;
+package org.windowkillproject.server.connections;
 
 import java.io.*;
 import java.net.*;

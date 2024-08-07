@@ -1,5 +1,6 @@
 package org.windowkillproject.client.view.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.windowkillproject.client.view.ObjectView;
 
 import java.util.ArrayList;
@@ -41,4 +42,4 @@ public abstract class EntityView extends ObjectView {
         setHeight(height);
 
     }
-    }
+}

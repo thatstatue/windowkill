@@ -69,8 +69,6 @@ public class SettingsPanel extends Panel {
 
         componentArrayList.add(buttonMaker("Menu", 790, 20, e -> client.getApp().initPFrame()));
 
-        componentArrayList.add(buttonMaker("Menu", 790, 20, e -> client.getApp().initPFrame()));
-
         componentArrayList.add(buttonMaker("UP KEY", 600, 150, e -> {
             Setter.key = UP_CODE;
             monoDialog.dispose();

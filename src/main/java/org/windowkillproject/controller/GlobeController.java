@@ -1,5 +1,6 @@
 package org.windowkillproject.controller;
 
+import org.windowkillproject.Request;
 import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.panels.game.PanelView;
 import org.windowkillproject.client.view.ObjectView;
@@ -29,7 +30,6 @@ import org.windowkillproject.client.view.entities.enemies.finalboss.SmileyHeadVi
 import org.windowkillproject.client.view.entities.enemies.minibosses.BarricadosView;
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
 import org.windowkillproject.server.model.globe.GlobeModel;
-import org.windowkillproject.server.model.globe.GlobesManager;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import java.awt.*;
@@ -37,18 +37,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import static org.windowkillproject.Request.REGEX_SPLIT;
+import static org.windowkillproject.Request.REQ_REMOVE_OBJECT;
 import static org.windowkillproject.client.GameClient.clients;
 
 public class GlobeController {
     private final GlobeModel globeModel;
     public GlobeController(GlobeModel globeModel){
         this.globeModel = globeModel;
-    }
-
-    public  <T extends ObjectView> void createObjectView(String id, int x, int y, int width, int height){
-//        ObjectModel objectModel = findModel(id);
-//        if (objectModel instanceof EntityModel) createEntityView(id, x, y, width, height);
-//        else createAbilityView(id,x, y);
     }
 
     public <T extends EntityView> void createEntityView(String id, int x, int y, int width, int height) {
@@ -61,6 +57,7 @@ public class GlobeController {
                 if (entityModel instanceof EnemyModel) {
                     EnemyModel enemyModel = (EnemyModel) entityModel;
                     Constructor<T> constructor = (Constructor<T>) entityViewCls.getConstructor(String.class, Polygon.class);
+
                     entityView = constructor.newInstance(id, enemyModel.getPolygon());
                 }else {
                     Constructor<T> constructor = (Constructor<T>) entityViewCls.getConstructor(String.class);
@@ -68,6 +65,7 @@ public class GlobeController {
                 }
                 entityView.set(x, y, width, height);
 
+                globeModel.sendObject(entityView, EntityView.class);
             } catch (NoSuchMethodException | InstantiationException |
                      InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
@@ -84,6 +82,7 @@ public class GlobeController {
                 for (GameClient player : getPlayers(clients, globeId)) {
                     var panelView = constructor.newInstance(id, player);
                     panelView.set(x, y, width, height);
+                    globeModel.sendObject(panelView, PanelView.class);
                 }
 
             } catch (NoSuchMethodException | InstantiationException |
@@ -130,23 +129,25 @@ public class GlobeController {
         Class abilityViewCls = getAbilityViewCls(abilityModel);
         if (abilityViewCls != null) {
             try {
+                AbilityView abilityView;
                 if (abilityModel instanceof ProjectileModel) {
                     var projectileModel = (ProjectileModel) abilityModel;
                     Constructor<T> constructor = (Constructor<T>) abilityViewCls.getConstructor
                             (String.class, int.class, int.class, Color.class, Color.class);
-                    constructor.newInstance(id, x, y, projectileModel.getTopColor(), projectileModel.getBottomColor());
+                    abilityView = constructor.newInstance(id, x, y, projectileModel.getTopColor(), projectileModel.getBottomColor());
 
                 } else if (abilityModel instanceof MomentModel) {
                     MomentModel momentModel = (MomentModel) abilityModel;
                     Constructor<T> constructor = (Constructor<T>) abilityViewCls.getConstructor
                             (String.class, int.class, int.class, int.class);
-                    constructor.newInstance(id, x, y, momentModel.getRadius());
+                    abilityView = constructor.newInstance(id, x, y, momentModel.getRadius());
 
                 } else {
                     Constructor<T> constructor = (Constructor<T>) abilityViewCls.getConstructor
                             (String.class, int.class, int.class);
-                    constructor.newInstance(id, x, y);
+                    abilityView = constructor.newInstance(id, x, y);
                 }
+                globeModel.sendObject(abilityView, AbilityView.class);
             } catch (NoSuchMethodException | InstantiationException |
                      InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
@@ -172,7 +173,7 @@ public class GlobeController {
         return abilityViewCls;
     }
 
-    public  <T extends Viewable> void setViewBounds(T view) {
+    public <T extends Viewable> void setViewBounds(T view) {
         if (findModel(view.getId()) instanceof EntityModel) {
             EntityModel entityModel = findModel(view.getId());
             if (entityModel != null) {
@@ -191,6 +192,7 @@ public class GlobeController {
                     var entityView = (EntityView) view;
                     entityView.setVisible(visible);
                 }
+                globeModel.modifyObject(view, EntityView.class);
             } else view.setEnabled(false);
         } else if (findModel(view.getId()) instanceof AbilityModel) {
             AbilityModel abilityModel = findModel(view.getId());
@@ -203,7 +205,7 @@ public class GlobeController {
                             momentModel.getRadius(),
                             momentModel.getRadius()
                     );
-                    MomentView momentView = (MomentView) view;
+                  //  MomentView momentView = (MomentView) view;
                   //  momentView.setColorOpacity(100 - (glapsedTime.getTotalSeconds()-momentModel.getTime())*17); todo for now isn't necessary
                 } else {
                     view.set(
@@ -211,6 +213,7 @@ public class GlobeController {
                             abilityModel.getY(),
                             5, 5);
                 }
+                globeModel.modifyObject(view, AbilityView.class);
             } else if(findModel(view.getId()) instanceof PanelModel) {
                 PanelModel panelModel = findModel(view.getId());
                 if (panelModel != null) {
@@ -220,14 +223,17 @@ public class GlobeController {
                             panelModel.getWidth(),
                             panelModel.getHeight()
                     );
+                    globeModel.modifyObject(view, PanelView.class);
                 }else view.setEnabled(false);
             }
             else{
                 view.setEnabled(false);
             }
-
         } else {
             view.setEnabled(false);
+        }
+        if (!view.isEnabled()){
+            globeModel.performAction(REQ_REMOVE_OBJECT+ REGEX_SPLIT+ view.getId());
         }
 
     }

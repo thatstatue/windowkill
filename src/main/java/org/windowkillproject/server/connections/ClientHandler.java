@@ -1,4 +1,4 @@
-package org.windowkillproject.server;
+package org.windowkillproject.server.connections;
 
 import org.windowkillproject.MessageQueue;
 
@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.windowkillproject.Request.REGEX_SPLIT;
 
 public class ClientHandler{
     private final Socket socket;

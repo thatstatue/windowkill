@@ -1,7 +1,9 @@
-package org.windowkillproject.server;
+package org.windowkillproject.server.connections;
 
 import org.windowkillproject.MessageQueue;
 
+import org.windowkillproject.server.Config;
+import org.windowkillproject.server.connections.online.League;
 import org.windowkillproject.server.model.abilities.BulletModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
@@ -53,6 +55,7 @@ public class RequestHandler implements Runnable{
             case REQ_SHOOT_BULLET -> handleShootBullet(parts);
             case REQ_DIFFICULTY -> handleDifficulty(parts[1]);
             case REQ_NEW_GAME_SINGLE -> handleNewGameSingle();
+            case LEAGUE_REDIRECT -> League.updateLeague(parts, messageQueue);
         }
     }
     private void handleNewGameSingle(){

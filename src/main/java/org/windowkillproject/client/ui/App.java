@@ -1,7 +1,7 @@
 package org.windowkillproject.client.ui;
 
-import org.windowkillproject.client.ui.frames.GameFrame;
-import org.windowkillproject.client.ui.frames.SideFrame;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.windowkillproject.client.ui.frames.*;
 import org.windowkillproject.client.ui.listeners.EpsilonKeyListener;
 import org.windowkillproject.client.ui.listeners.ShotgunMouseListener;
 
@@ -11,15 +11,18 @@ import org.windowkillproject.client.ui.panels.shop.ShopPanel;
 import org.windowkillproject.client.ui.panels.shop.SkillTreePanel;
 import org.windowkillproject.client.ui.panels.etc.TutorialPanel;
 import org.windowkillproject.client.GameClient;
-import org.windowkillproject.client.ui.frames.PrimaryFrame;
-import org.windowkillproject.client.ui.frames.ScoreFrame;
 
 import org.windowkillproject.client.ui.sounds.SoundPlayer;
+import org.windowkillproject.client.view.Viewable;
+import org.windowkillproject.client.view.entities.EntityView;
+import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import org.windowkillproject.controller.data.GameSaveManager;
 import org.windowkillproject.controller.data.GameState;
 import org.windowkillproject.client.view.abilities.AbilityView;
-import org.windowkillproject.client.view.entities.EntityView;
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
+import org.windowkillproject.json.JacksonMapper;
+import org.windowkillproject.server.model.abilities.AbilityModel;
+import org.windowkillproject.server.model.entities.enemies.attackstypes.Hideable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
+import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
 public class App implements Runnable {
@@ -45,6 +49,7 @@ public class App implements Runnable {
     private ScoreFrame scoreFrame;
     private SideFrame skillTreeFrame;
     private SideFrame settingsFrame;
+    private LeagueFrame leagueFrame;
 
     public void setEmpowerInitSeconds(long empowerInitSeconds) {
         shotgunMouseListener.setEmpowerInitSeconds(empowerInitSeconds);
@@ -52,7 +57,7 @@ public class App implements Runnable {
 
     private SideFrame tutorialFrame;
     private GameState gameState;//todo move to server side
-    private final GameClient client ;
+    private final GameClient client;
     private String globeId; //todo every game that starts, server aligns the globe id to its clients
     private final SoundPlayer soundPlayer;
 
@@ -83,6 +88,22 @@ public class App implements Runnable {
     public SideFrame getTutFrame() {
         if (tutorialFrame == null) tutorialFrame = new SideFrame(TutorialPanel.class, client);
         return tutorialFrame;
+    }
+
+    public LeagueFrame getLeagueFrame() {
+        if (leagueFrame == null) {
+            leagueFrame = new LeagueFrame(client);
+//            leagueFrame.getUsername(client);
+        }
+        return leagueFrame;
+    }
+
+    public void showLeague() {
+        getLeagueFrame().setVisible(true);
+        if (!getLeagueFrame().isUsernamed()) {
+            getLeagueFrame().getUsername(client);
+        }
+
     }
 
 
@@ -170,7 +191,7 @@ public class App implements Runnable {
     }
 
     public void initGFrame() {//todo add battle mode and stuff
-        gameFrame = new GameFrame(globeId,client);
+        gameFrame = new GameFrame(globeId, client);
         gameFrame.setVisible(true);
         getGameFrame().initLabels();
         client.sendMessage(REQ_SHRINK_FAST);
@@ -225,7 +246,7 @@ public class App implements Runnable {
 
     public void nextLevel() {
         client.sendMessage(REQ_NEXT_LEVEL);
-        AbilityView.abilityViews = new ArrayList<>();
+        abilityViews = new ArrayList<>();
         entityViews = new ArrayList<>();
         BlackOrbView.resetOrbViews();
 
@@ -241,7 +262,7 @@ public class App implements Runnable {
     public boolean loadOrNewGame() {
         GameState savedState = GameSaveManager.loadGameState(); //todo
 //        if (savedState != null) {
-            return promptUserToContinue();
+        return promptUserToContinue();
 //            if (continueGame) {
 //                globeId = savedId;
 //                gameState = savedState;
@@ -287,13 +308,14 @@ public class App implements Runnable {
 //        GameLoop.updateView();
 
     }
-    public void updateGame(String message){/*
+
+    public void updateGame(String message) {/*
     todo any thing that needs to be changed in client
     will be sent as a message from server to client and
     it will be decided what to do with it here
     */
         String[] parts = message.split(REGEX_SPLIT);
-        switch (parts[0]){
+        switch (parts[0]) {
             case REQ_ARE_KEYS_PRESSED -> handleKeysPressed();
             case RES_EPSILON_ANCHOR -> handleEpsilonAnchor(parts);
             case REQ_SET_WAVE_LEVEl -> gameFrame.setWaveLevel(Integer.parseInt(parts[1]));
@@ -312,31 +334,111 @@ public class App implements Runnable {
             case REQ_SET_CLOCK -> gameFrame.getMainPanelView().setClockTime(parts[1]);
             case REQ_REPAINT_GAME_FRAME -> handleRepaint();
             case RES_GLOBE_ID -> globeId = parts[1];
+            case RES_NEW_ONLINE_PLAYER -> getLeagueFrame().setUsernamed(Boolean.parseBoolean(parts[1]));
+            case REQ_SEND_OBJECT -> handleNewObject(parts[1], parts[2].getClass());
+            case REQ_MODIFY_OBJECT -> handleModifyObject(parts[1], parts[2].getClass());
+            case REQ_REMOVE_OBJECT -> handleRemoveObject(parts[1]);
 
 
         }
     }
-    private void handleRepaint(){
+    private void handleRemoveObject(String id){
+        for (EntityView entityView: entityViews) {
+            if (entityView.getId().equals(id)){
+                entityViews.remove(entityView);
+                return;
+            }
+        }
+        for (AbilityView abilityView: abilityViews) {
+            if (abilityView.getId().equals(id)){
+                abilityViews.remove(abilityView);
+                return;
+            }
+        }
+        for (PanelView panelView: panelViews) {
+            if (panelView.getId().equals(id)){
+                panelViews.remove(panelView);
+                return;
+            }
+        }
+    }
+
+    private void handleModifyObject(String json, Class cls) {
+        Viewable view;
+        try {
+            view = (Viewable) JacksonMapper.getInstance().readValue(json, cls);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        if (view instanceof EntityView) {
+            for (EntityView entityView: entityViews) {
+                if (entityView.getId().equals(view.getId())) {
+                    entityView.set(view.getX(), view.getY(), view.getWidth(), view.getHeight());
+                    if (entityView instanceof EnemyView){
+                        ((EnemyView) entityView).setPolygon(((EnemyView)view).getPolygon());
+                    }
+                    if (entityView instanceof Hideable){
+                        ((Hideable) entityView).setVisible(((Hideable)view).isVisible());
+                    }
+                    break;
+                }
+            }
+        } else if (view instanceof AbilityView) {
+            for (AbilityView abilityView: abilityViews) {
+                if (abilityView.getId().equals(view.getId())) {
+                    abilityView.set(view.getX(), view.getY(), view.getWidth(), view.getHeight());
+                    break;
+                }
+            }
+        } else if (view instanceof PanelView) {
+            for (PanelView panelView: panelViews) {
+                if (panelView.getId().equals(view.getId())) {
+                    panelView.set(view.getX(), view.getY(), view.getWidth(), view.getHeight());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void handleNewObject(String json, Class cls) {
+        Viewable view;
+        try {
+            view = (Viewable) JacksonMapper.getInstance().readValue(json, cls);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        if (view instanceof EntityView) {
+            entityViews.add((EntityView) view);
+        } else if (view instanceof AbilityView) {
+            abilityViews.add((AbilityView) view);
+        } else if (view instanceof PanelView) {
+            panelViews.add((PanelView) view);
+        }
+    }
+
+    private void handleRepaint() {
         gameFrame.revalidate();
         System.out.println(panelViews.size() + " is panel views size");
         System.out.println(entityViews.size() + " is entity views size");
 
         gameFrame.repaint();
     }
-    private void handleEpsilonXp(int xp){
+
+    private void handleEpsilonXp(int xp) {
         gameFrame.setXpAmount(xp);
 
     }
 
-    private void handleEpsilonAnchor(String[] parts){
+    private void handleEpsilonAnchor(String[] parts) {
         var anchor = new Point2D.Double(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
         epsilonKeyListener.setEpsilonAnchor(anchor);
     }
-    private void handleKeysPressed(){
-        client.sendMessage(RES_ARE_KEYS_PRESSED + REGEX_SPLIT+
-                EpsilonKeyListener.isLeftPressed + REGEX_SPLIT+
-                EpsilonKeyListener.isRightPressed + REGEX_SPLIT+
-                EpsilonKeyListener.isUpPressed + REGEX_SPLIT+
+
+    private void handleKeysPressed() {
+        client.sendMessage(RES_ARE_KEYS_PRESSED + REGEX_SPLIT +
+                EpsilonKeyListener.isLeftPressed + REGEX_SPLIT +
+                EpsilonKeyListener.isRightPressed + REGEX_SPLIT +
+                EpsilonKeyListener.isUpPressed + REGEX_SPLIT +
                 EpsilonKeyListener.isDownPressed);
     }
 
