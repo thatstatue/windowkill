@@ -6,7 +6,6 @@ import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.Writ;
 import org.windowkillproject.server.model.abilities.VertexModel;
-import org.windowkillproject.server.model.globe.GlobesManager;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -21,20 +20,21 @@ public class EpsilonModel extends EntityModel {
     private boolean astrapper, melame, chironner;
     protected MessageQueue messageQueue;
     public void setGlobeModel(GlobeModel globeModel){
+        boolean isCreate = false;
+        if (this.globeModel == null) isCreate = true;
         this.globeModel = globeModel;
-        this.globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        if (isCreate && globeModel!= null) {
+            this.globeModel.getEntityModels().add(this);
+            System.out.println("my epsilon model id is " + id);
+            this.globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
+
+        }
     }
 
     public MessageQueue getMessageQueue() {
         return messageQueue;
     }
 
-    public static EpsilonModel newINSTANCE(MessageQueue messageQueue, GlobeModel globeModel) {
-        //var globe = GlobesManager.getGlobeFromId(messageQueue.getGlobeId());
-        var epsilon =  new EpsilonModel(messageQueue, globeModel, null, EPSILON_HP, 0);
-        queueEpsilonModelMap.put(messageQueue, epsilon);//todo is it dangerous to set the local to null?
-        return epsilon;
-    }
     private int xp;
     public int panelWidth=GAME_WIDTH, panelHeight=GAME_HEIGHT;
     private boolean isLeftPressed, isRightPressed,isDownPressed, isUpPressed;
@@ -56,15 +56,17 @@ public class EpsilonModel extends EntityModel {
 
         }
     }
-    private EpsilonModel(MessageQueue messageQueue, GlobeModel globeModel, PanelModel localModel, int hp, int xp) {
-        super( globeModel, localModel,
+    public EpsilonModel(MessageQueue messageQueue, GlobeModel globeModel) {
+        super( globeModel, null,
                 CENTER_X-EPSILON_RADIUS,
                 CENTER_Y- EPSILON_RADIUS,
-                EPSILON_RADIUS, hp, 10);
+                EPSILON_RADIUS, EPSILON_HP, 10);
         this.messageQueue = messageQueue;
         writ = new Writ(messageQueue);
-        setXp(xp);
-        if (this.globeModel!= null)this.globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+        setXp(0);
+        queueEpsilonModelMap.put(messageQueue, this);
+
+        //if (this.globeModel!= null)this.globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
     }
 
     public void spawnVertex() {

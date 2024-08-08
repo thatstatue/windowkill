@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public abstract class MultiGlobe extends GlobeModel {
     protected ArrayList<EpsilonModel> team2 = new ArrayList<>();
 
-    public MultiGlobe(EpsilonModel epsilon1, EpsilonModel epsilon2) {
-        super(epsilon1);
+    public MultiGlobe(String id, EpsilonModel epsilon1, EpsilonModel epsilon2) {
+        super(id, epsilon1);
         team2.add(epsilon2);
     }
 

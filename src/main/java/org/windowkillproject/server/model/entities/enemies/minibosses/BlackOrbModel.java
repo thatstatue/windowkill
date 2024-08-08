@@ -11,7 +11,6 @@ import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.server.Config.*;
@@ -47,25 +46,25 @@ public class BlackOrbModel extends EnemyModel implements Hideable, NonRotatable,
     public BlackOrbModel(GlobeModel globeModel, int x, int y) {
         super(globeModel,null, x, y, ORB_RADIUS, 30, 0, 1, 30);
 
-        move(getXPoints()[globeModel.blackOrbModels.size()]-x, getYPoints()[globeModel.blackOrbModels.size()]-y);
-        globeModel.blackOrbModels.add(this);
+        move(getXPoints()[globeModel.getBlackOrbModels().size()]-x, getYPoints()[globeModel.getBlackOrbModels().size()]-y);
+        globeModel.getBlackOrbModels().add(this);
 
         setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(getX()-ORB_RADIUS*2, getY()-ORB_RADIUS*2,
                 ORB_RADIUS*6, ORB_RADIUS*6), isometric , true
         ));
-        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+//        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
         lastSpawnTime = globeModel.getElapsedTime().getTotalSeconds();
     }
     private static boolean complete;
     @Override
     public void route() {
-        if (globeModel.blackOrbModels.get(0).equals(this) &&
+        if (globeModel.getBlackOrbModels().get(0).equals(this) &&
                 globeModel.getElapsedTime().getTotalSeconds() - lastSpawnTime > 1 &&
-                globeModel.blackOrbModels.size() < 5 && !complete){
+                globeModel.getBlackOrbModels().size() < 5 && !complete){
             new BlackOrbModel(globeModel,x,y);
             lastSpawnTime = globeModel.getElapsedTime().getTotalSeconds();
-            if (globeModel.blackOrbModels.size() == 5) {
-                for (BlackOrbModel blackOrbModel : globeModel.blackOrbModels) {
+            if (globeModel.getBlackOrbModels().size() == 5) {
+                for (BlackOrbModel blackOrbModel : globeModel.getBlackOrbModels()) {
                     blackOrbModel.setVisible(true);
                 }
                 complete = true;
@@ -79,7 +78,7 @@ public class BlackOrbModel extends EnemyModel implements Hideable, NonRotatable,
     @Override
     public void destroy(){
         super.destroy();
-        globeModel.blackOrbModels.remove(this);
+        globeModel.getBlackOrbModels().remove(this);
     }
     @Override
     public Point2D getRoutePoint() {

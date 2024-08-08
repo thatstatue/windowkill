@@ -1,5 +1,6 @@
 package org.windowkillproject.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.windowkillproject.client.ui.App;
 import org.windowkillproject.server.connections.online.PlayerState;
 
@@ -21,8 +22,14 @@ public class GameClient implements Runnable {
     private Socket socket;
 
     private PrintWriter out;
+
+    public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
+    }
+
     private BufferedReader in;
-    private final App app;
+    @JsonIgnore
+    private final transient App app;
     private PlayerState playerState;
     private String username;
 
@@ -45,6 +52,8 @@ public class GameClient implements Runnable {
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 clients.add(this);
+
+
                 res = false;
 
             } catch (IOException e) {
@@ -81,7 +90,6 @@ public class GameClient implements Runnable {
             try {
                 String message;
                 while ((message = in.readLine()) != null) {
-                    System.out.println(message);
                     app.updateGame(message);
                 }
             } catch (IOException e) {

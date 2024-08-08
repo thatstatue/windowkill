@@ -32,13 +32,12 @@ public class LeagueFrame extends JFrame {
         if (client.getUsername() == null) {
             while (!usernamed) {
                 username = JOptionPane.showInputDialog(null, "Enter a username:");
-
                 if (username == null || username.trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Username cannot be empty.");
                 } else {
                     client.sendMessage(LEAGUE_REDIRECT + REGEX_SPLIT + REQ_NEW_ONLINE_PLAYER + REGEX_SPLIT + username);
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

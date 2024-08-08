@@ -10,8 +10,8 @@ import static java.lang.Math.abs;
 import static org.windowkillproject.Constants.*;
 
 public class MainPanelModel extends PanelModel{
-    public MainPanelModel(GlobeModel globeModel) {
-        super(globeModel,
+    public MainPanelModel(GlobeModel globeModel, String id) {
+        super(globeModel, id,
                 new Rectangle(
                         getDefaultToolkit().getScreenSize().width - GAME_WIDTH/2,
                         getDefaultToolkit().getScreenSize().height - GAME_HEIGHT/2,

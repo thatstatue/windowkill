@@ -49,7 +49,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         super(parent.getGlobeModel(), localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
 //        anchor = new Point2D.Double(x, y);
         isShoot = false;
-        globeModel.projectileModels.add(this);
+        globeModel.getProjectileModels().add(this);
         this.parent = parent;
         this.attackHp = attackHp;
         this.isHovering = isHovering;
@@ -109,8 +109,8 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private void isEntityShot() {
-        for (int i = 0; i < globeModel.entityModels.size(); i++) {
-            EntityModel entityModel = globeModel.entityModels.get(i);
+        for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
+            EntityModel entityModel = globeModel.getEntityModels().get(i);
             if (!entityModel.equals(parent)) {
                 //not hitting vertices
                 boolean notHitVs = true;
@@ -153,7 +153,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
 
     private void explode() {
         if (!isHovering) globeModel.getGameManager().impact(this);
-        globeModel.projectileModels.remove(this);
+        globeModel.getProjectileModels().remove(this);
         globeModel.performAction(Request.REQ_PLAY_BULLET_SOUND);
         destroy();
     }

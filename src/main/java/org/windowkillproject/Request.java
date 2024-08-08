@@ -2,7 +2,7 @@ package org.windowkillproject;
 
 public class Request {
     public static final String LOCK = "jshehkf*#&e^278";
-    public static final String REGEX_SPLIT = "~!@#$%^&*()";
+    public static final String REGEX_SPLIT = "~!@#%&";
 
     public static final String REQ_PAUSE_UPDATE = "0";
     public static final String REQ_RESUME_UPDATE  = "1";
@@ -53,6 +53,14 @@ public class Request {
     public static final String REQ_SEND_OBJECT = "47";
     public static final String REQ_MODIFY_OBJECT = "48";
     public static final String REQ_REMOVE_OBJECT = "49";
+    public static final String REQ_SEND_CLIENT = "50";
+    public static final String REQ_ADD_TO_VAULT = "51";
+    public static final String REQ_JOIN_SQUAD = "52";
+    public static final String REQ_LEAVE_SQUAD = "53";
+    public static final String BROADCAST_REDIRECT = "54";
+    public static final String REQ_CREATE_PANEL = "55";
+    public static final String REQ_CREATE_ENTITY = "56";
+    public static final String REQ_CREATE_ABILITY = "57";
 
 
 

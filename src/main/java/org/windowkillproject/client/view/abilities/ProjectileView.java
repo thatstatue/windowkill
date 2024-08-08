@@ -8,6 +8,9 @@ public class ProjectileView extends AbilityView{
         this.topColor = topColor;
         this.bottomColor = bottomColor;
     }
+    public ProjectileView(String id, int x, int y){
+        this(id,x, y, Color.yellow, Color.yellow);
+    }
     private final Color topColor ,  bottomColor;
 
     @Override

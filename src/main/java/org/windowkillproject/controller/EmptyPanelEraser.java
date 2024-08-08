@@ -1,8 +1,5 @@
 package org.windowkillproject.controller;
 
-import org.windowkillproject.client.ui.panels.game.PanelView;
-import org.windowkillproject.client.ui.panels.game.MainPanelView;
-
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.panelmodels.MainPanelModel;
@@ -30,8 +27,8 @@ public class EmptyPanelEraser extends Timer {
                     continue;
                 Rectangle rectangle = panelModel.getBounds();
                 boolean hasEntity = false;
-                for (int i = 0; i < globeModel.entityModels.size(); i++) {
-                    EntityModel entityModel = globeModel.entityModels.get(i);
+                for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
+                    EntityModel entityModel = globeModel.getEntityModels().get(i);
                     if (isTransferableInBounds(entityModel, rectangle, true)) {
                         hasEntity = true;
                         break;

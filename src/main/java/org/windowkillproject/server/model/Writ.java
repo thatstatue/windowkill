@@ -15,8 +15,6 @@ import static org.windowkillproject.server.model.entities.EpsilonModel.queueEpsi
 
 public class Writ implements Serializable {
 
-    @Serial
-    private final long serialVersionUID = 1L;
     private SpecialityName chosenSkill;
     private long initSeconds = Long.MIN_VALUE;
     private int times, acceptedClicks;

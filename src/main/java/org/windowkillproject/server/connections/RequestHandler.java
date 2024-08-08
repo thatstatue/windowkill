@@ -7,7 +7,9 @@ import org.windowkillproject.server.connections.online.League;
 import org.windowkillproject.server.model.abilities.BulletModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
+import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.globe.GlobesManager;
+import org.windowkillproject.server.model.panelmodels.MainPanelModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -31,12 +33,11 @@ public class RequestHandler implements Runnable{
     @Override
     public void run() {
         String[] parts = request.split(REGEX_SPLIT);
-        System.out.println("ok lets "+ parts[0]);
         switch (parts[0]){
             case REQ_PAUSE_UPDATE -> handlePauseUpdate();
             case REQ_RESUME_UPDATE -> handleResumeUpdate();
             case REQ_START_GAME_LOOP -> epsilonModel.getGlobeModel().getGameLoop().start();
-            case REQ_EPSILON_NEW_INSTANCE -> handleEpsilonXP();
+            case REQ_GET_EPSILON_XP -> handleEpsilonXP();
             case REQ_WAVE_RESET -> handleWaveReset();
             case REQ_NEXT_LEVEL -> handleNextLevel();
             case REQ_RESET_GAME -> handleResetGame();
@@ -44,7 +45,7 @@ public class RequestHandler implements Runnable{
             case REQ_WRIT_INIT -> handleWritInit();
             case REQ_SENSITIVITY_SET -> handleSensitivitySet(parts[1]);
             case REQ_GET_EPSILON_RADIUS -> handleGetEpsilonRadius();
-            case REQ_GET_EPSILON_XP -> handleEpsilonXp();
+            case REQ_EPSILON_NEW_INSTANCE -> handleEpsilonNewInstance();
             case REQ_WRIT_CHOSEN -> handleWritChosen();
             case REQ_INCREASE_EPSILON_RADIUS -> handleIncreaseEpsilonRadius();
             case RES_ARE_KEYS_PRESSED -> handleAreKeysPressed();
@@ -58,19 +59,23 @@ public class RequestHandler implements Runnable{
             case LEAGUE_REDIRECT -> League.updateLeague(parts, messageQueue);
         }
     }
+    private void handleEpsilonNewInstance(){
+
+    }
     private void handleNewGameSingle(){
         var id = GlobesManager.newGlobe(messageQueue, null,"");
-        epsilonModel = EpsilonModel.newINSTANCE(messageQueue, GlobesManager.getGlobeFromId(id));
-        messageQueue.enqueue(RES_GLOBE_ID+REGEX_SPLIT+id);
-
-        epsilonModel.getGlobeModel().getGameLoop().start();
-
+//        messageQueue.setGlobeId(id);
+        GlobeModel globeModel = GlobesManager.getGlobeFromId(id);
+        epsilonModel = globeModel.getEpsilons().getFirst();
+//        globeModel.mainPanelModel = new MainPanelModel(id);
+        globeModel.getGameLoop().start();
+//        globeModel.initProperties();
     }
     private void handleShootBullet(String[] parts){
         var globe = epsilonModel.getGlobeModel();
-        if (!globe.getSmileyHeadModel().isAppearing()){
+        //if (!globe.getSmileyHeadModel().isAppearing()){ //todo
             int empowerInitSeconds = Integer.parseInt(parts[1]);
-            Point2D mouseLoc = new Point2D.Double(Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+            Point2D mouseLoc = new Point2D.Double(Double.parseDouble(parts[2]), Double.parseDouble(parts[3]));
             BulletModel bulletModel = new BulletModel(globe,
                     epsilonModel.getXO(), epsilonModel.getYO(), mouseLoc, epsilonModel);
             bulletModel.shoot();
@@ -78,7 +83,7 @@ public class RequestHandler implements Runnable{
             if (deltaT > 0 && deltaT <= 10) { //doesn't allow too many bullets
                 globe.getGameManager().empowerBullets(epsilonModel, mouseLoc);
             }
-        }
+        //}
 
     }
     private void handleTotalKills(){
@@ -179,21 +184,21 @@ public class RequestHandler implements Runnable{
         var waveFactory = epsilonModel.getGlobeModel().getWaveFactory();
         waveFactory.getWaves().clear();
         waveFactory.setLevel(0);
-        waveFactory.setStartNewWave(false);
-        waveFactory.setBetweenWaves(true);
+        waveFactory.setStartNewWave(true);
+        waveFactory.setBetweenWaves(false);
     }
     private void handleNextLevel(){
         var globe = epsilonModel.getGlobeModel();
-        globe.collectableModels = new ArrayList<>();
-        globe.abilityModels = new ArrayList<>();
-        globe.bulletModels = new ArrayList<>();
-        globe.projectileModels = new ArrayList<>();
-        globe.entityModels = new ArrayList<>();
-        globe.blackOrbModels = new ArrayList<>();
+        globe.setCollectableModels(new ArrayList<>());
+        globe.setAbilityModels(new ArrayList<>());
+        globe.setBulletModels(new ArrayList<>());
+        globe.setProjectileModels(new ArrayList<>());
+        globe.setEntityModels(new ArrayList<>());
+        globe.setBlackOrbModels(new ArrayList<>());
         BlackOrbModel.setComplete(false);
-        globe.barricadosModels = new ArrayList<>();
-        globe.archmireModels = new ArrayList<>();
-        globe.omenoctModels = new ArrayList<>();
+        globe.setBarricadosModels(new ArrayList<>());
+        globe.setArchmireModels(new ArrayList<>());
+        globe.setOmenoctModels(new ArrayList<>());
     }
     private static void handleSensitivitySet (String value){
         switch (value) {

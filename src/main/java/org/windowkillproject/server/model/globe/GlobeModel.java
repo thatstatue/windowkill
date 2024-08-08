@@ -1,12 +1,9 @@
 package org.windowkillproject.server.model.globe;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.windowkillproject.client.view.Viewable;
 import org.windowkillproject.controller.ElapsedTime;
 import org.windowkillproject.controller.GameLoop;
 import org.windowkillproject.controller.GameManager;
 import org.windowkillproject.controller.GlobeController;
-import org.windowkillproject.json.JacksonMapper;
 import org.windowkillproject.server.model.ObjectModel;
 import org.windowkillproject.server.model.WaveFactory;
 import org.windowkillproject.server.model.abilities.AbilityModel;
@@ -30,7 +27,7 @@ import java.util.UUID;
 import static org.windowkillproject.Request.*;
 
 public abstract class GlobeModel {
-    public ArrayList<EpsilonModel> team1 = new ArrayList<>();
+    private ArrayList<EpsilonModel> team1 = new ArrayList<>();
 
     public ArrayList<EpsilonModel> getTeam1() {
         return team1;
@@ -40,22 +37,22 @@ public abstract class GlobeModel {
         return id;
     }
 
-    private final String id = UUID.randomUUID().toString();
+    private final String id;
 
     public ArrayList<EpsilonModel> getEpsilons() {
-        return new ArrayList<>(team1);
+        return new ArrayList<>(getTeam1());
     }
     public ArrayList<CollectableModel> getCollectableModels() {
         return collectableModels;
     }
 
-    public ArrayList<ObjectModel> objectModels;
-    public ArrayList<EntityModel> entityModels;
-    public ArrayList<AbilityModel> abilityModels;
-    public ArrayList<ProjectileModel> projectileModels;
-    public ArrayList<OmenoctModel> omenoctModels;
-    public ArrayList<BlackOrbModel> blackOrbModels;
-    public ArrayList<BarricadosModel> barricadosModels;
+    private ArrayList<ObjectModel> objectModels;
+    private ArrayList<EntityModel> entityModels;
+    private ArrayList<AbilityModel> abilityModels;
+    private ArrayList<ProjectileModel> projectileModels;
+    private ArrayList<OmenoctModel> omenoctModels;
+    private ArrayList<BlackOrbModel> blackOrbModels;
+    private ArrayList<BarricadosModel> barricadosModels;
 
     public ArrayList<AbilityModel> getAbilityModels() {
         return abilityModels;
@@ -66,10 +63,10 @@ public abstract class GlobeModel {
         return globeController;
     }
 
-    public ArrayList<CollectableModel> collectableModels;
-    public ArrayList<ArchmireModel> archmireModels;
-    public ArrayList<BulletModel> bulletModels;
-    public SmileyHeadModel smileyHeadModel;
+    private ArrayList<CollectableModel> collectableModels;
+    private ArrayList<ArchmireModel> archmireModels;
+    private ArrayList<BulletModel> bulletModels;
+    private SmileyHeadModel smileyHeadModel;
 
     public SmileyHeadModel getSmileyHeadModel() {
         return smileyHeadModel;
@@ -79,10 +76,10 @@ public abstract class GlobeModel {
         return gameLoop;
     }
 
-    public ArrayList<PanelModel> panelModels;
+    private ArrayList<PanelModel> panelModels;
     public MainPanelModel mainPanelModel;
-    public WaveFactory waveFactory;
-    public GameLoop gameLoop;
+    private WaveFactory waveFactory;
+    private GameLoop gameLoop;
     private GameManager gameManager;
     private ElapsedTime elapsedTime;
 
@@ -90,16 +87,17 @@ public abstract class GlobeModel {
         return gameManager;
     }
 
-    private int killedEnemiesInWave, killedEnemiesTotal;
+    private int killedEnemiesInWave;
+    private int killedEnemiesTotal;
 
     public int getKilledEnemiesInWave() {
         return killedEnemiesInWave;
     }
     public void addKilledEnemiesInWave() {
-        killedEnemiesInWave ++;
+        setKilledEnemiesInWave(getKilledEnemiesInWave() + 1);
     }
     public void resetKilledEnemiesInWave() {
-        killedEnemiesInWave = 0;
+        setKilledEnemiesInWave(0);
     }
 
     public int getKilledEnemiesTotal() {
@@ -111,10 +109,10 @@ public abstract class GlobeModel {
     }
 
     public void addKilledEnemiesTotal() {
-        killedEnemiesTotal++;
+        setKilledEnemiesTotal(getKilledEnemiesTotal() + 1);
     }
     public void resetKilledEnemiesTotal(){
-        killedEnemiesTotal = 0;
+        setKilledEnemiesTotal(0);
     }
 
     public MainPanelModel getMainPanelModel() {
@@ -125,66 +123,59 @@ public abstract class GlobeModel {
         return waveFactory;
     }
 
-    public GlobeModel(EpsilonModel epsilon1) {
-        globeController = new GlobeController(this);
-        team1.add(epsilon1);
-        objectModels = new ArrayList<>();
-        entityModels = new ArrayList<>();
-        abilityModels = new ArrayList<>();
-        panelModels = new ArrayList<>();
-        mainPanelModel = new MainPanelModel(this);
-        smileyHeadModel = new SmileyHeadModel(this);
-        smileyHeadModel.initHands();
-        archmireModels = new ArrayList<>();
-        bulletModels = new ArrayList<>();
-        collectableModels = new ArrayList<>();
+    public GlobeModel(String id, EpsilonModel epsilon1) {
+        this.id =id;
+        setGlobeController(new GlobeController(this));
+        getTeam1().add(epsilon1);
+        setObjectModels(new ArrayList<>());
+        setEntityModels(new ArrayList<>());
+        setAbilityModels(new ArrayList<>());
+        setPanelModels(new ArrayList<>());
 
-        blackOrbModels = new ArrayList<>();
-        omenoctModels = new ArrayList<>();
-        barricadosModels = new ArrayList<>();
-        projectileModels = new ArrayList<>();
+        setArchmireModels(new ArrayList<>());
+        setBulletModels(new ArrayList<>());
+        setCollectableModels(new ArrayList<>());
 
-        waveFactory = new WaveFactory(this);
-        gameLoop = new GameLoop(this);
-        gameManager = new GameManager(this);
-        elapsedTime = new ElapsedTime(this);
+        setBlackOrbModels(new ArrayList<>());
+        setOmenoctModels(new ArrayList<>());
+        setBarricadosModels(new ArrayList<>());
+        setProjectileModels(new ArrayList<>());
 
+        mainPanelModel = new MainPanelModel(this, id);
+
+        setWaveFactory(new WaveFactory(this));
+        setGameLoop(new GameLoop(this));
+        setGameManager(new GameManager(this));
+        setElapsedTime(new ElapsedTime(this));
+
+    }
+    public void initProperties(){
+//        mainPanelModel = new MainPanelModel(this);
+        setSmileyHeadModel(new SmileyHeadModel(this));
+        getSmileyHeadModel().initHands();
+        //shrinkFast();
     }
 
     public void performAction(String message) {
-        for (EpsilonModel epsilonModel : team1) {
+
+        for (EpsilonModel epsilonModel : getTeam1()) {
             epsilonModel.getMessageQueue().enqueue(message);
         }
     }
-    public void sendObject(Viewable viewable, Class cls){
-        String json;
-        try {
-            json = JacksonMapper.getInstance().writeValueAsString(viewable);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        performAction(REQ_SEND_OBJECT+ REGEX_SPLIT+ json + REGEX_SPLIT + cls);
+    public void broadcast(String message){
+        getTeam1().getFirst().getMessageQueue().enqueue(BROADCAST_REDIRECT+ REGEX_SPLIT + getId() + REGEX_SPLIT +message);
+    }
 
-    }
-    public void modifyObject(Viewable viewable, Class cls){
-        String json;
-        try {
-            json = JacksonMapper.getInstance().writeValueAsString(viewable);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        performAction(REQ_MODIFY_OBJECT+ REGEX_SPLIT+ json + REGEX_SPLIT + cls);
-    }
     public void shrinkAll(){
-        for (PanelModel panelModel :panelModels)
+        for (PanelModel panelModel : getPanelModels())
             panelModel.shrink();
     }
     public boolean isExploding() {
-        return mainPanelModel.isExploding();
+        return getMainPanelModel().isExploding();
     }
 
     public void shrinkFast() {
-        mainPanelModel.shrinkFast();
+        getMainPanelModel().shrinkFast();
     }
 
 
@@ -193,7 +184,7 @@ public abstract class GlobeModel {
 
     }
     public void endingScene() {
-        mainPanelModel.endingScene();
+        getMainPanelModel().endingScene();
     }
     public ArrayList<ObjectModel> getObjectModels() {
         return objectModels;
@@ -236,4 +227,83 @@ public abstract class GlobeModel {
     }
 
 
+    public void setTeam1(ArrayList<EpsilonModel> team1) {
+        this.team1 = team1;
+    }
+
+    public void setAbilityModels(ArrayList<AbilityModel> abilityModels) {
+        this.abilityModels = abilityModels;
+    }
+
+    public ArrayList<ProjectileModel> getProjectileModels() {
+        return projectileModels;
+    }
+
+    public void setProjectileModels(ArrayList<ProjectileModel> projectileModels) {
+        this.projectileModels = projectileModels;
+    }
+
+    public ArrayList<OmenoctModel> getOmenoctModels() {
+        return omenoctModels;
+    }
+
+    public void setOmenoctModels(ArrayList<OmenoctModel> omenoctModels) {
+        this.omenoctModels = omenoctModels;
+    }
+
+    public ArrayList<BlackOrbModel> getBlackOrbModels() {
+        return blackOrbModels;
+    }
+
+    public void setBlackOrbModels(ArrayList<BlackOrbModel> blackOrbModels) {
+        this.blackOrbModels = blackOrbModels;
+    }
+
+    public ArrayList<BarricadosModel> getBarricadosModels() {
+        return barricadosModels;
+    }
+
+    public void setBarricadosModels(ArrayList<BarricadosModel> barricadosModels) {
+        this.barricadosModels = barricadosModels;
+    }
+
+    public void setGlobeController(GlobeController globeController) {
+        this.globeController = globeController;
+    }
+
+    public void setCollectableModels(ArrayList<CollectableModel> collectableModels) {
+        this.collectableModels = collectableModels;
+    }
+
+    public void setSmileyHeadModel(SmileyHeadModel smileyHeadModel) {
+        this.smileyHeadModel = smileyHeadModel;
+    }
+
+    public void setMainPanelModel(MainPanelModel mainPanelModel) {
+        this.mainPanelModel = mainPanelModel;
+    }
+
+    public void setWaveFactory(WaveFactory waveFactory) {
+        this.waveFactory = waveFactory;
+    }
+
+    public void setGameLoop(GameLoop gameLoop) {
+        this.gameLoop = gameLoop;
+    }
+
+    public void setGameManager(GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
+
+    public void setElapsedTime(ElapsedTime elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
+
+    public void setKilledEnemiesInWave(int killedEnemiesInWave) {
+        this.killedEnemiesInWave = killedEnemiesInWave;
+    }
+
+    public void setKilledEnemiesTotal(int killedEnemiesTotal) {
+        this.killedEnemiesTotal = killedEnemiesTotal;
+    }
 }

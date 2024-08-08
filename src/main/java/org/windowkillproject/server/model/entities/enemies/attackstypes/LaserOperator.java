@@ -13,8 +13,8 @@ public interface LaserOperator {
     default void setLaserEnds() {
         LASER_ENDS.clear();
 
-        for (int i = 0; i < getGlobeModel().blackOrbModels.size(); i++) {
-            BlackOrbModel blackOrbModel = getGlobeModel().blackOrbModels.get(i);
+        for (int i = 0; i < getGlobeModel().getBlackOrbModels().size(); i++) {
+            BlackOrbModel blackOrbModel = getGlobeModel().getBlackOrbModels().get(i);
             Point2D anchor = blackOrbModel.getAnchor();
             LASER_ENDS.add(anchor);
         }

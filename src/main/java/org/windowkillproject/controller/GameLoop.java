@@ -3,20 +3,18 @@ package org.windowkillproject.controller;
 
 import javax.swing.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.windowkillproject.server.model.abilities.AbilityModel;
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.attackstypes.Hovering;
-import org.windowkillproject.client.view.abilities.AbilityView;
-import org.windowkillproject.client.view.entities.EntityView;
 import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 import static org.windowkillproject.Constants.FRAME_UPDATE_TIME;
 import static org.windowkillproject.Constants.MODEL_UPDATE_TIME;
 import static org.windowkillproject.Request.REQ_REPAINT_GAME_FRAME;
-import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 import static org.windowkillproject.controller.GameManager.*;
-import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
-import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
 public class GameLoop {
     public Timer modelUpdateTimer;
@@ -33,7 +31,7 @@ public class GameLoop {
             setCoalesce(true);
         }};
         emptyPanelEraser = new EmptyPanelEraser(globeModel);
-        globeModel.shrinkFast();
+
     }
     public void start(){
         modelUpdateTimer.start();
@@ -48,25 +46,6 @@ public class GameLoop {
         emptyPanelEraser.start();
     }
     public void updateView() {
-        for (int i =0 ; i< panelViews.size(); i++){ //todo how does it work
-            var panelView = panelViews.get(i);
-            globeModel.getGlobeController().setViewBounds(panelView);
-            panelView.revalidate();
-            panelView.repaint();
-        }
-
-        for (int i = 0; i < abilityViews.size(); i++) {
-            AbilityView abilityView = abilityViews.get(i);
-            globeModel.getGlobeController().setViewBounds(abilityView);
-            if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
-        }
-
-        for (int i = 0; i < entityViews.size(); i++) {
-            EntityView entityView = entityViews.get(i);
-            globeModel.getGlobeController().setViewBounds(entityView);
-            if (!entityView.isEnabled()) entityViews.remove(entityView);
-        }
-
         globeModel.performAction(REQ_REPAINT_GAME_FRAME);
         //todo uncomment for repainting
 //        gamePanelsBounds.forEach((panelView, rectangle) -> {
@@ -77,8 +56,17 @@ public class GameLoop {
 
     public void updateModel() {
         if (!globeModel.getWaveFactory().isBetweenWaves()) globeModel.shrinkAll();
-        for (int i = 0; i < globeModel.entityModels.size(); i++) {
-            EntityModel entityModel = globeModel.entityModels.get(i);
+        routeAll();
+        moveProjectable();
+        controlAll();
+        pauseControl();
+        globeModel.getGameManager().keepTransferableInBounds();
+        setViewBoundsForAll();
+    }
+
+    private void routeAll() {
+        for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
+            EntityModel entityModel = globeModel.getEntityModels().get(i);
             entityModel.rotate();
             if (!entityModel.isImpact()) {
                 if (entityModel instanceof Hovering || entityModel instanceof EpsilonModel ||
@@ -87,21 +75,18 @@ public class GameLoop {
                 }
             }
         }
-        for (int i = 0; i < globeModel.bulletModels.size(); i++) {
-            globeModel.bulletModels.get(i).move();
+    }
+
+    private void moveProjectable() {
+        for (int i = 0; i < globeModel.getBulletModels().size(); i++) {
+            globeModel.getBulletModels().get(i).move();
         }
-        for (int i = 0; i < globeModel.projectileModels.size(); i++) {
-            globeModel.projectileModels.get(i).move();
+        for (int i = 0; i < globeModel.getProjectileModels().size(); i++) {
+            globeModel.getProjectileModels().get(i).move();
         }
+    }
 
-
-        globeModel.getGameManager().areaOfEffectControl();
-        globeModel.getGameManager().specialtiesControl();
-        globeModel.getGameManager().writControl();
-        globeModel.getGameManager().epsilonsRewardControl();
-        globeModel.getGameManager().epsilonIntersectionControl();
-        globeModel.getGameManager().enemyIntersectionControl();
-
+    private void pauseControl() {
         var waveTimer = globeModel.getWaveFactory().waveTimer;
         if (globeModel.getElapsedTime().getTotalSeconds() - pauseInitSeconds < 12) {
             if (globeModel.getElapsedTime().getTotalSeconds() - pauseInitSeconds < 10) {
@@ -112,8 +97,42 @@ public class GameLoop {
             }
 
         }
-        globeModel.getGameManager().keepTransferableInBounds();
+    }
 
+    private void controlAll() {
+        globeModel.getGameManager().areaOfEffectControl();
+        globeModel.getGameManager().specialtiesControl();
+        globeModel.getGameManager().writControl();
+        globeModel.getGameManager().epsilonsRewardControl();
+        globeModel.getGameManager().epsilonIntersectionControl();
+        globeModel.getGameManager().enemyIntersectionControl();
+    }
+
+    private void setViewBoundsForAll() {
+        for (EntityModel entityModel: globeModel.getEntityModels()){
+            System.out.println( entityModel.getId() + " entity is requesting modif");
+            try {
+                globeModel.getGlobeController().setViewBounds(entityModel);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        for (AbilityModel abilityModel: globeModel.getAbilityModels()){
+            System.out.println( abilityModel.getId() + " ability is requesting modif");
+            try {
+                globeModel.getGlobeController().setViewBounds(abilityModel);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        for (PanelModel panelModel: globeModel.getPanelModels()){
+//            System.out.println( panelModel.getId() + " panel is requesting modif");
+            try {
+                globeModel.getGlobeController().setViewBounds(panelModel);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }

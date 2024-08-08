@@ -14,7 +14,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static org.windowkillproject.Constants.UNIT_DEGREE;
-import static org.windowkillproject.Request.LOCK;
 import static org.windowkillproject.Request.REQ_PLAY_HIT_SOUND;
 
 
@@ -42,13 +41,15 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     public ArrayList<VertexModel> getVertices() {
         return vertices;
     }
+
     public ArrayList<Point2D> getPointVertices() {
         ArrayList<Point2D> v = new ArrayList<>();
-        for (VertexModel vertexModel : vertices){
+        for (VertexModel vertexModel : vertices) {
             v.add(new Point2D.Double(vertexModel.getX(), vertexModel.getY()));
         }
         return v;
     }
+
     private ArrayList<PanelModel> allowedPanelModels = new ArrayList<>();
     private int radius, reduceCount;
 
@@ -80,13 +81,15 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         setWidth(2 * getRadius());
         setAnchor(x + getRadius(), y + getRadius());
     }
+
     public abstract Point2D getRoutePoint();
 
-    public void addToAllowedArea(PanelModel panel){
+    public void addToAllowedArea(PanelModel panel) {
         allowedPanelModels.add(panel);
-        Area area = new Area(new Rectangle(panel.getX(), panel.getY(),panel.getWidth(),panel.getHeight()));
+        Area area = new Area(new Rectangle(panel.getX(), panel.getY(), panel.getWidth(), panel.getHeight()));
         getAllowedArea().add(area);
     }
+
     public int getMeleeAttackHp() {
         return meleeAttackHp;
     }
@@ -103,12 +106,15 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         }
         globeModel.performAction(REQ_PLAY_HIT_SOUND);
     }
-    public Area getArea(){
-        return new Area(new Rectangle(getX(),getY(),getWidth(),getHeight()));
+
+    public Area getArea() {
+        return new Area(new Rectangle(getX(), getY(), getWidth(), getHeight()));
     }
-    public void gotShot(){
+
+    public void gotShot() {
         gotShot(BulletModel.getAttackHp());
     }
+
     public void gotShot(int attackHP) {
         setHp(getHp() - attackHP);
         if (getHp() <= 0) {
@@ -117,11 +123,9 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         }
     }
 
-        public void destroy() {
-        synchronized (LOCK) {
-            globeModel.getObjectModels().remove(this);
-        }
-            globeModel.entityModels.remove(this);
+    public void destroy() {
+        super.destroy();
+        globeModel.getEntityModels().remove(this);
     }
 
     public int getXO() {
@@ -144,7 +148,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         rotate(theta);
     }
 
-    public void rotate(double theta){
+    public void rotate(double theta) {
         if (!(this instanceof NonRotatable || getVertices() == null)) {
             for (VertexModel vertexModel : getVertices()) {
                 vertexModel.rotate(theta);
@@ -154,25 +158,33 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
 
 
     public EntityModel(GlobeModel globeModel, PanelModel localPanel, int x, int y, int radius, int hp, int meleeAttackHp) {
-        super(globeModel, localPanel, x, y );
+        super(globeModel, localPanel, x, y);
 
         this.hp = hp;
         this.meleeAttackHp = meleeAttackHp;
         vertices = new ArrayList<>();
-        if(this.globeModel!= null)this.globeModel.entityModels.add(this);
+        addToGlobe();
         setRadius(radius);
     }
 
+    private void addToGlobe() {
+        if (globeModel != null) {
+            globeModel.getEntityModels().add(this);
+            System.out.println("globe model aint null so im adding "+ id);
+            globeModel.getGlobeController().createEntityView(id, x, y, width, height);
+        }
+    }
 
 
-    public void move(int deltaX, int deltaY){
+    public void move(int deltaX, int deltaY) {
         moveX(deltaX);
         moveY(deltaY);
         reduceTheta();
     }
-    public void reduceTheta(){
+
+    public void reduceTheta() {
         reduceCount++;
-        if (reduceCount%5==0) {
+        if (reduceCount % 5 == 0) {
             int i = 1;
             if (theta > 0) i = -1;
             if (theta != 0) theta += i * UNIT_DEGREE;
@@ -184,7 +196,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
         return theta;
     }
 
-    public void setTheta(double theta){
+    public void setTheta(double theta) {
         this.theta = theta;
     }
 

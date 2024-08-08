@@ -3,6 +3,10 @@ package org.windowkillproject.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.windowkillproject.json.deserializers.BufferedImageDeserializer;
+import org.windowkillproject.json.deserializers.PolygonDeserializer;
+import org.windowkillproject.json.deserializers.RectangleDeserializer;
+import org.windowkillproject.json.serializers.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,7 +32,11 @@ public class JacksonMapper extends ObjectMapper{
             module.addSerializer(Rectangle.class, new RectangleSerializer());
             module.addDeserializer(Rectangle.class, new RectangleDeserializer());
 
+//            module.addSerializer(GameClient.class, new ClientSerializer());
+//            module.addDeserializer(GameClient.class, new ClientDeserializer());
+
             mapper.registerModule(module);
+            mapper.addMixIn(Component.class, ComponentMixin.class);
         }
         return mapper;
     }

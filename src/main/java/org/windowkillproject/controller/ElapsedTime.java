@@ -14,6 +14,7 @@ public class ElapsedTime {
     private GlobeModel globeModel;
 
     public ElapsedTime(GlobeModel globeModel) {
+        this.globeModel=globeModel;
     }
 
     public void setRunning(boolean running) {

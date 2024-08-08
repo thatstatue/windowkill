@@ -30,7 +30,7 @@ public class PunchFistModel extends EnemyModel {
         targetEpsilon = globeModel.getSmileyHeadModel().getTargetEpsilon();
         initVertices();
         initPolygon();
-        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+//        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
         on = true;
     }
 

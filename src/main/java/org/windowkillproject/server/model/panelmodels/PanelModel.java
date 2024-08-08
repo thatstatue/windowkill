@@ -72,7 +72,7 @@ public abstract class PanelModel implements Drawable {
     public void setBackground(boolean background) {
         this.background = background;
     }
-    private final String id = UUID.randomUUID().toString();
+    private final String id;
 
     private boolean background;
 
@@ -80,14 +80,17 @@ public abstract class PanelModel implements Drawable {
         return id;
     }
 
-    public PanelModel(GlobeModel globeModel, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
+    public PanelModel(GlobeModel globeModel, String id, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
         this.globeModel = globeModel;
+        this.id = id;
         this.flexible = flexible;
         this.panelStatus = panelStatus;
         setBounds(bounds);
         this.background = background;
         this.globeModel.getPanelModels().add(this);
-        globeModel.getGlobeController().createPanelView(id,x,y,width,height);
+    }
+    public PanelModel(GlobeModel globeModel, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
+        this(globeModel, UUID.randomUUID().toString(), bounds, panelStatus, flexible, background);
     }
 
     public Rectangle getBounds() {

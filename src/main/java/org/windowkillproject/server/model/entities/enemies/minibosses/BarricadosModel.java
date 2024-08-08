@@ -10,7 +10,6 @@ import org.windowkillproject.server.model.entities.enemies.attackstypes.Unmovabl
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import static org.windowkillproject.server.Config.*;
 
@@ -31,15 +30,15 @@ public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovab
         ));
         initVertices();
         initPolygon();
-        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+//        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
         beginTime = globeModel.getElapsedTime().getTotalSeconds();
-        globeModel.barricadosModels.add(this);
+        globeModel.getBarricadosModels().add(this);
 
     }
     @Override
     public void destroy() {
         super.destroy();
-        globeModel.barricadosModels.remove(this);
+        globeModel.getBarricadosModels().remove(this);
         if (getLocalPanelModel().getPanelStatus().equals(isometric)){
             globeModel.getGameManager().deleteGamePanel(getLocalPanelModel());
         }

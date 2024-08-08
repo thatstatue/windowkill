@@ -106,8 +106,8 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void hitWall(PanelModel panelModel, int code) {
-        for (int i = 0; i < globeModel.omenoctModels.size(); i++) {
-            var omenoctModel = globeModel.omenoctModels.get(i);
+        for (int i = 0; i < globeModel.getOmenoctModels().size(); i++) {
+            var omenoctModel = globeModel.getOmenoctModels().get(i);
             if (omenoctModel.getLocalPanelModel() != null &&
                     omenoctModel.getLocalPanelModel().equals(panelModel)) {
                 omenoctModel.hitWall(code);
@@ -157,7 +157,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
         super(globeModel, null, x, y);
         anchor = new Point2D.Double(x + EPSILON_RADIUS / 2.0, y + EPSILON_RADIUS * 1.5);
         isShoot = false;
-        globeModel.bulletModels.add(this);
+        globeModel.getBulletModels().add(this);
         this.mousePoint = mousePoint;
         this.shooterEpsilon = shooterEpsilon;
         globeModel.getGlobeController().createAbilityView(id, x, y);
@@ -172,7 +172,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
 
     private void explode() {
         globeModel.getGameManager().impact(this);
-        globeModel.bulletModels.remove(this);
+        globeModel.getBulletModels().remove(this);
         globeModel.performAction(REQ_PLAY_BULLET_SOUND);
         destroy();
     }

@@ -22,8 +22,9 @@ public abstract class EnemyModel extends EntityModel {
         setReward(rewardCount, rewardXps);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
-        if (localPanel!= null) globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+//        if (localPanel!= null) globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
         targetEpsilon = chooseRandomTarget(globeModel.getEpsilons());
+        System.out.println("seeeee im an enemyyy");
 
     }
     protected EpsilonModel targetEpsilon;

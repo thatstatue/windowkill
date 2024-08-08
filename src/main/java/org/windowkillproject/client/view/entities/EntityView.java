@@ -1,6 +1,5 @@
 package org.windowkillproject.client.view.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.windowkillproject.client.view.ObjectView;
 
 import java.util.ArrayList;
@@ -10,6 +9,14 @@ public abstract class EntityView extends ObjectView {
 
     public static ArrayList<EntityView> entityViews = new ArrayList<>();
     private boolean hovering;
+
+    public static ArrayList<EntityView> getEntityViews() {
+        return entityViews;
+    }
+
+    public static void setEntityViews(ArrayList<EntityView> entityViews) {
+        EntityView.entityViews = entityViews;
+    }
 
     @Override
     public boolean isVisible() {
@@ -33,7 +40,7 @@ public abstract class EntityView extends ObjectView {
 
     public EntityView(String id) {
         super(id);
-        entityViews.add(this);
+        getEntityViews().add(this);
     }
     public void set(int x, int y, int width, int height) {
         setX(x);

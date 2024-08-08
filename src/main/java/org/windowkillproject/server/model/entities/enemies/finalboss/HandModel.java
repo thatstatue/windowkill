@@ -30,7 +30,7 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
         setBgPanel((InternalPanelModel) getLocalPanelModel());
         initVertices();
         targetEpsilon = globeModel.getSmileyHeadModel().getTargetEpsilon();
-        globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
+        //globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
         hands.add(this);
 
     }

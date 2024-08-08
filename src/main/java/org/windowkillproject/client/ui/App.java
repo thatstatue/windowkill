@@ -1,29 +1,22 @@
 package org.windowkillproject.client.ui;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.windowkillproject.client.ui.frames.*;
 import org.windowkillproject.client.ui.listeners.EpsilonKeyListener;
 import org.windowkillproject.client.ui.listeners.ShotgunMouseListener;
 
 import org.windowkillproject.client.ui.panels.etc.SettingsPanel;
-import org.windowkillproject.client.ui.panels.game.PanelView;
 import org.windowkillproject.client.ui.panels.shop.ShopPanel;
 import org.windowkillproject.client.ui.panels.shop.SkillTreePanel;
 import org.windowkillproject.client.ui.panels.etc.TutorialPanel;
 import org.windowkillproject.client.GameClient;
 
 import org.windowkillproject.client.ui.sounds.SoundPlayer;
-import org.windowkillproject.client.view.Viewable;
+import org.windowkillproject.client.view.ViewsRenderer;
 import org.windowkillproject.client.view.entities.EntityView;
-import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import org.windowkillproject.controller.data.GameSaveManager;
 import org.windowkillproject.controller.data.GameState;
 import org.windowkillproject.client.view.abilities.AbilityView;
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
-import org.windowkillproject.json.JacksonMapper;
-import org.windowkillproject.server.model.abilities.AbilityModel;
-import org.windowkillproject.server.model.entities.enemies.attackstypes.Hideable;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -32,7 +25,9 @@ import java.util.ArrayList;
 
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
+import static org.windowkillproject.client.ui.panels.game.PanelView.setPanelViews;
 import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
+import static org.windowkillproject.client.view.abilities.AbilityView.setAbilityViews;
 import static org.windowkillproject.client.view.entities.EntityView.entityViews;
 
 public class App implements Runnable {
@@ -236,7 +231,7 @@ public class App implements Runnable {
         globeId = "";
         nextLevel();
         waveReset();
-        panelViews = new ArrayList<>();
+        setPanelViews(new ArrayList<>());
         client.sendMessage(REQ_RESET_GAME);
     }
 
@@ -246,11 +241,11 @@ public class App implements Runnable {
 
     public void nextLevel() {
         client.sendMessage(REQ_NEXT_LEVEL);
-        abilityViews = new ArrayList<>();
+        setAbilityViews(new ArrayList<>());
         entityViews = new ArrayList<>();
         BlackOrbView.resetOrbViews();
 
-        client.sendMessage(REQ_EPSILON_NEW_INSTANCE);
+//        client.sendMessage(REQ_EPSILON_NEW_INSTANCE);
 //        getGameFrame().setXpAmount(targetEpsilon.getXp()); todo check if is on time
 
     }
@@ -335,89 +330,36 @@ public class App implements Runnable {
             case REQ_REPAINT_GAME_FRAME -> handleRepaint();
             case RES_GLOBE_ID -> globeId = parts[1];
             case RES_NEW_ONLINE_PLAYER -> getLeagueFrame().setUsernamed(Boolean.parseBoolean(parts[1]));
-            case REQ_SEND_OBJECT -> handleNewObject(parts[1], parts[2].getClass());
-            case REQ_MODIFY_OBJECT -> handleModifyObject(parts[1], parts[2].getClass());
-            case REQ_REMOVE_OBJECT -> handleRemoveObject(parts[1]);
+            case BROADCAST_REDIRECT -> ViewsRenderer.updateViews(parts);
 
 
         }
     }
-    private void handleRemoveObject(String id){
-        for (EntityView entityView: entityViews) {
-            if (entityView.getId().equals(id)){
-                entityViews.remove(entityView);
-                return;
-            }
-        }
-        for (AbilityView abilityView: abilityViews) {
-            if (abilityView.getId().equals(id)){
-                abilityViews.remove(abilityView);
-                return;
-            }
-        }
-        for (PanelView panelView: panelViews) {
-            if (panelView.getId().equals(id)){
-                panelViews.remove(panelView);
-                return;
-            }
-        }
-    }
 
-    private void handleModifyObject(String json, Class cls) {
-        Viewable view;
-        try {
-            view = (Viewable) JacksonMapper.getInstance().readValue(json, cls);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        if (view instanceof EntityView) {
-            for (EntityView entityView: entityViews) {
-                if (entityView.getId().equals(view.getId())) {
-                    entityView.set(view.getX(), view.getY(), view.getWidth(), view.getHeight());
-                    if (entityView instanceof EnemyView){
-                        ((EnemyView) entityView).setPolygon(((EnemyView)view).getPolygon());
-                    }
-                    if (entityView instanceof Hideable){
-                        ((Hideable) entityView).setVisible(((Hideable)view).isVisible());
-                    }
-                    break;
-                }
-            }
-        } else if (view instanceof AbilityView) {
-            for (AbilityView abilityView: abilityViews) {
-                if (abilityView.getId().equals(view.getId())) {
-                    abilityView.set(view.getX(), view.getY(), view.getWidth(), view.getHeight());
-                    break;
-                }
-            }
-        } else if (view instanceof PanelView) {
-            for (PanelView panelView: panelViews) {
-                if (panelView.getId().equals(view.getId())) {
-                    panelView.set(view.getX(), view.getY(), view.getWidth(), view.getHeight());
-                    break;
-                }
-            }
-        }
-    }
-
-    private void handleNewObject(String json, Class cls) {
-        Viewable view;
-        try {
-            view = (Viewable) JacksonMapper.getInstance().readValue(json, cls);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        if (view instanceof EntityView) {
-            entityViews.add((EntityView) view);
-        } else if (view instanceof AbilityView) {
-            abilityViews.add((AbilityView) view);
-        } else if (view instanceof PanelView) {
-            panelViews.add((PanelView) view);
-        }
-    }
 
     private void handleRepaint() {
+
         gameFrame.revalidate();
+        for (int i =0 ; i< panelViews.size(); i++){
+            var panelView = panelViews.get(i);
+            panelView.revalidate();
+            panelView.repaint();
+        }
+
+        for (int i = 0; i < abilityViews.size(); i++) {
+            AbilityView abilityView = abilityViews.get(i);
+            abilityView.revalidate();
+            abilityView.repaint();
+            //  if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
+        }
+
+        for (int i = 0; i < entityViews.size(); i++) {
+            EntityView entityView = entityViews.get(i);
+            entityView.revalidate();
+            entityView.repaint();
+//            if (!entityView.isEnabled()) entityViews.remove(entityView);
+        }
+
         System.out.println(panelViews.size() + " is panel views size");
         System.out.println(entityViews.size() + " is entity views size");
 

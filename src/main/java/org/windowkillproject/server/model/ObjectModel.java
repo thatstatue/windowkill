@@ -9,13 +9,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static org.windowkillproject.Request.LOCK;
+import static org.windowkillproject.Request.*;
 
 public abstract class ObjectModel implements Drawable, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     protected int x, y, width, height;
-    protected String id;
+    protected final String id;
     protected Point2D anchor;
     protected GlobeModel globeModel;
 
@@ -84,9 +84,6 @@ public abstract class ObjectModel implements Drawable, Serializable {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public int getX() {
         return x;
@@ -117,6 +114,12 @@ public abstract class ObjectModel implements Drawable, Serializable {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+    public void destroy(){
+        synchronized (LOCK) {
+            globeModel.broadcast(REQ_REMOVE_OBJECT+ REGEX_SPLIT + id);
+            globeModel.getObjectModels().remove(this);
+        }
     }
 
 

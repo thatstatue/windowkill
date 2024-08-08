@@ -12,6 +12,15 @@ public abstract class PanelView extends Panel implements Viewable {
 
     public static ArrayList<PanelView> panelViews = new ArrayList<>();
     private final String id;
+
+    public static ArrayList<PanelView> getPanelViews() {
+        return panelViews;
+    }
+
+    public static void setPanelViews(ArrayList<PanelView> panelViews) {
+        PanelView.panelViews = panelViews;
+    }
+
     public String getId() {
         return id;
     }
@@ -23,7 +32,7 @@ public abstract class PanelView extends Panel implements Viewable {
         setFocusable(true);
         requestFocusInWindow();
         synchronized (Request.LOCK) {
-            panelViews.add(this);
+            getPanelViews().add(this);
         }
 
     }

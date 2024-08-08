@@ -1,4 +1,4 @@
-package org.windowkillproject.json;
+package org.windowkillproject.json.deserializers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

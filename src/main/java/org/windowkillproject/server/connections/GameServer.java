@@ -14,11 +14,11 @@ public class GameServer implements Runnable {
 
     }
 
-    //    public synchronized void broadcast(String message) {
-//        for (ClientHandler client : clientHandlers) {
-//            client.sendMessage(message);
-//        }
-//    }
+    public synchronized void broadcast(String message) {
+        for (ClientHandler handler : clientHandlers) {
+            handler.sendMessage(message);
+        }
+    }
 
     public synchronized void removeClient(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);

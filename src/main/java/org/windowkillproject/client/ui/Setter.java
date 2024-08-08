@@ -44,7 +44,7 @@ public class Setter {
     private static boolean buttonIsUsed(int pressedKey) {
         if ( UP_KEY == pressedKey || DOWN_KEY == pressedKey
         || LEFT_KEY == pressedKey || RIGHT_KEY == pressedKey) return true;
-        System.out.println();
+
         if (NativeKeyEvent.VC_SPACE == pressedKey || NativeKeyEvent.VC_SHIFT == pressedKey
         || NativeKeyEvent.VC_ESCAPE == pressedKey || NativeKeyEvent.VC_SLASH==pressedKey) return true;
 

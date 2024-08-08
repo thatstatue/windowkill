@@ -3,7 +3,7 @@ package org.windowkillproject.client.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.windowkillproject.json.BufferedImageSerializer;
+import org.windowkillproject.json.serializers.BufferedImageSerializer;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -14,16 +14,8 @@ import java.awt.image.BufferedImage;
 public abstract class ObjectView extends JLabel implements Viewable {
     @JsonSerialize(using = BufferedImageSerializer.class)
     protected BufferedImage img;
-    String id;
+    private final String id;
     protected int x, y, width, height;
-    private boolean enabled = true;
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    public boolean getEnabled(){return enabled;}
-
 
     public ObjectView(String id) {
         this.id = id;

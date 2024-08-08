@@ -12,7 +12,13 @@ public abstract class AbilityModel extends ObjectModel {
 
     public AbilityModel(GlobeModel globeModel, PanelModel localPanel, int x, int y) {
         super(globeModel, localPanel,x,y);
-        globeModel.abilityModels.add(this);
+        if (globeModel != null) addToGlobe(this);
+
+    }
+
+    private void addToGlobe(AbilityModel abilityModel) {
+        globeModel.getAbilityModels().add(abilityModel);
+        globeModel.getGlobeController().createAbilityView(id, x, y);
     }
 
     public boolean isCollectedByEpsilon(EpsilonModel epsilonModel) {
@@ -21,7 +27,7 @@ public abstract class AbilityModel extends ObjectModel {
     }
 
     public void destroy() {
-        globeModel.abilityModels.remove(this);
+        globeModel.getAbilityModels().remove(this);
     }
 
 

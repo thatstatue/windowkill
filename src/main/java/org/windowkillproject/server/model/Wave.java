@@ -47,6 +47,7 @@ public class Wave {
         globeModel.getWaveFactory().setStartNewWave(startNewWave);
     }
     public void spawnWave() {
+        System.out.println("spawnwaaaaaaave");
         AtomicInteger count = new AtomicInteger();
         globeModel.getWaveFactory().waveTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * getLevel())), null);
         getWaveTimer().addActionListener(e -> {
@@ -91,14 +92,14 @@ public class Wave {
         int dY = random.nextInt(CENTER_Y * 2) - CENTER_Y;
         switch (direction) {
             case TopRight -> new TrigorathModel(globeModel,CENTER_X + dX,
-                    CENTER_Y - dY, null
+                    CENTER_Y - dY, globeModel.getMainPanelModel()
             );
-            case TopLeft -> new SquarantineModel(globeModel,-dX, -dY, null);
+            case TopLeft -> new SquarantineModel(globeModel,-dX, -dY, globeModel.getMainPanelModel());
             case BottomLeft -> new TrigorathModel(globeModel,-dX, CENTER_Y + dY,
 
-                    null);
+                    globeModel.getMainPanelModel());
             case BottomRight -> new TrigorathModel(globeModel, CENTER_X + dX,
-                    CENTER_Y + dY, null);
+                    CENTER_Y + dY, globeModel.getMainPanelModel());
         }
         globeModel.performAction(REQ_PLAY_CREATE_SOUND);
     }
@@ -225,7 +226,7 @@ public class Wave {
 
     private void spawnMiniBoss(int randX, int randY) {
         int randNum = random.nextInt(3);
-        if (randNum == 0 && globeModel.blackOrbModels.isEmpty()) {
+        if (randNum == 0 && globeModel.getBlackOrbModels().isEmpty()) {
             new BlackOrbModel(globeModel, randX, randY);
         } else {
             if (!isEntityThere(randX, randY))
@@ -235,8 +236,8 @@ public class Wave {
     }
 
     private boolean isEntityThere(int randLocX, int randLocY) {
-        for (int i = 0; i < globeModel.entityModels.size(); i++) {
-            EntityModel entityModel = globeModel.entityModels.get(i);
+        for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
+            EntityModel entityModel = globeModel.getEntityModels().get(i);
             if (isOccupied(randLocX, entityModel.getX(), entityModel.getRadius())
                     && isOccupied(randLocY, entityModel.getY(), entityModel.getRadius())) {
                 return true;

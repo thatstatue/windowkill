@@ -33,7 +33,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
                  ));
          initVertices();
          initPolygon();
-        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
+//        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
          count++;
      }
 

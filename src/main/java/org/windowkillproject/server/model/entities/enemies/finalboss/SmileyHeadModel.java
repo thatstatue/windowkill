@@ -57,7 +57,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
                 PanelStatus.shrinkable, true
         ));
         getLocalPanelModel().setForSmiley(true);
-        globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
+//        globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
     }
 
     private boolean vulnerable;

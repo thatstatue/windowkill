@@ -13,7 +13,7 @@ public class EpsilonView extends EntityView {
         super(id);
         this.radius = EPSILON_RADIUS;
         setImg(ImgData.getData().getEpsilon());
-        entityViews.add(this);
+        System.out.println("i agree my id is "+ getId());
     }
 
     @Override

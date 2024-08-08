@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.windowkillproject.Request.BROADCAST_REDIRECT;
+
 public class ClientHandler{
     private final Socket socket;
     private final GameServer server;
@@ -60,8 +62,11 @@ public class ClientHandler{
             try {
                 while (true) {
                     String message = messageQueue.dequeue();
-                    System.out.println("message is "+ message);
-                    sendMessage(message);//sends every request from server side queued
+//                    System.out.println("message is "+ message);
+
+                    if (message.startsWith(BROADCAST_REDIRECT)){
+                        broadcast(message);
+                    }else sendMessage(message); //sends every request from server side queued
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -75,8 +80,11 @@ public class ClientHandler{
             }
         }
     }
+    public void broadcast(String message){
+        server.broadcast(message);
+    }
 
-    private void sendMessage(String message) {
+    void sendMessage(String message) {
         out.println(message);
     }
 
