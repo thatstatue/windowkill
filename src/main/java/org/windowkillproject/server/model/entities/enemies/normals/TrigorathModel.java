@@ -13,8 +13,8 @@ import static org.windowkillproject.controller.Utils.localRoutePoint;
 public class TrigorathModel extends EnemyModel {
     private final double RAD3_ON_2 = 0.866;
 
-    public TrigorathModel(GlobeModel globeModel, int x, int y, PanelModel localPanel) {
-        super(globeModel, localPanel, x, y, ENEMY_RADIUS , 15, 10, 2, 5);
+    public TrigorathModel(String globeId, int x, int y, PanelModel localPanel) {
+        super(globeId, localPanel, x, y, ENEMY_RADIUS , 15, 10, 2, 5);
 
         initVertices();
         initPolygon();

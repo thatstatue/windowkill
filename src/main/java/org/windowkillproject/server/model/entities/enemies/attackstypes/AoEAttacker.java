@@ -11,13 +11,13 @@ public interface AoEAttacker {
 
 
     default void AOE(){
-        MOMENT_MODELS.add(new MomentModel(getGlobeModel(),getMoment(), getInitSecond(), getRadius(),getAoEAttackHP()));
+        MOMENT_MODELS.add(new MomentModel(getGlobeId(),getMoment(), getInitSecond(), getRadius(),getAoEAttackHP()));
     };
     int getAoEAttackHP();
     Point2D getMoment();
     int getRadius();
     int getInitSecond();
-    GlobeModel getGlobeModel();
+    String getGlobeId();
 
 
 }

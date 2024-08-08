@@ -20,33 +20,33 @@ import static org.windowkillproject.server.model.panelmodels.PanelStatus.shrinka
 
 public class BarricadosModel extends EnemyModel implements NonRotatable, Unmovable {
     private final int beginTime;
-    public BarricadosModel(GlobeModel globeModel, int x, int y) {
-        super(globeModel,null, x, y, BARRICADOS_RADIUS, Integer.MAX_VALUE, 0, 0, 0);
+    public BarricadosModel(String globeId, int x, int y) {
+        super(globeId,null, x, y, BARRICADOS_RADIUS, Integer.MAX_VALUE, 0, 0, 0);
         PanelStatus panelStatus = isometric;
         if (random.nextInt(2) == 0) panelStatus = shrinkable;
-        setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(x, y,
+        setLocalPanelModel(new InternalPanelModel(globeId, new Rectangle(x, y,
                 BARRICADOS_RADIUS*2, BARRICADOS_RADIUS*2),
                 panelStatus, false
         ));
         initVertices();
         initPolygon();
 //        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
-        beginTime = globeModel.getElapsedTime().getTotalSeconds();
-        globeModel.getBarricadosModels().add(this);
+        beginTime = getGlobeModel().getElapsedTime().getTotalSeconds();
+        getGlobeModel().getBarricadosModels().add(this);
 
     }
     @Override
     public void destroy() {
         super.destroy();
-        globeModel.getBarricadosModels().remove(this);
+        getGlobeModel().getBarricadosModels().remove(this);
         if (getLocalPanelModel().getPanelStatus().equals(isometric)){
-            globeModel.getGameManager().deleteGamePanel(getLocalPanelModel());
+            getGlobeModel().getGameManager().deleteGamePanel(getLocalPanelModel());
         }
     }
 
     @Override
     public void route() {
-        if (globeModel.getElapsedTime().getTotalSeconds() - beginTime > 2 * 60) {
+        if (getGlobeModel().getElapsedTime().getTotalSeconds() - beginTime > 2 * 60) {
             destroy();
         }
     }

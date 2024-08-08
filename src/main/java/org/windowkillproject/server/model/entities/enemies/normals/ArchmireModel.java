@@ -15,9 +15,9 @@ import static org.windowkillproject.server.Config.MAX_ENEMY_SPEED;
 import static org.windowkillproject.controller.Utils.*;
 
 public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, Circular {
-    public ArchmireModel(GlobeModel globeModel,PanelModel localPanel, int x, int y) {
-        super(globeModel, localPanel, x, y,ARCHMIRE_RADIUS,30,0,5,6);
-        globeModel.getArchmireModels().add(this);
+    public ArchmireModel(String globeId,PanelModel localPanel, int x, int y) {
+        super(globeId, localPanel, x, y,ARCHMIRE_RADIUS,30,0,5,6);
+        getGlobeModel().getArchmireModels().add(this);
     }
     @Override
     public void route() {
@@ -65,12 +65,12 @@ public class ArchmireModel extends EnemyModel implements Hovering, AoEAttacker, 
 
     @Override
     public int getInitSecond() {
-        return globeModel.getElapsedTime().getTotalSeconds();
+        return getGlobeModel().getElapsedTime().getTotalSeconds();
     }
 
     @Override
     public void destroy(){
         super.destroy();
-        globeModel.getArchmireModels().remove(this);
+        getGlobeModel().getArchmireModels().remove(this);
     }
 }

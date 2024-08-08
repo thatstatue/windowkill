@@ -1,6 +1,5 @@
 package org.windowkillproject.server.model.panelmodels;
 
-import org.windowkillproject.server.model.globe.GlobeModel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -10,8 +9,8 @@ import static java.lang.Math.abs;
 import static org.windowkillproject.Constants.*;
 
 public class MainPanelModel extends PanelModel{
-    public MainPanelModel(GlobeModel globeModel, String id) {
-        super(globeModel, id,
+    public MainPanelModel(String globeId, String id) {
+        super(globeId, id,
                 new Rectangle(
                         getDefaultToolkit().getScreenSize().width - GAME_WIDTH/2,
                         getDefaultToolkit().getScreenSize().height - GAME_HEIGHT/2,

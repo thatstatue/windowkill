@@ -125,7 +125,7 @@ public abstract class GlobeModel {
 
     public GlobeModel(String id, EpsilonModel epsilon1) {
         this.id =id;
-        setGlobeController(new GlobeController(this));
+        setGlobeController(new GlobeController(id));
         getTeam1().add(epsilon1);
         setObjectModels(new ArrayList<>());
         setEntityModels(new ArrayList<>());
@@ -141,17 +141,17 @@ public abstract class GlobeModel {
         setBarricadosModels(new ArrayList<>());
         setProjectileModels(new ArrayList<>());
 
-        mainPanelModel = new MainPanelModel(this, id);
+        mainPanelModel = new MainPanelModel(id, id);
 
-        setWaveFactory(new WaveFactory(this));
-        setGameLoop(new GameLoop(this));
-        setGameManager(new GameManager(this));
-        setElapsedTime(new ElapsedTime(this));
+        setWaveFactory(new WaveFactory(id));
+        setGameLoop(new GameLoop(id));
+        setGameManager(new GameManager(id));
+        setElapsedTime(new ElapsedTime(id));
 
     }
     public void initProperties(){
 //        mainPanelModel = new MainPanelModel(this);
-        setSmileyHeadModel(new SmileyHeadModel(this));
+        setSmileyHeadModel(new SmileyHeadModel(id));
         getSmileyHeadModel().initHands();
         //shrinkFast();
     }

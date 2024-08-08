@@ -10,15 +10,15 @@ public abstract class AbilityModel extends ObjectModel {
 
 
 
-    public AbilityModel(GlobeModel globeModel, PanelModel localPanel, int x, int y) {
-        super(globeModel, localPanel,x,y);
-        if (globeModel != null) addToGlobe(this);
+    public AbilityModel(String globeId, PanelModel localPanel, int x, int y) {
+        super(globeId, localPanel,x,y);
+        if (globeId != null) addToGlobe(this);
 
     }
 
     private void addToGlobe(AbilityModel abilityModel) {
-        globeModel.getAbilityModels().add(abilityModel);
-        globeModel.getGlobeController().createAbilityView(id, x, y);
+        getGlobeModel().getAbilityModels().add(abilityModel);
+        getGlobeModel().getGlobeController().createAbilityView(id, x, y);
     }
 
     public boolean isCollectedByEpsilon(EpsilonModel epsilonModel) {
@@ -27,7 +27,7 @@ public abstract class AbilityModel extends ObjectModel {
     }
 
     public void destroy() {
-        globeModel.getAbilityModels().remove(this);
+        getGlobeModel().getAbilityModels().remove(this);
     }
 
 

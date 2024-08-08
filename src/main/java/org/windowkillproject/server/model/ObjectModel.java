@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.windowkillproject.Request.*;
+import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFromId;
 
 public abstract class ObjectModel implements Drawable, Serializable {
     @Serial
@@ -17,21 +18,25 @@ public abstract class ObjectModel implements Drawable, Serializable {
     protected int x, y, width, height;
     protected final String id;
     protected Point2D anchor;
-    protected GlobeModel globeModel;
+    protected String globeId;
+
+    public String getGlobeId() {
+        return globeId;
+    }
 
     public GlobeModel getGlobeModel() {
-        return globeModel;
+        return getGlobeFromId(globeId);
     }
 
     private transient Area allowedArea = new Area();
     private PanelModel localPanelModel;
 
 
-    protected ObjectModel(GlobeModel globeModel, PanelModel localPanelModel, int x, int y) {
+    protected ObjectModel(String globeId, PanelModel localPanelModel, int x, int y) {
         this.x = x;
         this.y = y;
         this.localPanelModel = localPanelModel;
-        this.globeModel =globeModel;
+        this.globeId = globeId;
        // initGlobeModel(); //todo ??
         this.id = UUID.randomUUID().toString();
         anchor = new Point2D.Double(x, y);
@@ -39,8 +44,8 @@ public abstract class ObjectModel implements Drawable, Serializable {
 
     private void initGlobeModel() {
         synchronized (LOCK) {
-            if (globeModel.getObjectModels() == null) globeModel.setObjectModels(new ArrayList<>());
-            globeModel.getObjectModels().add(this);
+            if (getGlobeModel().getObjectModels() == null) getGlobeModel().setObjectModels(new ArrayList<>());
+            getGlobeModel().getObjectModels().add(this);
         }
     }
 
@@ -117,8 +122,8 @@ public abstract class ObjectModel implements Drawable, Serializable {
     }
     public void destroy(){
         synchronized (LOCK) {
-            globeModel.broadcast(REQ_REMOVE_OBJECT+ REGEX_SPLIT + id);
-            globeModel.getObjectModels().remove(this);
+            getGlobeModel().broadcast(REQ_REMOVE_OBJECT+ REGEX_SPLIT + id);
+            getGlobeModel().getObjectModels().remove(this);
         }
     }
 

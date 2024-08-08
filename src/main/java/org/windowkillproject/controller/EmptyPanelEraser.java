@@ -9,18 +9,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import static org.windowkillproject.controller.Utils.isTransferableInBounds;
+import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFromId;
 
 
 public class EmptyPanelEraser extends Timer {
-    private GlobeModel globeModel;
+    private String globeId;
 
-    public EmptyPanelEraser(GlobeModel globeModel) {
+    public GlobeModel getGlobeModel(){
+        return getGlobeFromId(globeId);
+    }
+    public EmptyPanelEraser(String globeId) {
         super(5000, null);
-        this.globeModel = globeModel;
+        this.globeId = globeId;
 //        App.setGameState(new GameState(objectModels, panelViews, gamePanelsBounds, Wave.getLevel(),
 //                getKilledEnemiesInWave(), getKilledEnemiesTotal()));
 
         ActionListener actionListener = e -> {
+            var globeModel = getGlobeModel();
             for (int j = 0; j< globeModel.getPanelModels().size(); j++) {
                 PanelModel panelModel = globeModel.getPanelModels().get(j);
                 if (panelModel instanceof MainPanelModel)

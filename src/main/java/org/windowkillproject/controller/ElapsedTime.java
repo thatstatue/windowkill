@@ -6,15 +6,16 @@ import javax.swing.*;
 
 import static org.windowkillproject.Request.REGEX_SPLIT;
 import static org.windowkillproject.Request.REQ_SET_CLOCK;
+import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFromId;
 
 public class ElapsedTime {
     private int seconds, minutes;
     private boolean running;
     private Timer clock;
-    private GlobeModel globeModel;
+    private final String globeId;
 
-    public ElapsedTime(GlobeModel globeModel) {
-        this.globeModel=globeModel;
+    public ElapsedTime(String globeId) {
+        this.globeId=globeId;
     }
 
     public void setRunning(boolean running) {
@@ -28,13 +29,15 @@ public class ElapsedTime {
     public int getTotalSeconds() {
         return seconds + minutes * 60;
     }
-
+    public GlobeModel getGlobeModel(){
+        return getGlobeFromId(globeId);
+    }
 
     public void run() {
         clock = new Timer(1000, e -> {
             pass();
-            if (minutes == 0 && seconds == 10) globeModel.getWaveFactory().setBetweenWaves(false);
-            globeModel.performAction(REQ_SET_CLOCK + REGEX_SPLIT +timeSetter() );
+            if (minutes == 0 && seconds == 10) getGlobeModel().getWaveFactory().setBetweenWaves(false);
+            getGlobeModel().performAction(REQ_SET_CLOCK + REGEX_SPLIT +timeSetter() );
 
         });
         clock.start();

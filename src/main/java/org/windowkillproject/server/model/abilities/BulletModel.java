@@ -76,7 +76,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
 //        else area = getAllowedArea();
 
         if (!epsilonArea.contains(getX(), getY())) {
-            var gamePanelCorner = globeModel.getGameManager().getClosestPanelCorner(new Point2D.Double(getX(), getY()));
+            var gamePanelCorner = getGlobeModel().getGameManager().getClosestPanelCorner(new Point2D.Double(getX(), getY()));
 
             hit(gamePanelCorner.panelModel(), gamePanelCorner.corner());
             explode();
@@ -85,7 +85,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void hit(PanelModel panelModel, int code) {
-        globeModel.stretch(panelModel, code);
+        getGlobeModel().stretch(panelModel, code);
         hitWall(panelModel, code);
     }
 
@@ -106,8 +106,8 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void hitWall(PanelModel panelModel, int code) {
-        for (int i = 0; i < globeModel.getOmenoctModels().size(); i++) {
-            var omenoctModel = globeModel.getOmenoctModels().get(i);
+        for (int i = 0; i < getGlobeModel().getOmenoctModels().size(); i++) {
+            var omenoctModel = getGlobeModel().getOmenoctModels().get(i);
             if (omenoctModel.getLocalPanelModel() != null &&
                     omenoctModel.getLocalPanelModel().equals(panelModel)) {
                 omenoctModel.hitWall(code);
@@ -116,7 +116,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void isEnemyShot() {
-        var enemyModels = globeModel.getGameManager().getEnemies();
+        var enemyModels = getGlobeModel().getGameManager().getEnemies();
         for (int i = 0; i < enemyModels.size(); i++) {
             EnemyModel enemyModel = enemyModels.get(i);
             if (enemyModel instanceof Hideable && !((Hideable) enemyModel).isVisible())
@@ -153,14 +153,14 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
 
     }
     private final EpsilonModel shooterEpsilon;
-    public BulletModel(GlobeModel globeModel, int x, int y, Point2D mousePoint, EpsilonModel shooterEpsilon) {
-        super(globeModel, null, x, y);
+    public BulletModel(String globeId, int x, int y, Point2D mousePoint, EpsilonModel shooterEpsilon) {
+        super(globeId, null, x, y);
         anchor = new Point2D.Double(x + EPSILON_RADIUS / 2.0, y + EPSILON_RADIUS * 1.5);
         isShoot = false;
-        globeModel.getBulletModels().add(this);
+        getGlobeModel().getBulletModels().add(this);
         this.mousePoint = mousePoint;
         this.shooterEpsilon = shooterEpsilon;
-        globeModel.getGlobeController().createAbilityView(id, x, y);
+        getGlobeModel().getGlobeController().createAbilityView(id, x, y);
     }
 
     private boolean isShoot;
@@ -171,9 +171,9 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
     }
 
     private void explode() {
-        globeModel.getGameManager().impact(this);
-        globeModel.getBulletModels().remove(this);
-        globeModel.performAction(REQ_PLAY_BULLET_SOUND);
+        getGlobeModel().getGameManager().impact(this);
+        getGlobeModel().getBulletModels().remove(this);
+        getGlobeModel().performAction(REQ_PLAY_BULLET_SOUND);
         destroy();
     }
 

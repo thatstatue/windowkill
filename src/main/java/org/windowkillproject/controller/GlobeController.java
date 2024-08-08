@@ -30,13 +30,16 @@ import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 
 import static org.windowkillproject.Request.*;
+import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFromId;
 
 
 public class GlobeController {
-    private final GlobeModel globeModel;
-
-    public GlobeController(GlobeModel globeModel) {
-        this.globeModel = globeModel;
+    private final String globeId;
+    public GlobeModel getGlobeModel(){
+        return getGlobeFromId(globeId);
+    }
+    public GlobeController(String globeId) {
+        this.globeId = globeId;
     }
 
     public void createEntityView(String id, int x, int y, int width, int height) {
@@ -48,12 +51,12 @@ public class GlobeController {
                 if (entityModel instanceof EnemyModel enemyModel) {
                     System.out.println("im broadcasting enemy model "+ id);
                     String polygonJson = JacksonMapper.getInstance().writeValueAsString(enemyModel.getPolygon());
-                    globeModel.broadcast(REQ_CREATE_ENTITY + REGEX_SPLIT + id + REGEX_SPLIT +
+                    getGlobeModel().broadcast(REQ_CREATE_ENTITY + REGEX_SPLIT + id + REGEX_SPLIT +
                             x + REGEX_SPLIT + y + REGEX_SPLIT + width + REGEX_SPLIT + height +
                             REGEX_SPLIT +  polygonJson + REGEX_SPLIT +entityViewClsIndex);
 
                 } else if (entityModel instanceof EpsilonModel) {
-                    globeModel.broadcast(REQ_CREATE_ENTITY + REGEX_SPLIT + id + REGEX_SPLIT +
+                    getGlobeModel().broadcast(REQ_CREATE_ENTITY + REGEX_SPLIT + id + REGEX_SPLIT +
                             x + REGEX_SPLIT + y + REGEX_SPLIT + width + REGEX_SPLIT + height + REGEX_SPLIT + entityViewClsIndex);
                 }
 
@@ -67,7 +70,7 @@ public class GlobeController {
         var panelModel = findModel(id);
         if (panelModel instanceof PanelModel) {
             boolean isMain = panelModel instanceof MainPanelModel;
-            globeModel.broadcast(REQ_CREATE_PANEL + REGEX_SPLIT + id + REGEX_SPLIT + isMain + REGEX_SPLIT +
+            getGlobeModel().broadcast(REQ_CREATE_PANEL + REGEX_SPLIT + id + REGEX_SPLIT + isMain + REGEX_SPLIT +
                     x + REGEX_SPLIT + y + REGEX_SPLIT + width + REGEX_SPLIT + height);
         }
     }
@@ -108,10 +111,10 @@ public class GlobeController {
         int abilityViewClsIndex = getAbilityViewClsIndex(abilityModel);
         if (abilityViewClsIndex != -1) {
             if (abilityModel instanceof MomentModel momentModel) {
-                globeModel.broadcast(REQ_CREATE_ABILITY + REGEX_SPLIT + id + REGEX_SPLIT +
+                getGlobeModel().broadcast(REQ_CREATE_ABILITY + REGEX_SPLIT + id + REGEX_SPLIT +
                         x + REGEX_SPLIT + y + REGEX_SPLIT + momentModel.getRadius() + REGEX_SPLIT + abilityViewClsIndex);
             } else {
-                globeModel.broadcast(REQ_CREATE_ABILITY + REGEX_SPLIT + id + REGEX_SPLIT +
+                getGlobeModel().broadcast(REQ_CREATE_ABILITY + REGEX_SPLIT + id + REGEX_SPLIT +
                         x + REGEX_SPLIT + y + REGEX_SPLIT + abilityViewClsIndex);
             }
 
@@ -154,19 +157,19 @@ public class GlobeController {
                 message += REGEX_SPLIT + visible;
             }
         }
-        globeModel.broadcast(message);
+        getGlobeModel().broadcast(message);
     }
 
     public <T extends Drawable> T findModel(String id) {
-        for (EntityModel entityModel : globeModel.getEntityModels()) {
+        for (EntityModel entityModel : getGlobeModel().getEntityModels()) {
             if (entityModel.getId().equals(id)) return (T) entityModel;
         }
-        for (int i = 0; i < globeModel.getAbilityModels().size(); i++) {
-            AbilityModel abilityModel = globeModel.getAbilityModels().get(i);
+        for (int i = 0; i < getGlobeModel().getAbilityModels().size(); i++) {
+            AbilityModel abilityModel = getGlobeModel().getAbilityModels().get(i);
             if (abilityModel.getId().equals(id)) return (T) abilityModel;
         }
-        for (int i = 0; i < globeModel.getPanelModels().size(); i++) {
-            PanelModel panelModel = globeModel.getPanelModels().get(i);
+        for (int i = 0; i < getGlobeModel().getPanelModels().size(); i++) {
+            PanelModel panelModel = getGlobeModel().getPanelModels().get(i);
             if (panelModel.getId().equals(id)) return (T) panelModel;
         }
 

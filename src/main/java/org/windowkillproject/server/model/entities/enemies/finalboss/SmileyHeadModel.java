@@ -44,16 +44,16 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     private PunchFistModel punchFistModel;
     public void initHands() {
         if (!created && !defeated) {
-            leftHandModel = new LeftHandModel(globeModel,getX() - HAND_RADIUS * 3, getY() + MIN_HEAD_DISTANCE * 2);
-            rightHandModel = new RightHandModel(globeModel, getX() + HAND_RADIUS * 3, getY() + MIN_HEAD_DISTANCE * 2);
+            leftHandModel = new LeftHandModel(globeId,getX() - HAND_RADIUS * 3, getY() + MIN_HEAD_DISTANCE * 2);
+            rightHandModel = new RightHandModel(globeId, getX() + HAND_RADIUS * 3, getY() + MIN_HEAD_DISTANCE * 2);
             created = true ;
         }
 
     }
 
-    public SmileyHeadModel(GlobeModel globeModel) {
-        super(globeModel, null, CENTER_X, HAND_RADIUS, (int) (HAND_RADIUS * 1.5), 300, 0, 0, 0);
-        setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(x, y, HAND_RADIUS * 3, HAND_RADIUS * 3),
+    public SmileyHeadModel(String globeId) {
+        super(globeId, null, CENTER_X, HAND_RADIUS, (int) (HAND_RADIUS * 1.5), 300, 0, 0, 0);
+        setLocalPanelModel(new InternalPanelModel(globeId, new Rectangle(x, y, HAND_RADIUS * 3, HAND_RADIUS * 3),
                 PanelStatus.shrinkable, true
         ));
         getLocalPanelModel().setForSmiley(true);
@@ -104,7 +104,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
         Timer timer = new Timer(FPS , null);
         timer.addActionListener(e -> {
             if (count.get() < times) {
-                if (getYO() +getRadius()*2 < globeModel.getMainPanelModel().getY())
+                if (getYO() +getRadius()*2 < getGlobeModel().getMainPanelModel().getY())
                     move(0, HAND_SPEED);
                 rightHandModel.move(0, HAND_SPEED);
                 leftHandModel.move(0, HAND_SPEED);
@@ -123,7 +123,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     public void route() {
         if (!appearing) {
             if (punchFistModel.isOn()) {
-                if (globeModel.getElapsedTime().getTotalSeconds() - lastVomit > ATTACK_TIMEOUT) {
+                if (getGlobeModel().getElapsedTime().getTotalSeconds() - lastVomit > ATTACK_TIMEOUT) {
                     vomiting = false;
                     vulnerable = false;
                 }
@@ -148,7 +148,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
                 moveTowardsEpsilon();
             }
             if (getHp() < 200 && !punchFistModel.isOn()) {
-                punchFistModel = new PunchFistModel(globeModel, getX(), getY() + 3 * getHeight());
+                punchFistModel = new PunchFistModel(globeId, getX(), getY() + 3 * getHeight());
             }
             getLocalPanelModel().setX((int) (getXO() - getRadius() * 1.5));
             getLocalPanelModel().setY((int) (getYO() - getRadius() * 1.5));
@@ -166,7 +166,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
     private boolean squeezing , vomiting,  punching, slapping, firing ;
 
     private void squeezeProjectile() {
-        long timePassed = globeModel.getElapsedTime().getTotalSeconds() - squeezeChangeMoment;
+        long timePassed = getGlobeModel().getElapsedTime().getTotalSeconds() - squeezeChangeMoment;
 
         if (squeezing) {
             if (timePassed > SQUEEZE_TIMEOUT / 2) {
@@ -177,7 +177,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
 
         }else if (isHandFree()){
            // var epsilonPanel = targetEpsilon.getLocalPanelModel(); //todo
-            /*if (epsilonPanel== null)*/var epsilonPanel = globeModel.getMainPanelModel();
+            /*if (epsilonPanel== null)*/var epsilonPanel = getGlobeModel().getMainPanelModel();
             var rect = epsilonPanel.getBounds();
             Point2D anchor = new Point2D.Double(rect.x+rect.width/2D, rect.y);
             boolean smileyNear =
@@ -207,7 +207,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
 
     private void startSqueezing() {
         setVulnerable(true);
-        squeezeChangeMoment = globeModel.getElapsedTime().getTotalSeconds();
+        squeezeChangeMoment = getGlobeModel().getElapsedTime().getTotalSeconds();
         squeezing = true;
         squeezeHands();
     }
@@ -244,7 +244,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
             if (targetEpsilon.getAnchor().distance(getAnchor()) < 2 *
                     (MIN_HEAD_DISTANCE + 2 * getRadius())) {
                 vomiting = true;
-                lastVomit = globeModel.getElapsedTime().getTotalSeconds();
+                lastVomit = getGlobeModel().getElapsedTime().getTotalSeconds();
                 vulnerable = true;
                 for (int i = 0; i < 50; i++) {
                     AOE();
@@ -316,7 +316,7 @@ public class SmileyHeadModel extends EnemyModel implements Circular, NonRotatabl
 
     @Override
     public int getInitSecond() {
-        return globeModel.getElapsedTime().getTotalSeconds();
+        return getGlobeModel().getElapsedTime().getTotalSeconds();
     }
 
     @Override

@@ -22,14 +22,14 @@ import static org.windowkillproject.controller.Utils.globalRoutePoint;
 public class HandModel extends EnemyModel implements ProjectileOperator, NonRotatable {
     private static ArrayList<HandModel> hands = new ArrayList<>();
 
-    protected HandModel(GlobeModel globeModel, int x, int y) {
-        super(globeModel, null, x, y, Config.HAND_RADIUS, 100, 10, 10, 10);
-        setLocalPanelModel(new InternalPanelModel(globeModel,new Rectangle(x, y,
+    protected HandModel(String globeId, int x, int y) {
+        super(globeId, null, x, y, Config.HAND_RADIUS, 100, 10, 10, 10);
+        setLocalPanelModel(new InternalPanelModel(globeId,new Rectangle(x, y,
                 HAND_RADIUS * 3, HAND_RADIUS * 3),PanelStatus.isometric , true
         ));
         setBgPanel((InternalPanelModel) getLocalPanelModel());
         initVertices();
-        targetEpsilon = globeModel.getSmileyHeadModel().getTargetEpsilon();
+        targetEpsilon = getGlobeModel().getSmileyHeadModel().getTargetEpsilon();
         //globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
         hands.add(this);
 
@@ -70,10 +70,10 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
 
     @Override
     public void shoot() {
-        if (globeModel.getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
+        if (getGlobeModel().getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
             new ProjectileModel(getLocalPanelModel(), this, 4, true, targetEpsilon,
                     Color.yellow, Color.gray).shoot();
-            lastShot = globeModel.getElapsedTime().getTotalSeconds();
+            lastShot = getGlobeModel().getElapsedTime().getTotalSeconds();
         }
     }
 
@@ -97,7 +97,7 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
     public Point2D getRoutePoint() {
         int panelWidth = getBgPanel().getWidth();
         int panelHeight = getBgPanel().getHeight();
-        var bounds = globeModel.getMainPanelModel().getBounds();
+        var bounds = getGlobeModel().getMainPanelModel().getBounds();
         int goX = bounds.x - panelWidth -15;
         if (this instanceof RightHandModel)
             goX += bounds.width + panelWidth + 15;
@@ -111,7 +111,7 @@ public class HandModel extends EnemyModel implements ProjectileOperator, NonRota
     public void destroy() {
         super.destroy();
         hands.remove(this);
-        globeModel.getGameManager().deleteGamePanel(getLocalPanelModel());
+        getGlobeModel().getGameManager().deleteGamePanel(getLocalPanelModel());
     }
 
     private boolean vulnerable;

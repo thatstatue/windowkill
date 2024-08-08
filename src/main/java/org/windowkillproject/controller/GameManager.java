@@ -31,20 +31,24 @@ import static org.windowkillproject.controller.Utils.*;
 import static org.windowkillproject.server.model.abilities.PortalModel.lastPortal;
 import static org.windowkillproject.server.model.entities.enemies.attackstypes.AoEAttacker.MOMENT_MODELS;
 import static org.windowkillproject.server.model.entities.enemies.attackstypes.LaserOperator.LASER_LINES;
+import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFromId;
 
 
 public class GameManager {
-    public GameManager(GlobeModel globeModel) {
-        this.globeModel = globeModel;
+    public GameManager(String globeId) {
+        this.globeId = globeId;
     }
 
-    private final GlobeModel globeModel;
+    private final String globeId;
+    public GlobeModel getGlobeModel(){
+        return getGlobeFromId(globeId);
+    }
     public static Random random = new Random();
 
     public ArrayList<EnemyModel> getEnemies() {
         ArrayList<EnemyModel> enemies = new ArrayList<>();
-        for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
-            EntityModel entityModel = globeModel.getEntityModels().get(i);
+        for (int i = 0; i < getGlobeModel().getEntityModels().size(); i++) {
+            EntityModel entityModel = getGlobeModel().getEntityModels().get(i);
             if (entityModel instanceof EnemyModel) {
                 enemies.add((EnemyModel) entityModel);
             }
@@ -53,8 +57,8 @@ public class GameManager {
     }
 
     public void impact(Projectable projectable) {
-        for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
-            EntityModel entity = globeModel.getEntityModels().get(i);
+        for (int i = 0; i < getGlobeModel().getEntityModels().size(); i++) {
+            EntityModel entity = getGlobeModel().getEntityModels().get(i);
             Point2D bulletPoint = new Point2D.Double(projectable.getX(), projectable.getY());
             if (entity.getAnchor() != null && !(entity instanceof Hovering)) {
                 Point2D deltaS = impactPoint(entity.getAnchor(), bulletPoint);
@@ -70,7 +74,7 @@ public class GameManager {
         Point2D collisionPoint = getCollisionPoint(entityModel, enemyModel);
 
         //impact wave of collision
-        Timer impactsTimer = getImpactsTimer(globeModel.getEntityModels(), entityModel, enemyModel, collisionPoint, IMPACT_DURATION);
+        Timer impactsTimer = getImpactsTimer(getGlobeModel().getEntityModels(), entityModel, enemyModel, collisionPoint, IMPACT_DURATION);
         impactsTimer.start();
     }
 
@@ -273,6 +277,7 @@ public class GameManager {
     }
 
     public void epsilonsRewardControl() {
+        var globeModel = getGlobeModel();
         for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
             for (int i = 0; i < globeModel.getCollectableModels().size(); i++) {
                 var collectableModel = globeModel.getCollectableModels().get(i);
@@ -317,7 +322,7 @@ public class GameManager {
     }
 
     private void setTransferableBoundsAllowed() {
-        var panelModels = globeModel.getPanelModels();
+        var panelModels = getGlobeModel().getPanelModels();
         for (int j = 0; j < panelModels.size(); j++) {
             panelModels.get(j).resetCanShrink();
         }
@@ -332,6 +337,7 @@ public class GameManager {
     }
 
     private void setEntitiesBoundsAllowed() {
+        var globeModel = getGlobeModel();
         for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
             EntityModel entityModel = globeModel.getEntityModels().get(i);
             int t = 0;
@@ -351,6 +357,7 @@ public class GameManager {
     }
 
     private void setBulletsBoundsAllowed() {
+        var globeModel = getGlobeModel();
         for (int i = 0; i < globeModel.getBulletModels().size(); i++) {
             BulletModel bulletModel = globeModel.getBulletModels().get(i);
             int t = 0;
@@ -386,6 +393,7 @@ public class GameManager {
     private int lastAoEAttack;
 
     public void areaOfEffectControl() {
+        var globeModel = getGlobeModel();
         for (int i = 0; i < MOMENT_MODELS.size(); i++) {
             MomentModel momentModel = MOMENT_MODELS.get(i);
             if (globeModel.getElapsedTime().getTotalSeconds() > momentModel.getTime() + 5) MOMENT_MODELS.remove(momentModel);
@@ -423,7 +431,7 @@ public class GameManager {
     }
 
     public GamePanelCorner getClosestPanelCorner(Point2D point2D) {
-        var panelModels = globeModel.getPanelModels();
+        var panelModels = getGlobeModel().getPanelModels();
         final PanelModel[] closestPanel = {panelModels.getFirst()};
         final Point2D[] closestPoint = {new Point2D.Double(10000, 10000)};
         final int[] indexOfCorner = {0};
@@ -451,7 +459,7 @@ public class GameManager {
 
     private void setTransferableLocalPanel(Transferable transferable) {
         AtomicInteger t = new AtomicInteger();
-        var panelModels = globeModel.getPanelModels();
+        var panelModels = getGlobeModel().getPanelModels();
         for (int i = 0; i < panelModels.size(); i++) {
             var panelModel = panelModels.get(i);
             if (isTransferableInBounds(transferable, panelModel.getBounds(), false)) {
@@ -464,7 +472,7 @@ public class GameManager {
 
     public void keepTransferableInBounds() {
         setTransferableBoundsAllowed();
-        var mainPanel =globeModel.getMainPanelModel();
+        var mainPanel = getGlobeModel().getMainPanelModel();
         if (!(mainPanel== null ||mainPanel.isExploding())) {
             keepEpsilonsInBounds();
             keepBulletsInBounds();
@@ -473,7 +481,7 @@ public class GameManager {
     }
 
     private void keepEpsilonsInBounds() {
-        for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
             setTransferableLocalPanel(epsilonModel);
 
             Area allowedArea = epsilonModel.getAllowedArea();
@@ -487,8 +495,8 @@ public class GameManager {
     }
 
     private void keepBulletsInBounds() {
-        for (int i = 0; i < globeModel.getBulletModels().size(); i++) {
-            BulletModel bulletModel = globeModel.getBulletModels().get(i);
+        for (int i = 0; i < getGlobeModel().getBulletModels().size(); i++) {
+            BulletModel bulletModel = getGlobeModel().getBulletModels().get(i);
             setTransferableLocalPanel(bulletModel);
             Area bulletAllowedArea = bulletModel.getAllowedArea();
             if (!isTransferableInBounds(bulletModel, bulletAllowedArea, false)) {
@@ -527,7 +535,7 @@ public class GameManager {
     }
 
     public void epsilonIntersectionControl() {
-        for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
             ArrayList<EnemyModel> enemies = getEnemies();
             for (EnemyModel enemyModel : enemies) {
                 if (enemyModel instanceof Hideable && !((Hideable) enemyModel).isVisible())
@@ -574,11 +582,11 @@ public class GameManager {
     public void empowerBullets(EpsilonModel shooterEpsilon, Point2D relativePoint) {
         var anchor = shooterEpsilon.getAnchor();
         Point2D point = weighedVector(unitVector(anchor, relativePoint), 10);
-        var extraBullet1 = new BulletModel(globeModel,
+        var extraBullet1 = new BulletModel(globeId,
                 (int) (anchor.getX() + point.getX()),
                 (int) (anchor.getY() + point.getY()), relativePoint, shooterEpsilon);
         point = weighedVector(point, 2);
-        var extraBullet2 = new BulletModel(globeModel,
+        var extraBullet2 = new BulletModel(globeId,
                 (int) (anchor.getX() + point.getX()),
                 (int) (anchor.getY() + point.getY()), relativePoint, shooterEpsilon);
         extraBullet1.shoot();
@@ -586,7 +594,7 @@ public class GameManager {
     }
 
     public void writControl() {
-        ArrayList<EpsilonModel> epsilons = globeModel.getEpsilons();
+        ArrayList<EpsilonModel> epsilons = getGlobeModel().getEpsilons();
         for (int i = 0; i < epsilons.size(); i++) {
             EpsilonModel epsilon = epsilons.get(i);
             epsilon.getWrit().check();
@@ -595,7 +603,7 @@ public class GameManager {
     public void deleteGamePanel(PanelModel panelModel) {
         if (panelModel !=null) {
             synchronized (LOCK) {
-                globeModel.getPanelModels().remove(panelModel);
+                getGlobeModel().getPanelModels().remove(panelModel);
             }
 //            app.getGameFrame().getLayeredPane().remove(panelView);
         }

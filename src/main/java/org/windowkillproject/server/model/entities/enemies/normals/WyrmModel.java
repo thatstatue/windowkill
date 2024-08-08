@@ -26,9 +26,9 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
         return count;
     }
 
-    public WyrmModel(GlobeModel globeModel, int x, int y) {
-        super(globeModel,null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
-         setLocalPanelModel(new InternalPanelModel(globeModel,new Rectangle(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3),
+    public WyrmModel(String globeId, int x, int y) {
+        super(globeId,null, x, y, WYRM_RADIUS, 12 , 0, 2, 8);
+         setLocalPanelModel(new InternalPanelModel(globeId,new Rectangle(x, y, WYRM_RADIUS*3, WYRM_RADIUS*3),
                  PanelStatus.isometric , true
                  ));
          initVertices();
@@ -53,9 +53,9 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
 
     @Override
     public void shoot() {
-        if (globeModel.getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) { //todo epsilonmodel which
+        if (getGlobeModel().getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) { //todo epsilonmodel which
             new ProjectileModel(getLocalPanelModel(),this, 4, true, null, Color.magenta, Color.magenta).shoot();
-            lastShot = globeModel.getElapsedTime().getTotalSeconds();
+            lastShot = getGlobeModel().getElapsedTime().getTotalSeconds();
         }
     }
     private double rotationSpeed = UNIT_DEGREE/4;
@@ -86,7 +86,7 @@ public class WyrmModel extends EnemyModel implements ProjectileOperator, Unmovab
     @Override
     public void destroy() {
         super.destroy();
-        globeModel.getGameManager().deleteGamePanel(getLocalPanelModel());
+        getGlobeModel().getGameManager().deleteGamePanel(getLocalPanelModel());
         count--;
     }
 

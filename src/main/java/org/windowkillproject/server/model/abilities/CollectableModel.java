@@ -6,12 +6,12 @@ import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 
 public class CollectableModel extends AbilityModel{
-    public CollectableModel(GlobeModel globeModel,PanelModel localPanel, int x, int y, int rewardXp) {
-        super(globeModel,localPanel, x, y);
+    public CollectableModel(String globeId,PanelModel localPanel, int x, int y, int rewardXp) {
+        super(globeId,localPanel, x, y);
         this.rewardXp = rewardXp;
-        globeModel.getCollectableModels().add(this);
-        globeModel.getGlobeController().createAbilityView( id, x, y);
-        initSeconds = globeModel.getElapsedTime().getTotalSeconds();
+        getGlobeModel().getCollectableModels().add(this);
+        getGlobeModel().getGlobeController().createAbilityView( id, x, y);
+        initSeconds = getGlobeModel().getElapsedTime().getTotalSeconds();
     }
     private int rewardXp;
     private final long initSeconds;

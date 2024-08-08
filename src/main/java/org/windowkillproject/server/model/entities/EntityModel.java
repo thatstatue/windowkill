@@ -104,7 +104,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
             setHp(0);
             destroy();
         }
-        globeModel.performAction(REQ_PLAY_HIT_SOUND);
+        getGlobeModel().performAction(REQ_PLAY_HIT_SOUND);
     }
 
     public Area getArea() {
@@ -125,7 +125,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
 
     public void destroy() {
         super.destroy();
-        globeModel.getEntityModels().remove(this);
+        getGlobeModel().getEntityModels().remove(this);
     }
 
     public int getXO() {
@@ -157,8 +157,8 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     }
 
 
-    public EntityModel(GlobeModel globeModel, PanelModel localPanel, int x, int y, int radius, int hp, int meleeAttackHp) {
-        super(globeModel, localPanel, x, y);
+    public EntityModel(String globeId, PanelModel localPanel, int x, int y, int radius, int hp, int meleeAttackHp) {
+        super(globeId, localPanel, x, y);
 
         this.hp = hp;
         this.meleeAttackHp = meleeAttackHp;
@@ -168,10 +168,10 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     }
 
     private void addToGlobe() {
-        if (globeModel != null) {
-            globeModel.getEntityModels().add(this);
+        if (getGlobeModel() != null) {
+            getGlobeModel().getEntityModels().add(this);
             System.out.println("globe model aint null so im adding "+ id);
-            globeModel.getGlobeController().createEntityView(id, x, y, width, height);
+            getGlobeModel().getGlobeController().createEntityView(id, x, y, width, height);
         }
     }
 

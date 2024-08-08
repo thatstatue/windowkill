@@ -3,7 +3,6 @@ package org.windowkillproject.server.model.entities;
 
 import org.windowkillproject.MessageQueue;
 import org.windowkillproject.server.model.globe.GlobeModel;
-import org.windowkillproject.server.model.panelmodels.PanelModel;
 import org.windowkillproject.server.model.Writ;
 import org.windowkillproject.server.model.abilities.VertexModel;
 
@@ -14,6 +13,7 @@ import java.util.Map;
 import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.server.Config.*;
+import static org.windowkillproject.server.model.globe.GlobesManager.globeModelMap;
 
 public class EpsilonModel extends EntityModel {
     public static Map<MessageQueue, EpsilonModel> queueEpsilonModelMap = new HashMap<>();
@@ -21,12 +21,12 @@ public class EpsilonModel extends EntityModel {
     protected MessageQueue messageQueue;
     public void setGlobeModel(GlobeModel globeModel){
         boolean isCreate = false;
-        if (this.globeModel == null) isCreate = true;
-        this.globeModel = globeModel;
+        if (getGlobeModel() == null) isCreate = true;
+        globeModelMap.put(globeId, globeModel);
         if (isCreate && globeModel!= null) {
-            this.globeModel.getEntityModels().add(this);
+            getGlobeModel().getEntityModels().add(this);
             System.out.println("my epsilon model id is " + id);
-            this.globeModel.getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
+            getGlobeModel().getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
 
         }
     }
@@ -56,8 +56,8 @@ public class EpsilonModel extends EntityModel {
 
         }
     }
-    public EpsilonModel(MessageQueue messageQueue, GlobeModel globeModel) {
-        super( globeModel, null,
+    public EpsilonModel(MessageQueue messageQueue, String globeId) {
+        super( globeId, null,
                 CENTER_X-EPSILON_RADIUS,
                 CENTER_Y- EPSILON_RADIUS,
                 EPSILON_RADIUS, EPSILON_HP, 10);

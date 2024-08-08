@@ -18,7 +18,7 @@ public class WaveFactory extends Timer{
         return level;
     }
 
-    private final GlobeModel globeModel;
+    private final String globeId;
     private boolean betweenWaves, startNewWave = true;
 
     public boolean isStartNewWave() {
@@ -41,13 +41,13 @@ public class WaveFactory extends Timer{
         this.startNewWave = startNewWave;
     }
 
-    public WaveFactory(GlobeModel globeModel) {
+    public WaveFactory(String globeId) {
         super(500, null);
-        this.globeModel = globeModel;
+        this.globeId = globeId;
         ActionListener listener = e -> {
             System.out.println("work");
             if (!betweenWaves && startNewWave) {
-                var wave = new Wave(globeModel);
+                var wave = new Wave(globeId);
                 waves.add(wave);
                 System.out.println("WELCOME TO WAVE");
                 if (level <= END_OF_NORMAL) wave.spawnWave();

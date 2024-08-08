@@ -8,5 +8,6 @@ public interface ProjectileOperator {
     int getY();
     int getRadius();
     GlobeModel getGlobeModel();
+    String getGlobeId();
     void shoot();
 }

@@ -46,10 +46,10 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     private Point2D delta;
 
     public ProjectileModel(PanelModel localPanel, ProjectileOperator parent, int attackHp, boolean isHovering, EpsilonModel epsilonModel, Color topColor, Color bottomColor) {
-        super(parent.getGlobeModel(), localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
+        super(parent.getGlobeId(), localPanel, parent.getX() + parent.getRadius(), parent.getY() + parent.getRadius());
 //        anchor = new Point2D.Double(x, y);
         isShoot = false;
-        globeModel.getProjectileModels().add(this);
+        getGlobeModel().getProjectileModels().add(this);
         this.parent = parent;
         this.attackHp = attackHp;
         this.isHovering = isHovering;
@@ -58,7 +58,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
         delta = unitVector(getPoint2D(epsilonModel), this.getAnchor());
         delta = weighedVector(delta, BULLET_SPEED / 2.0);
 //        localPanel = parent.getLocalPanel();
-        globeModel.getGlobeController().createAbilityView(id, x, y);
+        getGlobeModel().getGlobeController().createAbilityView(id, x, y);
 
     }
 
@@ -109,8 +109,8 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private void isEntityShot() {
-        for (int i = 0; i < globeModel.getEntityModels().size(); i++) {
-            EntityModel entityModel = globeModel.getEntityModels().get(i);
+        for (int i = 0; i < getGlobeModel().getEntityModels().size(); i++) {
+            EntityModel entityModel = getGlobeModel().getEntityModels().get(i);
             if (!entityModel.equals(parent)) {
                 //not hitting vertices
                 boolean notHitVs = true;
@@ -121,7 +121,7 @@ public class ProjectileModel extends AbilityModel implements Projectable {
                         break;
                     }
                 }
-                for (EpsilonModel epsilon :globeModel.getEpsilons()) {
+                for (EpsilonModel epsilon : getGlobeModel().getEpsilons()) {
                     if (notHitVs && entityModel instanceof EpsilonModel &&
                             epsilon.getAnchor().
                                     distance(new Point2D.Double(getX(), getY())) < EPSILON_RADIUS) {
@@ -152,9 +152,9 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     }
 
     private void explode() {
-        if (!isHovering) globeModel.getGameManager().impact(this);
-        globeModel.getProjectileModels().remove(this);
-        globeModel.performAction(Request.REQ_PLAY_BULLET_SOUND);
+        if (!isHovering) getGlobeModel().getGameManager().impact(this);
+        getGlobeModel().getProjectileModels().remove(this);
+        getGlobeModel().performAction(Request.REQ_PLAY_BULLET_SOUND);
         destroy();
     }
 

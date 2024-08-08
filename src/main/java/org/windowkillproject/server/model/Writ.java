@@ -5,7 +5,6 @@ import org.windowkillproject.SpecialityName;
 import org.windowkillproject.server.model.abilities.BulletModel;
 
 
-import java.io.Serial;
 import java.io.Serializable;
 
 import static org.windowkillproject.Constants.*;
@@ -46,7 +45,7 @@ public class Writ implements Serializable {
     public void setInitSeconds() {
         var epsilon = queueEpsilonModelMap.get(messageQueue);
         if (epsilon.getXp() >= 100) {
-            initSeconds = epsilon.globeModel.getElapsedTime().getTotalSeconds();
+            initSeconds = epsilon.getGlobeModel().getElapsedTime().getTotalSeconds();
         }
     }
     public void resetInitSeconds() {
@@ -61,7 +60,7 @@ public class Writ implements Serializable {
     }
     public void check(){
         var epsilon = queueEpsilonModelMap.get(messageQueue);
-        long now = epsilon.globeModel.getElapsedTime().getTotalSeconds();
+        long now = epsilon.getGlobeModel().getElapsedTime().getTotalSeconds();
         if (getInitSeconds() > 0 && now - getInitSeconds() <= WRIT_DURATION) {
             switch (getChosenSkill()) {
                 case Ares -> {

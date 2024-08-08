@@ -22,12 +22,12 @@ import static org.windowkillproject.controller.Utils.globalRoutePoint;
 
 public class PunchFistModel extends EnemyModel {
     private boolean on;
-    public PunchFistModel(GlobeModel globeModel, int x, int y) {
-        super(globeModel, null, x, y, HAND_RADIUS, Integer.MAX_VALUE, 10, 0, 0);
-        setLocalPanelModel(new InternalPanelModel(globeModel, new Rectangle(x, y, HAND_RADIUS*3, HAND_RADIUS*3),
+    public PunchFistModel(String globeId, int x, int y) {
+        super(globeId, null, x, y, HAND_RADIUS, Integer.MAX_VALUE, 10, 0, 0);
+        setLocalPanelModel(new InternalPanelModel(globeId, new Rectangle(x, y, HAND_RADIUS*3, HAND_RADIUS*3),
                 PanelStatus.isometric , true
         ));
-        targetEpsilon = globeModel.getSmileyHeadModel().getTargetEpsilon();
+        targetEpsilon = getGlobeModel().getSmileyHeadModel().getTargetEpsilon();
         initVertices();
         initPolygon();
 //        globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
@@ -62,11 +62,11 @@ public class PunchFistModel extends EnemyModel {
             }else{
                 integer.getAndIncrement();
                 if (integer.get()<4){
-                    globeModel.getMainPanelModel().gotPunched(getAnchor());
+                    getGlobeModel().getMainPanelModel().gotPunched(getAnchor());
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
                 }else if (integer.get()>ATTACK_TIMEOUT){
-                    globeModel.getSmileyHeadModel().setPunching(false);
-                    globeModel.getSmileyHeadModel().setVulnerable(false);
+                    getGlobeModel().getSmileyHeadModel().setPunching(false);
+                    getGlobeModel().getSmileyHeadModel().setVulnerable(false);
                     getLocalPanelModel().setFlexible(true);
                     punch.stop();
                 }
@@ -91,8 +91,8 @@ public class PunchFistModel extends EnemyModel {
                     move((int) -getRoutePoint().getX(), (int) -getRoutePoint().getY());
 
                 }else if (integer.get()> ATTACK_TIMEOUT){
-                    globeModel.getSmileyHeadModel().setSlapping(false);
-                    globeModel.getSmileyHeadModel().setVulnerable(false);
+                    getGlobeModel().getSmileyHeadModel().setSlapping(false);
+                    getGlobeModel().getSmileyHeadModel().setVulnerable(false);
                     slap.stop();
                 }
             }

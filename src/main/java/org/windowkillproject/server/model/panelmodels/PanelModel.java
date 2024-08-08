@@ -13,10 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Constants.FRAME_SHRINKAGE_SPEED;
 import static org.windowkillproject.Request.REQ_START_GAME_1;
+import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFromId;
 
 
 public abstract class PanelModel implements Drawable {
-    private final GlobeModel globeModel;
+    private final String globeId;
+    public GlobeModel getGlobeModel(){
+        return getGlobeFromId(globeId);
+    }
     private boolean flexible;
     protected int x, y, width, height;
     private final PanelStatus panelStatus;
@@ -80,17 +84,17 @@ public abstract class PanelModel implements Drawable {
         return id;
     }
 
-    public PanelModel(GlobeModel globeModel, String id, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
-        this.globeModel = globeModel;
+    public PanelModel(String globeId, String id, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
+        this.globeId = globeId;
         this.id = id;
         this.flexible = flexible;
         this.panelStatus = panelStatus;
         setBounds(bounds);
         this.background = background;
-        this.globeModel.getPanelModels().add(this);
+        if (getGlobeModel()!= null)getGlobeModel().getPanelModels().add(this);
     }
-    public PanelModel(GlobeModel globeModel, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
-        this(globeModel, UUID.randomUUID().toString(), bounds, panelStatus, flexible, background);
+    public PanelModel(String globeId, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
+        this(globeId, UUID.randomUUID().toString(), bounds, panelStatus, flexible, background);
     }
 
     public Rectangle getBounds() {
@@ -240,7 +244,7 @@ public abstract class PanelModel implements Drawable {
 
     private boolean isStoppedByRigidPanels(int code, int newX, int newY, int newWidth, int newHeight) {
         if (forSmiley) return false;
-        var gamePanels = globeModel.getPanelModels();
+        var gamePanels = getGlobeModel().getPanelModels();
         for (int i = 0; i < gamePanels.size(); i++) {
             var panel = gamePanels.get(i);
             if (panel.isFlexible()) {
@@ -287,8 +291,8 @@ public abstract class PanelModel implements Drawable {
 
     public void shrinkFast() {
         if (exploding) {
-            for(EpsilonModel epsilonModel: globeModel.getEpsilons())
-                globeModel.getEntityModels().remove(epsilonModel);
+            for(EpsilonModel epsilonModel: getGlobeModel().getEpsilons())
+                getGlobeModel().getEntityModels().remove(epsilonModel);
             GAME_MIN_SIZE = 10;
         }
         Timer shrinkFastTimer = new Timer(1, null);
@@ -312,9 +316,9 @@ public abstract class PanelModel implements Drawable {
                 setBounds(newX, newY, newWidth, newHeight);
             } else {
                 if (exploding) {
-                    globeModel.getPanelModels().remove(this);
+                    getGlobeModel().getPanelModels().remove(this);
                     GAME_MIN_SIZE = 250;
-                    globeModel.performAction(REQ_START_GAME_1);
+                    getGlobeModel().performAction(REQ_START_GAME_1);
                 }
                 shrinkFastTimer.stop();
             }
@@ -328,8 +332,8 @@ public abstract class PanelModel implements Drawable {
 
         ActionListener actionListener = e -> {
             boolean temp = false;
-            for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
-                var mainPanel = globeModel.getMainPanelModel();
+            for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
+                var mainPanel = getGlobeModel().getMainPanelModel();
                 if (epsilonModel.getRadius() < mainPanel.getWidth() / 2 ||
                         epsilonModel.getRadius() < mainPanel.getHeight() / 2) {
                     epsilonModel.setRadius(epsilonModel.getRadius() + 6);

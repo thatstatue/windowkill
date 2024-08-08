@@ -17,13 +17,13 @@ import java.util.ArrayList;
 import static org.windowkillproject.controller.GameManager.random;
 
 public abstract class EnemyModel extends EntityModel {
-    public EnemyModel(GlobeModel globeModel, PanelModel localPanel, int x, int y, int radius, int hp , int meleeAttackHp, int rewardCount, int rewardXps) {
-        super(globeModel, localPanel,x, y, radius,hp, meleeAttackHp);
+    public EnemyModel(String globeId, PanelModel localPanel, int x, int y, int radius, int hp , int meleeAttackHp, int rewardCount, int rewardXps) {
+        super(globeId, localPanel,x, y, radius,hp, meleeAttackHp);
         setReward(rewardCount, rewardXps);
         setySpeed(Config.MAX_ENEMY_SPEED);
         setxSpeed(Config.MAX_ENEMY_SPEED);
 //        if (localPanel!= null) globeModel.getGlobeController().createEntityView(getId(), getX(),getY(),getWidth(),getHeight());
-        targetEpsilon = chooseRandomTarget(globeModel.getEpsilons());
+        targetEpsilon = chooseRandomTarget(getGlobeModel().getEpsilons());
         System.out.println("seeeee im an enemyyy");
 
     }
@@ -87,7 +87,7 @@ public abstract class EnemyModel extends EntityModel {
     @Override
     public void gotHit(int attackHp) {
         super.gotHit(attackHp);
-        for (EpsilonModel epsilonModel : globeModel.getEpsilons()) {
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
             if (epsilonModel.isChironner())
                 epsilonModel.setHp(epsilonModel.getHp() + 3);
         }
@@ -97,14 +97,14 @@ public abstract class EnemyModel extends EntityModel {
         @Override
     public void destroy() {
         super.destroy();
-        globeModel.performAction(Request.REQ_PLAY_DESTROY_SOUND);
-        globeModel.addKilledEnemiesInWave();
-        globeModel.addKilledEnemiesTotal();
+        getGlobeModel().performAction(Request.REQ_PLAY_DESTROY_SOUND);
+        getGlobeModel().addKilledEnemiesInWave();
+        getGlobeModel().addKilledEnemiesTotal();
         for (int i = 0; i < rewardCount; i++) {
             int x = getXO() + random.nextInt(2 * getRadius()) - getRadius();
             int y = getYO() + random.nextInt(2 * getRadius()) - getRadius();
 
-            new CollectableModel(globeModel,getLocalPanelModel(), x, y, rewardXps);
+            new CollectableModel(globeId,getLocalPanelModel(), x, y, rewardXps);
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class EnemyModel extends EntityModel {
     protected void moveBGPanel(int x, int y) {
         var bgPanel = getBgPanel();
         boolean temp = false;
-        for (EpsilonModel epsilonModel : globeModel.getEpsilons()){
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()){
             var epsilonPanel = epsilonModel.getLocalPanelModel();
             if (epsilonPanel!=null && epsilonPanel.equals(bgPanel)) {
                 temp = true;

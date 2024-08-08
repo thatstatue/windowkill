@@ -22,8 +22,8 @@ public class SquarantineModel extends EnemyModel implements Dashable {
         this.collision = collision;
     }
 
-    public SquarantineModel(GlobeModel globeModel, int x, int y, PanelModel localPanel) {
-        super(globeModel,localPanel,x, y, (int) (ENEMY_RADIUS * 0.8), 10, 6 , 1, 5);
+    public SquarantineModel(String globeId, int x, int y, PanelModel localPanel) {
+        super(globeId,localPanel,x, y, (int) (ENEMY_RADIUS * 0.8), 10, 6 , 1, 5);
 
         initVertices();
         initPolygon();

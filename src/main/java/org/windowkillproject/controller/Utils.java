@@ -1,7 +1,6 @@
 package org.windowkillproject.controller;
 
 import org.windowkillproject.server.model.Transferable;
-import org.windowkillproject.server.model.Wave;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 
 import java.awt.*;

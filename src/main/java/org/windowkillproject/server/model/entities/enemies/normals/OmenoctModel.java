@@ -20,18 +20,18 @@ import static org.windowkillproject.server.Config.*;
 //todo in ctor set an epsilon in the game that this enemy will target
 
 public class OmenoctModel extends EnemyModel implements ProjectileOperator {
-    public OmenoctModel(GlobeModel globeModel, int x, int y, PanelModel localPanel) {
-        super(globeModel, localPanel, x, y, (int) (ENEMY_RADIUS * 1.2), 20, 6, 8, 4);
+    public OmenoctModel(String globeId, int x, int y, PanelModel localPanel) {
+        super(globeId, localPanel, x, y, (int) (ENEMY_RADIUS * 1.2), 20, 6, 8, 4);
         initVertices();
         initPolygon();
-        globeModel.getOmenoctModels().add(this);
+        getGlobeModel().getOmenoctModels().add(this);
     }
     private long lastShot;
     private int edgeCode;
     @Override
     public void destroy(){
         super.destroy();
-        globeModel.getOmenoctModels().remove(this);
+        getGlobeModel().getOmenoctModels().remove(this);
     }
 
     @Override
@@ -51,16 +51,12 @@ public class OmenoctModel extends EnemyModel implements ProjectileOperator {
         moveBGPanel(x, y);
     }
 
-    @Override
-    public GlobeModel getGlobeModel() {
-        return globeModel;
-    }
 
     @Override
     public void shoot() {
-        if (globeModel.getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
+        if (getGlobeModel().getElapsedTime().getTotalSeconds() - lastShot > PROJECTILE_TIMEOUT) {
             new ProjectileModel(getLocalPanelModel(),this, 4, true, targetEpsilon, Color.red, Color.white).shoot();
-            lastShot = globeModel.getElapsedTime().getTotalSeconds();
+            lastShot = getGlobeModel().getElapsedTime().getTotalSeconds();
         }
     }
 

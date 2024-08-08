@@ -9,7 +9,6 @@ import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
 import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.globe.GlobesManager;
-import org.windowkillproject.server.model.panelmodels.MainPanelModel;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class RequestHandler implements Runnable{
         //if (!globe.getSmileyHeadModel().isAppearing()){ //todo
             int empowerInitSeconds = Integer.parseInt(parts[1]);
             Point2D mouseLoc = new Point2D.Double(Double.parseDouble(parts[2]), Double.parseDouble(parts[3]));
-            BulletModel bulletModel = new BulletModel(globe,
+            BulletModel bulletModel = new BulletModel(globe.getId(),
                     epsilonModel.getXO(), epsilonModel.getYO(), mouseLoc, epsilonModel);
             bulletModel.shoot();
             long deltaT = globe.getElapsedTime().getTotalSeconds() - empowerInitSeconds;

@@ -18,19 +18,20 @@ import static org.windowkillproject.Request.RES_GLOBE_ID;
 import static org.windowkillproject.server.model.entities.EpsilonModel.queueEpsilonModelMap;
 
 public class GlobesManager {
-    private static Map<String, GlobeModel> globeModelMap = new HashMap<>();
+    public static Map<String, GlobeModel> globeModelMap = new HashMap<>();
 
     public static String newGlobe(MessageQueue queue1, MessageQueue queue2, String battleMode){
 
+        String id = UUID.randomUUID().toString();
+
         var eps1 = queueEpsilonModelMap.get(queue1);
         if (queue1 != null && eps1 == null){
-            eps1 = new EpsilonModel(queue1,null);
+            eps1 = new EpsilonModel(queue1,id);
         }
         var eps2 = queueEpsilonModelMap.get(queue2);
         if (queue2 != null && eps2 == null){
-            eps2 = new EpsilonModel(queue2,null);
+            eps2 = new EpsilonModel(queue2,id);
         }
-        String id = UUID.randomUUID().toString();
         String m = RES_GLOBE_ID+REGEX_SPLIT+id;
         System.out.println("this is the message im enqueuing" + m);
         Objects.requireNonNull(queue1).enqueue(m);
@@ -46,6 +47,7 @@ public class GlobesManager {
 
         eps1.setGlobeModel(globeModel);
         if (eps2!=null) eps2.setGlobeModel(globeModel);
+        globeModel.getPanelModels().add(globeModel.mainPanelModel);
 
         return globeModel.getId();
     }

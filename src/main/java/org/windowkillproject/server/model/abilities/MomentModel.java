@@ -14,13 +14,13 @@ public class MomentModel extends AbilityModel {
         return time;
     }
 
-    public MomentModel(GlobeModel globeModel,Point2D centerOfArea, int time, int radius, int attackHP) {
-        super( globeModel,null, (int) (centerOfArea.getX()-radius), (int) (centerOfArea.getY()-radius));
+    public MomentModel(String globeId,Point2D centerOfArea, int time, int radius, int attackHP) {
+        super( globeId,null, (int) (centerOfArea.getX()-radius), (int) (centerOfArea.getY()-radius));
         this.centerOfArea = centerOfArea;
         this.time = time;
         this.radius = radius;
         this.attackHP = attackHP;
-        globeModel.getGlobeController().createAbilityView(getId(), getX(),getY());
+        getGlobeModel().getGlobeController().createAbilityView(getId(), getX(),getY());
     }
 
     public int getRadius() {
