@@ -44,7 +44,8 @@ public class ClientHandler{
                         new RequestHandler(messageQueue, message).run();
                     }
                 } catch (IOException e) {
-                    messageQueue.getGlobeModel().pause(true);
+                    var globe = messageQueue.getGlobeModel();
+                    if (globe!=null)  globe.pause(true);
                     //throw new RuntimeException(e);
                 }
             }

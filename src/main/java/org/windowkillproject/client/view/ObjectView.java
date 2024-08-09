@@ -31,6 +31,16 @@ public abstract class ObjectView extends JLabel implements Viewable {
         this.id = id;
 
     }
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+    private boolean visible = true;
 
     public String getId() {
         return id;

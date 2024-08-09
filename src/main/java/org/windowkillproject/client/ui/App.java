@@ -20,7 +20,6 @@ import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbVie
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import static org.windowkillproject.Request.*;
@@ -95,6 +94,9 @@ public class App implements Runnable {
 
     public void showLeague() {
         getLeagueFrame().setVisible(true);
+        getPrimaryFrame().setVisible(false);
+        client.sendMessage(LEAGUE_REDIRECT + REGEX_SPLIT+REQ_SQUADS_LIST);
+
         if (!getLeagueFrame().isUsernamed()) {
             getLeagueFrame().getUsername(client);
         }
@@ -132,6 +134,7 @@ public class App implements Runnable {
 
         if (gameFrame != null) gameFrame = null;
         if (scoreFrame != null) scoreFrame.dispose();
+        if (leagueFrame!=null) leagueFrame.setVisible(false);
         if (!EpsilonKeyListener.isStarted()) epsilonKeyListener.startListener();
         if (!ShotgunMouseListener.isStarted()) shotgunMouseListener.startListener();
         scoreFrame = null;
@@ -191,8 +194,8 @@ public class App implements Runnable {
     public void initGFrame() {//todo add battle mode and stuff
         gameFrame = new GameFrame(globeId, client);
         gameFrame.setVisible(true);
-        getGameFrame().initLabels();
-        client.sendMessage(REQ_SHRINK_FAST);
+//        getGameFrame().initLabels();
+//        client.sendMessage(REQ_SHRINK_FAST);
 
     }
 
@@ -247,7 +250,6 @@ public class App implements Runnable {
         BlackOrbView.resetOrbViews();
         client.sendMessage(REQ_NEXT_LEVEL);
 //        client.sendMessage(REQ_EPSILON_NEW_INSTANCE);
-//        getGameFrame().setXpAmount(targetEpsilon.getXp()); todo check if is on time
 
     }
 
@@ -331,23 +333,23 @@ public class App implements Runnable {
             case RES_NEW_ONLINE_PLAYER -> getLeagueFrame().setUsernamed(Boolean.parseBoolean(parts[1]));
             case BROADCAST_REDIRECT -> ViewsRenderer.updateViews(parts);
             case REQ_PAUSE_UPDATE -> client.sendMessage(REQ_PAUSE_UPDATE);
+            case RES_SQUAD_NAMES -> client.getApp().getLeagueFrame().setSquadNames(parts);
+            case RES_OCCUPANTS -> client.getApp().getLeagueFrame().setOccupants(parts);
+
         }
         handleKeysPressed();
     }
 
     private void handleGlobeId(String id) {
         globeId = id;
-        gameFrame.getMainPanelView().setId(id);
+//        gameFrame.getMainPanelView().setId(id);
     }
 
 
     private void handleRepaint() {
-//        System.out.println(panelViews.size() + " is panel views size");
-//        System.out.println(entityViews.size() + " is entity views size");
-//        gameFrame.revalidate();
         gameFrame.revalidate();
 
-
+        int t = 0;
         for (int i =0 ; i< panelViews.size(); i++){
             var panelView = panelViews.get(i);
             if(panelView.getClient().getApp().getGlobeId().equals(globeId)) {
@@ -362,7 +364,6 @@ public class App implements Runnable {
                 abilityView.revalidate();
                 abilityView.repaint();
             }
-            //  if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
 
         for (int i = 0; i < entityViews.size(); i++) {
@@ -371,7 +372,6 @@ public class App implements Runnable {
                 entityView.revalidate();
                 entityView.repaint();
             }
-//            if (!entityView.isEnabled()) entityViews.remove(entityView);
         }
 
         gameFrame.repaint();
@@ -382,11 +382,6 @@ public class App implements Runnable {
 
     }
 
-//    private void handleEpsilonAnchor(String[] parts) {
-//        var anchor = new Point2D.Double(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-//        epsilonKeyListener.setEpsilonAnchor(anchor);
-//    }
-
     private void handleKeysPressed() {
         client.sendMessage(RES_ARE_KEYS_PRESSED + REGEX_SPLIT +
                 EpsilonKeyListener.isLeftPressed + REGEX_SPLIT +
@@ -394,6 +389,5 @@ public class App implements Runnable {
                 EpsilonKeyListener.isUpPressed + REGEX_SPLIT +
                 EpsilonKeyListener.isDownPressed);
     }
-
 
 }

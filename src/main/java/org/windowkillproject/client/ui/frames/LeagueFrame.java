@@ -37,7 +37,7 @@ public class LeagueFrame extends JFrame {
                 } else {
                     client.sendMessage(LEAGUE_REDIRECT + REGEX_SPLIT + REQ_NEW_ONLINE_PLAYER + REGEX_SPLIT + username);
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -49,5 +49,11 @@ public class LeagueFrame extends JFrame {
 
     public boolean isUsernamed() {
         return usernamed;
+    }
+    public void setSquadNames(String[] parts){
+        ((LeaguePanel)getContentPane()).setSquadNames(parts);
+    }
+    public void setOccupants(String[] parts){
+        ((LeaguePanel)getContentPane()).setOccupants(parts);
     }
 }

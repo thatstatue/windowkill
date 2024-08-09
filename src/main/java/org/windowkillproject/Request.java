@@ -61,6 +61,9 @@ public class Request {
     public static final String REQ_CREATE_PANEL = "55";
     public static final String REQ_CREATE_ENTITY = "56";
     public static final String REQ_CREATE_ABILITY = "57";
+    public static final String REQ_SQUADS_LIST ="58";
+    public static final String RES_SQUAD_NAMES = "59";
+    public static final String RES_OCCUPANTS = "60";
 
 
 

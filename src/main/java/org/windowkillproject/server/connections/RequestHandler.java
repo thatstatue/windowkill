@@ -51,7 +51,7 @@ public class RequestHandler implements Runnable{
 //            case REQ_REMOVE_EPSILON -> handleRemoveEpsilon(parts[1]);
             case REQ_TOTAL_KILLS -> handleTotalKills();
             case REQ_WAVE_LEVEL -> handleWaveLevel();
-            //case REQ_SHRINK_FAST -> epsilonModel.getGlobeModel().shrinkFast();
+            case REQ_SHRINK_FAST -> handleShrinkFast();
             case REQ_SHOOT_BULLET -> handleShootBullet(parts);
             case REQ_DIFFICULTY -> handleDifficulty(parts[1]);
             case REQ_NEW_GAME_SINGLE -> handleNewGameSingle();
@@ -61,13 +61,17 @@ public class RequestHandler implements Runnable{
     private void handleEpsilonNewInstance(){
 
     }
+    private void handleShrinkFast(){
+        epsilonModel.getGlobeModel().getGameLoop().start();
+        epsilonModel.getGlobeModel().shrinkFast();
+    }
     private void handleNewGameSingle(){
         var id = GlobesManager.newGlobe(messageQueue, null,"");
 //        messageQueue.setGlobeId(id);
         GlobeModel globeModel = GlobesManager.getGlobeFromId(id);
         epsilonModel = globeModel.getEpsilons().getFirst();
 //        globeModel.mainPanelModel = new MainPanelModel(id);
-        globeModel.getGameLoop().start();
+//        globeModel.getGameLoop().start();
 //        globeModel.initProperties();
     }
     private void handleShootBullet(String[] parts){
@@ -157,12 +161,12 @@ public class RequestHandler implements Runnable{
         boolean isRightPressed = Boolean.parseBoolean(parts[2]);
         boolean isUpPressed = Boolean.parseBoolean(parts[3]);
         boolean isDownPressed = Boolean.parseBoolean(parts[4]);
-
-        epsilonModel.setLeftPressed(isLeftPressed);
-        epsilonModel.setRightPressed(isRightPressed);
-        epsilonModel.setUpPressed(isUpPressed);
-        epsilonModel.setDownPressed(isDownPressed);
-
+        if (epsilonModel!=null) {
+            epsilonModel.setLeftPressed(isLeftPressed);
+            epsilonModel.setRightPressed(isRightPressed);
+            epsilonModel.setUpPressed(isUpPressed);
+            epsilonModel.setDownPressed(isDownPressed);
+        }
     }
     private void handleEpsilonXP() {
         int xp = 0;

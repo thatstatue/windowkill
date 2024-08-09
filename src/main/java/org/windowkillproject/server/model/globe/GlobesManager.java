@@ -32,7 +32,6 @@ public class GlobesManager {
             eps2 = new EpsilonModel(queue2,id);
         }
         String m = RES_GLOBE_ID+REGEX_SPLIT+id;
-        System.out.println("this is the message im enqueuing" + m);
 
         if (queue1 != null) {
             queue1.setGlobeId(id);
@@ -52,7 +51,6 @@ public class GlobesManager {
         globeModelMap.put(id, globeModel);
 
         globeModel.mainPanelModel = new MainPanelModel(id, id);
-//        globeModel.getPanelModels().add(globeModel.mainPanelModel);
 
         eps1.manualAddToEntities();
         if (eps2!=null) eps2.manualAddToEntities();

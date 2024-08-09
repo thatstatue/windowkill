@@ -39,6 +39,17 @@ public class League {
                     Objects.requireNonNull(squad).removePlayer(player);
                 }
             }
+            case REQ_SQUADS_LIST -> {
+                String squadNames = RES_SQUAD_NAMES;
+                String occupants = RES_OCCUPANTS;
+                for (Squad squad: squads){
+                    squadNames += REGEX_SPLIT+ squad.getName();
+                    occupants += REGEX_SPLIT+ squad.getPlayersCount();
+                }
+                messageQueue.enqueue(squadNames);
+                messageQueue.enqueue(occupants);
+            }
+
         }
     }
     private static boolean isNewName(String name){

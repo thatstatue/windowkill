@@ -17,11 +17,11 @@ import org.windowkillproject.client.view.entities.enemies.minibosses.BarricadosV
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
 import org.windowkillproject.client.view.entities.enemies.normals.*;
 import org.windowkillproject.json.JacksonMapper;
-import org.windowkillproject.server.model.abilities.CollectableModel;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.client.GameClient.clients;
@@ -40,7 +40,7 @@ public class ViewsRenderer {
         for (GameClient gameClient : clients) {
             if (gameClient.getApp().getGlobeId()!= null && gameClient.getApp().getGlobeId().equals(globeId)) {
                 switch (request) {
-                    case REQ_CREATE_PANEL -> handleCreatePanel(parts, gameClient);
+                    case REQ_CREATE_PANEL -> handleCreatePanel(parts,gameClient);
                     case REQ_CREATE_ABILITY -> handleCreateAbility(parts);
                     case REQ_CREATE_ENTITY -> handleCreateEntity(parts);
                     case REQ_REMOVE_OBJECT -> handleRemoveId( objectId);
@@ -53,10 +53,14 @@ public class ViewsRenderer {
     private static void handleCreatePanel(String[] parts, GameClient gameClient) {
         String id = parts[3];
         boolean isMain = Boolean.parseBoolean(parts[4]);
-        if (isMain) {
+        if (isMain ) {
+            panelViews.removeIf(panelView -> panelView instanceof MainPanelView || panelView.getId() == null);
+            System.out.println(panelViews.size()+ "   hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
             var mainPanel = new MainPanelView(id, gameClient);
+            panelViews.add(mainPanel);
             gameClient.getApp().getGameFrame().setMainPanelView(mainPanel);
-        } else {
+        }
+        else {
             int x = Integer.parseInt(parts[5]);
             int y = Integer.parseInt(parts[6]);
             int width = Integer.parseInt(parts[7]);
@@ -121,27 +125,29 @@ public class ViewsRenderer {
     }
 
     private static void handleRemoveId(String id) {
-        for (EntityView entityView : getEntityViews()) {
+        ArrayList<EntityView> views = getEntityViews();
+        for (int i = 0; i < views.size(); i++) {
+            EntityView entityView = views.get(i);
             if (entityView.getId().equals(id)) {
                 entityView.setEnabled(false);
                 entityViews.remove(entityView);
                 return;
             }
         }
-        for (AbilityView abilityView : abilityViews) {
+        for (int i = 0; i < abilityViews.size(); i++) {
+            AbilityView abilityView = abilityViews.get(i);
             if (abilityView.getId().equals(id)) {
-                abilityView.setEnabled(false);
-                abilityViews.remove(abilityView);
-                return;
+//                abilityView.setEnabled(false);
+                abilityView.setVisible(false);
+
             }
         }
-        for (PanelView panelView : panelViews) {
-            if (panelView.getId()!= null && panelView.getId().equals(id)) {
+        for (int i = 0; i < panelViews.size(); i++) {
+            PanelView panelView = panelViews.get(i);
+            if (panelView.getId() != null && panelView.getId().equals(id)) {
                 panelView.setEnabled(false);
                 panelViews.remove(panelView);
 //                app.getGameFrame().getLayeredPane().remove(panelView);
-
-                return;
             }
         }
     }
@@ -154,10 +160,11 @@ public class ViewsRenderer {
         int width = Integer.parseInt(parts[6]);
         int height =  Integer.parseInt(parts[7]);
 
-        for (EntityView entityView : entityViews) {
+        for (int i = 0; i < entityViews.size(); i++) {
+            EntityView entityView = entityViews.get(i);
             if (entityView.getGlobeId().equals(globeId)
-            && entityView.getId().equals(id)) {
-                entityView.set(x,y,width,height);
+                    && entityView.getId().equals(id)) {
+                entityView.set(x, y, width, height);
 
                 if (entityView instanceof EnemyView enemyView) {
                     if (!parts[8].equals("null")) {
@@ -174,19 +181,17 @@ public class ViewsRenderer {
                 return;
             }
         }
-        for (AbilityView abilityView : abilityViews) {
+        for (int i = 0; i < abilityViews.size(); i++) {
+            AbilityView abilityView = abilityViews.get(i);
             if (abilityView.getGlobeId().equals(globeId) &&
                     abilityView.getId().equals(id)) {
-                abilityView.set(x,y,width,height);
-                if (abilityView instanceof BulletView)
-                    System.out.println("im an ability with height of "+ height );
-                return;
+                abilityView.set(x, y, width, height);
             }
         }
-        for (PanelView panelView : panelViews) {
-            if (panelView.getId()!= null && panelView.getId().equals(id)) {
-                panelView.set(x,y,width,height);
-                return;
+        for (int i = 0; i < panelViews.size(); i++) {
+            PanelView panelView = panelViews.get(i);
+            if (panelView.getId() != null && panelView.getId().equals(id)) {
+                panelView.set(x, y, width, height);
             }
         }
     }

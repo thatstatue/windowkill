@@ -16,6 +16,8 @@ public class MainPanelModel extends PanelModel{
                         (getDefaultToolkit().getScreenSize().height - GAME_HEIGHT)/2,
                         GAME_WIDTH, GAME_HEIGHT
                 ), PanelStatus.shrinkable, true, false);
+        getGlobeModel().getGlobeController().createPanelView(getId(),x,y,width,height);
+
     }
     public boolean isPunched() {
         return punched;

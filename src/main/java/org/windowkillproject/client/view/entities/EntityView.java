@@ -18,17 +18,8 @@ public abstract class EntityView extends ObjectView {
         EntityView.entityViews = entityViews;
     }
 
-    @Override
-    public boolean isVisible() {
-        return visible;
-    }
 
-    @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
 
-    private boolean visible = true;
 
     public void setHovering(boolean hovering) {
         this.hovering = hovering;

@@ -27,6 +27,11 @@ public abstract class EnemyModel extends EntityModel {
         System.out.println("seeeee im an enemyyy");
 
     }
+
+    public void setTargetEpsilon(EpsilonModel targetEpsilon) {
+        this.targetEpsilon = targetEpsilon;
+    }
+
     protected EpsilonModel targetEpsilon;
     private EpsilonModel chooseRandomTarget(ArrayList<EpsilonModel> epsilonModels){
         int rand = random.nextInt(epsilonModels.size());

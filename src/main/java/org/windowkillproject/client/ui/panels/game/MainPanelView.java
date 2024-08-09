@@ -23,7 +23,7 @@ public class MainPanelView extends PanelView {
         setSize(new Dimension(GAME_WIDTH, GAME_HEIGHT));
         setLocation((getDefaultToolkit().getScreenSize().width - getWidth())/2,
                 (getDefaultToolkit().getScreenSize().height - getHeight())/2);
-        setEnabled(false);
+//        setEnabled(false);
     }
 
     private String totalKills = "0";

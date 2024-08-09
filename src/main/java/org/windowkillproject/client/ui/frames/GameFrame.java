@@ -11,11 +11,20 @@ import java.awt.*;
 import static org.windowkillproject.Constants.CENTER_X;
 import static org.windowkillproject.Constants.CENTER_Y;
 import static org.windowkillproject.Constants.GAME_TITLE;
+import static org.windowkillproject.Request.REQ_SHRINK_FAST;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 
 public class GameFrame extends JFrame {
 
     private JLayeredPane layeredPane;
+
+    public void setMainPanelView(MainPanelView mainPanelView) {
+        this.mainPanelView = mainPanelView;
+        initLayeredPane();
+        initLabels();
+        entityPanel.getClient().sendMessage(REQ_SHRINK_FAST);
+    }
+
     private MainPanelView mainPanelView;
     private EntityPanel entityPanel;
 
@@ -28,12 +37,19 @@ public class GameFrame extends JFrame {
         return mainPanelView;
     }
 
-    public void setMainPanelView(MainPanelView mainPanelView) {
-        if (this.mainPanelView!= null){
-            panelViews.remove(this.mainPanelView);
-        }
-        this.mainPanelView = mainPanelView;
-    }
+//    public void setMainPanelView(MainPanelView mainPanelView) {
+//        erase();
+//        this.mainPanelView = mainPanelView;
+//    }
+//
+//    private void erase() {
+//        if (this.mainPanelView!= null){
+//            panelViews.remove(this.mainPanelView);
+//            mainPanelView.setVisible(false);
+//            mainPanelView.setEnabled(false);
+//            getLayeredPane().remove(mainPanelView);
+//        }
+//    }
 
     public GameFrame(String id, GameClient client) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -46,10 +62,10 @@ public class GameFrame extends JFrame {
         setBackground(new Color(0, 0, 0, 0));
         setLocationRelativeTo(null);
 
-        mainPanelView = new MainPanelView(id ,client);
+        //        mainPanelView = new MainPanelView(id ,client); //ssssssssss
         entityPanel = new EntityPanel(client);
 
-        initLayeredPane();
+//        initLayeredPane();
     }
 
     private void initLayeredPane() {

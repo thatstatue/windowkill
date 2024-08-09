@@ -4,10 +4,12 @@ import org.windowkillproject.server.Config;
 import org.windowkillproject.server.model.abilities.PortalModel;
 import org.windowkillproject.server.model.entities.EntityModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
+import org.windowkillproject.server.model.entities.enemies.EnemyModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BarricadosModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;
 import org.windowkillproject.server.model.entities.enemies.normals.*;
 import org.windowkillproject.server.model.globe.GlobeModel;
+import org.windowkillproject.server.model.globe.multiplayer.MonomachiaGlobe;
 import org.windowkillproject.server.model.panelmodels.InternalPanelModel;
 import org.windowkillproject.server.model.panelmodels.MainPanelModel;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
@@ -63,7 +65,6 @@ public class Wave {
     }
 
     public void spawnWave() {
-        System.out.println("spawnwaaaaaaave");
         AtomicInteger count = new AtomicInteger();
         getGlobeModel().getWaveFactory().waveTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * getLevel())), null);
         getGlobeModel().getWaveFactory().waveTimer.addActionListener(e -> {
@@ -106,17 +107,56 @@ public class Wave {
         Direction direction = Direction.values()[random.nextInt(4)];
         int dX = random.nextInt(CENTER_X * 2) - CENTER_X;
         int dY = random.nextInt(CENTER_Y * 2) - CENTER_Y;
-        switch (direction) {
-            case TopRight -> new TrigorathModel(globeId, CENTER_X + dX,
-                    CENTER_Y - dY, getGlobeModel().getMainPanelModel()
-            );
-            case TopLeft -> new TrigorathModel(globeId, -dX, -dY,
-                    getGlobeModel().getMainPanelModel());
-            case BottomLeft -> new SquarantineModel(globeId, -dX, CENTER_Y + dY,
-                    getGlobeModel().getMainPanelModel());
-            case BottomRight -> new TrigorathModel(globeId, CENTER_X + dX,
-                    CENTER_Y + dY, getGlobeModel().getMainPanelModel());
+        EnemyModel enemyModel1, enemyModel2;
+        if (getGlobeModel() instanceof MonomachiaGlobe){
+
         }
+        switch (direction) {
+            case TopRight -> {
+                enemyModel1 = new TrigorathModel(globeId, CENTER_X + dX,
+                        CENTER_Y - dY, getGlobeModel().getMainPanelModel()
+                );
+                if (getGlobeModel() instanceof MonomachiaGlobe) {
+                    enemyModel1.setTargetEpsilon(getGlobeModel().getEpsilons().get(0));
+                    enemyModel2 = new TrigorathModel(globeId, -dX, -dY,
+                            getGlobeModel().getMainPanelModel());
+                    enemyModel2.setTargetEpsilon(getGlobeModel().getEpsilons().get(1));
+                }
+            }
+            case TopLeft -> {
+                enemyModel1 = new TrigorathModel(globeId, -dX, -dY,
+                        getGlobeModel().getMainPanelModel());
+                if (getGlobeModel() instanceof MonomachiaGlobe) {
+                    enemyModel1.setTargetEpsilon(getGlobeModel().getEpsilons().get(0));
+                    enemyModel2 = new TrigorathModel(globeId, CENTER_X + dX,
+                            CENTER_Y - dY, getGlobeModel().getMainPanelModel()
+                    );
+                    enemyModel2.setTargetEpsilon(getGlobeModel().getEpsilons().get(1));
+                }
+            }
+            case BottomLeft -> {
+                enemyModel1 = new SquarantineModel(globeId, -dX, CENTER_Y + dY,
+                        getGlobeModel().getMainPanelModel());
+                if (getGlobeModel() instanceof MonomachiaGlobe) {
+                    enemyModel1.setTargetEpsilon(getGlobeModel().getEpsilons().get(0));
+                    enemyModel2 = new SquarantineModel(globeId, -dX, -dY,
+                            getGlobeModel().getMainPanelModel());
+                    enemyModel2.setTargetEpsilon(getGlobeModel().getEpsilons().get(1));
+                }
+            }
+            case BottomRight -> {
+                enemyModel1 = new TrigorathModel(globeId, CENTER_X + dX,
+                        CENTER_Y + dY, getGlobeModel().getMainPanelModel());
+                if (getGlobeModel() instanceof MonomachiaGlobe) {
+                    enemyModel1.setTargetEpsilon(getGlobeModel().getEpsilons().get(0));
+                    enemyModel2 = new TrigorathModel(globeId, CENTER_X + dX,
+                            CENTER_Y - dY, getGlobeModel().getMainPanelModel()
+                    );
+                    enemyModel2.setTargetEpsilon(getGlobeModel().getEpsilons().get(1));
+                }
+            }
+        }
+
         getGlobeModel().performAction(REQ_PLAY_CREATE_SOUND);
     }
 

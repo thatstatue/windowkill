@@ -296,9 +296,6 @@ public abstract class GlobeModel {
         this.smileyHeadModel = smileyHeadModel;
     }
 
-    public void setMainPanelModel(MainPanelModel mainPanelModel) {
-        this.mainPanelModel = mainPanelModel;
-    }
 
     public void setWaveFactory(WaveFactory waveFactory) {
         this.waveFactory = waveFactory;

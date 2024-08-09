@@ -70,6 +70,7 @@ public class GlobeController {
         var panelModel = findModel(id);
         if (panelModel instanceof PanelModel) {
             boolean isMain = panelModel instanceof MainPanelModel;
+            System.out.println(isMain + " lalalllalalalllalalalla");
             getGlobeModel().broadcast(REQ_CREATE_PANEL + REGEX_SPLIT + id + REGEX_SPLIT + isMain + REGEX_SPLIT +
                     x + REGEX_SPLIT + y + REGEX_SPLIT + width + REGEX_SPLIT + height);
         }
