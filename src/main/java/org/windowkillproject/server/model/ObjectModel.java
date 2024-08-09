@@ -6,7 +6,6 @@ import org.windowkillproject.server.model.panelmodels.PanelModel;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.windowkillproject.Request.*;
@@ -37,17 +36,10 @@ public abstract class ObjectModel implements Drawable, Serializable {
         this.y = y;
         this.localPanelModel = localPanelModel;
         this.globeId = globeId;
-       // initGlobeModel(); //todo ??
         this.id = UUID.randomUUID().toString();
         anchor = new Point2D.Double(x, y);
     }
 
-    private void initGlobeModel() {
-        synchronized (LOCK) {
-            if (getGlobeModel().getObjectModels() == null) getGlobeModel().setObjectModels(new ArrayList<>());
-            getGlobeModel().getObjectModels().add(this);
-        }
-    }
 
     @Serial
     private void writeObject(ObjectOutputStream out) throws IOException {

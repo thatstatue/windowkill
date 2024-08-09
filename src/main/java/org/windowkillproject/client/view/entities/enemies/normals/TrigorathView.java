@@ -5,8 +5,8 @@ import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import java.awt.*;
 
 public class TrigorathView extends EnemyView {
-    public TrigorathView(String id, Polygon polygon) {
-        super(id,polygon);
+    public TrigorathView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
     }
 
     @Override

@@ -7,8 +7,8 @@ import java.awt.*;
 public abstract class EnemyView extends EntityView {
     private Polygon polygon;
 
-    public EnemyView(String id, Polygon polygon) {
-        super(id);
+    public EnemyView(String globeId, String id, Polygon polygon) {
+        super(globeId, id );
         this.polygon = polygon;
     }
 

@@ -3,8 +3,8 @@ package org.windowkillproject.client.view.abilities;
 import java.awt.*;
 
 public class CollectableView extends AbilityView {
-    public CollectableView(String id, int x, int y) {
-        super(id, x, y);
+    public CollectableView(String globeId, String id, int x, int y) {
+        super(globeId, id, x, y);
     }
 
     @Override

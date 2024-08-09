@@ -55,6 +55,11 @@ public abstract class GlobeModel {
     private ArrayList<BarricadosModel> barricadosModels;
 
     public ArrayList<AbilityModel> getAbilityModels() {
+//        System.out.println("________________________");
+//        for (AbilityModel ability : abilityModels){
+//            System.out.println(" hi im "+ ability.getId() + "  "+ ability.getClass());
+//        }
+//        System.out.println("________________________");
         return abilityModels;
     }
     private GlobeController globeController;
@@ -89,6 +94,12 @@ public abstract class GlobeModel {
 
     private int killedEnemiesInWave;
     private int killedEnemiesTotal;
+    public void pause(boolean force){
+        getGameLoop().stop();
+        getWaveFactory().setForceStop(force);
+        getWaveFactory().waveTimer.stop();
+        getElapsedTime().pause();
+    }
 
     public int getKilledEnemiesInWave() {
         return killedEnemiesInWave;
@@ -123,6 +134,7 @@ public abstract class GlobeModel {
         return waveFactory;
     }
 
+
     public GlobeModel(String id, EpsilonModel epsilon1) {
         this.id =id;
         setGlobeController(new GlobeController(id));
@@ -141,7 +153,7 @@ public abstract class GlobeModel {
         setBarricadosModels(new ArrayList<>());
         setProjectileModels(new ArrayList<>());
 
-        mainPanelModel = new MainPanelModel(id, id);
+//        mainPanelModel = new MainPanelModel(id, id);
 
         setWaveFactory(new WaveFactory(id));
         setGameLoop(new GameLoop(id));
@@ -203,6 +215,11 @@ public abstract class GlobeModel {
     }
 
     public ArrayList<EntityModel> getEntityModels() {
+//        System.out.println("________________________");
+//        for (EntityModel entityModel : entityModels){
+//            System.out.println(" hi im "+ entityModel.getId() + "  "+ entityModel.getClass());
+//        }
+//        System.out.println("________________________");
         return entityModels;
     }
 

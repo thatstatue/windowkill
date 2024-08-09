@@ -161,6 +161,14 @@ public class ProjectileModel extends AbilityModel implements Projectable {
     public void setShoot(boolean shoot) {
         isShoot = shoot;
     }
+    @Override
+    public int getWidth() {
+        return 5;
+    }
 
+    @Override
+    public int getHeight() {
+        return 5;
+    }
 
 }

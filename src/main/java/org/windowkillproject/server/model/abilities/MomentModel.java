@@ -31,6 +31,15 @@ public class MomentModel extends AbilityModel {
         return attackHP;
     }
 
+    @Override
+    public int getWidth() {
+        return radius;
+    }
+
+    @Override
+    public int getHeight() {
+        return radius;
+    }
     private final Point2D centerOfArea;
     private final int time;
     private final int radius;

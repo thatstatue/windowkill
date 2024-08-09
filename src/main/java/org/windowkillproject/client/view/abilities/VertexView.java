@@ -3,8 +3,8 @@ package org.windowkillproject.client.view.abilities;
 import java.awt.*;
 
 public class VertexView extends AbilityView {
-    public VertexView(String id, int x, int y) {
-        super(id, x, y);
+    public VertexView(String globeId, String id, int x, int y) {
+        super(globeId, id, x, y);
     }
 
     @Override

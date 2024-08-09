@@ -7,8 +7,8 @@ import java.awt.*;
 import static org.windowkillproject.server.Config.WYRM_RADIUS;
 
 public class WyrmView extends EnemyView {
-    public WyrmView(String id, Polygon polygon) {
-        super(id,polygon);
+    public WyrmView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
     }
     @Override
     public void paint(Graphics g) {
@@ -21,7 +21,7 @@ public class WyrmView extends EnemyView {
             g2D.drawPolygon(getPolygon());
         }
         g2D.drawArc(getX()+10 , getY()- 10, WYRM_RADIUS*2 - 20, WYRM_RADIUS*2 - 10, 180, 180);
-        drawBlackRect(g2D);
+        if (getPolygon()!= null)drawBlackRect(g2D);
         g2D.fillOval(getX()+25 , getY()+15 , WYRM_RADIUS*2 - 50, WYRM_RADIUS*2 - 40);
 
         g2D.setColor(Color.magenta);

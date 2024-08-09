@@ -126,6 +126,7 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     public void destroy() {
         super.destroy();
         getGlobeModel().getEntityModels().remove(this);
+        System.out.println("WHO ASKED DESTROY");
     }
 
     public int getXO() {
@@ -170,7 +171,6 @@ public abstract class EntityModel extends ObjectModel implements Transferable {
     private void addToGlobe() {
         if (getGlobeModel() != null) {
             getGlobeModel().getEntityModels().add(this);
-            System.out.println("globe model aint null so im adding "+ id);
             getGlobeModel().getGlobeController().createEntityView(id, x, y, width, height);
         }
     }

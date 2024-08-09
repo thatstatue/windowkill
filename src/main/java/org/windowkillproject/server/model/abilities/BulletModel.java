@@ -175,6 +175,7 @@ public class BulletModel extends AbilityModel implements Projectable, Transferab
         getGlobeModel().getBulletModels().remove(this);
         getGlobeModel().performAction(REQ_PLAY_BULLET_SOUND);
         destroy();
+        getGlobeModel().getAbilityModels().remove(this);
     }
 
     public void setShoot(boolean shoot) {

@@ -11,6 +11,8 @@ import org.windowkillproject.server.model.entities.enemies.attackstypes.Hovering
 import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
 
+import java.util.ArrayList;
+
 import static org.windowkillproject.Constants.FRAME_UPDATE_TIME;
 import static org.windowkillproject.Constants.MODEL_UPDATE_TIME;
 import static org.windowkillproject.Request.REQ_REPAINT_GAME_FRAME;
@@ -117,23 +119,27 @@ public class GameLoop {
 
     private void setViewBoundsForAll() {
         var globeModel = getGlobeModel();
-        for (EntityModel entityModel: globeModel.getEntityModels()){
-            System.out.println( entityModel.getId() + " entity is requesting modif");
+        ArrayList<EntityModel> entityModels = globeModel.getEntityModels();
+        for (int i = 0; i < entityModels.size(); i++) {
+            EntityModel entityModel = entityModels.get(i);
             try {
                 globeModel.getGlobeController().setViewBounds(entityModel);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
         }
-        for (AbilityModel abilityModel: globeModel.getAbilityModels()){
-            System.out.println( abilityModel.getId() + " ability is requesting modif");
+        ArrayList<AbilityModel> abilityModels = globeModel.getAbilityModels();
+        for (int i = 0; i < abilityModels.size(); i++) {
+            AbilityModel abilityModel = abilityModels.get(i);
             try {
                 globeModel.getGlobeController().setViewBounds(abilityModel);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
         }
-        for (PanelModel panelModel: globeModel.getPanelModels()){
+        ArrayList<PanelModel> panelModels = globeModel.getPanelModels();
+        for (int i = 0; i < panelModels.size(); i++) {
+            PanelModel panelModel = panelModels.get(i);
 //            System.out.println( panelModel.getId() + " panel is requesting modif");
             try {
                 globeModel.getGlobeController().setViewBounds(panelModel);

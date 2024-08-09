@@ -5,8 +5,8 @@ import java.awt.*;
 import static org.windowkillproject.Constants.EPSILON_RADIUS;
 
 public class PortalView extends AbilityView {
-    public PortalView(String id, int x, int y) {
-        super(id, x, y);
+    public PortalView(String globeId, String id, int x, int y) {
+        super(globeId, id, x, y);
     }
     @Override
     public void paint(Graphics g) {

@@ -1,6 +1,5 @@
 package org.windowkillproject.server.model.abilities;
 
-import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.panelmodels.PanelModel;
 
 
@@ -22,6 +21,11 @@ public class CollectableModel extends AbilityModel{
 
     public int getRewardXp() {
         return rewardXp;
+    }
+    @Override
+    public void destroy(){
+        super.destroy();
+        getGlobeModel().getCollectableModels().remove(this);
     }
 
 }

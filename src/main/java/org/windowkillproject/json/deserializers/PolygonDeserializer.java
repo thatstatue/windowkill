@@ -20,17 +20,17 @@ public class PolygonDeserializer extends JsonDeserializer<Polygon> {
 
         Polygon polygon = new Polygon(xpoints, ypoints, npoints);
 
-        JsonNode boundsNode = node.get("bounds");
-        if (boundsNode != null) {
-            Rectangle bounds = p.getCodec().treeToValue(boundsNode, Rectangle.class);
-            try {
-                Field boundsField = Polygon.class.getDeclaredField("bounds");
-                boundsField.setAccessible(true);
-                boundsField.set(polygon, bounds);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+//        JsonNode boundsNode = node.get("bounds");
+//        if (boundsNode != null) {
+//            Rectangle bounds = p.getCodec().treeToValue(boundsNode, Rectangle.class);
+//            try {
+//                Field boundsField = Polygon.class.getDeclaredField("bounds");
+//                boundsField.setAccessible(true);
+//                boundsField.set(polygon, bounds);
+//            } catch (NoSuchFieldException | IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         return polygon;
     }

@@ -6,8 +6,8 @@ import java.awt.*;
 
 
 public class NecropickView extends EnemyView {
-    public NecropickView(String id, Polygon polygon) {
-        super(id,polygon);
+    public NecropickView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
     }
     @Override
     public void paint(Graphics g) {

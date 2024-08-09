@@ -3,8 +3,8 @@ package org.windowkillproject.client.view.abilities;
 import java.awt.*;
 
 public class MomentView extends AbilityView {
-    public MomentView(String id, int x, int y,int radius) {
-        super(id,x,y);
+    public MomentView(String globeId, String id, int x, int y, int radius) {
+        super(globeId, id, x, y);
         setWidth(radius);
         setHeight(radius);
     }

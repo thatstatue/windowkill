@@ -22,4 +22,13 @@ public class VertexModel extends AbilityModel {
         anchor = new Point2D.Float(getX(), getY());
     }
 
+    @Override
+    public int getWidth() {
+        return 5;
+    }
+
+    @Override
+    public int getHeight() {
+        return 5;
+    }
 }

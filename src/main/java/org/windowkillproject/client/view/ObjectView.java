@@ -12,12 +12,22 @@ import java.awt.image.BufferedImage;
         "graphics", "graphicsConfiguration", "raster", "propertyChangeListeners", "treeLock", "toolkit", "locationOnScreen"})
 
 public abstract class ObjectView extends JLabel implements Viewable {
+    public String getGlobeId() {
+        return globeId;
+    }
+
+    public void setGlobeId(String globeId) {
+        this.globeId = globeId;
+    }
+
     @JsonSerialize(using = BufferedImageSerializer.class)
     protected BufferedImage img;
     private final String id;
+    private String globeId;
     protected int x, y, width, height;
 
-    public ObjectView(String id) {
+    public ObjectView( String globeId, String id) {
+        this.globeId = globeId;
         this.id = id;
 
     }

@@ -138,22 +138,23 @@ public class GlobeController {
         return -1;
     }
 
-    public <T extends Drawable> void setViewBounds(T model) throws JsonProcessingException {
+    public <T extends Drawable> void setViewBounds(T drawable) throws JsonProcessingException {
         // brod + globeId+ req + id + x + y + w + h + polygon/null + boolvisible?
-        String message = REQ_MODIFY_OBJECT + REGEX_SPLIT + model.getId() + REGEX_SPLIT +
-                model.getX() + REGEX_SPLIT +
-                model.getY() + REGEX_SPLIT +
-                model.getWidth() + REGEX_SPLIT +
-                model.getHeight();
-        if (model instanceof EntityModel) {
-            if (model instanceof EnemyModel enemyModel) {
-                String json = JacksonMapper.getInstance().writeValueAsString(enemyModel);
-                message += REGEX_SPLIT + json;
+        String message = REQ_MODIFY_OBJECT + REGEX_SPLIT + drawable.getId() + REGEX_SPLIT +
+                drawable.getX() + REGEX_SPLIT +
+                drawable.getY() + REGEX_SPLIT +
+                drawable.getWidth() + REGEX_SPLIT +
+                drawable.getHeight();
+
+        if (drawable instanceof EntityModel) {
+            if (drawable instanceof EnemyModel enemyModel) {
+                String polygon = JacksonMapper.getInstance().writeValueAsString(enemyModel.getPolygon());
+                message += REGEX_SPLIT + polygon;
             } else {
                 message += REGEX_SPLIT + "null";
             }
-            if (model instanceof Hideable) {
-                boolean visible = ((Hideable) model).isVisible();
+            if (drawable instanceof Hideable) {
+                boolean visible = ((Hideable) drawable).isVisible();
                 message += REGEX_SPLIT + visible;
             }
         }

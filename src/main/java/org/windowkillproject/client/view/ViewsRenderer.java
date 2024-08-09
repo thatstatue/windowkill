@@ -17,6 +17,7 @@ import org.windowkillproject.client.view.entities.enemies.minibosses.BarricadosV
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
 import org.windowkillproject.client.view.entities.enemies.normals.*;
 import org.windowkillproject.json.JacksonMapper;
+import org.windowkillproject.server.model.abilities.CollectableModel;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
@@ -27,6 +28,7 @@ import static org.windowkillproject.client.GameClient.clients;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.client.view.entities.EntityView.entityViews;
+import static org.windowkillproject.client.view.entities.EntityView.getEntityViews;
 
 public class ViewsRenderer {
     public static void updateViews(String[] parts) {
@@ -36,12 +38,12 @@ public class ViewsRenderer {
         String objectId = parts[3];
 
         for (GameClient gameClient : clients) {
-            if (gameClient.getApp().getGlobeId().equals(globeId)) {
+            if (gameClient.getApp().getGlobeId()!= null && gameClient.getApp().getGlobeId().equals(globeId)) {
                 switch (request) {
                     case REQ_CREATE_PANEL -> handleCreatePanel(parts, gameClient);
                     case REQ_CREATE_ABILITY -> handleCreateAbility(parts);
                     case REQ_CREATE_ENTITY -> handleCreateEntity(parts);
-                    case REQ_REMOVE_OBJECT -> handleRemoveId(objectId);
+                    case REQ_REMOVE_OBJECT -> handleRemoveId( objectId);
                     case REQ_MODIFY_OBJECT -> handleModifyObject(parts);
                 }
             }
@@ -52,7 +54,8 @@ public class ViewsRenderer {
         String id = parts[3];
         boolean isMain = Boolean.parseBoolean(parts[4]);
         if (isMain) {
-            new MainPanelView(id, gameClient);
+            var mainPanel = new MainPanelView(id, gameClient);
+            gameClient.getApp().getGameFrame().setMainPanelView(mainPanel);
         } else {
             int x = Integer.parseInt(parts[5]);
             int y = Integer.parseInt(parts[6]);
@@ -71,13 +74,13 @@ public class ViewsRenderer {
                 Constructor<T> constructor = null;
                 T entityView;
                 if (entityViewCls.equals(EpsilonView.class)) {
-                    constructor = entityViewCls.getConstructor(String.class);
-                    entityView = constructor.newInstance(parts[3]);
+                    constructor = entityViewCls.getConstructor(String.class, String.class);
+                    entityView = constructor.newInstance(parts[1], parts[3]);
                     System.out.println("i just created epsilon view with id " + parts[3]);
                 } else {
                     Polygon polygon = JacksonMapper.getInstance().readValue(parts[size - 2], Polygon.class);
-                    constructor = entityViewCls.getConstructor(String.class, Polygon.class);
-                    entityView = constructor.newInstance(parts[3], polygon);
+                    constructor = entityViewCls.getConstructor(String.class, String.class, Polygon.class);
+                    entityView = constructor.newInstance(parts[1], parts[3], polygon);
                 }
                 entityView.set(Integer.parseInt(parts[4]),
                         Integer.parseInt(parts[5]),
@@ -100,11 +103,11 @@ public class ViewsRenderer {
                 int radius = 5;
                 if (size > 7) {
                     radius = Integer.parseInt(parts[7]);
-                    constructor = abilityViewCls.getConstructor(String.class, int.class, int.class, int.class);
-                    abilityView = constructor.newInstance(parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5]), Integer.parseInt(parts[6]));
+                    constructor = abilityViewCls.getConstructor(String.class, String.class, int.class, int.class, int.class);
+                    abilityView = constructor.newInstance(parts[1], parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5]), Integer.parseInt(parts[6]));
                 } else {
-                    constructor = abilityViewCls.getConstructor(String.class, int.class, int.class);
-                    abilityView = constructor.newInstance(parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+                    constructor = abilityViewCls.getConstructor(String.class, String.class, int.class, int.class);
+                    abilityView = constructor.newInstance(parts[1], parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
 
                 }
                 abilityView.set(Integer.parseInt(parts[4]),
@@ -118,7 +121,7 @@ public class ViewsRenderer {
     }
 
     private static void handleRemoveId(String id) {
-        for (EntityView entityView : entityViews) {
+        for (EntityView entityView : getEntityViews()) {
             if (entityView.getId().equals(id)) {
                 entityView.setEnabled(false);
                 entityViews.remove(entityView);
@@ -133,15 +136,18 @@ public class ViewsRenderer {
             }
         }
         for (PanelView panelView : panelViews) {
-            if (panelView.getId().equals(id)) {
+            if (panelView.getId()!= null && panelView.getId().equals(id)) {
                 panelView.setEnabled(false);
                 panelViews.remove(panelView);
+//                app.getGameFrame().getLayeredPane().remove(panelView);
+
                 return;
             }
         }
     }
 
     private static void handleModifyObject(String[] parts) {
+        String globeId = parts[1];
         String id = parts[3];
         int x = Integer.parseInt(parts[4]);
         int y = Integer.parseInt(parts[5]);
@@ -149,14 +155,16 @@ public class ViewsRenderer {
         int height =  Integer.parseInt(parts[7]);
 
         for (EntityView entityView : entityViews) {
-            if (entityView.getId().equals(id)) {
+            if (entityView.getGlobeId().equals(globeId)
+            && entityView.getId().equals(id)) {
                 entityView.set(x,y,width,height);
+
                 if (entityView instanceof EnemyView enemyView) {
                     if (!parts[8].equals("null")) {
                         try {
                             Polygon polygon = JacksonMapper.getInstance().readValue(parts[8], Polygon.class);
                             enemyView.setPolygon(polygon);
-                            System.out.println("i just set polygon for enemy in rendering");
+//                            System.out.println("i just set polygon for enemy in rendering");
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
                         }
@@ -167,13 +175,16 @@ public class ViewsRenderer {
             }
         }
         for (AbilityView abilityView : abilityViews) {
-            if (abilityView.getId().equals(id)) {
+            if (abilityView.getGlobeId().equals(globeId) &&
+                    abilityView.getId().equals(id)) {
                 abilityView.set(x,y,width,height);
+                if (abilityView instanceof BulletView)
+                    System.out.println("im an ability with height of "+ height );
                 return;
             }
         }
         for (PanelView panelView : panelViews) {
-            if (panelView.getId().equals(id)) {
+            if (panelView.getId()!= null && panelView.getId().equals(id)) {
                 panelView.set(x,y,width,height);
                 return;
             }

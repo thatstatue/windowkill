@@ -19,8 +19,6 @@ public class ClientHandler{
     private BufferedReader in;
     private MessageQueue messageQueue = new MessageQueue();
 
-    public static Map<Socket, ClientHandler> socketClientHandlerMap = new HashMap<>();
-
 
     public ClientHandler(Socket clientSocket, GameServer server) {
         this.socket = clientSocket;
@@ -31,7 +29,6 @@ public class ClientHandler{
         }  catch (IOException e){
             e.printStackTrace();
         }
-        socketClientHandlerMap.put(socket, this);
     }
     public void start(){
         new Thread(new sendQueuedMessages(this)).start();
@@ -47,7 +44,8 @@ public class ClientHandler{
                         new RequestHandler(messageQueue, message).run();
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    messageQueue.getGlobeModel().pause(true);
+                    //throw new RuntimeException(e);
                 }
             }
         }

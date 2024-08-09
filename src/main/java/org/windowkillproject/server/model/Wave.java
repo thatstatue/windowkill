@@ -30,30 +30,43 @@ import static org.windowkillproject.server.model.globe.GlobesManager.getGlobeFro
 
 public class Wave {
     private final String globeId;
+
     public Wave(String globeId) {
         this.globeId = globeId;
         setStartNewWave(false);
     }
-    public GlobeModel getGlobeModel(){
+
+    public GlobeModel getGlobeModel() {
         return getGlobeFromId(globeId);
     }
-    private Timer getWaveTimer(){
-        return getGlobeModel().getWaveFactory().waveTimer;
+
+    private void startWaveTimer() {
+        var waves = getGlobeModel().getWaveFactory();
+        if (!waves.isForceStop()) waves.waveTimer.start();
     }
-    private int getLevel(){
+    private void stopWaveTimer() {
+        var waves = getGlobeModel().getWaveFactory();
+        if (!waves.isForceStop()) waves.waveTimer.stop();
+    }
+
+
+    private int getLevel() {
         return getGlobeModel().getWaveFactory().getLevel();
     }
-    private void setBetweenWaves(boolean betweenWaves){
+
+    private void setBetweenWaves(boolean betweenWaves) {
         getGlobeModel().getWaveFactory().setBetweenWaves(betweenWaves);
     }
-    private void setStartNewWave(boolean startNewWave){
+
+    private void setStartNewWave(boolean startNewWave) {
         getGlobeModel().getWaveFactory().setStartNewWave(startNewWave);
     }
+
     public void spawnWave() {
         System.out.println("spawnwaaaaaaave");
         AtomicInteger count = new AtomicInteger();
         getGlobeModel().getWaveFactory().waveTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * getLevel())), null);
-        getWaveTimer().addActionListener(e -> {
+        getGlobeModel().getWaveFactory().waveTimer.addActionListener(e -> {
             int bound = getLevel() * 2 + Config.BOUND;
             if (count.get() < bound) {
                 //doesn't allow too many enemies
@@ -81,11 +94,11 @@ public class Wave {
                     } else {
                         getGlobeModel().endingScene();
                     }
-                    getWaveTimer().stop();
+                    stopWaveTimer();
                 }
             }
         });
-        getWaveTimer().start();
+        startWaveTimer();
 
     }
 
@@ -94,11 +107,12 @@ public class Wave {
         int dX = random.nextInt(CENTER_X * 2) - CENTER_X;
         int dY = random.nextInt(CENTER_Y * 2) - CENTER_Y;
         switch (direction) {
-            case TopRight -> new TrigorathModel(globeId,CENTER_X + dX,
+            case TopRight -> new TrigorathModel(globeId, CENTER_X + dX,
                     CENTER_Y - dY, getGlobeModel().getMainPanelModel()
             );
-            case TopLeft -> new SquarantineModel(globeId,-dX, -dY, getGlobeModel().getMainPanelModel());
-            case BottomLeft -> new TrigorathModel(globeId,-dX, CENTER_Y + dY,
+            case TopLeft -> new TrigorathModel(globeId, -dX, -dY,
+                    getGlobeModel().getMainPanelModel());
+            case BottomLeft -> new SquarantineModel(globeId, -dX, CENTER_Y + dY,
                     getGlobeModel().getMainPanelModel());
             case BottomRight -> new TrigorathModel(globeId, CENTER_X + dX,
                     CENTER_Y + dY, getGlobeModel().getMainPanelModel());
@@ -113,8 +127,8 @@ public class Wave {
         int boundKill = getLevel() * 2 + Config.BOUND;
 
 
-        getGlobeModel().getWaveFactory().waveTimer= new Timer((int) (WAVE_LOOP * (1 - 0.05 * getLevel())), null);
-            getWaveTimer().addActionListener(e -> {
+        getGlobeModel().getWaveFactory().waveTimer = new Timer((int) (WAVE_LOOP * (1 - 0.05 * getLevel())), null);
+        getGlobeModel().getWaveFactory().waveTimer.addActionListener(e -> {
             count.getAndIncrement();
             if (getGlobeModel().getKilledEnemiesInWave() < boundKill) {
                 createRandomEnemy();
@@ -125,28 +139,28 @@ public class Wave {
                     getGlobeModel().performAction(REQ_PLAY_END_WAVE_SOUND);
                     setStartNewWave(false);
                     setBetweenWaves(true);
-                    if(wait.get()<3){
+                    if (wait.get() < 3) {
                         wait.getAndIncrement();
-                    }else {
+                    } else {
                         setStartNewWave(true);
                         setBetweenWaves(false);
                         if (getLevel() < END_OF_MINIBOSS) {
                             getGlobeModel().resetKilledEnemiesInWave();
                         }
-                        getWaveTimer().stop();
+                        stopWaveTimer();
                     }
                 } else {
                     System.out.println("Waiting for remaining enemies to be killed.");
                 }
             }
             if (count.get() == 5) {
-                var mainPanel =getGlobeModel().getMainPanelModel();
-                new PortalModel(globeId, mainPanel.getX()+40,
-                        mainPanel.getY()+40);
-             //   setCheckPointOn(true); //todo
+                var mainPanel = getGlobeModel().getMainPanelModel();
+                new PortalModel(globeId, mainPanel.getX() + 40,
+                        mainPanel.getY() + 40);
+                //   setCheckPointOn(true); //todo
             }
         });
-        getWaveTimer().start();
+        startWaveTimer();
 
     }
 
@@ -159,7 +173,7 @@ public class Wave {
             for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons())
                 keepInPanel(epsilonModel, getGlobeModel().getMainPanelModel());
             if (getGlobeModel().getSmileyHeadModel().isDefeated()) {
-                getGlobeModel().performAction(REQ_INIT_SCORE_FRAME+ REGEX_SPLIT + true);
+                getGlobeModel().performAction(REQ_INIT_SCORE_FRAME + REGEX_SPLIT + true);
                 timer.stop();
             }
         };
@@ -187,32 +201,32 @@ public class Wave {
             switch (randNum) {
                 case 0 -> createRandomLocalEnemy();
                 case 1 -> {
-                   // var gamePanel = targetEpsilon.getLocalPanelModel();
-                   // boolean temp = false;
-                  //  if (random.nextInt(2) == 0 || gamePanel == null) {
-                       var gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.shrinkable, true);
-                  //      temp = true;
-                   // }
-                    var omenoctModel = new OmenoctModel(globeId,randX, randY, gamePanel);
+                    // var gamePanel = targetEpsilon.getLocalPanelModel();
+                    // boolean temp = false;
+                    //  if (random.nextInt(2) == 0 || gamePanel == null) {
+                    var gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.shrinkable, true);
+                    //      temp = true;
+                    // }
+                    var omenoctModel = new OmenoctModel(globeId, randX, randY, gamePanel);
                     //if (temp) omenoctModel.setBgPanel((InternalGamePanel) gamePanel);
                 }
                 case 2 -> {
 //                    var gamePanel = targetEpsilon.getLocalPanelModel();
 //                    boolean temp = false;
 //                    if (random.nextInt(2) == 0 || gamePanel == null) {
-                       var gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.isometric, true);
+//                    var gamePanel = spawnInternalGamePanel(randX, randY, PanelStatus.isometric, true);
 //                        temp = true;
 //                    }
-                    var archmireModel = new ArchmireModel(globeId,gamePanel, randX, randY);
+//                    var archmireModel = new ArchmireModel(globeId, gamePanel, randX, randY);
 //                    if (temp) archmireModel.setBgPanel((InternalGamePanel) gamePanel);
-
+                     createRandomLocalEnemy();
                 }
                 case 3 -> {
-                    if (WyrmModel.getCount() < 1) new WyrmModel(globeId,randX, randY);
+                    if (WyrmModel.getCount() < 1) new WyrmModel(globeId, randX, randY);
                     else createRandomLocalEnemy();
                 }
                 case 4 -> {
-                    new NecropickModel(globeId,randX, randY);
+                    new NecropickModel(globeId, randX, randY);
                 }
             }
         }
@@ -221,7 +235,7 @@ public class Wave {
     private InternalPanelModel spawnInternalGamePanel(int randX, int randY, PanelStatus panelStatus, boolean flexible) {
         int randWidth = GAME_MIN_SIZE / 2 + random.nextInt(GAME_MIN_SIZE);
         int randHeight = GAME_MIN_SIZE / 2 + random.nextInt(GAME_MIN_SIZE);
-        return new InternalPanelModel(globeId,new Rectangle(randX - randWidth / 2, randY - randHeight / 2,
+        return new InternalPanelModel(globeId, new Rectangle(randX - randWidth / 2, randY - randHeight / 2,
                 randWidth, randHeight), panelStatus, flexible);
     }
 
@@ -232,7 +246,7 @@ public class Wave {
             new BlackOrbModel(globeId, randX, randY);
         } else {
             if (!isEntityThere(randX, randY))
-                new BarricadosModel(globeId,randX, randY);
+                new BarricadosModel(globeId, randX, randY);
             else createRandomLocalEnemy();
         }
     }
@@ -249,7 +263,6 @@ public class Wave {
     }
 
 
-
     private enum Direction {
         TopLeft, TopRight, BottomLeft, BottomRight
     }
@@ -257,14 +270,14 @@ public class Wave {
     public void welcomeBossScene() {
         Timer welcome = new Timer(FPS, null);
         //take epsilon to main panel
-        for (EpsilonModel epsilonModel: getGlobeModel().getEpsilons()){
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
             getGlobeModel().getEntityModels().remove(epsilonModel);
         }
         cleanOutOtherObjects();
         getGlobeModel().performAction(REQ_NEXT_LEVEL);
 
         var mainPanel = getGlobeModel().getMainPanelModel();
-        for (EpsilonModel epsilonModel: getGlobeModel().getEpsilons()){
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
             epsilonModel.setLocalPanelModel(mainPanel);
             keepInPanel(epsilonModel, epsilonModel.getLocalPanelModel());
         }
@@ -279,7 +292,7 @@ public class Wave {
         return e -> {
             var rect = mainPanel.getBounds();
             int deltaX = CENTER_X - GAME_MIN_SIZE - rect.x;
-            int deltaY = CENTER_Y - rect.y ;
+            int deltaY = CENTER_Y - rect.y;
             int dX = 6 * getSign(deltaX);
             int dY = 6 * getSign(deltaY);
 
@@ -291,14 +304,14 @@ public class Wave {
 
                 }
                 if (abs(deltaY) > 8) {
-                    mainPanel.setBounds(rect.x , rect.y + dY,
+                    mainPanel.setBounds(rect.x, rect.y + dY,
                             rect.width, rect.height);
 
 //                    epsilonModel.move(0, dY);
                 }
-                for (EpsilonModel epsilonModel: getGlobeModel().getEpsilons()){
+                for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
                     epsilonModel.setLocalPanelModel(mainPanel);
-                    keepInPanel(epsilonModel,mainPanel);
+                    keepInPanel(epsilonModel, mainPanel);
                 }
             } else {
                 welcome.stop();
@@ -307,7 +320,7 @@ public class Wave {
     }
 
     private void cleanOutOtherObjects() {
-        for (EpsilonModel epsilonModel: getGlobeModel().getEpsilons()) {
+        for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
             epsilonModel.setLocalPanelModel(getGlobeModel().getMainPanelModel());
         }
         for (int i = 0; i < getGlobeModel().getPanelModels().size(); i++) {

@@ -18,7 +18,8 @@ public abstract class AbilityModel extends ObjectModel {
 
     private void addToGlobe(AbilityModel abilityModel) {
         getGlobeModel().getAbilityModels().add(abilityModel);
-        getGlobeModel().getGlobeController().createAbilityView(id, x, y);
+        if (!(abilityModel instanceof VertexModel))
+            getGlobeModel().getGlobeController().createAbilityView(id, x, y);
     }
 
     public boolean isCollectedByEpsilon(EpsilonModel epsilonModel) {
@@ -27,8 +28,8 @@ public abstract class AbilityModel extends ObjectModel {
     }
 
     public void destroy() {
+        super.destroy();
         getGlobeModel().getAbilityModels().remove(this);
     }
-
 
 }

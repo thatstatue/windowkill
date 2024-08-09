@@ -147,8 +147,10 @@ public class App implements Runnable {
     public void initScoreFrame(boolean won) {
         GameSaveManager.deleteSaveFile();
         getGameFrame().setVisible(false);
-        scoreFrame = new ScoreFrame(client, gameFrame.getLabels(), won);
         pauseUpdate();
+        scoreFrame = new ScoreFrame(client, gameFrame.getLabels(), won);
+
+        //nextLevel();
     }
 
     public void showTut() {
@@ -163,6 +165,7 @@ public class App implements Runnable {
         //minimize tabs
         minimize();
         loadOrNewGame();
+        setPanelViews(new ArrayList<>());
         client.sendMessage(REQ_NEW_GAME_SINGLE);
         resetGame();
         initGFrame();//todo
@@ -197,7 +200,6 @@ public class App implements Runnable {
         pauseUpdate();
         getGameFrame().setVisible(false);
         getShopFrame().setVisible(true);
-
     }
 
     public void initSTFrame() {
@@ -228,10 +230,9 @@ public class App implements Runnable {
     }
 
     public void resetGame() {
-        globeId = "";
-        nextLevel();
+//        globeId = "";
+//        nextLevel();
         waveReset();
-        setPanelViews(new ArrayList<>());
         client.sendMessage(REQ_RESET_GAME);
     }
 
@@ -240,11 +241,11 @@ public class App implements Runnable {
     }
 
     public void nextLevel() {
-        client.sendMessage(REQ_NEXT_LEVEL);
+
         setAbilityViews(new ArrayList<>());
         entityViews = new ArrayList<>();
         BlackOrbView.resetOrbViews();
-
+        client.sendMessage(REQ_NEXT_LEVEL);
 //        client.sendMessage(REQ_EPSILON_NEW_INSTANCE);
 //        getGameFrame().setXpAmount(targetEpsilon.getXp()); todo check if is on time
 
@@ -311,8 +312,6 @@ public class App implements Runnable {
     */
         String[] parts = message.split(REGEX_SPLIT);
         switch (parts[0]) {
-            case REQ_ARE_KEYS_PRESSED -> handleKeysPressed();
-            case RES_EPSILON_ANCHOR -> handleEpsilonAnchor(parts);
             case REQ_SET_WAVE_LEVEl -> gameFrame.setWaveLevel(Integer.parseInt(parts[1]));
             case REQ_PLAY_END_WAVE_SOUND -> soundPlayer.playEndWaveSound();
             case REQ_PLAY_CREATE_SOUND -> soundPlayer.playCreateSound();
@@ -328,40 +327,52 @@ public class App implements Runnable {
             case REQ_PLAY_DESTROY_SOUND -> soundPlayer.playDestroySound();
             case REQ_SET_CLOCK -> gameFrame.getMainPanelView().setClockTime(parts[1]);
             case REQ_REPAINT_GAME_FRAME -> handleRepaint();
-            case RES_GLOBE_ID -> globeId = parts[1];
+            case RES_GLOBE_ID -> handleGlobeId(parts[1]);
             case RES_NEW_ONLINE_PLAYER -> getLeagueFrame().setUsernamed(Boolean.parseBoolean(parts[1]));
             case BROADCAST_REDIRECT -> ViewsRenderer.updateViews(parts);
-
-
+            case REQ_PAUSE_UPDATE -> client.sendMessage(REQ_PAUSE_UPDATE);
         }
+        handleKeysPressed();
+    }
+
+    private void handleGlobeId(String id) {
+        globeId = id;
+        gameFrame.getMainPanelView().setId(id);
     }
 
 
     private void handleRepaint() {
-
+//        System.out.println(panelViews.size() + " is panel views size");
+//        System.out.println(entityViews.size() + " is entity views size");
+//        gameFrame.revalidate();
         gameFrame.revalidate();
+
+
         for (int i =0 ; i< panelViews.size(); i++){
             var panelView = panelViews.get(i);
-            panelView.revalidate();
-            panelView.repaint();
+            if(panelView.getClient().getApp().getGlobeId().equals(globeId)) {
+                panelView.revalidate();
+                panelView.repaint();
+            }
         }
 
         for (int i = 0; i < abilityViews.size(); i++) {
             AbilityView abilityView = abilityViews.get(i);
-            abilityView.revalidate();
-            abilityView.repaint();
+            if(abilityView.getGlobeId().equals(globeId)) {
+                abilityView.revalidate();
+                abilityView.repaint();
+            }
             //  if (!abilityView.isEnabled()) abilityViews.remove(abilityView);
         }
 
         for (int i = 0; i < entityViews.size(); i++) {
             EntityView entityView = entityViews.get(i);
-            entityView.revalidate();
-            entityView.repaint();
+            if(entityView.getGlobeId().equals(globeId)) {
+                entityView.revalidate();
+                entityView.repaint();
+            }
 //            if (!entityView.isEnabled()) entityViews.remove(entityView);
         }
-
-        System.out.println(panelViews.size() + " is panel views size");
-        System.out.println(entityViews.size() + " is entity views size");
 
         gameFrame.repaint();
     }
@@ -371,10 +382,10 @@ public class App implements Runnable {
 
     }
 
-    private void handleEpsilonAnchor(String[] parts) {
-        var anchor = new Point2D.Double(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        epsilonKeyListener.setEpsilonAnchor(anchor);
-    }
+//    private void handleEpsilonAnchor(String[] parts) {
+//        var anchor = new Point2D.Double(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+//        epsilonKeyListener.setEpsilonAnchor(anchor);
+//    }
 
     private void handleKeysPressed() {
         client.sendMessage(RES_ARE_KEYS_PRESSED + REGEX_SPLIT +

@@ -11,6 +11,8 @@ import java.awt.*;
 import static org.windowkillproject.Constants.CENTER_X;
 import static org.windowkillproject.Constants.CENTER_Y;
 import static org.windowkillproject.Constants.GAME_TITLE;
+import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
+
 public class GameFrame extends JFrame {
 
     private JLayeredPane layeredPane;
@@ -24,6 +26,13 @@ public class GameFrame extends JFrame {
 
     public MainPanelView getMainPanelView() {
         return mainPanelView;
+    }
+
+    public void setMainPanelView(MainPanelView mainPanelView) {
+        if (this.mainPanelView!= null){
+            panelViews.remove(this.mainPanelView);
+        }
+        this.mainPanelView = mainPanelView;
     }
 
     public GameFrame(String id, GameClient client) {

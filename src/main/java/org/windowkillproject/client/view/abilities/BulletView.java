@@ -4,8 +4,8 @@ package org.windowkillproject.client.view.abilities;
 import java.awt.*;
 
 public class BulletView extends AbilityView {
-    public BulletView(String id,int x, int y) {
-        super(id, x, y);
+    public BulletView(String globeId, String id, int x, int y) {
+        super(globeId, id, x, y);
     }
 
     @Override

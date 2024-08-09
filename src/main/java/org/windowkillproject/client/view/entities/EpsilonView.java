@@ -9,8 +9,8 @@ import static org.windowkillproject.Constants.EPSILON_RADIUS;
 public class EpsilonView extends EntityView {
     double radius;
 
-    public EpsilonView(String id) {
-        super(id);
+    public EpsilonView(String globeId, String id) {
+        super(globeId, id );
         this.radius = EPSILON_RADIUS;
         setImg(ImgData.getData().getEpsilon());
         System.out.println("i agree my id is "+ getId());

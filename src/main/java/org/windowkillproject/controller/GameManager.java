@@ -355,7 +355,6 @@ public class GameManager {
             }
         }
     }
-
     private void setBulletsBoundsAllowed() {
         var globeModel = getGlobeModel();
         for (int i = 0; i < globeModel.getBulletModels().size(); i++) {
@@ -467,8 +466,11 @@ public class GameManager {
                 transferable.setLocalPanelModel(panelModel);
             }
         }
-        if (t.get() > 1) transferable.setLocalPanelModel(null);
+        if (t.get() > 1) {
+            transferable.setLocalPanelModel(null);
+        }
     }
+
 
     public void keepTransferableInBounds() {
         setTransferableBoundsAllowed();
@@ -515,7 +517,6 @@ public class GameManager {
         int localPanelY = panel.getY();
         int endOfLocalPanelY = localPanelY + panel.getHeight();
         int endOfLocalPanelX = localPanelX + panel.getWidth();
-
         if (endY > endOfLocalPanelY) {
             int deltaY = endOfLocalPanelY - endY;
             entityModel.move(0, deltaY);
@@ -533,6 +534,7 @@ public class GameManager {
             entityModel.move(deltaX, 0);
         }
     }
+
 
     public void epsilonIntersectionControl() {
         for (EpsilonModel epsilonModel : getGlobeModel().getEpsilons()) {
@@ -604,8 +606,8 @@ public class GameManager {
         if (panelModel !=null) {
             synchronized (LOCK) {
                 getGlobeModel().getPanelModels().remove(panelModel);
+                getGlobeModel().broadcast(REQ_REMOVE_OBJECT+ REGEX_SPLIT + panelModel.getId());
             }
-//            app.getGameFrame().getLayeredPane().remove(panelView);
         }
     }
 

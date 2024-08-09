@@ -17,7 +17,6 @@ public class PortalModel extends AbilityModel{
         getGlobeModel().getGlobeController().createAbilityView(getId(), getX(),getY());
 
     }
-
     private final long initSeconds;
 
     public long getInitSeconds() {

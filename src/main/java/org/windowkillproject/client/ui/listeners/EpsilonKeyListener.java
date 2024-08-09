@@ -21,12 +21,8 @@ public class EpsilonKeyListener implements NativeKeyListener {
     }
 
     private final GameClient client;
-    private Point2D epsilonAnchor = new Point2D.Float(0, 0);
     private int SENSITIVITY_RATE = 0;
 
-    public void setEpsilonAnchor(Point2D epsilonAnchor) {
-        this.epsilonAnchor = epsilonAnchor;
-    }
 
     public static boolean changingButtons;
     public static boolean isLeftPressed;

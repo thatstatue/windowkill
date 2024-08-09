@@ -32,7 +32,7 @@ public class PrimaryPanel extends Panel {
         }
         {
             ActionListener actionListener = e -> client.getApp().showSettings();
-            JButton button = buttonMaker("Settings", 480, 400, actionListener);
+            JButton button = buttonMaker("Settings", 580, 370, actionListener);
             componentArrayList.add(button);
         }
         {
@@ -42,7 +42,7 @@ public class PrimaryPanel extends Panel {
         }
         {
             ActionListener actionListener = e -> client.getApp().showTut();
-            JButton button = buttonMaker("Tutorial", 630, 200, actionListener);
+            JButton button = buttonMaker("Tutorial", 630, 180, actionListener);
             componentArrayList.add(button);
         }
         {

@@ -3,13 +3,13 @@ package org.windowkillproject.client.view.abilities;
 import java.awt.*;
 
 public class ProjectileView extends AbilityView{
-    public ProjectileView(String id, int x, int y, Color topColor, Color bottomColor) {
-        super(id, x, y);
+    public ProjectileView(String globeId, String id, int x, int y, Color topColor, Color bottomColor) {
+        super(globeId, id, x, y);
         this.topColor = topColor;
         this.bottomColor = bottomColor;
     }
-    public ProjectileView(String id, int x, int y){
-        this(id,x, y, Color.yellow, Color.yellow);
+    public ProjectileView(String globeId, String id, int x, int y){
+        this(globeId, id,x, y, Color.yellow, Color.yellow);
     }
     private final Color topColor ,  bottomColor;
 

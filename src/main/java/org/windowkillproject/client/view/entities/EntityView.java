@@ -38,8 +38,8 @@ public abstract class EntityView extends ObjectView {
         return hovering;
     }
 
-    public EntityView(String id) {
-        super(id);
+    public EntityView(String globeId, String id) {
+        super(globeId, id );
         getEntityViews().add(this);
     }
     public void set(int x, int y, int width, int height) {

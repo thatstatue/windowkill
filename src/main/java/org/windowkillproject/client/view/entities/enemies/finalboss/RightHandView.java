@@ -6,8 +6,8 @@ import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import java.awt.*;
 
 public class RightHandView extends EnemyView {
-    public RightHandView(String id, Polygon polygon) {
-        super(id , polygon);
+    public RightHandView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
         setImg(ImgData.getData().getRightHand());
     }
 

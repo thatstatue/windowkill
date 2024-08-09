@@ -6,8 +6,8 @@ import org.windowkillproject.client.view.entities.enemies.EnemyView;
 import java.awt.*;
 
 public class BarricadosView extends EnemyView {
-    public BarricadosView(String id, Polygon polygon) {
-        super(id,polygon);
+    public BarricadosView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
            setImg(ImgData.getData().getBarricados());
     }
 

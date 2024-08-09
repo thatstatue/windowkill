@@ -9,8 +9,8 @@ import static org.windowkillproject.server.Config.ORB_RADIUS;
 
 
 public class BlackOrbView extends EnemyView {
-    public BlackOrbView(String id, Polygon polygon) {
-        super(id,polygon);
+    public BlackOrbView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
         blackOrbViews.add(this);
     }
     private static ArrayList<BlackOrbView> blackOrbViews = new ArrayList<>();

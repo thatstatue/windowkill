@@ -18,14 +18,14 @@ public class PolygonSerializer extends JsonSerializer<Polygon> {
         gen.writeArray(polygon.ypoints, 0, polygon.npoints);
         gen.writeNumberField("npoints", polygon.npoints);
 
-        try {
-            Field boundsField = Polygon.class.getDeclaredField("bounds");
-            boundsField.setAccessible(true);
-            Rectangle bounds = (Rectangle) boundsField.get(polygon);
-            gen.writeObjectField("bounds", bounds);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Field boundsField = Polygon.class.getDeclaredField("bounds");
+//            boundsField.setAccessible(true);
+//            Rectangle bounds = (Rectangle) boundsField.get(polygon);
+//            gen.writeObjectField("bounds", bounds);
+//        } catch (NoSuchFieldException | IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
 
         gen.writeEndObject();
     }

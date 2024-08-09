@@ -2,7 +2,6 @@ package org.windowkillproject.server.model.entities;
 
 
 import org.windowkillproject.MessageQueue;
-import org.windowkillproject.server.model.globe.GlobeModel;
 import org.windowkillproject.server.model.Writ;
 import org.windowkillproject.server.model.abilities.VertexModel;
 
@@ -13,22 +12,16 @@ import java.util.Map;
 import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.server.Config.*;
-import static org.windowkillproject.server.model.globe.GlobesManager.globeModelMap;
 
 public class EpsilonModel extends EntityModel {
     public static Map<MessageQueue, EpsilonModel> queueEpsilonModelMap = new HashMap<>();
     private boolean astrapper, melame, chironner;
     protected MessageQueue messageQueue;
-    public void setGlobeModel(GlobeModel globeModel){
-        boolean isCreate = false;
-        if (getGlobeModel() == null) isCreate = true;
-        globeModelMap.put(globeId, globeModel);
-        if (isCreate && globeModel!= null) {
-            getGlobeModel().getEntityModels().add(this);
-            System.out.println("my epsilon model id is " + id);
-            getGlobeModel().getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
 
-        }
+    public void manualAddToEntities() {
+        getGlobeModel().getEntityModels().add(this);
+        System.out.println(getId() + "\t\t  "+getGlobeModel().getEntityModels().getLast().getId());
+        getGlobeModel().getGlobeController().createEntityView(getId(), getX(), getY(), getWidth(), getHeight());
     }
 
     public MessageQueue getMessageQueue() {
@@ -36,30 +29,34 @@ public class EpsilonModel extends EntityModel {
     }
 
     private int xp;
-    public int panelWidth=GAME_WIDTH, panelHeight=GAME_HEIGHT;
-    private boolean isLeftPressed, isRightPressed,isDownPressed, isUpPressed;
+    private boolean isLeftPressed, isRightPressed, isDownPressed, isUpPressed;
     private final Writ writ;
     public void route() {
-        performAction(REQ_ARE_KEYS_PRESSED);
-
         int endX = getWidth() + getX();
         int endY = getHeight() + getY();
         if (!((isLeftPressed && isRightPressed) || (isDownPressed && isUpPressed))) {
+            var localPanel = getLocalPanelModel();
+            boolean checkH = true;
+            boolean checkW = true;
+            if (localPanel!= null){
+                checkH = endY + EPSILON_SPEED <= localPanel.getY()+localPanel.getHeight();
+                checkW = endX + EPSILON_SPEED <= localPanel.getX()+localPanel.getWidth();
+            }
             if (isUpPressed && getY() - EPSILON_SPEED >= 0)
-                move(0, - EPSILON_SPEED);
-            else if (isDownPressed && endY + EPSILON_SPEED <= panelHeight)
+                move(0, -EPSILON_SPEED);
+            else if (isDownPressed && checkH)
                 move(0, EPSILON_SPEED);
             if (isLeftPressed && getX() - EPSILON_SPEED >= 0)
                 move(-EPSILON_SPEED, 0);
-            else if (isRightPressed && endX + EPSILON_SPEED <= panelWidth)
+            else if (isRightPressed && checkW)
                 move(EPSILON_SPEED, 0);
 
         }
     }
     public EpsilonModel(MessageQueue messageQueue, String globeId) {
-        super( globeId, null,
-                CENTER_X-EPSILON_RADIUS,
-                CENTER_Y- EPSILON_RADIUS,
+        super(globeId, null,
+                CENTER_X - EPSILON_RADIUS,
+                CENTER_Y - EPSILON_RADIUS,
                 EPSILON_RADIUS, EPSILON_HP, 10);
         this.messageQueue = messageQueue;
         writ = new Writ(messageQueue);
@@ -139,6 +136,7 @@ public class EpsilonModel extends EntityModel {
     public void setAstrapper(boolean astrapper) {
         this.astrapper = astrapper;
     }
+
     public int getXp() {
         return xp;
     }
@@ -162,6 +160,7 @@ public class EpsilonModel extends EntityModel {
     public void setUpPressed(boolean upPressed) {
         isUpPressed = upPressed;
     }
+
     public Writ getWrit() {
         return writ;
     }

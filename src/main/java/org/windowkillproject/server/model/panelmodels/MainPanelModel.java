@@ -12,8 +12,8 @@ public class MainPanelModel extends PanelModel{
     public MainPanelModel(String globeId, String id) {
         super(globeId, id,
                 new Rectangle(
-                        getDefaultToolkit().getScreenSize().width - GAME_WIDTH/2,
-                        getDefaultToolkit().getScreenSize().height - GAME_HEIGHT/2,
+                        (getDefaultToolkit().getScreenSize().width - GAME_WIDTH)/2,
+                        (getDefaultToolkit().getScreenSize().height - GAME_HEIGHT)/2,
                         GAME_WIDTH, GAME_HEIGHT
                 ), PanelStatus.shrinkable, true, false);
     }

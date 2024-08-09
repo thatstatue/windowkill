@@ -38,7 +38,7 @@ public class RequestHandler implements Runnable{
             case REQ_START_GAME_LOOP -> epsilonModel.getGlobeModel().getGameLoop().start();
             case REQ_GET_EPSILON_XP -> handleEpsilonXP();
             case REQ_WAVE_RESET -> handleWaveReset();
-            case REQ_NEXT_LEVEL -> handleNextLevel();
+//            case REQ_NEXT_LEVEL -> handleNextLevel();
             case REQ_RESET_GAME -> handleResetGame();
             case REQ_EPSILON_ANCHOR -> handleEpsilonAnchor();
             case REQ_WRIT_INIT -> handleWritInit();
@@ -47,8 +47,8 @@ public class RequestHandler implements Runnable{
             case REQ_EPSILON_NEW_INSTANCE -> handleEpsilonNewInstance();
             case REQ_WRIT_CHOSEN -> handleWritChosen();
             case REQ_INCREASE_EPSILON_RADIUS -> handleIncreaseEpsilonRadius();
-            case RES_ARE_KEYS_PRESSED -> handleAreKeysPressed();
-            case REQ_REMOVE_EPSILON -> handleRemoveEpsilon(parts[1]);
+            case RES_ARE_KEYS_PRESSED -> handleAreKeysPressed(parts);
+//            case REQ_REMOVE_EPSILON -> handleRemoveEpsilon(parts[1]);
             case REQ_TOTAL_KILLS -> handleTotalKills();
             case REQ_WAVE_LEVEL -> handleWaveLevel();
             //case REQ_SHRINK_FAST -> epsilonModel.getGlobeModel().shrinkFast();
@@ -102,7 +102,7 @@ public class RequestHandler implements Runnable{
         }
         if (epsilon!=null){
             var entityModels = epsilon.getGlobeModel().getEntityModels();
-            entityModels.remove(epsilon);
+//            entityModels.remove(epsilon);
         }
 
     }
@@ -152,13 +152,16 @@ public class RequestHandler implements Runnable{
         globe.resetKilledEnemiesInWave();
         globe.resetKilledEnemiesTotal();
     }
-    private void handleAreKeysPressed(){
-        String[] parts = request.split(REGEX_SPLIT);
-        epsilonModel.setLeftPressed(Boolean.parseBoolean(parts[1]));
-        epsilonModel.setRightPressed(Boolean.parseBoolean(parts[2]));
-        epsilonModel.setUpPressed(Boolean.parseBoolean(parts[3]));
-        epsilonModel.setDownPressed(Boolean.parseBoolean(parts[5]));
+    private void handleAreKeysPressed(String[] parts){
+        boolean isLeftPressed = Boolean.parseBoolean(parts[1]);
+        boolean isRightPressed = Boolean.parseBoolean(parts[2]);
+        boolean isUpPressed = Boolean.parseBoolean(parts[3]);
+        boolean isDownPressed = Boolean.parseBoolean(parts[4]);
 
+        epsilonModel.setLeftPressed(isLeftPressed);
+        epsilonModel.setRightPressed(isRightPressed);
+        epsilonModel.setUpPressed(isUpPressed);
+        epsilonModel.setDownPressed(isDownPressed);
 
     }
     private void handleEpsilonXP() {
@@ -167,20 +170,20 @@ public class RequestHandler implements Runnable{
         messageQueue.enqueue(RES_SET_EPSILON_XP +REGEX_SPLIT+xp);
     }
 
-    private  void handlePauseUpdate() {
+    public void handlePauseUpdate() {
         var globe = epsilonModel.getGlobeModel();
-        globe.getGameLoop().stop();
-        globe.getWaveFactory().waveTimer.stop();
-        globe.getElapsedTime().pause();
+        globe.pause(false);
     }
     private void handleResumeUpdate() {
         var globe = epsilonModel.getGlobeModel();
         globe.getElapsedTime().resume();
         globe.getGameLoop().start();
-        globe.getWaveFactory().waveTimer.start();
+        var waves = globe.getWaveFactory();
+        if(!waves.isForceStop()) waves.waveTimer.start();
     }
     private void handleWaveReset(){
         var waveFactory = epsilonModel.getGlobeModel().getWaveFactory();
+        waveFactory.setForceStop(false);
         waveFactory.getWaves().clear();
         waveFactory.setLevel(0);
         waveFactory.setStartNewWave(true);

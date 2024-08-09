@@ -91,7 +91,7 @@ public abstract class PanelModel implements Drawable {
         this.panelStatus = panelStatus;
         setBounds(bounds);
         this.background = background;
-        if (getGlobeModel()!= null)getGlobeModel().getPanelModels().add(this);
+        getGlobeModel().getPanelModels().add(this);
     }
     public PanelModel(String globeId, Rectangle bounds, PanelStatus panelStatus, boolean flexible, boolean background) {
         this(globeId, UUID.randomUUID().toString(), bounds, panelStatus, flexible, background);
@@ -291,8 +291,10 @@ public abstract class PanelModel implements Drawable {
 
     public void shrinkFast() {
         if (exploding) {
-            for(EpsilonModel epsilonModel: getGlobeModel().getEpsilons())
+            for(EpsilonModel epsilonModel: getGlobeModel().getEpsilons()) {
+                System.out.println("ARE U FUCKING KIDDING ME SHRINK");
                 getGlobeModel().getEntityModels().remove(epsilonModel);
+            }
             GAME_MIN_SIZE = 10;
         }
         Timer shrinkFastTimer = new Timer(1, null);

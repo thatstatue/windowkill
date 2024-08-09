@@ -11,10 +11,14 @@ import java.util.ArrayList;
 public abstract class PanelView extends Panel implements Viewable {
 
     public static ArrayList<PanelView> panelViews = new ArrayList<>();
-    private final String id;
+    private String id;
 
     public static ArrayList<PanelView> getPanelViews() {
         return panelViews;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public static void setPanelViews(ArrayList<PanelView> panelViews) {
@@ -32,7 +36,7 @@ public abstract class PanelView extends Panel implements Viewable {
         setFocusable(true);
         requestFocusInWindow();
         synchronized (Request.LOCK) {
-            getPanelViews().add(this);
+            panelViews.add(this);
         }
 
     }

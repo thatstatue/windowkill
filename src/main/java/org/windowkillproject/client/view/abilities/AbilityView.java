@@ -5,8 +5,8 @@ import org.windowkillproject.client.view.ObjectView;
 import java.util.ArrayList;
 
 public abstract class AbilityView extends ObjectView {
-    public AbilityView(String id, int x, int y) {
-        super(id);
+    public AbilityView(String globeId, String id, int x, int y) {
+        super(globeId, id);
         this.x = x;
         this.y = y;
         getAbilityViews().add(this);

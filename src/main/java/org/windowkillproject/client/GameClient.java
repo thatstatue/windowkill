@@ -71,7 +71,7 @@ public class GameClient implements Runnable {
     }
     public void sendMessage(String message) {
         out.println(message);
-        System.out.println("i sent the message " + message);
+//        System.out.println("i sent the message " + message);
 
     }
 

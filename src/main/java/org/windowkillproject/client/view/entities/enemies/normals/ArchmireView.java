@@ -7,8 +7,8 @@ import java.awt.*;
 import static org.windowkillproject.server.Config.ARCHMIRE_RADIUS;
 
 public class ArchmireView extends EnemyView {
-    public ArchmireView(String id, Polygon polygon) {
-        super(id,polygon);
+    public ArchmireView(String globeId, String id, Polygon polygon) {
+        super(globeId, id, polygon);
         setHovering(true);
     }
 
