@@ -1,10 +1,12 @@
 package org.windowkillproject.client.ui.frames;
 
 import org.windowkillproject.client.GameClient;
-import org.windowkillproject.client.ui.panels.etc.LeaguePanel;
+import org.windowkillproject.client.ui.panels.league.LeaguePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.windowkillproject.Constants.*;
 import static org.windowkillproject.Request.*;

@@ -26,7 +26,7 @@ public class PrimaryPanel extends Panel {
 
 
         {
-            ActionListener actionListener = e -> client.getApp().startGame();
+            ActionListener actionListener = e -> client.getApp().startGame(false);
             JButton button = buttonMaker("Start", 330, 100, actionListener);
             componentArrayList.add(button);
         }

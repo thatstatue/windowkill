@@ -1,16 +1,7 @@
 package org.windowkillproject.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.windowkillproject.client.GameClient;
-import org.windowkillproject.client.ui.panels.game.MainPanelView;
-import org.windowkillproject.client.ui.panels.game.PanelView;
-import org.windowkillproject.client.view.Viewable;
-import org.windowkillproject.client.view.abilities.*;
-import org.windowkillproject.client.view.entities.enemies.EnemyView;
-import org.windowkillproject.client.view.entities.enemies.normals.*;
-import org.windowkillproject.json.JacksonMapper;
-import org.windowkillproject.server.connections.Database;
-import org.windowkillproject.server.connections.online.OnlinePlayer;
+import org.windowkillproject.controller.json.JacksonMapper;
 import org.windowkillproject.server.model.Drawable;
 import org.windowkillproject.server.model.abilities.*;
 import org.windowkillproject.server.model.entities.EntityModel;

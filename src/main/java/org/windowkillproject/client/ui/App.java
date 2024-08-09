@@ -5,6 +5,7 @@ import org.windowkillproject.client.ui.listeners.EpsilonKeyListener;
 import org.windowkillproject.client.ui.listeners.ShotgunMouseListener;
 
 import org.windowkillproject.client.ui.panels.etc.SettingsPanel;
+import org.windowkillproject.client.ui.panels.league.Alert;
 import org.windowkillproject.client.ui.panels.shop.ShopPanel;
 import org.windowkillproject.client.ui.panels.shop.SkillTreePanel;
 import org.windowkillproject.client.ui.panels.etc.TutorialPanel;
@@ -145,6 +146,9 @@ public class App implements Runnable {
         getSkillTreeFrame().setVisible(false);
         getSettingsFrame().setVisible(false);
         getPrimaryFrame().setVisible(true);
+        if (!(client.getAlert().equals(Alert.noAlerts))){
+            JOptionPane.showMessageDialog(null, client.getAlert().getMessage());
+        }
     }
 
     public void initScoreFrame(boolean won) {
@@ -162,14 +166,16 @@ public class App implements Runnable {
     }
 
 
-    public void startGame() {
+    public void startGame(boolean isBattle) {
         getPrimaryFrame().setVisible(false);
         getShopFrame().setVisible(false);
         //minimize tabs
         minimize();
-        loadOrNewGame();
-        setPanelViews(new ArrayList<>());
-        client.sendMessage(REQ_NEW_GAME_SINGLE);
+        if (!isBattle) {
+            loadOrNewGame();
+            setPanelViews(new ArrayList<>());
+            client.sendMessage(REQ_NEW_GAME_SINGLE);
+        }
         resetGame();
         initGFrame();//todo
     }
@@ -335,6 +341,7 @@ public class App implements Runnable {
             case REQ_PAUSE_UPDATE -> client.sendMessage(REQ_PAUSE_UPDATE);
             case RES_SQUAD_NAMES -> client.getApp().getLeagueFrame().setSquadNames(parts);
             case RES_OCCUPANTS -> client.getApp().getLeagueFrame().setOccupants(parts);
+            case REQ_BEGIN_GAME -> client.getApp().startGame(true);
 
         }
         handleKeysPressed();

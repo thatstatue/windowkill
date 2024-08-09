@@ -5,29 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4cb7147d-c2f7-4914-bd23-040476efc352" name="Changes" comment="y">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/dummy/DummyOnlinePlayer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/dummy/DummySquad.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/league/Alert.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/league/KnownSquadPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/league/SquadPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/league/UnknownSquadPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/Request.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/GameClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/GameClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/frames/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/frames/GameFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/frames/LeagueFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/frames/LeagueFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/etc/LeaguePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/etc/LeaguePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/game/MainPanelView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/game/MainPanelView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/etc/LeaguePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/league/LeaguePanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/etc/PrimaryPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/etc/PrimaryPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/ObjectView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/ObjectView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/ViewsRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/ViewsRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/abilities/BulletView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/abilities/BulletView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/abilities/CollectableView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/abilities/CollectableView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/entities/EntityView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/entities/EntityView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GlobeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GlobeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/ClientHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/ComponentMixin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/ComponentMixin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/JacksonMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/JacksonMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/deserializers/BufferedImageDeserializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/deserializers/BufferedImageDeserializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/deserializers/ClientDeserializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/deserializers/ClientDeserializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/deserializers/PolygonDeserializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/deserializers/PolygonDeserializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/deserializers/RectangleDeserializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/deserializers/RectangleDeserializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/serializers/BufferedImageSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/serializers/BufferedImageSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/serializers/ClientSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/serializers/ClientSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/serializers/PolygonSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/serializers/PolygonSerializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/json/serializers/RectangleSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/serializers/RectangleSerializer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/RequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/RequestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/online/League.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/online/League.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/Wave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/Wave.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/WaveFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/WaveFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/entities/enemies/EnemyModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/entities/enemies/EnemyModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/globe/GlobeModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/globe/GlobeModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/globe/GlobesManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/globe/GlobesManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/globe/multiplayer/MonomachiaGlobe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/globe/multiplayer/MonomachiaGlobe.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/panelmodels/MainPanelModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/model/panelmodels/MainPanelModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/online/League.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/League.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/online/Squad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/online/Squad.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,9 +47,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Record" />
         <option value="Enum" />
         <option value="Class" />
-        <option value="Record" />
       </list>
     </option>
   </component>
@@ -75,7 +81,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "PHASE-3/squadBattle",
     "last_opened_file_path": "C:/Users/NoteBook/IdeaProjects/iCloud",
     "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15",
@@ -181,11 +187,11 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/RequestHandler.java</url>
-          <line>70</line>
+          <line>69</line>
           <option name="timeStamp" value="60" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/json/serializers/PolygonSerializer.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/json/serializers/PolygonSerializer.java</url>
           <line>20</line>
           <option name="timeStamp" value="67" />
         </line-breakpoint>
@@ -195,13 +201,18 @@
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/online/League.java</url>
-          <line>41</line>
+          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/League.java</url>
+          <line>75</line>
           <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/server/connections/League.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="91" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/ViewsRenderer.java</url>
-          <line>52</line>
+          <line>75</line>
           <properties class="org.windowkillproject.client.view.ViewsRenderer" method="handleCreatePanel">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -210,7 +221,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GlobeController.java</url>
-          <line>140</line>
+          <line>131</line>
           <properties class="org.windowkillproject.controller.GlobeController">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -219,7 +230,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/controller/GlobeController.java</url>
-          <line>77</line>
+          <line>68</line>
           <properties class="org.windowkillproject.controller.GlobeController">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -228,7 +239,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/client/view/ViewsRenderer.java</url>
-          <line>72</line>
+          <line>94</line>
           <properties class="org.windowkillproject.client.view.ViewsRenderer" method="handleCreateEntity">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -236,7 +247,7 @@
           <option name="timeStamp" value="66" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/etc/LeaguePanel.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/org/windowkillproject/client/ui/panels/league/LeaguePanel.java</url>
           <line>74</line>
           <properties class="org.windowkillproject.client.ui.panels.etc.LeaguePanel" method="renew">
             <option name="EMULATED" value="true" />

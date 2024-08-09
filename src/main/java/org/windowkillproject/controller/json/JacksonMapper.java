@@ -1,12 +1,14 @@
-package org.windowkillproject.json;
+package org.windowkillproject.controller.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.windowkillproject.json.deserializers.BufferedImageDeserializer;
-import org.windowkillproject.json.deserializers.PolygonDeserializer;
-import org.windowkillproject.json.deserializers.RectangleDeserializer;
-import org.windowkillproject.json.serializers.*;
+import org.windowkillproject.controller.json.deserializers.BufferedImageDeserializer;
+import org.windowkillproject.controller.json.deserializers.PolygonDeserializer;
+import org.windowkillproject.controller.json.deserializers.RectangleDeserializer;
+import org.windowkillproject.controller.json.serializers.BufferedImageSerializer;
+import org.windowkillproject.controller.json.serializers.PolygonSerializer;
+import org.windowkillproject.controller.json.serializers.RectangleSerializer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

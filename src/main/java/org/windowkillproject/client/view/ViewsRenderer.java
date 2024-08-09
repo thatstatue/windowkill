@@ -2,6 +2,7 @@ package org.windowkillproject.client.view;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.windowkillproject.client.GameClient;
+import org.windowkillproject.client.ui.panels.league.Alert;
 import org.windowkillproject.client.ui.panels.game.InternalPanelView;
 import org.windowkillproject.client.ui.panels.game.MainPanelView;
 import org.windowkillproject.client.ui.panels.game.PanelView;
@@ -16,15 +17,18 @@ import org.windowkillproject.client.view.entities.enemies.finalboss.SmileyHeadVi
 import org.windowkillproject.client.view.entities.enemies.minibosses.BarricadosView;
 import org.windowkillproject.client.view.entities.enemies.minibosses.BlackOrbView;
 import org.windowkillproject.client.view.entities.enemies.normals.*;
-import org.windowkillproject.json.JacksonMapper;
+import org.windowkillproject.controller.json.JacksonMapper;
 
+import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import static javax.swing.JOptionPane.OK_OPTION;
 import static org.windowkillproject.Request.*;
 import static org.windowkillproject.client.GameClient.clients;
+import static org.windowkillproject.client.GameClient.usernameMap;
 import static org.windowkillproject.client.ui.panels.game.PanelView.panelViews;
 import static org.windowkillproject.client.view.abilities.AbilityView.abilityViews;
 import static org.windowkillproject.client.view.entities.EntityView.entityViews;
@@ -36,31 +40,49 @@ public class ViewsRenderer {
         String globeId = parts[1];
         String request = parts[2];
         String objectId = parts[3];
-
+        //inbetween clients : redirect + null + req + to + from
         for (GameClient gameClient : clients) {
-            if (gameClient.getApp().getGlobeId()!= null && gameClient.getApp().getGlobeId().equals(globeId)) {
-                switch (request) {
-                    case REQ_CREATE_PANEL -> handleCreatePanel(parts,gameClient);
-                    case REQ_CREATE_ABILITY -> handleCreateAbility(parts);
-                    case REQ_CREATE_ENTITY -> handleCreateEntity(parts);
-                    case REQ_REMOVE_OBJECT -> handleRemoveId( objectId);
-                    case REQ_MODIFY_OBJECT -> handleModifyObject(parts);
+            if (request.equals(REQ_NOTIFY_START_BATTLE)) {
+                gameClient.setAlert(Alert.startBattle);
+            }else if(request.equals(REQ_NEW_GAME_MONOMACHIA)){
+                if (gameClient.getUsername().equals(objectId))
+                    handleMonomachia(gameClient,parts[4]);
+            }else {
+                if (gameClient.getApp().getGlobeId() != null && gameClient.getApp().getGlobeId().equals(globeId)) {
+                    switch (request) {
+                        case REQ_CREATE_PANEL -> handleCreatePanel(parts, gameClient);
+                        case REQ_CREATE_ABILITY -> handleCreateAbility(parts);
+                        case REQ_CREATE_ENTITY -> handleCreateEntity(parts);
+                        case REQ_REMOVE_OBJECT -> handleRemoveId(objectId);
+                        case REQ_MODIFY_OBJECT -> handleModifyObject(parts);
+                    }
                 }
             }
         }
     }
 
+    private static void handleMonomachia(GameClient to, String fromUsername){
+        String ans = LEAGUE_REDIRECT+ REGEX_SPLIT+ RES_NEW_GAME_MONOMACHIA +
+                REGEX_SPLIT+ to.getUsername() + REGEX_SPLIT+ fromUsername + REGEX_SPLIT;
+        if (OK_OPTION == JOptionPane.showConfirmDialog(null,
+                "player " + fromUsername+
+                        "has requested\nMONOMACHIA battle, accept?", "battle request",
+                JOptionPane.OK_CANCEL_OPTION)){
+
+           to.sendMessage(ans+ true);
+       }else to.setUsername(ans +false);
+
+    }
     private static void handleCreatePanel(String[] parts, GameClient gameClient) {
         String id = parts[3];
         boolean isMain = Boolean.parseBoolean(parts[4]);
-        if (isMain ) {
+        if (isMain) {
             panelViews.removeIf(panelView -> panelView instanceof MainPanelView || panelView.getId() == null);
-            System.out.println(panelViews.size()+ "   hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+            System.out.println(panelViews.size() + "   hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
             var mainPanel = new MainPanelView(id, gameClient);
             panelViews.add(mainPanel);
             gameClient.getApp().getGameFrame().setMainPanelView(mainPanel);
-        }
-        else {
+        } else {
             int x = Integer.parseInt(parts[5]);
             int y = Integer.parseInt(parts[6]);
             int width = Integer.parseInt(parts[7]);
@@ -158,7 +180,7 @@ public class ViewsRenderer {
         int x = Integer.parseInt(parts[4]);
         int y = Integer.parseInt(parts[5]);
         int width = Integer.parseInt(parts[6]);
-        int height =  Integer.parseInt(parts[7]);
+        int height = Integer.parseInt(parts[7]);
 
         for (int i = 0; i < entityViews.size(); i++) {
             EntityView entityView = entityViews.get(i);

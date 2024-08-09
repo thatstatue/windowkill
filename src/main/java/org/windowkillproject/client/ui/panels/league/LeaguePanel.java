@@ -1,4 +1,4 @@
-package org.windowkillproject.client.ui.panels.etc;
+package org.windowkillproject.client.ui.panels.league;
 
 import org.windowkillproject.client.GameClient;
 import org.windowkillproject.client.ui.panels.Panel;
@@ -6,6 +6,7 @@ import org.windowkillproject.client.ui.panels.Panel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static org.windowkillproject.Constants.*;
@@ -14,6 +15,7 @@ import static org.windowkillproject.Request.*;
 public class LeaguePanel extends Panel {
     private DefaultTableModel tableModel;
     private JScrollPane scrollPane;
+    private KnownSquadPanel mySquad, opponentSquad;
     public LeaguePanel(GameClient client) {
         super(client);
 //        client.sendMessage(LEAGUE_REDIRECT + REGEX_SPLIT+REQ_SQUADS_LIST);
@@ -25,6 +27,15 @@ public class LeaguePanel extends Panel {
         scrollPane.setBounds(50, 100, 300, 300);
 
         add(scrollPane);
+        ActionListener actionListener = e -> {
+            client.sendMessage(LEAGUE_REDIRECT+
+                    REGEX_SPLIT+ REQ_NEW_SQUAD+
+                    REGEX_SPLIT+ client.getUsername()
+                    + REGEX_SPLIT+ client.getUsername()+"Squad");
+        };
+        add(buttonMaker("CREATE" , 790, 100, actionListener));
+//        mySquad = new KnownSquadPanel(client, null ,false);
+//        opponentSquad = new KnownSquadPanel(client, null, true);
     }
     private ArrayList<String> squadNames = new ArrayList<>();
     private ArrayList<String> occupants = new ArrayList<>();
@@ -33,7 +44,6 @@ public class LeaguePanel extends Panel {
         for (int i = 1; i< occupants.length;i++){
             this.occupants.add(occupants[i]);
         }
-        this.occupants.add("22");this.occupants.add("22");this.occupants.add("22");this.occupants.add("22");
         renew();
     }
 
@@ -41,7 +51,6 @@ public class LeaguePanel extends Panel {
         for (int i = 1; i< squadNames.length;i++){
             this.squadNames.add(squadNames[i]);
         }
-        this.squadNames.add("DUMMy");this.squadNames.add("DUMMy");this.squadNames.add("DUMMy");this.squadNames.add("DUMMy");
 
     }
     @Override

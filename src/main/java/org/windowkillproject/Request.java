@@ -50,10 +50,8 @@ public class Request {
     public static final String REQ_NEW_ONLINE_PLAYER = "44";
     public static final String RES_NEW_ONLINE_PLAYER = "45";
     public static final String REQ_NEW_SQUAD = "46";
-    public static final String REQ_SEND_OBJECT = "47";
     public static final String REQ_MODIFY_OBJECT = "48";
     public static final String REQ_REMOVE_OBJECT = "49";
-    public static final String REQ_SEND_CLIENT = "50";
     public static final String REQ_ADD_TO_VAULT = "51";
     public static final String REQ_JOIN_SQUAD = "52";
     public static final String REQ_LEAVE_SQUAD = "53";
@@ -64,7 +62,11 @@ public class Request {
     public static final String REQ_SQUADS_LIST ="58";
     public static final String RES_SQUAD_NAMES = "59";
     public static final String RES_OCCUPANTS = "60";
-
+    public static final String REQ_NOTIFY_START_BATTLE = "61";
+    public static final String REQ_NEW_GAME_MONOMACHIA = "62";
+    public static final String RES_NEW_GAME_MONOMACHIA = "63";
+    public static final String REQ_NEW_GAME_COLOSSEUM = "64";
+    public static final String REQ_BEGIN_GAME = "65";
 
 
 }

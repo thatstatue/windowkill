@@ -3,7 +3,6 @@ package org.windowkillproject.server.connections;
 import org.windowkillproject.MessageQueue;
 
 import org.windowkillproject.server.Config;
-import org.windowkillproject.server.connections.online.League;
 import org.windowkillproject.server.model.abilities.BulletModel;
 import org.windowkillproject.server.model.entities.EpsilonModel;
 import org.windowkillproject.server.model.entities.enemies.minibosses.BlackOrbModel;

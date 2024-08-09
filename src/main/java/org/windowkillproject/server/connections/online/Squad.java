@@ -2,15 +2,23 @@ package org.windowkillproject.server.connections.online;
 
 import java.util.ArrayList;
 
-import static org.windowkillproject.server.connections.Database.allPlayers;
-import static org.windowkillproject.server.connections.Database.squads;
+import static org.windowkillproject.server.connections.Database.*;
 
 
 public class Squad {
 
 
 
-    private String name;
+    private final String name;
+    private Squad opponent;
+
+    public Squad getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Squad opponent) {
+        this.opponent = opponent;
+    }
 
     public String getName() {
         return name;
@@ -21,8 +29,17 @@ public class Squad {
     }
 
     private ArrayList<OnlinePlayer> players = new ArrayList<>();
-    private OnlinePlayer host;
+    private final OnlinePlayer host;
     private int vault;
+
+
+    public void setPlayers(ArrayList<OnlinePlayer> players) {
+        this.players = players;
+    }
+
+    public void setVault(int vault) {
+        this.vault = vault;
+    }
 
     public int getVault() {
         return vault;
@@ -38,16 +55,7 @@ public class Squad {
         players.add(host);
     }
     public Squad(String hostname, String name){
-        for (OnlinePlayer player: allPlayers){
-            if (player.username.equals(hostname)) {
-                new Squad(player, name);
-                break;
-            }
-        }
-    }
-
-    public int getPlayersCount() {
-        return players.size();
+        this(getPlayerFromUsername(hostname), name);
     }
 
     public void addPlayer(OnlinePlayer player) {
@@ -64,6 +72,9 @@ public class Squad {
         }
     }
 
+    public int getPlayersCount(){
+        return players.size();
+    }
     private void deleteSquad() {
         for (OnlinePlayer player : players) {
             player.squad = null;

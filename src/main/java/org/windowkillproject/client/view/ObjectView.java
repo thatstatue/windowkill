@@ -3,7 +3,7 @@ package org.windowkillproject.client.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.windowkillproject.json.serializers.BufferedImageSerializer;
+import org.windowkillproject.controller.json.serializers.BufferedImageSerializer;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

@@ -1,4 +1,4 @@
-package org.windowkillproject.json;
+package org.windowkillproject.controller.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
