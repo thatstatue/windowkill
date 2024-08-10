@@ -328,8 +328,8 @@ public class App implements Runnable {
             case RES_WRIT_CHOSEN -> gameFrame.getMainPanelView().setWrit(parts[1]);
             case REQ_PLAY_HIT_SOUND -> soundPlayer.playHitSound();
             case REQ_PLAY_BULLET_SOUND -> soundPlayer.playBulletSound();
-            case REQ_TOTAL_KILLS -> gameFrame.getMainPanelView().setTotalKills(parts[1]);
-            case REQ_WAVE_LEVEL -> gameFrame.getMainPanelView().setWaveLevel(parts[1]);
+            case RES_TOTAL_KILLS -> gameFrame.getMainPanelView().setTotalKills(parts[1]);
+            case RES_WAVE_LEVEL -> gameFrame.getMainPanelView().setWaveLevel(parts[1]);
             case RES_EPSILON_HP -> gameFrame.getMainPanelView().setHpAmount(Integer.parseInt(parts[1]));
             case REQ_START_GAME_1 -> startGame(1);
             case REQ_PLAY_DESTROY_SOUND -> soundPlayer.playDestroySound();

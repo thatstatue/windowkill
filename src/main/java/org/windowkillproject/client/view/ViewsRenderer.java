@@ -167,9 +167,11 @@ public class ViewsRenderer {
         for (int i = 0; i < panelViews.size(); i++) {
             PanelView panelView = panelViews.get(i);
             if (panelView.getId() != null && panelView.getId().equals(id)) {
-                panelView.setEnabled(false);
+                var layeredPane = panelView.getClient().getApp().getGameFrame().getLayeredPane();
+                layeredPane.remove(panelView);
                 panelViews.remove(panelView);
-//                app.getGameFrame().getLayeredPane().remove(panelView);
+                panelView.setEnabled(false);
+
             }
         }
     }

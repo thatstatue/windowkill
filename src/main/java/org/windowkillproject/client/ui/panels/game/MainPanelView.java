@@ -15,7 +15,7 @@ public class MainPanelView extends PanelView {
     private final JLabel hp = new JLabel("100 ♡");
     private final JLabel wave = new JLabel("~1");
     private final JLabel writ = new JLabel("");
-    private final JLabel ability = new JLabel("");
+    private final JLabel kills = new JLabel("");
 
     public MainPanelView(String id, GameClient client){
         super(id, client);
@@ -26,11 +26,11 @@ public class MainPanelView extends PanelView {
 //        setEnabled(false);
     }
 
-    private String totalKills = "0";
+
     private String waveLevel = "1";
 
     public void setTotalKills(String totalKills) {
-        this.totalKills = totalKills;
+        kills.setText(totalKills);
     }
 
     public void setWaveLevel(String waveLevel) {
@@ -43,7 +43,7 @@ public class MainPanelView extends PanelView {
         client.sendMessage(REQ_TOTAL_KILLS);
         client.sendMessage(REQ_WAVE_LEVEL);
         return new JLabel[]{new JLabel(""), clock, xp
-                , new JLabel(totalKills), wave, writ};
+                , kills, wave, writ};
     }
 
 

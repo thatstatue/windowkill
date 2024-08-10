@@ -59,7 +59,7 @@ public class WaveFactory extends Timer{
                 var wave = new Wave(globeId);
                 waves.add(wave);
                 System.out.println("WELCOME TO WAVE");
-                if (level <= END_OF_NORMAL) wave.spawnWave();
+                if (level <= END_OF_NORMAL) wave.spawnMiniBossWave();
                 else if (level <= END_OF_MINIBOSS) wave.spawnMiniBossWave();
                 else wave.spawnBossWave();
             }

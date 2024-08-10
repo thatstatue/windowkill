@@ -53,6 +53,7 @@ public class Squad {
         this.host = host;
         this.name = name;
         players.add(host);
+        squads.add(this);
     }
     public Squad(String hostname, String name){
         this(getPlayerFromUsername(hostname), name);

@@ -89,6 +89,7 @@ public class RequestHandler implements Runnable{
 
     }
     private void handleTotalKills(){
+        System.out.println(epsilonModel.getGlobeModel().getKilledEnemiesTotal());
         messageQueue.enqueue(RES_TOTAL_KILLS+REGEX_SPLIT+epsilonModel.getGlobeModel().getKilledEnemiesTotal());
     }
     private void handleWaveLevel(){
@@ -147,6 +148,7 @@ public class RequestHandler implements Runnable{
     }
 
     private void handleResetGame(){
+        handleTotalKills();
         epsilonModel.setHp(EPSILON_HP);
         epsilonModel.getWrit().resetInitSeconds();
         Config.GAME_MIN_SIZE = 250;
